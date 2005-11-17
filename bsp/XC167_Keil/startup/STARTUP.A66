@@ -1,0 +1,570 @@
+;------------------------------------------------------------------------------
+;  This file is part of the C166 Compiler package
+;  Copyright KEIL ELEKTRONIK GmbH 1992-2003
+;------------------------------------------------------------------------------
+;  STARTUP.A66:  This code is executed after processor reset.
+;
+;  To translate this file use A166 with the following invocation:
+;
+;     A166 STARTUP.A66 SET (<model>)
+;
+;     <model> determines the memory model and can be one of the following:
+;         TINY, SMALL, COMPACT, MEDIUM or LARGE
+;
+;  Example:  A166 STARTUP.A66 SET (SMALL)
+;
+;  To link the modified STARTUP.OBJ file to your application use the following
+;  L166 invocation:
+;
+;     L166 <your object file list>, STARTUP.OBJ <controls>
+;
+;------------------------------------------------------------------------------
+; Setup model-dependend Assembler controls
+$CASE
+$IF NOT TINY
+$SEGMENTED
+$ENDIF
+;------------------------------------------------------------------------------
+;
+; Definitions for SYSCON Register (System Configuration):
+; -------------------------------------------------------
+;
+; MCTC: Memory Cycle Time (SYSCON.0 .. SYSCON.3):
+; Note: if RDYEN == 1 a maximum number of 7 waitstates can be selected
+_MCTC	EQU	1	; Memory wait states is 1 (MCTC = 0EH).
+;			; (Reset Value = 15 additional state times)
+;
+; RWDC: Read/Write Signal Delay (SYSCON.4):
+_RWDC	EQU	0	; 0 = Delay Time     0.5 States (Reset Value)  
+;			; 1 = No Delay Time  0   States
+;
+; MTTC: Memory Tri-state Time (SYSCON.5):
+_MTTC	EQU	1	; 0 = Delay Time     0.5 States (Reset Value)
+;			; 1 = No Delay Time  0   States
+;
+; BTYP_ENABLE: Enable External Bus Configuration Control Bits
+; --- Set BTYP_ENABLE = 1 to allow modification of BTYP and BUSACT field
+;                         in the SYSCON register.
+$SET (BTYP_ENABLE = 0)
+;
+; BTYP: External Bus Configuration Control (SYSCON.7 .. SYSCON.6):
+; Note: These bits are only valid if _BUSACT == 1.
+_BTYP	EQU	3	; 0 = 8 Bit Non Multiplexed
+;			; 1 = 8 Bit Multiplexed
+;			; 2 = 16 Bit Multiplexed
+;			; 3 = 16 Bit Non Multiplexed
+;
+; CLKEN: System Clock Output Enable bit (SYSCON.8):
+_CLKEN	EQU	0	; 0 = disabled    (Reset Value)
+;			; 1 = enabled
+;
+; BYTDIS: Byte High Enable pin control bit (SYSCON.9):
+_BYTDIS	EQU	0	; 0 = enabled     (Reset Value)
+;			; 1 = disabled
+;
+; BUSACT: Bus Active Control Bit (SYSCON.10):
+_BUSACT EQU	1	; 0 = disabled
+;			; 1 = enabled     (Reset Value)
+;
+; SGTDIS: Segmentation Disable control bit (SYSCON.11):
+$IF TINY
+_SGTDIS	EQU	1	; disable segmented mode for TINY model
+$ELSE
+_SGTDIS	EQU	0	; enable segmented mode (Reset Value)
+$ENDIF
+;
+; RDYEN: READY# Input Enable control bit (SYSCON.12):
+_RDYEN	EQU	0	; 0 = disabled    (Reset Value)
+;			; 1 = enabled
+;
+; RDY_AS: Synchronous / Asynchronous READY# Input (SYSCON.3):
+; Note: This bit is only valid if _RDYEN == 1.
+_RDY_AS EQU	0	; 0 = synchronous READY# input
+;			; 1 = asynchronous READY# input
+;
+; STKSZ: Maximum System Stack Size selection  (SYSCON.13 .. SYSCON.14)
+;  Defines the system stack space which is used by CALL/RET and PUSH/POP
+;  instructions.  The system stack space must be adjusted according the
+;  actual requirements of the application.
+$SET (STK_SIZE = 0)
+;     System stack sizes:
+;       0 = 256 words (Reset Value)
+;       1 = 128 words
+;       2 =  64 words
+;       3 =  32 words
+;       4 = not implemented
+;       5 = not implemented
+;       6 = not implemented
+;       7 = size adjustable (up to 512 bytes in on-chip RAM, start at 0FA00H)
+; If you have selected 7 for STK_SIZE, you can set the actual system stack size
+; with the following SSTSZ statement.
+SSTSZ	EQU	200H	; set System Stack Size to 200H Bytes
+;
+; USTSZ: User Stack Size Definition 
+;  Defines the user stack space available for automatics.  This stack space is
+;  accessed by R0.  The user stack space must be adjusted according the actual
+;  requirements of the application.
+USTSZ	EQU	200H	; set User Stack Size to 200H Bytes.
+;
+; EXT_RAM: External RAM Write Access Enable (P3.13 = WR-Pin)
+; --- Remove following statement if no external RAM is used
+$SET (EXT_RAM)
+;
+; WATCHDOG: Disable Hardware Watchdog
+; --- Set WATCHDOG = 1 to enable the Hardware watchdog
+$SET (WATCHDOG = 0)
+;
+;
+; CLR_MEMORY: Disable Memory Zero Initialization of RAM area
+; --- Set CLR_MEMORY = 0 to disable memory zero initilization
+$SET (CLR_MEMORY = 1)
+;
+; INIT_VARS: Disable Variable Initilization
+; --- Set INIT_VARS = 0 to disable variable initilization
+$SET (INIT_VARS = 1)
+;
+; DPPUSE:  Re-assign DPP registers
+; --- Set DPPUSE = 0 to reduce the code size of the startup code, if you
+;                    are not using the L166 DPPUSE directive.
+$SET (DPPUSE = 1)
+;
+;------------------------------------------------------------------------------
+;
+; BUSCON1/ADDRSEL1 Initialization
+; ===============================
+;
+;
+; BUSCON1/ADDRSEL1
+; --- Set BUSCON1 = 1 to initialize the BUSCON1/ADDRSEL1 registers
+$SET (BUSCON1 = 0)
+;
+; Define the start address and the address range.  
+; These values are used to set the ADDRSEL1 register
+%DEFINE (ADDRESS1) (20000H)      ; Set CS1# Start Address (default 20000H)
+%DEFINE (RANGE1)   (128K)        ; Set CS1# Range (default 128K)
+;  
+; MCTC1: Memory Cycle Time (BUSCON1.0 .. BUSCON1.3):
+; Note: if RDYEN1 == 1 a maximum number of 7 waitstates can be selected
+_MCTC1	 EQU	1	; Memory wait states is 1 (MCTC1 field = 0EH).
+;
+; RWDC1: Read/Write Signal Delay (BUSCON1.4):
+_RWDC1	 EQU	0	; 0 = Delay Time     0.5 States
+;			; 1 = No Delay Time  0   States
+;
+; MTTC1: Memory Tri-state Time (BUSCON1.5):
+_MTTC1	 EQU	1	; 0 = Delay Time     0.5 States
+;			; 1 = No Delay Time  0   States
+;
+; BTYP1: External Bus Configuration Control (BUSCON1.6 .. BUSCON1.7):
+_BTYP1	 EQU	2	; 0 = 8 Bit Non Multiplexed
+;			; 1 = 8 Bit Multiplexed
+;			; 2 = 16 Bit Multiplexed
+;			; 3 = 16 Bit Non Multiplexed
+;
+; ALECTL1: ALE Lengthening Control Bit (BUSCON1.9):
+_ALECTL1 EQU	0	; see data sheet for description
+;
+; BUSACT1: Bus Active Control Bit (BUSCON1.10):
+_BUSACT1 EQU	1	; = 0 external (ADDRSEL1) bus disabled
+			; = 1 external (ADDRSEL1) bus enabled
+;
+; RDYEN1: READY# Input Enable control bit (BUSCON1.12):
+_RDYEN1  EQU	0	; 0 = READY# function disabled
+;			; 1 = READY# function enabled
+;
+;------------------------------------------------------------------------------
+
+$IF TINY
+$SET (DPPUSE = 0)
+$ENDIF
+
+_STKSZ		SET	0		; size is 256 Words
+$IF (STK_SIZE = 1)
+_STKSZ		SET	1		; size is 128 Words
+$ENDIF
+$IF (STK_SIZE = 2)
+_STKSZ		SET	2		; size is  64 Words
+$ENDIF
+$IF (STK_SIZE = 3)
+_STKSZ		SET	3		; size is  32 Words
+$ENDIF
+
+$IF NOT TINY
+ASSUME	DPP3:SYSTEM
+ASSUME  DPP2:NDATA
+$ENDIF
+
+NAME	?C_STARTUP
+PUBLIC	?C_STARTUP
+
+$IF MEDIUM OR LARGE OR HLARGE
+Model	LIT	'FAR'
+$ELSE
+Model	LIT	'NEAR'
+$ENDIF
+
+EXTRN	main:Model
+
+PUBLIC		?C_USRSTKBOT
+
+?C_USERSTACK	SECTION	DATA PUBLIC 'NDATA'
+$IF NOT TINY
+NDATA		DGROUP	?C_USERSTACK
+$ENDIF
+?C_USRSTKBOT:
+		DS	USTSZ		; Size of User Stack
+?C_USERSTKTOP:
+?C_USERSTACK	ENDS
+
+?C_MAINREGISTERS	REGDEF	R0 - R15
+
+$IF (STK_SIZE = 7)
+
+?C_SYSSTACK	SECTION	DATA AT 0FA00H
+_BOS:					; bottom of system stack
+		DS	SSTSZ		; Size of User Stack
+_TOS:					; top of system stack
+?C_SYSSTACK	ENDS
+
+$ELSE
+
+; Setup Stack Overflow
+_TOS	EQU	0FC00H			; top of system stack
+_BOS	EQU	_TOS - (512 >> _STKSZ)	; bottom of system stack
+
+		SSKDEF	_STKSZ		; System stack size
+$ENDIF
+
+
+?C_STARTUP_CODE	SECTION	CODE	'ICODE'
+
+%*DEFINE (ADDR (Val, Start, Range)) (
+%SET (adr, %SUBSTR(%Start,1,(%LEN(%Start)- 3))%SUBSTR(%Start,%LEN(%Start),1))
+%IF (%EQS (%Range,2K))     THEN (%SET (adr, (%adr AND 0FFF8H) + 0)) FI
+%IF (%EQS (%Range,16K))    THEN (%SET (adr, (%adr AND 0FFC0H) + 1)) FI
+%IF (%EQS (%Range,32K))    THEN (%SET (adr, (%adr AND 0FF80H) + 2)) FI
+%IF (%EQS (%Range,64K))    THEN (%SET (adr, (%adr AND 0FF00H) + 3)) FI
+%IF (%EQS (%Range,128K))   THEN (%SET (adr, (%adr AND 0FE00H) + 4)) FI
+%Val	EQU 	%adr
+)
+
+;------------------------------------------------------------------------------
+
+?C_RESET  	PROC TASK C_STARTUP INTNO RESET = 0
+?C_STARTUP:	LABEL	Model
+
+$IF (WATCHDOG = 0)
+		DISWDT			; Disable watchdog timer
+$ENDIF
+
+SYS_L		SET     (_MTTC << 5) OR (_RWDC << 4) OR ((NOT _MCTC) AND 0FH)
+SYS_L		SET	SYS_L AND (NOT (_RDYEN << 2))
+SYS_L		SET	SYS_L OR (_RDY_AS << 2)
+SYS_H		SET	(_STKSZ << 5) OR (_RDYEN << 4) OR (_SGTDIS << 3)
+SYS_H		SET	SYS_H OR (_BYTDIS << 1) OR _CLKEN
+$IF (BTYP_ENABLE == 1)
+SYS_L		SET	SYS_L OR (_BTYP << 6)
+SYS_H		SET	SYS_H OR (_BUSACT << 2)
+$ENDIF
+
+; Setup SYSCON Register
+
+$IF (BTYP_ENABLE == 0)
+		BFLDL	SYSCON,#3FH,#SYS_L
+		BFLDH	SYSCON,#7BH,#SYS_H
+$ELSE
+		BFLDL	SYSCON,#0FFH,#SYS_L
+		BFLDH	SYSCON,#7FH,#SYS_H
+$ENDIF
+
+$IF (BUSCON1 = 1)
+BCON1		SET     (_MTTC1 << 5) OR (_RWDC1 << 4)
+BCON1		SET	BCON1 OR ((NOT _MCTC1) AND 0FH)
+BCON1		SET	BCON1 AND (NOT (_RDYEN1 << 3))
+BCON1 		SET	BCON1 OR (_RDY_AS << 3)  OR (_BTYP1 << 6)
+BCON1 		SET	BCON1 OR (_ALECTL1 << 9) OR (_BUSACT1 << 10)
+BCON1		SET	BCON1 OR (_RDYEN1 << 12) 
+
+%ADDR (ADDR1,%ADDRESS1,%RANGE1)
+		MOV	ADDRSEL1,#ADDR1 
+		MOV	BUSCON1,#BCON1
+$ENDIF
+
+PUBLIC		?C_SYSSTKBOT
+?C_SYSSTKBOT	EQU	_BOS
+$IF (STK_SIZE = 7)
+		MOV	STKOV,#DPP3:(_BOS+6*2)	;INITIALIZE STACK OVFL REGISTER
+$ELSE
+		MOV	STKOV,#(_BOS+6*2)	;INITIALIZE STACK OVFL REGISTER
+$ENDIF
+
+$IF NOT TINY
+
+		EXTRN	?C_PAGEDPP0 : DATA16
+		EXTRN	?C_PAGEDPP1 : DATA16
+		EXTRN	?C_PAGEDPP2 : DATA16
+
+		MOV	DPP1,#?C_PAGEDPP1	; Init DPP1 (default NCONST)
+		MOV	DPP2,#?C_PAGEDPP2	; Init DPP2 (default NDATA)
+$ENDIF
+
+$IF (EXT_RAM)
+		BSET	P3.13				; ENABLE WR/ OUTPUT
+		BSET	DP3.13
+$ENDIF
+
+		MOV	CP,#?C_MAINREGISTERS
+		EINIT
+
+$IF NOT TINY
+        	MOV	R0,#DPP2:?C_USERSTKTOP
+$ELSE
+	       	MOV	R0,#?C_USERSTKTOP
+$ENDIF
+
+
+;------------------------------------------------------------------------------
+;
+; The following code is necessary to set RAM variables to 0 at start-up
+; (RESET) of the C application program.
+;
+
+$IF (CLR_MEMORY = 1)
+
+		EXTRN	?C_CLRMEMSECSTART : WORD
+Clr_Memory:
+$IF NOT TINY
+		MOV	R2,#PAG (?C_CLRMEMSECSTART)
+		MOV	R1,#POF (?C_CLRMEMSECSTART)
+		MOV	DPP0,R2
+		OR	R2,R1
+		JMPR	cc_Z,EndClear
+$ELSE
+		MOV	R1,#?C_CLRMEMSECSTART
+		JMPR	cc_Z,EndClear
+$ENDIF
+
+RepeatClear:
+$IF (WATCHDOG = 1)
+		SRVWDT				; SERVICE WATCHDOG
+$ENDIF
+		MOV	R5,#0
+		MOV	DPP3,#3			; SYSTEM PAGE
+		MOV	R2,[R1+]
+		JMPR	cc_Z,EndClear
+		MOV	R3,R2
+		MOV	R4,[R1+]
+		JBC	R2.14,ClearNear
+$IF NOT TINY
+		JBC	R2.15,ClearFar
+$ENDIF
+
+ClearBit:	MOV	R3,R4
+		SHR	R3,#3
+		BCLR	R3.0
+		ADD	R3,#0FD00H		; START OF BIT SPACE
+		MOV	R5,#1
+		SHL	R5,R4
+		CPL	R5
+		AND	R5,[R3]
+		MOV	[R3],R5
+		ADD	R4,#1
+		SUB	R2,#1
+		JMPR	cc_NZ,ClearBit
+		JMPR	cc_UC,RepeatClear
+
+$IF NOT TINY
+ClearFar:
+		MOV	DPP3,R4
+		MOV	R4,[R1+]
+$ENDIF
+$IF (DPPUSE = 0)
+ClearNear:
+$ENDIF
+ClearLoop:
+$IF (WATCHDOG = 1)
+		SRVWDT				; SERVICE WATCHDOG
+$ENDIF
+		MOVB	[R4],RL5
+		ADD	R4,#1
+$IF NOT TINY
+		JNB	R3.15,NoDPP3Corr
+		JB	R4.14,NoDPP3Corr
+		ADD	DPP3,#1
+		OR	R4,#0C000H		; SET DPP3 Bits 
+NoDPP3Corr:	
+$ENDIF
+		SUB	R2,#1
+		JMPR	cc_NN,ClearLoop
+		JMPR	cc_UC,RepeatClear
+
+$IF (DPPUSE = 1)
+ClearNear:
+		PUSH	DPP0
+		MOV	DPP0,#?C_PAGEDPP0	; Init DPP0 (for DPPUSE)u
+		NOP
+ClearNearL:
+$IF (WATCHDOG = 1)
+		SRVWDT				; SERVICE WATCHDOG
+$ENDIF
+		MOVB	[R4],RL5
+		ADD	R4,#1
+		SUB	R2,#1
+		JMPR	cc_NN,ClearNearL
+		POP	DPP0
+		JMPR	cc_UC,RepeatClear
+$ENDIF
+
+EndClear:
+
+$ENDIF
+
+;------------------------------------------------------------------------------
+;
+;  The following code is necessary, if the application program contains
+;  initialized variables at file level.
+;
+
+$IF (INIT_VARS = 1)
+
+		EXTRN	?C_INITSECSTART : WORD
+Init_Vars:
+$IF NOT TINY
+		MOV	DPP0,#PAG (?C_INITSECSTART)
+		MOV	R1,#POF (?C_INITSECSTART)
+$ELSE
+		MOV	R1,#?C_INITSECSTART
+$ENDIF
+RepeatInit:	
+$IF (WATCHDOG = 1)
+		SRVWDT				; SERVICE WATCHDOG
+$ENDIF
+		MOV	DPP3,#3			; SYSTEM PAGE
+		MOV	R2,[R1+]
+		JMPR	cc_Z,EndInit
+$IF NOT TINY
+		JNB	R1.14,NoDPP0Adj1
+		ADD	DPP0,#1
+		BCLR	R1.14
+NoDPP0Adj1:
+$ENDIF
+		JBC	R2.15,InitBit
+		MOV	R4,R2
+		AND	R2,#3FFFH
+		JMPR	cc_NZ,LenLoad
+		MOV	R4,#0
+		MOV	R2,[R1+]
+$IF NOT TINY
+		JNB	R1.14,NoDPP0Adj2
+		ADD	DPP0,#1
+		BCLR	R1.14
+NoDPP0Adj2:
+$ENDIF
+LenLoad:			
+		MOV	R3,[R1+]
+$IF NOT TINY
+		JNB	R1.14,NoDPP0Adj3
+		ADD	DPP0,#1
+		BCLR	R1.14
+NoDPP0Adj3:
+$ENDIF
+$IF NOT TINY
+		JB	R4.14,CopyNear
+		MOV	DPP3,R3
+		MOV	R3,[R1+]
+		JNB	R1.14,NoDPP0Adj4
+		ADD	DPP0,#1
+		BCLR	R1.14
+NoDPP0Adj4:
+$ENDIF
+$IF (DPPUSE = 0)
+CopyNear:
+$ENDIF
+CopyInitVal:	MOVB	[R3],[R1+]
+$IF (WATCHDOG = 1)
+		SRVWDT				; SERVICE WATCHDOG
+$ENDIF
+$IF NOT TINY
+		JNB	R1.14,NoDPP0Adj5
+		ADD	DPP0,#1
+		BCLR	R1.14
+NoDPP0Adj5:
+$ENDIF
+		ADD	R3,#1
+$IF NOT TINY
+		JB	R4.14,NoDPP3Adj
+		JB	R3.14,NoDPP3Adj
+		ADD	DPP3,#1
+		OR	R3,#0C000H		; SET DPP3 Bits 
+NoDPP3Adj:	
+$ENDIF
+		SUB	R2,#1
+		JMPR	cc_NZ,CopyInitVal
+CorrR1:		JNB	R1.0,RepeatInit
+		ADD	R1,#1
+$IF NOT TINY
+		JNB	R1.14,NoDPP0Adj6
+		ADD	DPP0,#1
+		BCLR	R1.14
+NoDPP0Adj6:
+$ENDIF
+		JMPR	cc_UC,RepeatInit
+
+$IF (DPPUSE = 1)
+CopyNear:	
+CopyNInitVal:	MOVB	RL5,[R1+]
+		PUSH	DPP0
+		MOV	DPP0,#?C_PAGEDPP0
+		NOP
+		MOVB	[R3],RL5
+		POP	DPP0
+$IF (WATCHDOG = 1)
+		SRVWDT				; SERVICE WATCHDOG
+$ENDIF
+		JNB	R1.14,NoDPP0Adj7
+		ADD	DPP0,#1
+		BCLR	R1.14
+NoDPP0Adj7:
+		ADD	R3,#1
+		SUB	R2,#1
+		JMPR	cc_NZ,CopyNInitVal
+		JMPR	cc_UC,CorrR1
+$ENDIF
+
+InitBit:	MOVBZ	R3,RL2
+		SHL	R3,#1
+		OR 	R3,#0FD00H		; START OF BIT SPACE
+		MOV	R4,#1
+		MOVB	RL5,RH2
+		SHL	R4,R5			; CALCULATE BIT MASK
+		JB	R2.7,SetBit
+		CPL	R4			; CLEAR BIT
+		AND	R4,[R3]
+		JMPR	cc_UC,StoreBit
+SetBit:		OR	R4,[R3]			; SET BIT
+StoreBit:	MOV	[R3],R4
+		JMPR	cc_UC,RepeatInit
+
+EndInit:
+
+$ENDIF
+
+;------------------------------------------------------------------------------
+$IF (DPPUSE = 1)
+		MOV	DPP0,#?C_PAGEDPP0	; Init DPP0 (for DPPUSE)
+$ENDIF
+
+$IF TINY
+		JMP	main
+$ELSE
+		JMP	FAR main
+$ENDIF
+
+?C_RESET	ENDP
+?C_STARTUP_CODE	ENDS
+
+$IF (INIT_VARS = 1)
+EXTERN	?C_ENDINIT:WORD
+$ENDIF
+
+		END

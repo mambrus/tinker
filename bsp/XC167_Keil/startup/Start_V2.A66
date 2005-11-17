@@ -1,0 +1,1969 @@
+$MODV2                                  ; Define C166v2 core mode
+
+
+;
+;------------------------------------------------------------------------------
+;  This file is part of the C166 Compiler package
+;  Copyright KEIL ELEKTRONIK GmbH 1993 - 2004
+;  Version 5.01
+;  Note:  PHAx default set to 0 as bypass for TwinCAN device problem.
+;  *** <<< Use Configuration Wizard in Context Menu >>> ***
+;
+;------------------------------------------------------------------------------
+;  START_V2.A66:  This code is executed after processor reset and provides the
+;                 startup sequence for the C166v2/Super10 architecture CPU's.
+;                 (i.e. XC161, XC164, XC167, ect.)
+;
+;  You may add this file to a uVision2 project - in this case it will be 
+;  automatically assembled and linked.
+;
+;  For manual translation of this file use A166 with the following invocation:
+;
+;     A166 START_V2.A66 SET (model)
+;
+;     model determines the memory model and can be one of the following:
+;         TINY, SMALL, COMPACT, HCOMPACT, MEDIUM, LARGE, HLARGE, XLARGE
+;
+;  Example:  A166 START_V2.A66 SET (SMALL)
+;
+;  For manual linkage of the modified START_V2.OBJ file to your application
+;  use the following L166 invocation:
+;
+;     L166 your object file list, START_V2.OBJ controls
+;
+;------------------------------------------------------------------------------
+; Setup model-dependend Assembler controls
+$CASE
+$IF NOT TINY
+$SEGMENTED
+$ENDIF
+; Settings for ADDRSEL calculation (do not change!)
+KB          EQU    0x400     ; define KB constant for CS _SIZE calculation
+MB          EQU    0x400*KB  ; define MB as 1024KB
+;------------------------------------------------------------------------------
+;
+; <h>Definitions for System and User Stack
+; ========================================
+;
+; <o>STKSZ: Maximum System Stack Size selection <0x0-0x1000:0x2>
+; <i> Defines the system stack space that is used by CALL/RET and PUSH/POP
+; <i> instructions.  The system stack space must be adjusted according the actual
+; <i> requirements of the application.
+SSTSZ   EQU     0x200 
+; <o> USTSZ: User Stack Size Definition <0x0-0x4000:0x2>
+; <i> Defines the user stack space available for automatics.  This stack space is
+; <i> accessed by R0.  The user stack space must be adjusted according the actual
+; <i> requirements of the application.
+USTSZ   EQU     0x200    ; set User Stack Size to 200H Bytes.
+;
+; <o> UST1SZ: User Stack Size for local register bank 1 <0x0-0x4000:0x2>
+; <i> Defines the user stack space available for the interrupt functions that are
+; <i> assigned to the local register bank 1.  Since the compiler cannot copy the R0
+; <i> value to local register banks, the user stack must be assign separately.
+; <i> If you have no interrupt functions assigned to local register bank 1, you may
+; <i> set UST1SZ to 0.
+UST1SZ   EQU    0x20     ; set User Stack Size to 20H Bytes.
+;
+; <o> UST2SZ: User Stack Size for local register bank 2 <0x0-0x4000:0x2>
+; <i> Defines the user stack space available for the interrupt functions that are
+; <i> assigned to the local register bank 1.  Since the compiler cannot copy the R0
+; <i> value to local register banks, the user stack must be assign separately.
+;  If you have no interrupt functions assigned to local register bank 2, you may
+;  set UST2SZ to 0.
+UST2SZ   EQU    0x20     ; set User Stack Size to 20H Bytes.
+;
+; </h>
+; <h>Definitions for Startup Code
+; ===============================
+;
+; <q> CLR_MEMORY: Enable/Disable Memory Zero Initialization of RAM area
+; --- <i> Set CLR_MEMORY = 0 to disable memory zero initilization
+$SET (CLR_MEMORY = 1)
+;
+; <q> INIT_VARS: Enable/Disable Variable Initialization
+; --- <i> Set INIT_VARS = 0 to disable variable initilization
+$SET (INIT_VARS = 1)
+;
+; <q> DPPUSE:  Allow re-assign of DPP registers 
+; --- <i> Set DPPUSE = 0 to reduce the code size of the startup code, if you
+;     <i> are not using the L166 DPPUSE directive.
+$SET (DPPUSE = 1)
+;
+; <q> DPP3USE: Use DPP3 register during variable initilization
+; --- <i> Set DPP3USE = 0 to disable the usage of DPP3 during initilization of
+;     <i> variables.  This option might be required if you write
+;     <i> program parts that are reloaded during application 
+;     <i> execution and increase code size of the startup code.
+$SET (DPP3USE = 1)
+;
+;</h>
+; <h> CPU Configuration
+; =====================
+;
+; <h>Definitions for CPU Configuration Register CPUCON1
+; ==================================================
+;
+; <q> ZCJ: Enable Zero Cycle Jump Function (CPUCON1.0):
+_ZCJ EQU 1 ; 0 = Disable Zero Cycle Jump Function /Dave/                                                                                                                             
+                        ; 1 = Enable Zero Cycle Jump Function
+;
+; <q> BP: Enable Branch Prediction Unit (CPUCON1.1):
+_BP EQU 1 ; 0 = Disable Branch Prediction Unit /Dave/                                                                                                                             
+                        ; 1 = Enable Branch Prediction Unit
+;
+; <q> INTSCXT: Enable Interruptability of Switch Context Instruction (CPUCON1.2):
+_INTSCXT EQU 1 ; 0 = Disable Interruption of SCXT instruction /Dave/                                                                                                                             
+                        ; 1 = Enable Interruption of SCXT instruction
+;
+; SGTDIS: Disable Segmentation Control (CPUCON1.3):
+$IF TINY
+_SGTDIS EQU 0 ; disable segmented mode for TINY model /Dave/                                                                                                                             
+$ELSE
+_SGTDIS  EQU    0       ; enable segmented mode (Reset Value)
+$ENDIF
+;
+; <o> WDTCTL: Watchdog Timer Control (CPUCON1.4):
+; <0=> DISWDT executable until end of EINIT  <1=> DISWDT/ENWDT always executable
+_WDTCTL EQU 0 ; 0 = DISWDT executable until end of EINIT /Dave/                                                                                                                             
+                        ; 1 = DISWDT/ENWDT always executable
+;
+; <o> VECSC: Vector Table Scaling Factor (CPUCON1.5 .. CPUCON1.6)
+; <0=> 2 words  <1=> 4 words  <2=> 8 words  <3=> 16 words
+_VECSC EQU 0 ; 0 = Space between two vectors is 2 words /Dave/                                                                                                                             
+                        ; 1 = Space between two vectors is 4 words
+                        ; 2 = Space between two vectors is 8 words
+                        ; 3 = Space between two vectors is 16 words
+;
+; </h>
+; <e>Definitions for CPU Configuration Register CPUCON2
+; ==================================================
+;
+;  INIT_CPUCON2: Init CPUCON2 register
+; --- <i>Set INIT_CPUCON2 to initilize the CPUCON2 register
+$SET (INIT_CPUCON2 = 1) ; default: do not initilize CPUCON2  
+;
+; <q> SL: Enable Short Loop Mode (CPUCON2.0)
+_SL EQU 1 ; 0 = Short Loop mode disabled /Dave/                                                                                                                             
+                        ; 1 = Short Loop mode enabled
+;
+; <q> FASTPEC: Enable Fast Pec Event Injection (CPUCON2.1)
+_FASTPEC  EQU   1       ; 0 = Direct Injection of PEC Events disabled
+                        ; 1 = Direct Injection of PEC Events enabled
+;
+; <q> FASTBL: Enable Fast Block Transfer Injection (CPUCON2.2)
+_FASTBL   EQU   0       ; 0 = Direct Injection for Block Transfers disabled
+                        ; 1 = Direct Injection for Block Transfers enabled
+;
+; <q> RETST: Enable Return Stack (CPUCON2.3)
+_RETST EQU 1 ; 0 = Return Stack disabled /Dave/                                                                                                                             
+                        ; 1 = Return Stack enabled
+;
+; <q> OVRUN: Allow Pipeline Bubble Overrun (CPUCON2.4)
+_OVRUN EQU 1 ; 0 = Overrun of Pipeline Bubbles not allowed /Dave/                                                                                                                             
+                        ; 1 = Overrun of Pipeline Bubbles allowed
+;
+; <q> ZSC: Enable Zero Cycle Jump Cache (CPUCON2.5)
+_ZSC      EQU   1       ; 0 = Zero Cycle Jump Cache disabled
+                        ; 1 = Zero Cycle Jump Cache enabled
+;
+; <q> STEN: Enable Stall Instruction (CPUCON2.6)
+_STEN EQU 0 ; 0 = Stall instruction disabled /Dave/                                                                                                                             
+                        ; 1 = Stall instruction enabled
+;
+; <q> EIOIAEN: Early IO Injection Acknowledge guaranteed
+_EIOIAEN  EQU   1       ; 0 = Injection ack. by destructive read not guaranteed
+;                       ; 1 = Injection ack. by destructive read guaranteed
+; 
+; <q> BYPF: Enable Fetch Bypass Control (CPUCON2.8)
+_BYPF EQU 1 ; 0 = Bypass Path from Fetch to Decode disabled /Dave/                                                                                                                             
+                        ; 1 = Bypass Path from Fetch to Decode enabled
+;
+; <q> BYPPF: Enable Prefecth Bypass Control (CPUCON2.9)
+_BYPPF EQU 1 ; 0 = Bypass Path from Prefetch to Decode disabled /Dave/                                                                                                                             
+                        ; 1 = Bypass Path from Prefetch to Decode enabled
+;
+; <o> FIFOFED: FIFO Fill Configuration (CPUCON2.10 .. CPUCON2.11)
+; <0=> FIFO disabled    <1=> 1 instruction
+; <2=> 2 instructions   <3=> 3 instructions
+_FIFOFED EQU 3 ; 0 = FIFO disabled /Dave/                                                                                                                             
+                        ; 1 = FIFO filled with up to 1 instruction per cycle
+                        ; 2 = FIFO filled with up to 2 instructions per cycle
+                        ; 3 = FIFO filled with up to 3 instructions per cycle
+;
+;<o> FIFODEPTH: FIFO Depth Configuration (CPUCON2.12 .. CPUCON2.15) <0-8>
+_FIFODEPTH EQU 8 ; 0 = No FIFO entries (No FIFO) /Dave/                                                                                                                             
+                        ; 1 = 1 FIFO entry
+                        ; ...
+                        ; 8 = 8 FIFO entries
+                        ; 9 - 15 = reserved
+;</e>
+;</h>
+; <h> Peripheral Configuration
+; ============================
+;
+; <e> Definitions for System Configuration Register SYSCON1
+; =========================================================
+;
+; INIT_SYSCON1: Init SYSCON1 register
+; --- Set INIT_SYSCON1 = 1 to initilize the SYSCON1 register
+$SET (INIT_SYSCON1 = 0) ; /Dave/                                                                                                                             
+;
+; <q> SLEEPCON: Sleep Mode Configuration (SYSCON1.0 .. SYSCON1.1)
+; <0=> IDLE mode upon IDLE instr. <1=> SLEEP mode upon IDLE instr.
+_SLEEPCON EQU 0 ; 0 = Normal IDLE mode entered upone IDLE instruction /Dave/                                                                                                                             
+                        ; 1 = SLEEP mode entered upon IDLE instruction
+                        ; 2 - 3 = reserved
+;
+; <q> PDCFG: Port Driver Configuration (SYSCON1.2 .. SYSCON1.3)
+; <0=>Port drivers are always ON <1=>Port drivers are off in IDLE/Sleep mode
+; <2=>Port drivers are off in Powerdown mode
+_PDCFG EQU 0 ; 0 = Port drivers are always ON (default) /Dave/                                                                                                                             
+                        ; 1 = Port drivers are off in IDLE or Sleep mode
+                        ; 2 = Port drivers are off in Powerdown mode
+                        ; 3 = reserved
+;
+; <o> PFCFG: Program Flash Configuration (SYSCON1.4 .. SYSCON1.5) 
+; <0=> Program Flash always ON <1=>Program Flash OFF in IDLE/Sleep mode
+_PFCFG EQU 0 ; 0 = Program Flash is always ON (default) /Dave/                                                                                                                             
+                        ; 1 = Program Flash is off in IDLE or Sleep mode
+                        ; 2 - 3 = reserved
+;
+; <o> CPSYS: Clock Prescaler for System (SYSCON1.8 .. SYSCON1.10)
+; <0=>CPU clock = PLL frequency  <1=>CPU clock = PLL frequency / 2
+_CPSYS EQU 0 ; 0 = clock signal for CPU is PLL frequency /Dave/                                                                                                                             
+                        ; 1 = clock signal for CPU is PLL frequency / 2
+                        ; 2 - 7 = reserved
+; </e>
+;
+; <e> Definitions for System Configuration Register SYSCON3
+; =========================================================
+;
+; INIT_SYSCON3: Init SYSCON3 register
+; --- Set INIT_SYSCON3 = 1 to initilize the SYSCON3 register
+$SET (INIT_SYSCON3 = 1) ; /Dave/                                                                                                                             
+;
+; SYSCON3:  Power Management (disable on-chip peripherals)
+;
+;<q> Disable Analog/Digital Converter
+ADCDIS  EQU     0       ; 1 = disable Analog/Digital Converter    (SYSCON3.0)
+;<q> Disable UART ASC0
+ASC0DIS EQU 0 ; 1 = disable UART ASC0                   (SYSCON3.1) /Dave/                                                                                                                             
+;<q> Disable Synchronus Serial Cnl0 SSC0
+SSC0DIS EQU 0 ; 1 = disable Synchronus Serial Cnl0 SSC0 (SYSCON3.2) /Dave/                                                                                                                             
+;<q> Disable Timer Block GPT 
+GPTDIS EQU 0 ; 1 = disable Timer Block GPT             (SYSCON3.3) /Dave/                                                                                                                             
+                        ; reserved                                (SYSCON3.4)
+;<q> Disable on-chip Flash Memory Module
+FMDIS EQU 0 ; 1 = disable on-chip Flash Memory Module (SYSCON3.5) /Dave/                                                                                                                             
+;<q> Disable CAPCOM Unit 1
+CC1DIS EQU 1 ; 1 = disable CAPCOM Unit 1               (SYSCON3.6) /Dave/                                                                                                                             
+;<q> Disable CAPCOM Unit 2
+CC2DIS EQU 1 ; 1 = disable CAPCOM Unit 2               (SYSCON3.7) /Dave/                                                                                                                             
+;<q> Disable CAPCOM Unit 6
+CC6DIS EQU 1 ; 1 = disable CAPCOM Unit 6               (SYSCON3.8) /Dave/                                                                                                                             
+                        ; reserved                                (SYSCON3.9)
+;<q> Disable UART ASC1
+ASC1DIS EQU     0       ; 1 = disable UART ASC1                   (SYSCON3.10)
+;<q> Disable I2C Bus Module
+I2CDIS  EQU     0       ; 1 = disable I2C Bus Module              (SYSCON3.11)
+;<q> Disable SDLM (J1850) Module
+SDLMDIS EQU     0       ; 1 = disable SDLM (J1850) Module         (SYSCON3.12)
+;<q> Disable on-chip CAN Module
+CANDIS EQU 0 ; 1 = disable on-chip CAN Module          (SYSCON3.13) /Dave/                                                                                                                             
+;<q> Disable Real Time Clock
+RTCDIS  EQU     0       ; 1 = disable Real Time Clock             (SYSCON3.14)
+;<q> Disable Synchronus Serial Cnl1 SSC1
+SSC1DIS EQU 1 ; 1 = disable Synchronus Serial Cnl1 SSC1 (SYSCON3.15) /Dave/                                                                                                                             
+;
+;</e>
+;</h>
+; <e> Definitions for Reset Configuration Register RSTCON
+; ===================================================
+;
+; INIT_RSTCON: Init RSTCON register
+; --- Set INIT_RSTCON = 0 to initilize the RSTCON register
+$SET (INIT_RSTCON = 0) ; /Dave/                                                                                                                             
+;
+; <o> RSTLEN: Reset Length Control (RSTCON.0 .. RSTCON.2)
+; <0=>   2 CPU clocks  <1=>   4 CPU clocks  <2=>   8 CPU clocks  <3=>  16 CPU clocks
+; <4=>  32 CPU clocks  <5=>  64 CPU clocks  <6=> 128 CPU clocks  <7=> 256 CPU clocks
+_RSTLEN EQU 0 ; 0 =   2 t_CPU clocks (default) /Dave/                                                                                                                             
+                        ; 1 =   4 t_CPU clocks
+                        ; 2 =   8 t_CPU clocks
+                        ; 3 =  16 t_CPU clocks
+                        ; 4 =  32 t_CPU clocks
+                        ; 5 =  64 t_CPU clocks
+                        ; 6 = 128 t_CPU clocks
+                        ; 7 = 256 t_CPU clocks
+;
+; <o> RORMV: RSTOUT# Remove Control (RSTCON.4)
+; <0=> RSTOUT delivers RSTOUT# signal <1=> RSTOUT pin operates as GPIO
+_RORMV EQU 0 ; 0 = RSTOUT delivers RSTOUT# signal /Dave/                                                                                                                             
+                        ; 1 = RSTOUT pin operates as GPIO
+;
+; <o> ROCOFF: RSTOUT# Control Switch Off (RSTCON.5)
+; <0=>RSTOUT deactivated by user software  <1=>RSTOUT deactivated after reset
+_ROCOFF EQU 0 ; 0 = RSTOUT is deactivated by user software /Dave/                                                                                                                             
+                        ; 1 = RSTOUT is deactivated at end of reset
+;
+; <o> ROCON: RSTOUT# Control Switch Off (RSTCON.6)
+; <0=> RSTOUT active on any reset  <1=> RSTOUT active on hardware reset
+_ROCON EQU 0 ; 0 = RSTOUT is activated upon any reset /Dave/                                                                                                                             
+                        ; 1 = RSTOUT is only activated upon a hardware reset
+;
+; <q> RODIS: RSTOUT# Disable Control (RSTCON.7) <0-1>
+_RODIS EQU 0 ; 0 = RSTOUT is controlled by other mechanism /Dave/                                                                                                                             
+                        ; 1 = RSTOUT is deactivated
+;
+;</e>
+;
+;
+; <e> Definitions for PLL Control Register PLLCON
+; ===========================================
+;
+; INIT_PLLCON: Init PLLCON register
+; --- Set INIT_PLLCON = 0 to initilize the PLLCON register
+$SET (INIT_PLLCON = 0)
+;
+; <o> PLLODIV: PLL Output Devider (PLLCON.0 .. PLLCON.3) <0-14>
+_PLLODIV  EQU    5      ; 0 .. 14  Fpll = Fvco / (PLLODIV+1)
+                        ; 15 = reserved
+;
+; <o> PLLIDIV: PLL Input Devider (PLLCON.4 .. PLLCON.5) <0-3>
+; <i> Fin = Fosc / (PLLIDIV+1)
+_PLLIDIV  EQU    0      ; 0 .. 3   Fin = Fosc / (PLLIDIV+1)
+;
+; <o> PLLVB: PLL VCO Band Select (PLLCON.6 .. PLLCON.7)
+; <0=> Ouput:100-150MHz / Base:20-80MHz <1=> Ouput:150-200MHz / Base:40-130MHz
+; <2=> Ouput:200-250MHz / Base:60-180MHz <3=> (250...300 MHz) Reserved
+_PLLVB    EQU   2      ; ValueVCO output frequency    Base frequency
+                        ; 0 = 100...150 MHz            20...80 MHz
+                        ; 1 = 150...200 MHz            40...130 MHz
+                        ; 2 = 200...250 MHz [def.]     60...180 MHz
+                        ; 3 = (250...300 MHz) Reserved
+;
+; <o> PLLMUL: PLL Multiplication Factor (PLLCON.8 .. PLLCON.12) <6-31>
+; <i> Fvco = Fin * (PLLMUL+1)
+_PLLMUL   EQU    25     ; 7 .. 31  Fvco = Fin * (PLLMUL+1)
+                        ; 0 .. 6 = reserved
+;
+; <o> PLLCTRL: PLL Operation Control (PLLCON.13 .. PLLCON.14)
+; <0=> Bypass PLL clock mult., the VCO is off   <1=> Bypass PLL clock mult., the VCO is running
+; <2=> VCO clock used, input clock switched off <3=> VCO clock used, input clock connected
+_PLLCTRL  EQU    3      ; 0 = Bypass PLL clock mult., the VCO is off
+                        ; 1 = Bypass PLL clock mult., the VCO is running
+                        ; 2 = VCO clock used, input clock switched off
+                        ; 3 = VCO clock used, input clock connected
+;
+; <o> PLLWRI: PLLCON Write Ignore Flag (PLLCON.15)
+; <0=> Register PLLCON may be written  <1=> Write cycles to register PLLCON are ignored
+_PLLWRI   EQU    0      ; 0 = Register PLLCON may be written
+                        ; 1 = Write cycles to register PLLCON are ignored
+;</e>
+;
+; <e> Definitions for Watchdog Timer Control Register WDTCON
+; ======================================================
+;
+; --- Set WATCHDOG = 0 to enable the Hardware watchdog and initilize the WDTCON register
+$SET (WATCHDOG = 0) ; 0 = Disabled Hardware watchdog /Dave/                                                                                                                             
+;
+; <o> WDTIN: Watchdog Timer Input Frequency Select (WDTCON.0 .. WDTCON.1)
+; <0=> Peripheral Frequency divided by 2  <1=> Peripheral Frequency divided by 128 
+; <2=> Peripheral Frequency divided by 4  <3=> Peripheral Frequency divided by 256
+_WDTIN EQU 0 ; 0 = frequency f_peripheral / 2   (CPU default)   /Dave/                                                                                                                             
+                        ; 1 = frequency f_peripheral / 128 (recommended for START_V2)
+                        ; 2 = frequency f_peripheral / 4
+                        ; 3 = frequency f_peripheral / 256
+;
+; <o> WDTREL: Watchdog Timer Reload Value (WDTCON8 .. WDTCON15) <0-255>
+; <i> High byte of WDT (counts up, overflow gives Watchdog reset)
+_WDTREL EQU 0 ; /Dave/                                                                                                                             
+;
+;</e>
+; <e> Definitions for Frequency Output Signal FOCON
+; =================================================
+;
+; INIT_FOCON: Init FOCON register
+; --- Set INIT_FOCON = 0 to initilize the FOCON register
+$SET (INIT_FOCON = 1) ; /Dave/                                                                                                                             
+;
+; <o> CLKEN: CLKOUT Enable (FOCON.7)
+; <0=> P3.15 is IO <1=> P3.15 is CLKOUT
+_CLKEN EQU 0 ; 0 = P3.15 is IO pin when _FOUT is 0 /Dave/                                                                                                                             
+                        ; 1 = P3.15 outputs signal CLKOUT
+;
+; <o> FORV: Frequency Output Reload Value (FOCON.8 .. FOCON.13) <0-63>
+; <i> Is copied to FOCNT upon each underflow of FOCNT
+_FORV EQU 2 ; /Dave/                                                                                                                             
+;
+; <o> FOSS: Frequency Output Signal Select (FOCON.14)
+; <0=> Output of Toggle Latch  <1=> Output of Reload Counter
+_FOSS EQU 0 ; 0 = Output of the toggle latch; 0.5 duty cycle /Dave/                                                                                                                             
+                        ; 1 = Output of reload counter; duty cycle depends on FORV
+;
+; <o> FOEN: Frequency Output Enable (FOCON.15)
+; <0=> P3.15 is IO <1=> P3.15 outputs f_OUT
+_FOEN EQU 0 ; 0 = P3.15 is IO pin when _CLKEN is 0 /Dave/                                                                                                                             
+                        ; 1 = P3.15 outputs f_OUT when _CLKEN is 0
+;</e>
+;
+;<h> External Bus Configuration
+;
+; <e> Configure External Bus (EBC) Behaviour
+; ==========================================
+;
+; --- Set CONFIG_EBC = 0 to initialize the EBCMOD0/EBCMOD1 registers
+$SET (CONFIG_EBC = 1) ; 0 = EBCMOD0/EBCMOD1 are set during reset according the  /Dave/                                                                                                                             
+                        ;     of configuration bus (typical Port0) values.
+                        ; 1 = the following external bus configuration values
+                        ;      are written to EBCMOD and BUSACT0
+;
+; <h>Definitions for EBC Mode 0 register EBCMOD0
+; ===========================================
+;
+; <o> SAPEN: Segment Address Pins Enabled (EBCMOD0.0 .. EBCMOD0.3) <0-8>
+; <i> Number of active Address Lines (A16-A23)
+_SAPEN EQU 4 ; 0 = No segment address pins enabled /Dave/                                                                                                                             
+                        ; 1 = One (A16) segment address pin enabled
+                        ; : = :        
+                        ; 8 = Eight (A16 .. A23) address pins enabled
+                        ; 9 - 15 = reserved
+;
+; <o> CSPEN: CSx Pins Enabled (EBCMOD0.4 .. EBCMOD0.7) <0-8>
+; <i> Number of active ChipSelect pins
+_CSPEN EQU 5 ; 0 = No CS pins enabled /Dave/                                                                                                                             
+                        ; 1 = One CS (CS0) pin enabled
+                        ; : = :
+                        ; 8 = Eight CS (CS0 .. CS7) pins enabled
+                        ; 9 - 15 = reserved
+; Note: the number of available CS pins depends on the chip used
+;
+; <q> ARBEN: Enable Bus Arbitration Pins (EBCMOD0.8)
+_ARBEN EQU 1 ; 0 = HOLD, HLDA and BREQ pins are tristate or act as GPIO /Dave/                                                                                                                             
+                        ; 1 = HOLD, HLDA and BREQ pins act normally
+;
+; <o> SLAVE: SLAVE mode enable (EBCMOD0.9)
+; <0=> Master Mode  <1=> Slave Mode
+_SLAVE EQU 0 ; 0 = Bus arbiter acts in master mode /Dave/                                                                                                                             
+                        ; 1 = Bus arbiter acts in slave mode
+;
+; <q> EBCDIS: Disable EBC pins (EBCMOD0.10)
+_EBCDIS EQU 0 ; 0 = EBC is using the pins for external bus /Dave/                                                                                                                             
+                        ; 1 = EBC off (pins to be used as GPIO if implemented)
+;
+; <o> WRCFG: Configuration for pins WR/WRL and BHE/WRH (EBCMOD0.11)
+; <0=> WR and BHE  <1=> WRL and WRH
+_WRCFG EQU 0 ; 0 = Pins act as WR and BHE /Dave/                                                                                                                             
+                        ; 1 = Pins act as WRL and WRH
+;
+; <q> BYTDIS: Disable BHE pin (EBCMOD0.12)
+_BYTDIS EQU 0 ; 0 = BHE enabled /Dave/                                                                                                                             
+                        ; 1 = BHE disabled (GPIO function if implemented)
+;
+; <q> ALEDIS: Disable ALE pin (EBCMOD0.13)
+_ALEDIS EQU 0 ; 0 = ALE pin enabled /Dave/                                                                                                                             
+                        ; 1 = ALE pin disabled (GPIO function if implemented)
+;
+; <q> RDYDIS: Disable READY pin (EBCMOD0.14)
+_RDYDIS EQU 1 ; 0 = READY enabled /Dave/                                                                                                                             
+                        ; 1 = READY disabled (GPIO function if implemented)
+;
+; <o> RDYPOL: READY pin polarity (EBCMOD0.15)
+; <0=> Active Low  <1=> Active High
+_RDYPOL EQU 0 ; 0 = READY pin is active low /Dave/                                                                                                                             
+                        ; 1 = READY pin is active high
+;
+;</h>
+;
+; <h>Definitions for EBC Mode 1 register EBCMOD1
+; ===========================================
+;
+; <o> APDIS: Address Port Pins Disable (EBCMOD1.0 .. EBCMOD0.4) <0-31:31>
+_APDIS EQU 15 ; 0  = Address port PORT1 used as address bus /Dave/                                                                                                                             
+                        ; 1 - 30 = reserved
+                        ; 31 = Address bus disabled (PORT1 used as GPIO)
+;
+; <q> DHPDIS: Data High Port Pins Disable (EBCMOD1.6)
+_DHPDIS EQU 0 ; 0 = Data bus pins 15-8 of PORT0 enabled /Dave/                                                                                                                             
+                        ; 1 = Data bus pins 15-8 disabled (used as GPIO)
+;
+;</h></e>
+;
+; <e>Configure External Bus Behaviour for CS0 area
+; ================================================
+;
+; --- Set CONFIG_CS0 = 1 to initialize the FCONCS0/TCONCS0 registers
+$SET (CONFIG_CS0 = 1) ; /Dave/                                                                                                                             
+;
+; <h>Definitions for Function Configuration Register FCONCS0
+; =======================================================
+;
+; <q> ENCS0: Enable Chip Select (FCONCS0.0)
+_ENCS0 EQU 1 ; 0 = Chip Select 0 disabled /Dave/                                                                                                                             
+                        ; 1 = Chip Select 0 enabled
+;
+; <q> RDYEN0: Ready Enable (FCONCS0.1)
+_RDYEN0 EQU 0 ; 0 = Access time controlled by TCONCS0.PHE0 /Dave/                                                                                                                             
+                        ; 1 = Access time cont. by TCONCS0.PHE0 and READY signal
+;
+; <o> RDYMOD0: Ready Mode (FCONCS0.2) 
+; <0=> Asynchronous  <1=> Synchronous
+_RDYMOD0 EQU 0 ; 0 = Asynchronous READY /Dave/                                                                                                                             
+                        ; 1 = Synchronous READY
+;
+; <o> BTYP0: Bus Type Selection (FCONCS0.4 .. FCONCS0.5)
+; <0=> 8-bit Demultiplexed Bus  <1=> 8-bit Multiplexed Bus
+; <2=> 16-bit Demultiplexed Bus <3=> 16-bit Multiplexed Bus
+_BTYP0 EQU 3 ; 0 = 8 bit Demultiplexed bus /Dave/                                                                                                                             
+                        ; 1 = 8 bit Multiplexed bus
+                        ; 2 = 16 bit Demultiplexed bus
+                        ; 3 = 16 bit Multiplexed bus
+; </h>
+;
+; <h> TCONCS0: Definitions for the Timing Configuration register 
+; ==========================================================
+;
+; <o> PHA0: Phase A clock cycles (TCONCS0.0 .. TCONCS0.1) <0-3>
+_PHA0 EQU 3 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = : 
+                        ; 3 = 3 clock cycles
+;
+; <o> PHB0: Phase B clock cycles (TCONCS0.2) <1-2> <#-1>
+_PHB0 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; 1 = 2 clock cycles
+;
+; <o> PHC0: Phase C clock cycles (TCONCS0.3 .. TCONCS0.4) <0-3>
+_PHC0 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o> PHD0: Phase D clock cycle (TCONCS0.5) <0-1>
+_PHD0 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; 1 = 1 clock cycle
+;
+; <o> PHE0: Phase E clock cycles (TCONCS0.6 .. TCONCS0.10) <1-32> <#-1>
+_PHE0 EQU 9 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; : = :
+                        ; 31 = 32 clock cycles
+;
+; <o> RDPHF0: Phase F read clock cycles (TCONCS0.11 .. TCONCS0.12) <0-3>
+_RDPHF0 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o> WRPHF0: Phase F write clock cycles (TCONCS0.13 .. TCONCS0.14) <0-3>
+_WRPHF0 EQU 3 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;</h> </e>
+;
+;<e>Configure External Bus Behaviour for CS1 Area
+;   =============================================
+;
+; --- Set CONFIG_CS1 = 1 to initialize the ADDRSEL1/FCONCS1/TCONCS1 registers
+$SET (CONFIG_CS1 = 1) ; /Dave/                                                                                                                             
+;
+; <h>Definitions for Address Select register ADDRSEL1
+; ===================================================
+; <o> CS1 Start Address   <0x0-0xFFFFFF:0x1000>
+_ADDR1 EQU 0x400000 ; Set CS1# Start Address (default 100000H) /Dave/                                                                                                                             
+
+; <o> CS1 Size in KB      
+; <4=>    4KB      <8=>    8KB      <16=>   16KB     <32=>   32KB   
+; <64=>   64KB     <128=>  128KB    <256=>  256KB    <512=>  512KB
+; <1024=> 1024KB   <2048=> 2048KB   <4096=> 4096KB   <8192=> 8192KB
+_SIZE1 EQU 512*KB ; Set CS1# Size (default 1024*KB = 1*MB) /Dave/                                                                                                                             
+                             ; possible values for _SIZE1 are:
+                             ;    4*KB            (gives RGSZ1 = 0)
+                             ;    8*KB            (gives RGSZ1 = 1)
+                             ;   16*KB            (gives RGSZ1 = 2)
+                             ;   32*KB            (gives RGSZ1 = 3)
+                             ;   64*KB            (gives RGSZ1 = 4)
+                             ;  128*KB            (gives RGSZ1 = 5)
+                             ;  256*KB            (gives RGSZ1 = 6)
+                             ;  512*KB            (gives RGSZ1 = 7)
+                             ; 1024*KB  or  1*MB  (gives RGSZ1 = 8)
+                             ; 2048*KB  or  2*MB  (gives RGSZ1 = 9)
+                             ; 4096*KB  or  4*MB  (gives RGSZ1 = 10)
+                             ; 8192*KB  or  8*MB  (gives RGSZ1 = 11)
+                             ;                    (RGSZ1 = 12 .. 15 reserved)
+;</h>
+;
+; <h>Definitions for Function Configuration Register FCONCS1
+; =======================================================
+;
+; <q> ENCS1: Enable Chip Select (FCONCS1.0)
+_ENCS1 EQU 1 ; 0 = Chip Select 0 disabled /Dave/                                                                                                                             
+                        ; 1 = Chip Select 0 enabled
+;
+; <q> RDYEN1: Ready Enable (FCONCS1.1)
+_RDYEN1 EQU 0 ; 0 = Access time controlled by TCONCS1.PHE1 /Dave/                                                                                                                             
+                        ; 1 = Access time cont. by TCONCS1.PHE1 and READY signal
+;
+; <o> RDYMOD1: Ready Mode (FCONCS1.2)
+; <0=> Asynchronous  <1=> Synchronous
+_RDYMOD1 EQU 0 ; 0 = Asynchronous READY /Dave/                                                                                                                             
+                        ; 1 = Synchronous READY
+;
+; <o> BTYP1: Bus Type Selection (FCONCS1.4 .. FCONCS1.5)
+; <0=> 8-bit Demultiplexed Bus  <1=> 8-bit Multiplexed Bus
+; <2=> 16-bit Demultiplexed Bus <3=> 16-bit Multiplexed Bus
+_BTYP1 EQU 3 ; 0 = 8 bit Demultiplexed bus /Dave/                                                                                                                             
+                        ; 1 = 8 bit Multiplexed bus
+                        ; 2 = 16 bit Demultiplexed bus
+                        ; 3 = 16 bit Multiplexed bus
+;</h>
+;
+; <h>TCONCS1: Definitions for the Timing Configuration register 
+; ==========================================================
+;
+; <o>PHA1: Phase A clock cycles (TCONCS1.0 .. TCONCS1.1) <0-3>
+_PHA1 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = : 
+                        ; 3 = 3 clock cycles
+;
+; <o>PHB1: Phase B clock cycles (TCONCS1.2) <1-2> <#-1>
+_PHB1 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; 1 = 2 clock cycles
+;
+; <o>PHC1: Phase C clock cycles (TCONCS1.3 .. TCONCS1.4) <0-3>
+_PHC1 EQU 1 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>PHD1: Phase D clock cycles (TCONCS1.5) <0-1>
+_PHD1 EQU 1 ; 0 = 0 clock cycles /Dave/                                                                                                                          
+                        ; 1 = 1 clock cycle
+;
+; <o> PHE1: Phase E clock cycles (TCONCS1.6 .. TCONCS1.10) <1-32> <#-1>
+_PHE1 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; : = :
+                        ; 31 = 32 clock cycles
+;
+; <o>RDPHF1: Phase F read clock cycles (TCONCS1.11 .. TCONCS1.12) <0-3>
+_RDPHF1 EQU 1 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>WRPHF1: Phase F write clock cycles (TCONCS1.13 .. TCONCS1.14) <0-3>
+_WRPHF1 EQU 1 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;</h> </e>
+;
+;<e>Configure External Bus Behaviour for CS2 Area
+;   =============================================
+;
+; --- Set CONFIG_CS2 = 1 to initialize the ADDRSEL2/FCONCS2/TCONCS2 registers
+$SET (CONFIG_CS2 = 1) ; /Dave/                                                                                                                             
+;
+; <h>Definitions for Address Select register ADDRSEL2
+; ===================================================
+; <o> CS2 Start Address   <0x0-0xFFFFFF:0x1000>
+_ADDR2 EQU 0x500000 ; Set CS2# Start Address (default 100000H) /Dave/                                                                                                                             
+
+; <o> CS2 Size in KB      
+; <4=>    4KB      <8=>    8KB      <16=>   16KB     <32=>   32KB
+; <64=>   64KB     <128=>  128KB    <256=>  256KB    <512=>  512KB
+; <1024=> 1024KB   <2048=> 2048KB   <4096=> 4096KB   <8192=> 8192KB
+_SIZE2 EQU 4*KB ; Set CS2# Size (default 1024*KB = 1*MB) /Dave/                                                                                                                             
+                             ; possible values for _SIZE2 are:
+                             ;    4*KB            (gives RGSZ2 = 0)
+                             ;    8*KB            (gives RGSZ2 = 1)
+                             ;   16*KB            (gives RGSZ2 = 2)
+                             ;   32*KB            (gives RGSZ2 = 3)
+                             ;   64*KB            (gives RGSZ2 = 4)
+                             ;  128*KB            (gives RGSZ2 = 5)
+                             ;  256*KB            (gives RGSZ2 = 6)
+                             ;  512*KB            (gives RGSZ2 = 7)
+                             ; 1024*KB  or  1*MB  (gives RGSZ2 = 8)
+                             ; 2048*KB  or  2*MB  (gives RGSZ2 = 9)
+                             ; 4096*KB  or  4*MB  (gives RGSZ2 = 10)
+                             ; 8192*KB  or  8*MB  (gives RGSZ2 = 11)
+                             ;                    (RGSZ2 = 12 .. 15 reserved)
+;</h>
+;
+; <h>Definitions for Function Configuration Register FCONCS2
+; =======================================================
+;
+; <q> ENCS2: Enable Chip Select (FCONCS2.0)
+_ENCS2 EQU 0 ; 0 = Chip Select 0 disabled /Dave/                                                                                                                             
+                        ; 1 = Chip Select 0 enabled
+;
+; <q> RDYEN2: Ready Enable (FCONCS2.1)
+_RDYEN2 EQU 0 ; 0 = Access time controlled by TCONCS2.PHE1 /Dave/                                                                                                                             
+                        ; 1 = Access time cont. by TCONCS2.PHE1 and READY signal
+;
+; <o> RDYMOD2: Ready Mode (FCONCS2.2)
+; <0=> Asynchronous  <1=> Synchronous
+_RDYMOD2 EQU 0 ; 0 = Asynchronous READY /Dave/                                                                                                                             
+                        ; 1 = Synchronous READY
+;
+; <o> BTYP2: Bus Type Selection (FCONCS2.4 .. FCONCS2.5)
+; <0=> 8-bit Demultiplexed Bus  <1=> 8-bit Multiplexed Bus
+; <2=> 16-bit Demultiplexed Bus <3=> 16-bit Multiplexed Bus
+_BTYP2 EQU 0 ; 0 = 8 bit Demultiplexed bus /Dave/                                                                                                                             
+                        ; 1 = 8 bit Multiplexed bus
+                        ; 2 = 16 bit Demultiplexed bus
+                        ; 3 = 16 bit Multiplexed bus
+;</h>
+;
+; <h>TCONCS2: Definitions for the Timing Configuration register 
+; ==========================================================
+;
+; <o>PHA2: Phase A clock cycle (TCONCS2.0 .. TCONCS2.1) <0-3>
+_PHA2 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = : 
+                        ; 3 = 3 clock cycles
+;
+; <o>PHB2: Phase B clock cycle (TCONCS2.2) <1-2> <#-1>
+_PHB2 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; 1 = 2 clock cycles
+;
+; <o>PHC2: Phase C clock cycle (TCONCS2.3 .. TCONCS2.4) <0-3>
+_PHC2 EQU 1 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>PHD2: Phase D clock cycle (TCONCS2.5) <0-1>
+_PHD2 EQU 1 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; 1 = 1 clock cycle
+;
+; <o> PHE2: Phase E clock cycle (TCONCS2.6 .. TCONCS2.10) <1-32> <#-1>
+_PHE2 EQU 3 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; : = :
+                        ; 31 = 32 clock cycles
+;
+; <o>RDPHF2: Phase F read clock cycle (TCONCS2.11 .. TCONCS2.12) <0-3>
+_RDPHF2 EQU 1 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>WRPHF2: Phase F write clock cycle (TCONCS2.13 .. TCONCS2.14) <0-3>
+_WRPHF2 EQU 1 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;</h> </e>
+;
+;<e>Configure External Bus Behaviour for CS3 Area
+;   =============================================
+;
+; --- Set CONFIG_CS3 = 1 to initialize the ADDRSEL3/FCONCS3/TCONCS3 registers
+$SET (CONFIG_CS3 = 0) ; /Dave/                                                                                                                             
+;
+; <h>Definitions for Address Select register ADDRSEL3
+; ===================================================
+; <o> CS3 Start Address   <0x0-0xFFFFFF:0x1000>
+_ADDR3 EQU 0x0 ; Set CS3# Start Address (default 100000H) /Dave/                                                                                                                             
+
+; <o> CS2 Size in KB      
+; <4=>    4KB      <8=>    8KB      <16=>   16KB     <32=>   32KB
+; <64=>   64KB     <128=>  128KB    <256=>  256KB    <512=>  512KB
+; <1024=> 1024KB   <2048=> 2048KB   <4096=> 4096KB   <8192=> 8192KB
+_SIZE3 EQU 4*KB ; Set CS3# Size (default 1024*KB = 1*MB) /Dave/                                                                                                                             
+                             ; possible values for _SIZE3 are:
+                             ;    4*KB            (gives RGSZ3 = 0)
+                             ;    8*KB            (gives RGSZ3 = 1)
+                             ;   16*KB            (gives RGSZ3 = 2)
+                             ;   32*KB            (gives RGSZ3 = 3)
+                             ;   64*KB            (gives RGSZ3 = 4)
+                             ;  128*KB            (gives RGSZ3 = 5)
+                             ;  256*KB            (gives RGSZ3 = 6)
+                             ;  512*KB            (gives RGSZ3 = 7)
+                             ; 1024*KB  or  1*MB  (gives RGSZ3 = 8)
+                             ; 2048*KB  or  2*MB  (gives RGSZ3 = 9)
+                             ; 4096*KB  or  4*MB  (gives RGSZ3 = 10)
+                             ; 8192*KB  or  8*MB  (gives RGSZ3 = 11)
+                             ;                    (RGSZ3 = 12 .. 15 reserved)
+;</h>
+;
+; <h>Definitions for Function Configuration Register FCONCS3
+; =======================================================
+;
+; <q> ENCS3: Enable Chip Select (FCONCS3.0)
+_ENCS3 EQU 0 ; 0 = Chip Select 0 disabled /Dave/                                                                                                                             
+                        ; 1 = Chip Select 0 enabled
+;
+; <q> RDYEN3: Ready Enable (FCONCS3.1)
+_RDYEN3 EQU 0 ; 0 = Access time controlled by TCONCS3.PHE1 /Dave/                                                                                                                             
+                        ; 1 = Access time cont. by TCONCS3.PHE1 and READY signal
+;
+; <o> RDYMOD3: Ready Mode (FCONCS3.2)
+; <0=> Asynchronous  <1=> Synchronous
+_RDYMOD3 EQU 0 ; 0 = Asynchronous READY /Dave/                                                                                                                             
+                        ; 1 = Synchronous READY
+;
+; <o> BTYP3  Bus Type Selection (FCONCS3.4 .. FCONCS3.5)
+; <0=> 8-bit Demultiplexed Bus  <1=> 8-bit Multiplexed Bus
+; <2=> 16-bit Demultiplexed Bus <3=> 16-bit Multiplexed Bus
+_BTYP3 EQU 0 ; 0 = 8 bit Demultiplexed bus /Dave/                                                                                                                             
+                        ; 1 = 8 bit Multiplexed bus
+                        ; 2 = 16 bit Demultiplexed bus
+                        ; 3 = 16 bit Multiplexed bus
+;</h>
+;
+; <h>TCONCS2: Definitions for the Timing Configuration register 
+; ==========================================================
+;
+; <o>PHA3: Phase A clock cycle (TCONCS3.0 .. TCONCS3.1) <0-3>
+_PHA3 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = : 
+                        ; 3 = 3 clock cycles
+;
+; <o>PHB3: Phase B clock cycle (TCONCS2.2) <1-2> <#-1>
+_PHB3 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; 1 = 2 clock cycles
+;
+; <o>PHC3: Phase C clock cycle (TCONCS3.3 .. TCONCS3.4) <0-3>
+_PHC3 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>PHD3: Phase D clock cycle (TCONCS3.5) <0-1>
+_PHD3 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; 1 = 1 clock cycle
+;
+; <o> PHE3: Phase E clock cycle (TCONCS3.6 .. TCONCS3.10) <1-32> <#-1>
+_PHE3 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; : = :
+                        ; 31 = 32 clock cycles
+;
+; <o>RDPHF3: Phase F read clock cycle (TCONCS3.11 .. TCONCS3.12) <0-3>
+_RDPHF3 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>WRPHF3: Phase F write clock cycle (TCONCS3.13 .. TCONCS3.14) <0-3>
+_WRPHF3 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;</h> </e>
+;
+;<e>Configure External Bus Behaviour for CS4 Area
+;   =============================================
+;
+; --- Set CONFIG_CS4 = 1 to initialize the ADDRSEL4/FCONCS4/TCONCS4 registers
+$SET (CONFIG_CS4 = 0) ; /Dave/                                                                                                                             
+;
+; <h>Definitions for Address Select register ADDRSEL4
+; ===================================================
+; <o> CS4 Start Address   <0x0-0xFFFFFF:0x1000>
+_ADDR4 EQU 0x0 ; Set CS4# Start Address (default 100000H) /Dave/                                                                                                                             
+
+; <o> CS4 Size in KB      
+; <4=>    4KB      <8=>    8KB      <16=>   16KB     <32=>   32KB
+; <64=>   64KB     <128=>  128KB    <256=>  256KB    <512=>  512KB
+; <1024=> 1024KB   <2048=> 2048KB   <4096=> 4096KB   <8192=> 8192KB
+_SIZE4 EQU 4*KB ; Set CS4# Size (default 1024*KB = 1*MB) /Dave/                                                                                                                             
+                             ; possible values for _SIZE4 are:
+                             ;    4*KB            (gives RGSZ4 = 0)
+                             ;    8*KB            (gives RGSZ4 = 1)
+                             ;   16*KB            (gives RGSZ4 = 2)
+                             ;   32*KB            (gives RGSZ4 = 3)
+                             ;   64*KB            (gives RGSZ4 = 4)
+                             ;  128*KB            (gives RGSZ4 = 5)
+                             ;  256*KB            (gives RGSZ4 = 6)
+                             ;  512*KB            (gives RGSZ4 = 7)
+                             ; 1024*KB  or  1*MB  (gives RGSZ4 = 8)
+                             ; 2048*KB  or  2*MB  (gives RGSZ4 = 9)
+                             ; 4096*KB  or  4*MB  (gives RGSZ4 = 10)
+                             ; 8192*KB  or  8*MB  (gives RGSZ4 = 11)
+                             ;                    (RGSZ4 = 12 .. 15 reserved)
+;</h>
+;
+; <h>Definitions for Function Configuration Register FCONCS4
+; =======================================================
+;
+; <q> ENCS4: Enable Chip Select (FCONCS4.0)
+_ENCS4 EQU 0 ; 0 = Chip Select 0 disabled /Dave/                                                                                                                             
+                        ; 1 = Chip Select 0 enabled
+;
+; <q> RDYEN4: Ready Enable (FCONCS4.1)
+_RDYEN4 EQU 0 ; 0 = Access time controlled by TCONCS4.PHE1 /Dave/                                                                                                                             
+                        ; 1 = Access time cont. by TCONCS4.PHE1 and READY signal
+;
+; <o> RDYMOD4: Ready Mode (FCONCS4.2)
+; <0=> Asynchronous  <1=> Synchronous
+_RDYMOD4 EQU 0 ; 0 = Asynchronous READY /Dave/                                                                                                                             
+                        ; 1 = Synchronous READY
+;
+; <o> BTYP4: Bus Type Selection (FCONCS4.4 .. FCONCS4.5)
+; <0=> 8-bit Demultiplexed Bus  <1=> 8-bit Multiplexed Bus
+; <2=> 16-bit Demultiplexed Bus <3=> 16-bit Multiplexed Bus
+_BTYP4 EQU 0 ; 0 = 8 bit Demultiplexed bus /Dave/                                                                                                                             
+                        ; 1 = 8 bit Multiplexed bus
+                        ; 2 = 16 bit Demultiplexed bus
+                        ; 3 = 16 bit Multiplexed bus
+;</h>
+;
+; <h>TCONCS4: Definitions for the Timing Configuration register 
+; ==========================================================
+;
+; <o>PHA4: Phase A clock cycle (TCONCS4.0 .. TCONCS4.1) <0-3>
+_PHA4 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = : 
+                        ; 3 = 3 clock cycles
+;
+; <o>PHB4: Phase B clock cycle (TCONCS4.2) <1-2> <#-1>
+_PHB4 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; 1 = 2 clock cycles
+;
+; <o>PHC4: Phase C clock cycle (TCONCS4.3 .. TCONCS4.4) <0-3>
+_PHC4 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>PHD4: Phase D clock cycle (TCONCS4.5) <0-1>
+_PHD4 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; 1 = 1 clock cycle
+;
+; <o> PHE4: Phase E clock cycle (TCONCS4.6 .. TCONCS4.10) <1-32> <#-1>
+_PHE4 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; : = :
+                        ; 31 = 32 clock cycles
+;
+; <o>RDPHF4: Phase F read clock cycle (TCONCS4.11 .. TCONCS4.12) <0-3>
+_RDPHF4 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>WRPHF4: Phase F write clock cycle (TCONCS4.13 .. TCONCS4.14) <0-3>
+_WRPHF4 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;</h> </e>
+;
+;<e>Configure External Bus Behaviour for CS5 Area
+;   =============================================
+;
+; --- Set CONFIG_CS5 = 1 to initialize the ADDRSEL5/FCONCS5/TCONCS5 registers
+$SET (CONFIG_CS5 = 0) ; /Dave/                                                                                                                             
+;
+; <h>Definitions for Address Select register ADDRSEL5
+; ===================================================
+; <o> CS5 Start Address   <0x0-0xFFFFFF:0x1000>
+_ADDR5 EQU 0x0 ; Set CS5# Start Address (default 100000H) /Dave/                                                                                                                             
+
+; <o> CS5 Size in KB      
+; <4=>    4KB      <8=>    8KB      <16=>   16KB     <32=>   32KB
+; <64=>   64KB     <128=>  128KB    <256=>  256KB    <512=>  512KB
+; <1024=> 1024KB   <2048=> 2048KB   <4096=> 4096KB   <8192=> 8192KB
+_SIZE5 EQU 4*KB ; Set CS5# Size (default 1024*KB = 1*MB) /Dave/                                                                                                                             
+                             ; possible values for _SIZE5 are:
+                             ;    4*KB            (gives RGSZ5 = 0)
+                             ;    8*KB            (gives RGSZ5 = 1)
+                             ;   16*KB            (gives RGSZ5 = 2)
+                             ;   32*KB            (gives RGSZ5 = 3)
+                             ;   64*KB            (gives RGSZ5 = 4)
+                             ;  128*KB            (gives RGSZ5 = 5)
+                             ;  256*KB            (gives RGSZ5 = 6)
+                             ;  512*KB            (gives RGSZ5 = 7)
+                             ; 1024*KB  or  1*MB  (gives RGSZ5 = 8)
+                             ; 2048*KB  or  2*MB  (gives RGSZ5 = 9)
+                             ; 4096*KB  or  4*MB  (gives RGSZ5 = 10)
+                             ; 8192*KB  or  8*MB  (gives RGSZ5 = 11)
+                             ;                    (RGSZ5 = 12 .. 15 reserved)
+;</h>
+;
+; <h>Definitions for Function Configuration Register FCONCS5
+; =======================================================
+;
+; <q> ENCS5: Enable Chip Select (FCONCS5.0)
+_ENCS5 EQU 0 ; 0 = Chip Select 0 disabled /Dave/                                                                                                                             
+                        ; 1 = Chip Select 0 enabled
+;
+; <q> RDYEN5: Ready Enable (FCONCS5.1)
+_RDYEN5 EQU 0 ; 0 = Access time controlled by TCONCS2.PHE1 /Dave/                                                                                                                             
+                        ; 1 = Access time cont. by TCONCS2.PHE1 and READY signal
+;
+; <o> RDYMOD2: Ready Mode (FCONCS5.2)
+; <0=> Asynchronous  <1=> Synchronous
+_RDYMOD5 EQU 0 ; 0 = Asynchronous READY /Dave/                                                                                                                             
+                        ; 1 = Synchronous READY
+;
+; <o> BTYP2: Bus Type Selection (FCONCS5.4 .. FCONCS5.5)
+; <0=> 8-bit Demultiplexed Bus  <1=> 8-bit Multiplexed Bus
+; <2=> 16-bit Demultiplexed Bus <3=> 16-bit Multiplexed Bus
+_BTYP5 EQU 0 ; 0 = 8 bit Demultiplexed bus /Dave/                                                                                                                             
+                        ; 1 = 8 bit Multiplexed bus
+                        ; 2 = 16 bit Demultiplexed bus
+                        ; 3 = 16 bit Multiplexed bus
+;</h>
+;
+; <h>TCONCS5: Definitions for the Timing Configuration register 
+; ==========================================================
+;
+; <o>PHA5: Phase A clock cycle (TCONCS5.0 .. TCONCS5.1) <0-3>
+_PHA5 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = : 
+                        ; 3 = 3 clock cycles
+;
+; <o>PHB5: Phase B clock cycle (TCONCS5.2) <1-2> <#-1>
+_PHB5 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; 1 = 2 clock cycles
+;
+; <o>PHC5: Phase C clock cycle (TCONCS5.3 .. TCONCS5.4) <0-3>
+_PHC5 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>PHD5: Phase D clock cycle (TCONCS5.5) <0-1>
+_PHD5 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; 1 = 1 clock cycle
+;
+; <o> PHE5: Phase E clock cycle (TCONCS5.6 .. TCONCS5.10) <1-32> <#-1>
+_PHE5 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; : = :
+                        ; 31 = 32 clock cycles
+;
+; <o>RDPHF5: Phase F read clock cycle (TCONCS5.11 .. TCONCS5.12) <0-3>
+_RDPHF5 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>WRPHF5: Phase F write clock cycle (TCONCS5.13 .. TCONCS5.14) <0-3>
+_WRPHF5 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;</h> </e>
+;
+;<e>Configure External Bus Behaviour for CS6 Area
+;   =============================================
+;
+; --- Set CONFIG_CS6 = 1 to initialize the ADDRSEL6/FCONCS6/TCONCS6 registers
+$SET (CONFIG_CS6 = 0) ; /Dave/                                                                                                                             
+;
+; <h>Definitions for Address Select register ADDRSEL6
+; ===================================================
+; <o> CS6 Start Address   <0x0-0xFFFFFF:0x1000>
+_ADDR6 EQU 0x0 ; Set CS2# Start Address (default 100000H) /Dave/                                                                                                                             
+
+; <o> CS6 Size in KB      
+; <4=>    4KB      <8=>    8KB      <16=>   16KB     <32=>   32KB
+; <64=>   64KB     <128=>  128KB    <256=>  256KB    <512=>  512KB
+; <1024=> 1024KB   <2048=> 2048KB   <4096=> 4096KB   <8192=> 8192KB
+_SIZE6 EQU 4*KB ; Set CS6# Size (default 1024*KB = 1*MB) /Dave/                                                                                                                             
+                             ; possible values for _SIZE6 are:
+                             ;    4*KB            (gives RGSZ6 = 0)
+                             ;    8*KB            (gives RGSZ6 = 1)
+                             ;   16*KB            (gives RGSZ6 = 2)
+                             ;   32*KB            (gives RGSZ6 = 3)
+                             ;   64*KB            (gives RGSZ6 = 4)
+                             ;  128*KB            (gives RGSZ6 = 5)
+                             ;  256*KB            (gives RGSZ6 = 6)
+                             ;  512*KB            (gives RGSZ6 = 7)
+                             ; 1024*KB  or  1*MB  (gives RGSZ6 = 8)
+                             ; 2048*KB  or  2*MB  (gives RGSZ6 = 9)
+                             ; 4096*KB  or  4*MB  (gives RGSZ6 = 10)
+                             ; 8192*KB  or  8*MB  (gives RGSZ6 = 11)
+                             ;                    (RGSZ6 = 12 .. 15 reserved)
+;</h>
+;
+; <h>Definitions for Function Configuration Register FCONCS6
+; =======================================================
+;
+; <q> ENCS6: Enable Chip Select (FCONCS6.0)
+_ENCS6 EQU 0 ; 0 = Chip Select 0 disabled /Dave/                                                                                                                             
+                        ; 1 = Chip Select 0 enabled
+;
+; <q> RDYEN6: Ready Enable (FCONCS6.1)
+_RDYEN6 EQU 0 ; 0 = Access time controlled by TCONCS6.PHE1 /Dave/                                                                                                                             
+                        ; 1 = Access time cont. by TCONCS6.PHE1 and READY signal
+;
+; <o> RDYMOD6: Ready Mode (FCONCS6.2)
+; <0=> Asynchronous  <1=> Synchronous
+_RDYMOD6 EQU 0 ; 0 = Asynchronous READY /Dave/                                                                                                                             
+                        ; 1 = Synchronous READY
+;
+; <o> BTYP6: Bus Type Selection (FCONCS6.4 .. FCONCS6.5)
+; <0=> 8-bit Demultiplexed Bus  <1=> 8-bit Multiplexed Bus
+; <2=> 16-bit Demultiplexed Bus <3=> 16-bit Multiplexed Bus
+_BTYP6 EQU 0 ; 0 = 8 bit Demultiplexed bus /Dave/                                                                                                                             
+                        ; 1 = 8 bit Multiplexed bus
+                        ; 2 = 16 bit Demultiplexed bus
+                        ; 3 = 16 bit Multiplexed bus
+;</h>
+;
+; <h>TCONCS6: Definitions for the Timing Configuration register 
+; ==========================================================
+;
+; <o>PHA6: Phase A clock cycle (TCONCS6.0 .. TCONCS6.1) <0-3>
+_PHA6 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = : 
+                        ; 3 = 3 clock cycles
+;
+; <o>PHB6: Phase B clock cycle (TCONCS6.2) <1-2> <#-1>
+_PHB6 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; 1 = 2 clock cycles
+;
+; <o>PHC6: Phase C clock cycle (TCONCS6.3 .. TCONCS6.4) <0-3>
+_PHC6 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>PHD6: Phase D clock cycle (TCONCS6.5) <0-1>
+_PHD6 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; 1 = 1 clock cycle
+;
+; <o> PHE6: Phase E clock cycle (TCONCS6.6 .. TCONCS6.10) <1-32> <#-1>
+_PHE6 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; : = :
+                        ; 31 = 32 clock cycles
+;
+; <o>RDPHF6: Phase F read clock cycle (TCONCS6.11 .. TCONCS6.12) <0-3>
+_RDPHF6 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>WRPHF6: Phase F write clock cycle (TCONCS6.13 .. TCONCS6.14) <0-3>
+_WRPHF6 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;</h> </e>
+;
+;<e>Configure External Bus Behaviour for CS7 Area
+;   =============================================
+;
+; --- Set CONFIG_CS7 = 1 to initialize the ADDRSEL7/FCONCS7/TCONCS7 registers
+$SET (CONFIG_CS7 = 0) ; /Dave/                                                                                                                             
+;
+; <h>Definitions for Address Select register ADDRSEL7
+; ===================================================
+; <o> CS7 Start Address   <0x0-0xFFFFFF:0x1000>
+_ADDR7 EQU 0x0 ; Set CS7# Start Address (default 100000H) /Dave/                                                                                                                             
+
+; <o> CS7 Size in KB      
+; <4=>    4KB      <8=>    8KB      <16=>   16KB     <32=>   32KB
+; <64=>   64KB     <128=>  128KB    <256=>  256KB    <512=>  512KB
+; <1024=> 1024KB   <2048=> 2048KB   <4096=> 4096KB   <8192=> 8192KB
+_SIZE7 EQU 4*KB ; Set CS7# Size (default 1024*KB = 1*MB) /Dave/                                                                                                                             
+                             ; possible values for _SIZE7 are:
+                             ;    4*KB            (gives RGSZ7 = 0)
+                             ;    8*KB            (gives RGSZ7 = 1)
+                             ;   16*KB            (gives RGSZ7 = 2)
+                             ;   32*KB            (gives RGSZ7 = 3)
+                             ;   64*KB            (gives RGSZ7 = 4)
+                             ;  128*KB            (gives RGSZ7 = 5)
+                             ;  256*KB            (gives RGSZ7 = 6)
+                             ;  512*KB            (gives RGSZ7 = 7)
+                             ; 1024*KB  or  1*MB  (gives RGSZ7 = 8)
+                             ; 2048*KB  or  2*MB  (gives RGSZ7 = 9)
+                             ; 4096*KB  or  4*MB  (gives RGSZ7 = 10)
+                             ; 8192*KB  or  8*MB  (gives RGSZ7 = 11)
+                             ;                    (RGSZ7 = 12 .. 15 reserved)
+;</h>
+;
+; <h>Definitions for Function Configuration Register FCONCS7
+; =======================================================
+;
+; <q> ENCS7: Enable Chip Select (FCONCS7.0)
+_ENCS7 EQU 0 ; 0 = Chip Select 0 disabled /Dave/                                                                                                                             
+                        ; 1 = Chip Select 0 enabled
+;
+; <q> RDYEN7: Ready Enable (FCONCS7.1)
+_RDYEN7 EQU 0 ; 0 = Access time controlled by TCONCS7.PHE1 /Dave/                                                                                                                             
+                        ; 1 = Access time cont. by TCONCS7.PHE1 and READY signal
+;
+; <o> RDYMOD7: Ready Mode (FCONCS7.2)
+; <0=> Asynchronous  <1=> Synchronous
+_RDYMOD7 EQU 0 ; 0 = Asynchronous READY /Dave/                                                                                                                             
+                        ; 1 = Synchronous READY
+;
+; <o> BTYP7: Bus Type Selection (FCONCS7.4 .. FCONCS7.5)
+; <0=> 8-bit Demultiplexed Bus  <1=> 8-bit Multiplexed Bus
+; <2=> 16-bit Demultiplexed Bus <3=> 16-bit Multiplexed Bus
+_BTYP7 EQU 0 ; 0 = 8 bit Demultiplexed bus /Dave/                                                                                                                             
+                        ; 1 = 8 bit Multiplexed bus
+                        ; 2 = 16 bit Demultiplexed bus
+                        ; 3 = 16 bit Multiplexed bus
+;</h>
+;
+; <h>TCONCS7: Definitions for the Timing Configuration register 
+; ==========================================================
+;
+; <o>PHA7: Phase A clock cycle (TCONCS7.0 .. TCONCS7.1) <0-3>
+_PHA7 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = : 
+                        ; 3 = 3 clock cycles
+;
+; <o>PHB7: Phase B clock cycle (TCONCS7.2) <1-2> <#-1>
+_PHB7 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; 1 = 2 clock cycles
+;
+; <o>PHC7: Phase C clock cycle (TCONCS7.3 .. TCONCS7.4) <0-3>
+_PHC7 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>PHD27 Phase D clock cycle (TCONCS2.5) <0-1>
+_PHD7 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; 1 = 1 clock cycle
+;
+; <o> PHE7: Phase E clock cycle (TCONCS7.6 .. TCONCS7.10) <1-32> <#-1>
+_PHE7 EQU 0 ; 0 = 1 clock cycle /Dave/                                                                                                                             
+                        ; : = :
+                        ; 31 = 32 clock cycles
+;
+; <o>RDPHF7: Phase F read clock cycle (TCONCS7.11 .. TCONCS7.12) <0-3>
+_RDPHF7 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;
+; <o>WRPHF7: Phase F write clock cycle (TCONCS7.13 .. TCONCS7.14) <0-3>
+_WRPHF7 EQU 0 ; 0 = 0 clock cycles /Dave/                                                                                                                             
+                        ; : = :
+                        ; 3 = 3 clock cycles
+;</h> </e>
+;
+; </h>
+; <<< end of configuration section >>>
+
+
+$IF TINY
+$SET (DPPUSE = 0)
+$ENDIF
+
+
+$IF NOT TINY
+ASSUME  DPP3:SYSTEM
+ASSUME  DPP2:NDATA
+$ENDIF
+
+NAME    ?C_STARTUP
+PUBLIC  ?C_STARTUP
+PUBLIC  ?L?VECSC
+
+?L?VECSC        EQU     _VECSC   ; Interrupt Vector Spacing for L166
+
+$IF MEDIUM OR LARGE OR HLARGE OR XLARGE
+Model   LIT     'FAR'
+$ELSE
+Model   LIT     'NEAR'
+$ENDIF
+
+EXTRN   main:Model
+
+PUBLIC          ?C_USRSTKBOT
+
+?C_USERSTACK    SECTION DATA PUBLIC 'NDATA'
+?C_USRSTKBOT:
+                DS      USTSZ           ; Size of User Stack
+?C_USERSTKTOP:
+?C_USERSTACK    ENDS
+
+
+IF UST1SZ > 0                           ; Define User Stack 1 area
+?C_USERSTACK1   SECTION DATA PUBLIC 'NDATA'
+?C_USRSTKBOT1:
+                DS      UST1SZ          ; Size of User Stack 1
+?C_USERSTKTOP1:
+?C_USERSTACK1   ENDS
+ENDIF
+
+IF UST2SZ > 0                           ; Define User Stack 2 area
+?C_USERSTACK2   SECTION DATA PUBLIC 'NDATA'
+?C_USRSTKBOT2:
+                DS      UST2SZ          ; Size of User Stack 2
+?C_USERSTKTOP2:
+?C_USERSTACK2   ENDS
+ENDIF
+
+$IF NOT TINY
+IF (UST1SZ > 0) AND (UST2SZ > 0)        ; Define User Stack 1 area
+NDATA           DGROUP  ?C_USERSTACK, ?C_USERSTACK1, ?C_USERSTACK2
+ENDIF
+IF (UST1SZ > 0) AND (UST2SZ = 0) 
+NDATA           DGROUP  ?C_USERSTACK, ?C_USERSTACK1
+ENDIF
+IF (UST1SZ = 0) AND (UST2SZ > 0) 
+NDATA           DGROUP  ?C_USERSTACK, ?C_USERSTACK2
+ENDIF
+IF (UST1SZ = 0) AND (UST2SZ = 0) 
+NDATA           DGROUP  ?C_USERSTACK
+ENDIF
+$ENDIF
+
+?C_MAINREGISTERS        REGDEF  R0 - R15
+
+?C_SYSSTACK     SECTION DATA PUBLIC 'IDATA'
+$IF NOT TINY
+SDATA           DGROUP  ?C_SYSSTACK
+$ENDIF
+_BOS:                                   ; bottom of system stack
+                DS      SSTSZ           ; Size of User Stack
+_TOS:                                   ; top of system stack
+?C_SYSSTACK     ENDS
+
+
+PUBLIC          ?C_SYSSTKBOT
+PUBLIC          ?C_SYSSTKTOP
+
+?C_SYSSTKBOT    EQU     _BOS
+?C_SYSSTKTOP    EQU     _TOS
+
+                SSKDEF  7               ; unlimited System stack size
+
+?C_STARTUP_CODE SECTION CODE    'ICODE'
+
+
+;------------------------------------------------------------------------------
+
+; Special Function Register Addresses
+ADDRSEL1 EQU    0EE1EH
+ADDRSEL2 EQU    0EE26H
+ADDRSEL3 EQU    0EE2EH
+ADDRSEL4 EQU    0EE36H
+ADDRSEL5 EQU    0EE3EH
+ADDRSEL6 EQU    0EE46H
+ADDRSEL7 EQU    0EE4EH
+CPUCON1  DEFR   0FE18H
+CPUCON2  DEFR   0FE1AH
+EBCMOD0  EQU    0EE00H
+EBCMOD1  EQU    0EE02H
+FOCON    DEFR   0FFAAH
+FCONCS0  EQU    0EE12H
+FCONCS1  EQU    0EE1AH
+FCONCS2  EQU    0EE22H
+FCONCS3  EQU    0EE2AH
+FCONCS4  EQU    0EE32H
+FCONCS5  EQU    0EE3AH
+FCONCS6  EQU    0EE42H
+FCONCS7  EQU    0EE4AH
+RSTCON   EQU    0F1E0H
+SP       DEFR   0FE12H
+SPSEG    DEFR   0FF0CH
+STKOV    DEFR   0FE14H
+STKUN    DEFR   0FE16H
+SYSCON1  DEFR   0F1DCH
+SYSCON3  DEFR   0F1D4H
+PLLCON   DEFR   0F1D0H
+TCONCS0  EQU    0EE10H
+TCONCS1  EQU    0EE18H
+TCONCS2  EQU    0EE20H
+TCONCS3  EQU    0EE28H
+TCONCS4  EQU    0EE30H
+TCONCS5  EQU    0EE38H
+TCONCS6  EQU    0EE40H
+TCONCS7  EQU    0EE48H
+WDTCON   DEFR   0FFAEH
+
+
+; Macro for calculation of ADDRSEL values -------------
+
+CALC_ADDRSEL     MACRO   sym, adr, size
+IF     size <= (4*KB)
+sym             EQU     ((adr >> 8) AND 0xFFF0) OR 0
+ELSEIF size <= (8*KB)
+sym             EQU     ((adr >> 8) AND 0xFFE0) OR 1
+ELSEIF size <= (16*KB)
+sym             EQU     ((adr >> 8) AND 0xFFC0) OR 2
+ELSEIF size <= (32*KB)
+sym             EQU     ((adr >> 8) AND 0xFF80) OR 3
+ELSEIF size <= (64*KB)
+sym             EQU     ((adr >> 8) AND 0xFF00) OR 4
+ELSEIF size <= (128*KB)
+sym             EQU     ((adr >> 8) AND 0xFE00) OR 5
+ELSEIF size <= (256*KB)
+sym             EQU     ((adr >> 8) AND 0xFC00) OR 6
+ELSEIF size <= (512*KB)
+sym             EQU     ((adr >> 8) AND 0xF800) OR 7
+ELSEIF size <= (1*MB)
+sym             EQU     ((adr >> 8) AND 0xF000) OR 8
+ELSEIF size <= (2*MB)
+sym             EQU     ((adr >> 8) AND 0xE000) OR 9
+ELSEIF size <= (4*MB)
+sym             EQU     ((adr >> 8) AND 0xC000) OR 10
+ELSEIF size <= (8*MB)
+sym             EQU     ((adr >> 8) AND 0x8000) OR 11
+ENDIF
+                ENDM
+; -----------------------------------------------------
+
+?C_RESET        PROC TASK C_STARTUP INTNO RESET = 0
+?C_STARTUP:     LABEL   Model
+
+$INCLUDE (..\..\..\..\dave\Dave.asm)
+
+
+$IF (WATCHDOG = 0)
+                DISWDT                  ; Disable watchdog timer
+$ELSE 
+_WDTCON         SET     (_WDTREL << 8) OR (_WDTIN)
+                MOV     WDTCON,#_WDTCON ; Set WDTCON register
+                SRVWDT                  ; Enable watchdog
+$ENDIF
+
+                                        ; Set CPUCON1 register
+_CPC1           SET     (_VECSC<<5) OR (_WDTCTL<<4) OR (_SGTDIS<<3) 
+_CPC1           SET     _CPC1 OR (_INTSCXT<<2) OR (_BP<<1) OR (_ZCJ)
+                MOV     CPUCON1,#_CPC1
+
+$IF (INIT_CPUCON2 = 1)                  ; Set CPUCON2 register
+_CPC2           SET     (_RETST<<3) OR (_FASTBL<<2) OR (_FASTPEC<<1) OR (_SL)
+_CPC2           SET     _CPC2 OR (_EIOIAEN<<7) OR (_STEN<<6) OR (_ZSC<<5) OR (_OVRUN<<4)
+_CPC2           SET     _CPC2 OR (_BYPPF<<9) OR (_BYPF<<8) 
+_CPC2           SET     _CPC2 OR (_FIFODEPTH<<12) OR (_FIFOFED<<10) 
+                MOV     CPUCON2,#_CPC2
+$ENDIF
+
+$IF (INIT_SYSCON1 = 1)                  ; Set SYSCON1 register
+_SYSC1          SET     (_CPSYS<<8) OR (_PFCFG<<4) OR (_PDCFG<<2) OR (_SLEEPCON)
+                EXTR    #01H            ; Extended SFR access
+                MOV     SYSCON1,#_SYSC1         
+$ENDIF
+
+$IF (INIT_SYSCON3 = 1)                  ; Set SYSCON3 register
+_SYSC3          SET     ADCDIS OR (ASC0DIS << 1)  OR (SSC0DIS << 2)  OR (GPTDIS << 3)
+_SYSC3          SET     _SYSC3 OR (FMDIS   << 5)  OR (CC1DIS  << 6)  OR (CC2DIS << 7)
+_SYSC3          SET     _SYSC3 OR (CC6DIS  << 8)  OR (ASC1DIS << 10) OR (I2CDIS << 11)
+_SYSC3          SET     _SYSC3 OR (SDLMDIS << 12) OR (CANDIS  << 13) OR (RTCDIS << 14)
+_SYSC3          SET     _SYSC3 OR (SSC1DIS << 15)
+                EXTR    #1
+                MOV     SYSCON3,#_SYSC3
+$ENDIF
+
+$IF (CONFIG_EBC = 1)                    ; Set EBCMOD0 register
+_EBC0           SET     (_SLAVE<<9) OR (_ARBEN<<8) OR (_CSPEN<<4) OR (_SAPEN)
+_EBC0           SET     _EBC0 OR (_BYTDIS<<12) OR (_WRCFG<<11)  OR (_EBCDIS<<10) 
+_EBC0           SET     _EBC0 OR (_RDYPOL<<15) OR (_RDYDIS<<14) OR (_ALEDIS<<13)
+                MOV     R0,#_EBC0
+                MOV     EBCMOD0,R0
+
+                                        ; Set EBCMOD1 register
+_EBC1           SET  (_DHPDIS<<6) OR (_APDIS)
+                MOV     R0,#_EBC1
+                MOV     EBCMOD1,R0
+$ENDIF
+
+$IF (CONFIG_CS0)  
+                                        ; Set TCONCS0 register
+_TCS0           SET     (_PHD0<<5) OR (_PHC0<<3) OR (_PHB0<<2) OR (_PHA0)
+_TCS0           SET     _TCS0 OR (_WRPHF0<<13) OR (_RDPHF0<<11) OR (_PHE0<<6)
+                MOV     R0,#_TCS0
+                MOV     TCONCS0,R0
+                                        ; Set FCONCS0 register
+_FCS0  SET  (_BTYP0<<4) OR (_RDYMOD0<<2) OR (_RDYEN0<<1) OR (_ENCS0)
+                MOV     R0,#_FCS0
+                MOV     FCONCS0,R0
+$ENDIF
+
+$IF (CONFIG_CS1)  
+                                        ; Set TCONCS1 register
+;_TCS1           SET     (_PHD1<<5) OR (_PHC1<<3) OR (_PHB1<<2) OR (_PHA1)
+;_TCS1           SET     _TCS1 OR (_WRPHF1<<13) OR (_RDPHF1<<11) OR (_PHE1<<6)
+;                MOV     R0,#_TCS1
+;                MOV     TCONCS1,R0
+
+_TCS1           SET     (_PHD1<<5) OR (_PHC1<<3) OR (_PHB1<<2) OR (_PHA1)
+_TCS1           SET     _TCS1 OR (_WRPHF1<<13) OR (_RDPHF1<<11) OR (TCONCS1_PHE1<<6) 
+                MOV     R0,#_TCS1
+                MOV     TCONCS1,R0
+
+                                        ; Set ADDRSEL1 register
+CALC_ADDRSEL    _ADDRSEL1, _ADDR1, _SIZE1
+                MOV     R0,#_ADDRSEL1
+                MOV     ADDRSEL1,R0
+                                        ; Set FCONCS1 register
+_FCS1  SET  (_BTYP1<<4) OR (_RDYMOD1<<2) OR (_RDYEN1<<1) OR (_ENCS1)
+                MOV     R0,#_FCS1
+                MOV     FCONCS1,R0
+
+$ENDIF
+
+$IF (CONFIG_CS2)  
+                                        ; Set TCONCS2 register
+_TCS2           SET     (_PHD2<<5) OR (_PHC2<<3) OR (_PHB2<<2) OR (_PHA2)
+_TCS2           SET     _TCS2 OR (_WRPHF2<<13) OR (_RDPHF2<<11) OR (_PHE2<<6)
+                MOV     R0,#_TCS2
+                MOV     TCONCS2,R0
+                                        ; Set ADDRSEL2 register
+CALC_ADDRSEL    _ADDRSEL2, _ADDR2, _SIZE2
+                MOV     R0,#_ADDRSEL2
+                MOV     ADDRSEL2,R0
+                                        ; Set FCONCS2 register
+_FCS2  SET  (_BTYP2<<4) OR (_RDYMOD2<<2) OR (_RDYEN2<<1) OR (_ENCS2)
+                MOV     R0,#_FCS2
+                MOV     FCONCS2,R0
+
+$ENDIF
+
+$IF (CONFIG_CS3)  
+                                        ; Set TCONCS3 register
+_TCS3           SET     (_PHD3<<5) OR (_PHC3<<3) OR (_PHB3<<2) OR (_PHA3)
+_TCS3           SET     _TCS3 OR (_WRPHF3<<13) OR (_RDPHF3<<11) OR (_PHE3<<6)
+                MOV     R0,#_TCS3
+                MOV     TCONCS3,R0
+                                        ; Set ADDRSEL3 register
+CALC_ADDRSEL    _ADDRSEL3, _ADDR3, _SIZE3
+                MOV     R0,#_ADDRSEL3
+                MOV     ADDRSEL3,R0
+                                        ; Set FCONCS3 register
+_FCS3  SET  (_BTYP3<<4) OR (_RDYMOD3<<2) OR (_RDYEN3<<1) OR (_ENCS3)
+                MOV     R0,#_FCS3
+                MOV     FCONCS3,R0
+
+$ENDIF
+
+$IF (CONFIG_CS4)  
+                                        ; Set TCONCS4 register
+_TCS4           SET     (_PHD4<<5) OR (_PHC4<<3) OR (_PHB4<<2) OR (_PHA4)
+_TCS4           SET     _TCS4 OR (_WRPHF4<<13) OR (_RDPHF4<<11) OR (_PHE4<<6)
+                MOV     R0,#_TCS4
+                MOV     TCONCS4,R0
+                                        ; Set ADDRSEL4 register
+CALC_ADDRSEL    _ADDRSEL4, _ADDR4, _SIZE4
+                MOV     R0,#_ADDRSEL4
+                MOV     ADDRSEL4,R0
+                                        ; Set FCONCS4 register
+_FCS4  SET  (_BTYP4<<4) OR (_RDYMOD4<<2) OR (_RDYEN4<<1) OR (_ENCS4)
+                MOV     R0,#_FCS4
+                MOV     FCONCS4,R0
+
+$ENDIF
+
+$IF (CONFIG_CS5)  
+                                        ; Set TCONCS5 register
+_TCS5           SET     (_PHD5<<5) OR (_PHC5<<3) OR (_PHB5<<2) OR (_PHA5)
+_TCS5           SET     _TCS5 OR (_WRPHF5<<13) OR (_RDPHF5<<11) OR (_PHE5<<6)
+                MOV     R0,#_TCS5
+                MOV     TCONCS5,R0
+                                        ; Set ADDRSEL5 register
+CALC_ADDRSEL    _ADDRSEL5, _ADDR5, _SIZE5
+                MOV     R0,#_ADDRSEL5
+                MOV     ADDRSEL5,R0
+                                        ; Set FCONCS5 register
+_FCS5  SET  (_BTYP5<<4) OR (_RDYMOD5<<2) OR (_RDYEN5<<1) OR (_ENCS5)
+                MOV     R0,#_FCS5 
+                MOV     FCONCS5,R0
+
+$ENDIF
+
+$IF (CONFIG_CS6)  
+                                        ; Set TCONCS6 register
+_TCS6           SET     (_PHD6<<5) OR (_PHC6<<3) OR (_PHB6<<2) OR (_PHA6)
+_TCS6           SET     _TCS6 OR (_WRPHF6<<13) OR (_RDPHF6<<11) OR (_PHE6<<6)
+                MOV     R0,#_TCS6
+                MOV     TCONCS6,R0
+                                        ; Set ADDRSEL6 register
+CALC_ADDRSEL    _ADDRSEL6, _ADDR6, _SIZE6
+                MOV     R0,#_ADDRSEL6
+                MOV     ADDRSEL6,R0
+                                        ; Set FCONCS6 register
+_FCS6  SET  (_BTYP6<<4) OR (_RDYMOD6<<2) OR (_RDYEN6<<1) OR (_ENCS6)
+                MOV     R0,#_FCS6 
+                MOV     FCONCS6,R0
+
+$ENDIF
+
+$IF (CONFIG_CS7)  
+                                        ; Set TCONCS7 register
+_TCS7           SET     (_PHD7<<5) OR (_PHC7<<3) OR (_PHB7<<2) OR (_PHA7)
+_TCS7           SET     _TCS7 OR (_WRPHF7<<13) OR (_RDPHF7<<11) OR (_PHE7<<6)
+                MOV     R0,#_TCS7
+                MOV     TCONCS7,R0
+                                        ; Set ADDRSEL7 register
+CALC_ADDRSEL    _ADDRSEL7, _ADDR7, _SIZE7
+                MOV     R0,#_ADDRSEL7
+                MOV     ADDRSEL7,R0
+                                        ; Set FCONCS7 register
+_FCS7  SET  (_BTYP7<<4) OR (_RDYMOD7<<2) OR (_RDYEN7<<1) OR (_ENCS7)
+                MOV     R0,#_FCS7 
+                MOV     FCONCS7,R0
+
+$ENDIF
+
+$IF (INIT_RSTCON = 1)                   ; Set RSTCON register
+_RSTCON         SET     (_ROCOFF<<5) OR (_RORMV<<4) OR (_RSTLEN)
+_RSTCON         SET     _RSTCON OR (_RODIS<<7) OR (_ROCON<<6)
+                MOV     R0,#_RSTCON
+                MOV     RSTCON,R0
+$ENDIF
+
+$IF (INIT_PLLCON = 1)                   ; Set PLLCON register
+_PLLCON         SET     (_PLLVB<<6) OR (_PLLIDIV<<4) OR (_PLLODIV)
+_PLLCON         SET     _PLLCON OR (_PLLWRI<<15) OR (_PLLCTRL<<13) OR (_PLLMUL<<8)
+                EXTR    #01H            ; Extended SFR access
+                MOV     PLLCON,#_PLLCON
+$ENDIF
+
+$IF (INIT_FOCON = 1)                    ; Set FOCON register
+_FOCON          SET (_CLKEN<<7) OR (_FORV<<8) OR (_FOSS<<14) OR (_FOEN<<15)
+                MOV     FOCON,#_FOCON
+$ENDIF
+;
+                MOV     STKUN,#SOF (_TOS)       ; INITIALIZE STACK UNFL REGISTER
+                MOV     STKOV,#SOF (_BOS+6*2)   ; INITIALIZE STACK OVFL REGISTER
+                MOV     SP,#SOF (_TOS)          ; INITIALIZE STACK POINTER
+                MOV     SPSEG,#SEG (_TOS)       ; INITIALIZE STACK POINTER SEGMENT
+
+$IF NOT TINY
+
+                EXTRN   ?C_PAGEDPP0 : DATA16
+                EXTRN   ?C_PAGEDPP1 : DATA16
+                EXTRN   ?C_PAGEDPP2 : DATA16
+
+$IF (DPPUSE = 1)
+                MOV     DPP0,#?C_PAGEDPP0       ; INIT DPP0 VALUE
+$ENDIF
+                MOV     DPP1,#?C_PAGEDPP1       ; DEFAULT NEAR CONST PAGE
+                MOV     DPP2,#?C_PAGEDPP2       ; DEFAULT NEAR DATA  PAGE
+
+$ENDIF
+
+                MOV     CP,#?C_MAINREGISTERS
+
+                EINIT
+
+
+IF UST1SZ > 0
+                BFLDH   PSW,#03H,#02H           ; select local bank 1
+                MOV     R0,#?C_USERSTKTOP1
+ENDIF
+
+IF UST2SZ > 0
+                BFLDH   PSW,#03H,#03H           ; select local bank 2
+                MOV     R0,#?C_USERSTKTOP2
+ENDIF
+
+IF (UST1SZ > 0) OR (UST2SZ > 0)
+                BFLDH   PSW,#03H,#00H           ; select global bank
+ENDIF
+
+                MOV     R0,#?C_USERSTKTOP
+
+;------------------------------------------------------------------------------
+;
+; The following code is necessary to set RAM variables to 0 at start-up
+; (RESET) of the C application program.
+;
+
+$IF (CLR_MEMORY = 1)
+
+                EXTRN   ?C_CLRMEMSECSTART : WORD
+Clr_Memory:
+$IF TINY
+                MOV     R8,#?C_CLRMEMSECSTART
+                JMPR    cc_Z,EndClear
+
+RepeatClear:
+$IF (WATCHDOG = 1)
+                SRVWDT                          ; SERVICE WATCHDOG
+$ENDIF
+                MOV     R5,#0
+                MOV     R2,[R8+]    ; Count
+                JMPR    cc_Z,EndClear
+                MOV     R3,R2
+                MOV     R4,[R8+]
+                JBC     R2.14,ClearNear
+
+ClearBit:       MOV     R3,R4
+                SHR     R3,#3
+                BCLR    R3.0
+                ADD     R3,#0FD00H              ; START OF BIT SPACE
+                MOV     R5,#1
+                SHL     R5,R4
+                CPL     R5
+                AND     R5,[R3]
+                MOV     [R3],R5
+                ADD     R4,#1
+                SUB     R2,#1
+                JMPR    cc_NZ,ClearBit
+                JMPR    cc_UC,RepeatClear
+
+ClearNear:
+$IF (WATCHDOG = 1)
+                SRVWDT                          ; SERVICE WATCHDOG
+$ENDIF
+                MOVB    [R4],RL5
+                ADD     R4,#1
+                SUB     R2,#1
+                JMPR    cc_NN,ClearNear
+                JMPR    cc_UC,RepeatClear
+
+$ELSE
+                MOV     R9,#SEG (?C_CLRMEMSECSTART)
+                MOV     R8,#SOF (?C_CLRMEMSECSTART)
+                MOV     R1,R8           
+                OR      R1,R9
+                JMPR    cc_Z,EndClear
+
+RepeatClear:
+$IF (WATCHDOG = 1)
+                SRVWDT                          ; SERVICE WATCHDOG
+$ENDIF
+                MOV     R5,#0
+                EXTS    R9,#1
+                MOV     R2,[R8+]    ; Count
+                JMPR    cc_Z,EndClear
+                MOV     R3,R2
+                EXTS    R9,#1
+                MOV     R4,[R8+]
+                JBC     R2.14,ClearNear
+                JBC     R2.15,ClearFar
+
+ClearBit:       MOV     R3,R4
+                SHR     R3,#3
+                BCLR    R3.0
+                ADD     R3,#0FD00H              ; START OF BIT SPACE
+                MOV     R5,#1
+                SHL     R5,R4
+                CPL     R5
+                AND     R5,[R3]
+                MOV     [R3],R5
+                ADD     R4,#1
+                SUB     R2,#1
+                JMPR    cc_NZ,ClearBit
+                JMPR    cc_UC,RepeatClear
+
+ClearFar:       EXTS    R9,#1
+                MOV     R3,[R8+]
+RepClearFar:
+$IF (WATCHDOG = 1)
+                SRVWDT                          ; SERVICE WATCHDOG
+$ENDIF
+                EXTP    R4,#1
+                MOVB    [R3],RL5
+                ADD     R3,#1
+                ADDC    R4,#0
+                OR      R3,#0C000H
+                SUB     R2,#1
+                JMPR    cc_NN,RepClearFar
+                JMPR    cc_UC,RepeatClear
+
+ClearNear:
+$IF (WATCHDOG = 1)
+                SRVWDT                          ; SERVICE WATCHDOG
+$ENDIF
+                MOVB    [R4],RL5
+                ADD     R4,#1
+                SUB     R2,#1
+                JMPR    cc_NN,ClearNear
+                JMPR    cc_UC,RepeatClear
+$ENDIF
+
+EndClear:
+
+$ENDIF
+
+;------------------------------------------------------------------------------
+;
+;  The following code is necessary, if the application program contains
+;  initialized variables at file level.
+;
+
+$IF (INIT_VARS = 1) ; *********************************************************
+
+                EXTRN   ?C_INITSECSTART : WORD
+Init_Vars:
+$IF TINY ; ********************************************************************
+                MOV     R8,#?C_INITSECSTART
+RepeatInit:     
+$IF (WATCHDOG = 1)
+                SRVWDT                          ; SERVICE WATCHDOG
+$ENDIF
+                MOV     R2,[R8+]
+                JMPR    cc_Z,EndInit
+                JBC     R2.15,InitBit
+                MOV     R4,R2
+                AND     R2,#3FFFH
+                JMPR    cc_NZ,LenLoad
+                MOV     R4,#0
+                MOV     R2,[R8+]
+LenLoad:        MOV     R3,[R8+]
+CopyInitVal:    MOVB    [R3],[R8+]
+$IF (WATCHDOG = 1)
+                SRVWDT                          ; SERVICE WATCHDOG
+$ENDIF
+                ADD     R3,#1
+                SUB     R2,#1
+                JMPR    cc_NZ,CopyInitVal
+                JNB     R8.0,RepeatInit
+                ADD     R8,#1
+                ADDC    R9,#0                   ; potential overflow
+                JMPR    cc_UC,RepeatInit
+
+InitBit:        MOVBZ   R3,RL2
+                SHL     R3,#1
+                OR      R3,#0FD00H              ; START OF BIT SPACE
+                MOV     R4,#1
+                MOVB    RL5,RH2
+                SHL     R4,R5                   ; CALCULATE BIT MASK
+                JB      R2.7,SetBit
+                CPL     R4                      ; CLEAR BIT
+                AND     R4,[R3]
+                JMPR    cc_UC,StoreBit
+SetBit:         OR      R4,[R3]                 ; SET BIT
+StoreBit:       MOV     [R3],R4
+                JMPR    cc_UC,RepeatInit
+
+EndInit:
+
+$ELSE ; $IF TINY **************************************************************
+                MOV     R9,#SEG (?C_INITSECSTART)
+                MOV     R8,#SOF (?C_INITSECSTART)
+$IF (DPP3USE = 1) ; ***********************************************************
+RepeatInit:     
+$IF (WATCHDOG = 1)
+                SRVWDT                          ; SERVICE WATCHDOG
+$ENDIF
+                MOV     DPP3,#3
+                EXTS    R9,#1
+                MOV     R2,[R8]
+                JMPR    cc_Z,EndInit
+                ADD     R8,#2
+                ADDC    R9,#0
+                JBC     R2.15,InitBit
+                MOV     R4,R2
+                AND     R2,#3FFFH
+                JMPR    cc_NZ,LenLoad
+                MOV     R4,#0
+                EXTS    R9,#1
+                MOV     R2,[R8]
+                ADD     R8,#2
+                ADDC    R9,#0
+LenLoad:        EXTS    R9,#1
+                MOV     R3,[R8]
+                ADD     R8,#2
+                ADDC    R9,#0
+                JB      R4.14,CopyInitVal
+                MOV     DPP3,R3
+                EXTS    R9,#1
+                MOV     R3,[R8]
+                ADD     R8,#2
+                ADDC    R9,#0
+CopyInitVal:    EXTS    R9,#1
+                MOVB    RL5,[R8]
+                ADD     R8,#1
+                ADDC    R9,#0
+                MOVB    [R3],RL5
+                ADD     R3,#1
+                JB      R4.14,NoDPP3Adj
+                JB      R3.14,NoDPP3Adj
+                ADD     DPP3,#1
+                OR      R3,#0C000H              ; SET DPP3 Bits 
+NoDPP3Adj:      
+$IF (WATCHDOG = 1)
+                SRVWDT                          ; SERVICE WATCHDOG
+$ENDIF
+                SUB     R2,#1
+                JMPR    cc_NZ,CopyInitVal
+                JNB     R8.0,RepeatInit
+                ADD     R8,#1
+                ADDC    R9,#0                   ; potential overflow
+                JMPR    cc_UC,RepeatInit
+
+InitBit:        MOVBZ   R3,RL2
+                SHL     R3,#1
+                OR      R3,#0FD00H              ; START OF BIT SPACE
+                MOV     R4,#1
+                MOVB    RL5,RH2
+                SHL     R4,R5                   ; CALCULATE BIT MASK
+                JB      R2.7,SetBit
+                CPL     R4                      ; CLEAR BIT
+                AND     R4,[R3]
+                JMPR    cc_UC,StoreBit
+SetBit:         OR      R4,[R3]                 ; SET BIT
+StoreBit:       MOV     [R3],R4
+                JMPR    cc_UC,RepeatInit
+
+$ELSE ; block IF (DPP3USE = 1) ************************************************
+RepeatInit:       
+$IF (WATCHDOG = 1)
+                SRVWDT                          ; SERVICE WATCHDOG
+$ENDIF
+                EXTS    R9,#1
+                MOV     R2,[R8]
+                JMPR    cc_Z,EndInit
+                ADD     R8,#2
+                ADDC    R9,#0
+                JBC     R2.15,InitBit
+                MOV     R4,R2
+                AND     R2,#3FFFH
+                JMPR    cc_NZ,LenLoad
+                MOV     R4,#0
+                EXTS    R9,#1
+                MOV     R2,[R8]
+                ADD     R8,#2
+                ADDC    R9,#0
+LenLoad:        EXTS    R9,#1
+                MOV     R3,[R8]
+                ADD     R8,#2
+                ADDC    R9,#0
+                JB      R4.14,CopyNearVal
+                MOV     R6,R3
+                EXTS    R9,#1
+                MOV     R3,[R8]
+                ADD     R8,#2
+                ADDC    R9,#0
+CopyInitVal:    EXTS    R9,#1
+                MOVB    RL5,[R8]
+                ADD     R8,#1
+                ADDC    R9,#0
+                EXTP    R6,#1
+                MOV     [R3],RL5
+                ADD     R3,#1
+                ADDC    R6,#0
+$IF (WATCHDOG = 1)
+                SRVWDT                          ; SERVICE WATCHDOG
+$ENDIF
+                SUB     R2,#1
+                JMPR    cc_NZ,CopyInitVal
+                JMPR    cc_UC,CopyInitDone
+
+
+CopyNearVal:    EXTS    R9,#1
+                MOVB    RL5,[R8]
+                ADD     R8,#1
+                ADDC    R9,#0
+                MOVB    [R3],RL5
+                ADD     R3,#1
+$IF (WATCHDOG = 1)
+                SRVWDT                          ; SERVICE WATCHDOG
+$ENDIF
+                SUB     R2,#1
+                JMPR    cc_NZ,CopyNearVal
+CopyInitDone:   JNB     R8.0,RepeatInit
+                ADD     R8,#1
+                ADDC    R9,#0                   ; potential overflow
+                JMPR    cc_UC,RepeatInit
+
+InitBit:        MOVBZ   R3,RL2
+                SHL     R3,#1
+                OR      R3,#0FD00H              ; START OF BIT SPACE
+                MOV     R4,#1
+                MOVB    RL5,RH2
+                SHL     R4,R5                   ; CALCULATE BIT MASK
+                JB      R2.7,SetBit
+                CPL     R4                      ; CLEAR BIT
+                AND     R4,[R3]
+                JMPR    cc_UC,StoreBit
+SetBit:         OR      R4,[R3]                 ; SET BIT
+StoreBit:       MOV     [R3],R4
+                JMPR    cc_UC,RepeatInit
+$ENDIF ; close block IF (DPP3USE = 1) **************************************** 
+
+EndInit:
+
+$ENDIF ; close block $IF TINY ************************************************ 
+
+$ENDIF ; close $IF (INIT_VARS = 1) ******************************************* 
+
+;------------------------------------------------------------------------------
+
+$IF TINY
+                JMP     main
+$ELSE
+                JMP     FAR main
+$ENDIF
+
+?C_RESET        ENDP
+?C_STARTUP_CODE ENDS
+
+$IF (INIT_VARS = 1)
+EXTERN  ?C_ENDINIT:WORD
+$ENDIF
+
+                END
+
+
+
