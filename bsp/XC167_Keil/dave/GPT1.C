@@ -12,7 +12,7 @@
 // @Description   This file contains functions that use the GPT1 module.
 //
 //----------------------------------------------------------------------------
-// @Date          2005-11-17 12:14:27
+// @Date          2005-11-17 20:49:24
 //
 //****************************************************************************
 
@@ -20,6 +20,14 @@
 
 // USER CODE END
 
+/*
+******************************************************************************
+@Note
+
+GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currently this rate is choosen to be 1KHz (choice btw 100KHz to 100Hz are available - which is suitable depends on the required tick resolution and overall performance of the MPU).
+
+******************************************************************************
+*/
 
 
 //****************************************************************************
@@ -155,7 +163,7 @@ void GPT1_vInit(void)
   ///  - timer 2 run bit is reset
 
   GPT12E_T2CON   =  0x0080;      // load timer 2 control register
-  GPT12E_T2      =  0xFFFB;      // load timer 2 register
+  GPT12E_T2      =  0x1387;      // load timer 2 register
 
   ///  -----------------------------------------------------------------------
   ///  Configuration of the GPT1 Auxiliary Timer 4:
@@ -227,8 +235,10 @@ void GPT1_vInit(void)
 //****************************************************************************
 
 // USER CODE BEGIN (Tmr2,1)
-unsigned long idata sys_mackey = 0;
-unsigned long idata sys_tick = 0;
+//unsigned long idata sys_mackey = 0;
+//unsigned long idata sys_tick = 0;
+#define TICK_OWNER
+#include <../src/tk_tick.h>
 
 // USER CODE END
 
@@ -236,14 +246,16 @@ void GPT1_viTmr2(void) interrupt T2INT
 {
   // USER CODE BEGIN (Tmr2,2)
 
-  GPT1_vLoadTmr(GPT1_TIMER_2,4999);
+  GPT1_vLoadTmr(GPT1_TIMER_2,0x1387);
+  __tk_tick_1mS();
 
+/*
   sys_tick++;
 
   if (!sys_tick){ //Will occure every 4294967,295 seconds (1193 hrs and	aprox 3 minuts)
     sys_mackey++;
   }
-
+*/
   // USER CODE END
 
 
