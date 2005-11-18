@@ -6,11 +6,14 @@
  *										  
  *  HISTORY:    
  *
- *  Current $Revision: 1.1 $
+ *  Current $Revision: 1.2 $
  *
  *  $Log: tk.c,v $
- *  Revision 1.1  2005-11-17 09:59:09  ambrmi09
- *  Initial revision
+ *  Revision 1.2  2005-11-18 11:23:32  ambrmi09
+ *  Starting to document and to clean up kernel internals.
+ *
+ *  Revision 1.1.1.1  2005/11/17 09:59:09  ambrmi09
+ *  Created CVS jhome for TinKer from scratch. RCS history lost in database (kept in sourcecode)
  *
  *  Revision 1.6  1998/02/16 18:03:41  mickey
  *  Added tk_assertFail
@@ -321,8 +324,61 @@ unsigned int createTask(
    return proc_idx ;
 }
 
-unsigned int sleep( unsigned int time ){
-/* returns diff in 1/10 ms */
+/**
+
+@ingroup kernel   
+        
+@brief Sleeps for ms amount of time. 
+
+Sleeps for ms amount of time. Passes control to other threads meanwhile.   
+
+The longest time this function can sleep is dependant on the 
+targets bitsize for a integer. On 16 bit targets that would be  65535 mS
+or  aprox <b>max 65 S </b>.<br>
+
+The timeout resolution is the same as for the in-argument, i.e. best
+kernel supported timeout <b>resolution is 1mS</b>. Note however that the
+precision is dependant of the sys_tick advancement resolution (i.e.
+interrupt frequency). On a low performance target one sys_tick might be
+advanced less often than 1kHz (i.e. each mS). That means that the actual
+precision is less than the resolution in this function. To help the
+application to handle those cases, this function will return the latency
+in 1/10 of the resolution.<br>
+
+I.e. in case your timeout is later than you ideal, you can use this
+valut in a  periodic thread to even out (compensate) for this case. In
+this case each  thread will not run with a fixed frequency but
+deliberatlly gitter a bit, so that the mean-value of the frequence is
+the desired one.<br>
+
+There isn't much any kernal can really do about this issue without beeing able 
+to control the HW in detail. That would however create a dependancy that is 
+beyont the scope of this project to handle. Note that choosing a better 
+precition is a delicate matter that is best suited for HW designers. 
+For now, alway remember to check the precition of you target.<br>
+
+There are several sleep functions to choose between. Which one is best is 
+alwas a tradeof between resolution and maximum timeout.<br>
+
+
+@note Note the latencies can occure even on targets
+that have the same precision as resolution. In these cases the latency
+is typically myck lower and should be in the samge of a few precition
+periods (i.e. a very few multiples of the intersupt frequency) or
+close to zero. This is due to that the code in the kernal itself takes
+some time to reach the point where a dispatch is actuated.
+
+
+@todo Wraparound problem when actual time (int) added to relatine
+timeout is greater than the size of an integer. This needs to be solved.
+   
+@return latency in 1/10 of the timeout resolution, i.e. in 1/10 of a mS.
+   
+   
+*/
+
+unsigned int msleep( unsigned int time ){
+/* It's our kernal so we "know" that a clock equals 1uS */
    clock_t act_time;
    act_time = clock()/CLK_TCK*1000;
    //need a function t_diff that handles wraparound
@@ -330,6 +386,7 @@ unsigned int sleep( unsigned int time ){
    proc_stat[active_task].state |= SLEEP;
    schedul();
    act_time = clock()/CLK_TCK*10000;
+/* returns diff in 1/10 ms */
    return act_time - proc_stat[active_task].wakeuptime*10;
 }
 
