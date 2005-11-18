@@ -6,10 +6,17 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.2 $
+ *  Current $Revision: 1.3 $
  *
  *  $Log: tk.h,v $
- *  Revision 1.2  2005-11-18 11:27:46  ambrmi09
+ *  Revision 1.3  2005-11-18 13:18:27  ambrmi09
+ *  Finally got the timing right (tested and verifyed). Amazing accurancy!
+ *  accurancy from 60000mS to 1mS (executed 10000 ti,es) both show the same
+ *  constant error (that they are equal can only be explained due to the
+ *  meassuring method). Still need to work some on getting portability between
+ *  fast and slow targets right so trimming of kernal will be easy.
+ *
+ *  Revision 1.2  2005/11/18 11:27:46  ambrmi09
  *  Starting documenting
  *
  *  Revision 1.1.1.1  2005/11/17 09:59:09  ambrmi09
@@ -42,19 +49,19 @@
 #include <time.h>
 
 /** local definitions **/
-#define max_procs 			10
-#define max_prio_levels 	0x10  //fix this, Idle needs to bee last in last prio( needs one extra )
-#define max_procs_at_prio 	0x8
-#define proc_name_len 		0x08
+#define max_procs          10
+#define max_prio_levels    0x10  //fix this, Idle needs to bee last in last prio( needs one extra )
+#define max_procs_at_prio  0x8
+#define proc_name_len      0x08
 
 //Some defines for the logic
-#define TK_OK 		0
-#define TK_ERROR    1
-#define YES			1
-#define NO			0
+#define TK_OK              0
+#define TK_ERROR           1
+#define YES                1
+#define NO                 0
 
 //Include components 
-#define	IPC			YES
+#define  IPC               YES
 
 //assert macro
 #ifdef NDEBUG
@@ -62,7 +69,7 @@
 #else
 #  
 #  define assert(p) ((p) ? (void)0 : (void) __tk_assertfail( \
-                    #p, __FILE__, __LINE__ ) )					
+                    #p, __FILE__, __LINE__ ) )              
 #endif
 
 
@@ -75,27 +82,32 @@ typedef funk *funk_p;
 // _S_ = SLEEP = Process is blocked on timer (sleeping)
 // Q__ = QUEUE = Process is blocked on queue or semafor
 typedef enum {
-	READY=0x0,		_______T=0x1,	______S_=0x2,	______ST=0x3,
-	_____Q__=0x4,	_____Q_T=0x5,	_____QS_=0x6,	_____QST=0x7,
-	ZOMBIE=0X80
+   READY=0x0,     _______T=0x1,  ______S_=0x2,  ______ST=0x3,
+   _____Q__=0x4,  _____Q_T=0x5,  _____QS_=0x6,  _____QST=0x7,
+   ZOMBIE=0X80
 }PROCSTATE;
 
 typedef enum{TERM=1,SLEEP=2,QUEUE=4}STATEBITS;
 typedef enum{E_CHILDDEATH, E_TIMER, E_IPC, E_IPC2}wakeE_t;
 
-typedef struct proc_t_s{
-	unsigned int	Pid,Gid;				//Process ID and Parent ID (Gid)
-	unsigned int	noChilds;				//Numb of procs this has created
-	char			name[proc_name_len];	//Name of the process
-	BOOL			isInit;					//Memory for stack is allocated
-	PROCSTATE		state;					//State of the process
-	char			*stack;					//Bottom of stack
-	char			*sp;					//Top of stack
-	size_t			stack_size;				//Size of stack
-	clock_t  		wakeuptime;				//When to wake up if sleeping
-	wakeE_t			wakeupEvent;			//Helper variable mainly for IPC
-	unsigned int	Prio,Idx;				//Helpers, prevent need of lookup
+/*!
+Thread control block (TCB) definition. This structure cntains all
+information the kernel needs to know about a thread.
+*/
+typedef struct    proc_t_s{
+   unsigned int   Pid,Gid;             //!< Process ID and Parent ID (Gid)
+   unsigned int   noChilds;            //!< Numb of procs this has created
+   char           name[proc_name_len]; //!< Name of the process
+   BOOL           isInit;              //!< Memory for stack is allocated
+   PROCSTATE      state;               //!< State of the process
+   char          *stack;               //!< Bottom of stack
+   char          *sp;                  //!< Top of stack
+   size_t         stack_size;          //!< Size of stack
+   clock_t        wakeuptime;          //!< When to wake up if sleeping
+   wakeE_t        wakeupEvent;         //!< Helper variable mainly for IPC
+   unsigned int   Prio,Idx;            //!< Helpers, prevent need of lookup
 }proc_t;
+
 /** default settings **/
 
 /** external functions **/
@@ -127,15 +139,15 @@ void createKern( void );
 void deleteKern( void );
 void schedul( void );
 void tk_exit( int ec );
-unsigned int sleep( unsigned int time );
-unsigned int MyPid( void );				
+unsigned int msleep( unsigned int time );
+unsigned int MyPid( void );            
 proc_t *MyProc_p( void );/* Gives a way to enter my own proc (for TKOS only)*/
 extern void root( void );/* supplied by the developper */
 
-void __tk_assertfail(	 /* emulates __assertfail */
-	char *assertstr, 
-	char *filestr, 
-	int line
+void __tk_assertfail(    /* emulates __assertfail */
+   char *assertstr, 
+   char *filestr, 
+   int line
 );
 
 /** private functions **/

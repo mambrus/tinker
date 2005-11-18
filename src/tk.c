@@ -3,13 +3,20 @@
  *  DESCRIPTION: tk.c Scheduler for TinKerOS.
  *
  *  AUTHOR: Michael Ambrus
- *										  
+ *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.2 $
+ *  Current $Revision: 1.3 $
  *
  *  $Log: tk.c,v $
- *  Revision 1.2  2005-11-18 11:23:32  ambrmi09
+ *  Revision 1.3  2005-11-18 13:18:27  ambrmi09
+ *  Finally got the timing right (tested and verifyed). Amazing accurancy!
+ *  accurancy from 60000mS to 1mS (executed 10000 ti,es) both show the same
+ *  constant error (that they are equal can only be explained due to the
+ *  meassuring method). Still need to work some on getting portability between
+ *  fast and slow targets right so trimming of kernal will be easy.
+ *
+ *  Revision 1.2  2005/11/18 11:23:32  ambrmi09
  *  Starting to document and to clean up kernel internals.
  *
  *  Revision 1.1.1.1  2005/11/17 09:59:09  ambrmi09
@@ -36,7 +43,7 @@
  *******************************************************************/
 
 /** include files **/
-#include <stdio.h>			    	          	       	   	      	   
+#include <stdio.h>                                                      
 #include <stdlib.h>
 #include <string.h>
 
@@ -76,7 +83,7 @@ proc_t proc_stat[max_procs];
 //coord_t lookUpTable[max_procs];
 
 typedef struct{
-   unsigned short procs_at_prio;		//Used for optimizing sheduler.
+   unsigned short procs_at_prio;    //Used for optimizing sheduler.
    unsigned short curr_idx;
 }prio_stat_t;
 
@@ -86,8 +93,8 @@ static prio_stat_t scheduleIdxs[max_prio_levels];
 static unsigned int active_task = 0;
 static unsigned int task_to_run = 0;
 /*static*/ unsigned int procs_in_use = 0;
-static unsigned int proc_idx;					//points at the last proc_t created
-static unsigned int idle_Pid;					//idle_Pid must be known;
+static unsigned int proc_idx;             //points at the last proc_t created
+static unsigned int idle_Pid;             //idle_Pid must be known;
 
 unsigned int __tk_idle( void *foo ){          //idle loop (non public)
    while (TRUE){
@@ -100,15 +107,15 @@ void deleteKern( void ){
 }
 
 unsigned int MyPid( void ){
-	return(active_task);
+   return(active_task);
 }
 
 proc_t *MyProc_p( void ){
-	return(&proc_stat[active_task]);
+   return(&proc_stat[active_task]);
 }
 
 void createKern( void ){
-	int i,j;
+   int i,j;
 
    for (i=0; i<max_procs; i++){
       proc_stat[i].state = ZOMBIE;
@@ -121,7 +128,7 @@ void createKern( void ){
       proc_stat[i].stack_size = 0;
       proc_stat[i].stack = NULL;
       proc_stat[i].sp = NULL;
-	  proc_stat[i].wakeupEvent = 0;
+     proc_stat[i].wakeupEvent = 0;
    }
    //The Root proc is already created but must be registred
    proc_stat[0].state = READY;
@@ -131,7 +138,7 @@ void createKern( void ){
    proc_idx = 0;
    //Clear the tables (before creating idle - task)
    for (i=0; i<max_prio_levels; i++){
-   	//Clear the help table
+      //Clear the help table
       scheduleIdxs[i].procs_at_prio = 0;
       scheduleIdxs[i].curr_idx = 0;
       for (j=0; j<max_procs_at_prio; j++){
@@ -144,14 +151,14 @@ void createKern( void ){
    idle_Pid = createTask("idle",max_prio_levels - 1,__tk_idle,NULL,64);
    //IdleProc must like root, i.e. bee owned by itself
    proc_stat[proc_stat[idle_Pid].Gid].noChilds--;
-   	//Awkward way to say that root has created one process less than it has
+   //Awkward way to say that root has created one process less than it has
    proc_stat[idle_Pid].Gid = proc_stat[idle_Pid].Pid;
    //Idle ownde by it self
    //Init shedule tables
-	   //Put the root in the scedule
+   //Put the root in the scedule
    scheduleIdxs[0].procs_at_prio = 1;
    theSchedule[0][0]=0;
-	   //Put idle task in shedule at lowest prio
+   //Put idle task in shedule at lowest prio
    /*
    scheduleIdxs[max_prio_levels - 1].procs_at_prio = 1;
    theScedule[max_prio_levels - 1][0]=idle_Pid;
@@ -166,7 +173,7 @@ unsigned int destructor( void *foo ){
 
    GET_THREADS_RETVAL( retval );
    
-	//This is critical, no more stack, will not work as is in a preemtive kernal
+   //This is critical, no more stack, will not work as is in a preemtive kernal
    #ifdef DEBUG
    printf("Dieing task is returning %d\n\n",retval);
    #endif
@@ -177,41 +184,41 @@ unsigned int destructor( void *foo ){
 }
 
 int deleteTask(unsigned int Pid){
-	unsigned int Prio,Idx,i;
-	
-	if ( proc_stat[Pid].isInit == FALSE )  {
-		//The process you are trying to delete does not exist
-		return(TK_ERROR);		
-	}
-	Prio = proc_stat[Pid].Prio;
-	Idx = proc_stat[Pid].Idx;
-	procs_in_use--;
-	proc_stat[Pid].state = ZOMBIE;
-	//Tell the parent proc that one more child is gone if parent exists
-	//else don't bother "" and then try to free "sleep until no workers"
-	if (proc_stat[proc_stat[Pid].Gid].isInit) {
-		proc_stat[proc_stat[Pid].Gid].noChilds--;
- 		if ( (proc_stat[proc_stat[Pid].Gid].noChilds == 0) &&
-			  ( proc_stat[proc_stat[Pid].Gid].state & _______T ) ) {
-		}
-	}
-	//Take away the process fom theSchedule and compress gap at prio
-	for(i=Idx; i < scheduleIdxs[Prio].procs_at_prio; i++){
-		theSchedule[Prio][i] = theSchedule[Prio][i+1];
-	}
-	//#if DEBUG
-	// not needed, could cause problems if procs last..
-	//theSchedule[Prio][i] = 0;
-	//#endif
-	//Take away the process fom scheduleIdxs
-	scheduleIdxs[Prio].procs_at_prio --;
-	if (scheduleIdxs[Prio].curr_idx >= scheduleIdxs[Prio].procs_at_prio){
-		scheduleIdxs[Prio].curr_idx = 0;
-	}
-	//Make it final
-	free(proc_stat[Pid].stack);
-	proc_stat[Pid].isInit = FALSE;
-	return(TK_OK);
+   unsigned int Prio,Idx,i;
+   
+   if ( proc_stat[Pid].isInit == FALSE )  {
+      //The process you are trying to delete does not exist
+      return(TK_ERROR);    
+   }
+   Prio = proc_stat[Pid].Prio;
+   Idx = proc_stat[Pid].Idx;
+   procs_in_use--;
+   proc_stat[Pid].state = ZOMBIE;
+   //Tell the parent proc that one more child is gone if parent exists
+   //else don't bother "" and then try to free "sleep until no workers"
+   if (proc_stat[proc_stat[Pid].Gid].isInit) {
+      proc_stat[proc_stat[Pid].Gid].noChilds--;
+      if ( (proc_stat[proc_stat[Pid].Gid].noChilds == 0) &&
+           ( proc_stat[proc_stat[Pid].Gid].state & _______T ) ) {
+      }
+   }
+   //Take away the process fom theSchedule and compress gap at prio
+   for(i=Idx; i < scheduleIdxs[Prio].procs_at_prio; i++){
+      theSchedule[Prio][i] = theSchedule[Prio][i+1];
+   }
+   //#if DEBUG
+   // not needed, could cause problems if procs last..
+   //theSchedule[Prio][i] = 0;
+   //#endif
+   //Take away the process fom scheduleIdxs
+   scheduleIdxs[Prio].procs_at_prio --;
+   if (scheduleIdxs[Prio].curr_idx >= scheduleIdxs[Prio].procs_at_prio){
+      scheduleIdxs[Prio].curr_idx = 0;
+   }
+   //Make it final
+   free(proc_stat[Pid].stack);
+   proc_stat[Pid].isInit = FALSE;
+   return(TK_OK);
 }
 
 
@@ -228,12 +235,12 @@ unsigned int createTask(
    size_t stack_size
 ){
    //where in theScheduler to put task id
-	unsigned int slot_idx = scheduleIdxs[prio].procs_at_prio;
-	funk_p *f_p;
-	void *v_p;
-	#ifdef DEBUG
-	int i;
-	#endif
+   unsigned int slot_idx = scheduleIdxs[prio].procs_at_prio;
+   funk_p *f_p;
+   void *v_p;
+   #ifdef DEBUG
+   int i;
+   #endif
 
    //Error handling needs improvment (don't forget taking special care of
    //proc_idx)
@@ -311,7 +318,7 @@ unsigned int createTask(
    PREP_TOS( ctTSP2, ctTSP1, ctTTOS, ctTEMP );   
     //#pragma src
     //#pragma asm                                                                                                 
-	//   MOV R1,R5                                                                                                
+   //   MOV R1,R5                                                                                                
     //#pragma endasm  
 
    //Assigne the stackpointer to top of stack
@@ -377,32 +384,37 @@ timeout is greater than the size of an integer. This needs to be solved.
    
 */
 
-unsigned int msleep( unsigned int time ){
+unsigned int msleep( unsigned int time_ms ){
 /* It's our kernal so we "know" that a clock equals 1uS */
-   clock_t act_time;
-   act_time = clock()/CLK_TCK*1000;
+   clock_t act_time_us; 
+   clock_t wkp_time_us;
+   clock_t latency_us;  //Temporary var only to aid debugging
+   
+   act_time_us    = clock();
+   wkp_time_us    = act_time_us + (time_ms * 1000uL);
    //need a function t_diff that handles wraparound
-   proc_stat[active_task].wakeuptime = act_time + time;
+   proc_stat[active_task].wakeuptime = wkp_time_us;
    proc_stat[active_task].state |= SLEEP;
    schedul();
-   act_time = clock()/CLK_TCK*10000;
-/* returns diff in 1/10 ms */
-   return act_time - proc_stat[active_task].wakeuptime*10;
+   act_time_us    = clock();
+/* returns diff in clocks, i.e. uS  */
+   latency_us = difftime(proc_stat[active_task].wakeuptime,act_time_us);
+   return latency_us;
 }
 
 void wakeUpSleepers( void ){
    int i;
    clock_t act_time;
 
-   act_time = clock()/CLK_TCK*1000;
-	//Do not optimize this to "active_procs" until fragmentation of deleted procs
+   act_time = clock();
+   //Do not optimize this to "active_procs" until fragmentation of deleted procs
    //is solved.
    for(i=0;i<max_procs;i++){
       if (proc_stat[i].state & SLEEP){
-         if (proc_stat[i].isInit){ 				//dubble check
+         if (proc_stat[i].isInit){           //dubble check
             if ( act_time >= proc_stat[i].wakeuptime ){
                proc_stat[i].state &= ~_____QST; /*Release ques also*/
-			   proc_stat[i].wakeupEvent = E_TIMER;
+               proc_stat[i].wakeupEvent = E_TIMER;
             }
          }
       }
@@ -410,30 +422,30 @@ void wakeUpSleepers( void ){
 }
 
 unsigned int next(){
-	int idx,prio,cidx,midx,nbTry,loop,return_Pid,p_at_p;
-	BOOL found;
+   int idx,prio,cidx,midx,nbTry,loop,return_Pid,p_at_p;
+   BOOL found;
 
-   return_Pid 	= idle_Pid; //In case no runnable proc is found...
-   found 		= FALSE;
+   return_Pid  = idle_Pid; //In case no runnable proc is found...
+   found       = FALSE;
 
-   for(prio=0;prio<max_prio_levels && !found;prio++){	//prio from highets to lowest
-   	p_at_p = scheduleIdxs[prio].procs_at_prio;
-   	if (p_at_p != 0){ //No procs at prio to run.. prevent division by zero
-   		//Manual RR from current to next ready
-	      idx =(scheduleIdxs[prio].curr_idx);
-      	cidx = scheduleIdxs[prio].curr_idx;
-   	   nbTry = scheduleIdxs[prio].procs_at_prio;                             
-	      for(	loop = 0;
-      			loop < nbTry && !found;
-   				loop++){
-	      	if (proc_stat[theSchedule[prio][idx]].state == READY){
-         		return_Pid = theSchedule[prio][idx];
-         	   found = TRUE;
-      	   }
-   	      //Next proc at this prio that should try to run
-	         idx++;
-         	idx %= p_at_p; //saves some pointer-casts this way
-	   	}
+   for(prio=0;prio<max_prio_levels && !found;prio++){ //prio from highets to lowest
+      p_at_p = scheduleIdxs[prio].procs_at_prio;
+      if (p_at_p != 0){ //No procs at prio to run.. prevent division by zero
+         //Manual RR from current to next ready
+         idx =(scheduleIdxs[prio].curr_idx);
+         cidx = scheduleIdxs[prio].curr_idx;
+         nbTry = scheduleIdxs[prio].procs_at_prio;                             
+         for(  loop = 0;
+               loop < nbTry && !found;
+               loop++){
+            if (proc_stat[theSchedule[prio][idx]].state == READY){
+               return_Pid = theSchedule[prio][idx];
+               found = TRUE;
+            }
+            //Next proc at this prio that should try to run
+            idx++;
+            idx %= p_at_p; //saves some pointer-casts this way
+         }
       }
    }
    return return_Pid;
@@ -465,35 +477,35 @@ void schedul( void ){
 }
 
 void tk_exit( int ec) {
-	if (ec==0)
-		printf("Program terminated normally");
-	else
-		printf("Program terminated with errorcode [%d]",ec);
-	while (1) {
-	}
+   if (ec==0)
+      printf("Program terminated normally");
+   else
+      printf("Program terminated with errorcode [%d]",ec);
+   while (1) {
+   }
 }
 
 void __tk_assertfail(
-	char *assertstr, 
-	char *filestr, 
-	int line
+   char *assertstr, 
+   char *filestr, 
+   int line
 ) {
-	printf("Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line);
-	tk_exit(3);
+   printf("Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line);
+   tk_exit(3);
 }
 
 void tk_main( void ){
-	createKern();
-	#ifdef IPC
-	createIPC();
-	#endif
-	 
-	root();
+   createKern();
+   #ifdef IPC
+   createIPC();
+   #endif
+    
+   root();
 
-	#ifdef IPC
-	deleteIPC();
-	#endif 
-	deleteKern();
+   #ifdef IPC
+   deleteIPC();
+   #endif 
+   deleteKern();
 }
 
 
