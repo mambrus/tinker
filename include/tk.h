@@ -6,11 +6,14 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.1 $
+ *  Current $Revision: 1.2 $
  *
  *  $Log: tk.h,v $
- *  Revision 1.1  2005-11-17 09:59:09  ambrmi09
- *  Initial revision
+ *  Revision 1.2  2005-11-18 11:27:46  ambrmi09
+ *  Starting documenting
+ *
+ *  Revision 1.1.1.1  2005/11/17 09:59:09  ambrmi09
+ *  Created CVS jhome for TinKer from scratch. RCS history lost in database (kept in sourcecode)
  *
  *  Revision 1.5  1998/02/16 18:05:12  mickey
  *  Added macro assert.
@@ -39,7 +42,7 @@
 #include <time.h>
 
 /** local definitions **/
-#define max_procs 			25
+#define max_procs 			10
 #define max_prio_levels 	0x10  //fix this, Idle needs to bee last in last prio( needs one extra )
 #define max_procs_at_prio 	0x8
 #define proc_name_len 		0x08
