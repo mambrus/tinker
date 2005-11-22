@@ -12,13 +12,14 @@
 // @Description   This file contains the project initialization function.
 //
 //----------------------------------------------------------------------------
-// @Date          2005-11-17 20:49:21
+// @Date          2005-11-19 14:27:37
 //
 //****************************************************************************
 
 // USER CODE BEGIN (MAIN_General,1)
 //unsigned char xhuge malloc_mempool [0x1000];
 unsigned char far malloc_mempool [0x4000];
+//works not -> unsigned char xhuge malloc_mempool [0x4000];
 
 // USER CODE END
 
@@ -52,6 +53,7 @@ Bus arbitration enabled
 #include <stdlib.h>
 #include <tk.h>
 #include <time.h>
+
 
 #pragma code
 
@@ -134,7 +136,7 @@ Bus arbitration enabled
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2005-11-17
+// @Date          2005-11-19
 //
 //****************************************************************************
 
@@ -353,7 +355,7 @@ void MAIN_vInit(void)
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2005-11-17
+// @Date          2005-11-19
 //
 //****************************************************************************
 
@@ -407,7 +409,7 @@ void MAIN_vUnlockProtecReg(void)
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2005-11-17
+// @Date          2005-11-19
 //
 //****************************************************************************
 
