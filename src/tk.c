@@ -6,10 +6,15 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.3 $
+ *  Current $Revision: 1.4 $
  *
  *  $Log: tk.c,v $
- *  Revision 1.3  2005-11-18 13:18:27  ambrmi09
+ *  Revision 1.4  2005-11-22 20:07:56  ambrmi09
+ *  Separated architecture specific code by introducing tk_hwsys_<TARGET>.h
+ *  files.
+ *  Prepared for new stack_t type (not introduced yet).
+ *
+ *  Revision 1.3  2005/11/18 13:18:27  ambrmi09
  *  Finally got the timing right (tested and verifyed). Amazing accurancy!
  *  accurancy from 60000mS to 1mS (executed 10000 ti,es) both show the same
  *  constant error (that they are equal can only be explained due to the
@@ -221,11 +226,13 @@ int deleteTask(unsigned int Pid){
    return(TK_OK);
 }
 
-
+//sfr  SPSEG                = 0xFF0C;       //Stack Pointer Segment Register
 
 static char *ctTSP1, *ctTSP2; //!< fony temporary stackpointer used in the process of setting TOS
 static unsigned long ctTEMP;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
 static char *ctTTOS;          //!< Top of stack pointer (temporary), return value storage from macro
+
+
 
 unsigned int createTask(
    char *name,
@@ -245,17 +252,17 @@ unsigned int createTask(
    //Error handling needs improvment (don't forget taking special care of
    //proc_idx)
    if (procs_in_use >= max_procs){
-      printf("Total amount of processer exceeds limit\n");
+      printf("tk: Error - Total amount of processer exceeds limit\n");
       tk_exit(1);
    }
    //Check if chosen prio is within limits
    if (prio >= max_prio_levels){
-      printf("Chosen priority exceed bounds\n");
+      printf("tk: Error - Chosen priority exceed bounds\n");
       tk_exit(1);
    }
    //Check if there will be enough room at that prio
    if (max_procs_at_prio <= ( scheduleIdxs[prio].procs_at_prio ) ){
-      printf("To many processes at prio\n");
+      printf("tk: Error - To many processes at prio\n");
       tk_exit(1);
    }
    //Find next empty slot - which is also the CREATED Pid
@@ -267,13 +274,13 @@ unsigned int createTask(
    if (strlen(name)<proc_name_len)
       strcpy(proc_stat[proc_idx].name,name);
    else{
-      printf("process name to long\n");
+      printf("tk: Error - Process name to long\n");
       tk_exit(1);
    }
    //Try to allocate memory for stack
 
    if ((proc_stat[proc_idx].stack = (char *) malloc(stack_size)) == NULL){
-       printf("Can't create process\n");
+       printf("tk: Error - Can't create process (can't allocate memory for stack)\n");
        tk_exit(1);  // terminate program if out of memory
    }
    proc_stat[proc_idx].isInit       = TRUE;
@@ -478,9 +485,9 @@ void schedul( void ){
 
 void tk_exit( int ec) {
    if (ec==0)
-      printf("Program terminated normally");
+      printf("tk: Program terminated normally");
    else
-      printf("Program terminated with errorcode [%d]",ec);
+      printf("tk: Warning - Program terminated with errorcode [%d]",ec);
    while (1) {
    }
 }
@@ -490,7 +497,7 @@ void __tk_assertfail(
    char *filestr, 
    int line
 ) {
-   printf("Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line);
+   printf("tk: Error - Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line);
    tk_exit(3);
 }
 

@@ -6,10 +6,15 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.3 $
+ *  Current $Revision: 1.4 $
  *
  *  $Log: tk.h,v $
- *  Revision 1.3  2005-11-18 13:18:27  ambrmi09
+ *  Revision 1.4  2005-11-22 20:07:56  ambrmi09
+ *  Separated architecture specific code by introducing tk_hwsys_<TARGET>.h
+ *  files.
+ *  Prepared for new stack_t type (not introduced yet).
+ *
+ *  Revision 1.3  2005/11/18 13:18:27  ambrmi09
  *  Finally got the timing right (tested and verifyed). Amazing accurancy!
  *  accurancy from 60000mS to 1mS (executed 10000 ti,es) both show the same
  *  constant error (that they are equal can only be explained due to the
@@ -42,11 +47,13 @@
  *  
  *******************************************************************/
  
-#ifndef tk_h
-#define tk_h
+#ifndef TK_H
+#define TK_H
 
 /** include files **/
+#include <stddef.h>
 #include <time.h>
+//#include <tk_hwsys.h>
 
 /** local definitions **/
 #define max_procs          10
@@ -91,8 +98,13 @@ typedef enum{TERM=1,SLEEP=2,QUEUE=4}STATEBITS;
 typedef enum{E_CHILDDEATH, E_TIMER, E_IPC, E_IPC2}wakeE_t;
 
 /*!
-Thread control block (TCB) definition. This structure cntains all
+Thread control block (TCB). This structure contains all
 information the kernel needs to know about a thread.
+
+@note the type for various stack pointers. This type is supplied by BSP
+adaptions to cover certain architectures special aspects of a "stack".
+In a 32bit "normal" CPU this is often a char*, but for some obscure MPU
+like C166 family, this is a muck mor complex structure.
 */
 typedef struct    proc_t_s{
    unsigned int   Pid,Gid;             //!< Process ID and Parent ID (Gid)
@@ -100,9 +112,12 @@ typedef struct    proc_t_s{
    char           name[proc_name_len]; //!< Name of the process
    BOOL           isInit;              //!< Memory for stack is allocated
    PROCSTATE      state;               //!< State of the process
-   char          *stack;               //!< Bottom of stack
-   char          *sp;                  //!< Top of stack
-   size_t         stack_size;          //!< Size of stack
+//   stack_t        stack;               //!< Bottom of stack
+   char*        stack;               //!< Bottom of stack
+//   stack_t        sp;                  //!< Top of stack
+   char*        sp;                  //!< Top of stack
+//   size_t         stack_size;          //!< Size of stack
+   char*         stack_size;          //!< Size of stack
    clock_t        wakeuptime;          //!< When to wake up if sleeping
    wakeE_t        wakeupEvent;         //!< Helper variable mainly for IPC
    unsigned int   Prio,Idx;            //!< Helpers, prevent need of lookup
@@ -152,6 +167,9 @@ void __tk_assertfail(    /* emulates __assertfail */
 
 /** private functions **/
 #endif
+
+
+
 
 
 
