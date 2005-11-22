@@ -51,7 +51,8 @@ Bus arbitration enabled
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <tk.h>
+//#include <tk.h>             //Some stupid include bug forces us to this
+extern void tk_main( void );  
 #include <time.h>
 
 
@@ -432,7 +433,7 @@ void main(void)
 {
   // USER CODE BEGIN (Main,2)  
       //unsigned int *myTCONCS1=&TCONCS1;
-	  int rc,inpar;
+	  int inpar;
 
       init_mempool (&malloc_mempool, sizeof(malloc_mempool));
 

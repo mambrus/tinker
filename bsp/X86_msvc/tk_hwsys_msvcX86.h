@@ -62,17 +62,6 @@ typedef char * stack_t;
    __asm{ mov THRETVAL,EAX             }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 #endif
+
+

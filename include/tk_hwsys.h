@@ -92,10 +92,10 @@ Typically used in the second stage of a context switch. The intended SP is retri
 from the corresponding threads TCB.
 
 */
-#define CHANGE_STACK_POP_CPU( 
-TSP1, 
-TEMP 
-)                                                                    \
+#define CHANGE_STACK_POP_CPU(                                                 \
+   TSP1,                                                                      \
+   TEMP                                                                       \
+)
 
 /**
 @ingroup kernel_internals
@@ -105,7 +105,17 @@ TEMP
 @todo If this macro is really needed, document it also!
 */
 
-#define GET_THREADS_RETVAL( THRETVAL )                                                                        \
+#define GET_THREADS_RETVAL( THRETVAL )
+
+
+/**
+@ingroup kernel_internals
+        
+@brief Sets a stack adress (a stack_t type of variable) to zero
+*/
+
+#define SET_SP_TO_ZERO( SP )
+
 
    
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -131,6 +141,8 @@ TEMP
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 #endif  //TK_HWSYS_H
+
+
 
 
 

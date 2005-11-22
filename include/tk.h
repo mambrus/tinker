@@ -6,10 +6,13 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.4 $
+ *  Current $Revision: 1.5 $
  *
  *  $Log: tk.h,v $
- *  Revision 1.4  2005-11-22 20:07:56  ambrmi09
+ *  Revision 1.5  2005-11-22 23:33:53  ambrmi09
+ *  New stack_t in place and tested for XC167. We seem to have some include confilict also between regs166.h and main.h (both system includes)
+ *
+ *  Revision 1.4  2005/11/22 20:07:56  ambrmi09
  *  Separated architecture specific code by introducing tk_hwsys_<TARGET>.h
  *  files.
  *  Prepared for new stack_t type (not introduced yet).
@@ -53,7 +56,7 @@
 /** include files **/
 #include <stddef.h>
 #include <time.h>
-//#include <tk_hwsys.h>
+#include <tk_hwsys.h>   //should be OK now
 
 /** local definitions **/
 #define max_procs          10
@@ -167,6 +170,8 @@ void __tk_assertfail(    /* emulates __assertfail */
 
 /** private functions **/
 #endif
+
+
 
 
 

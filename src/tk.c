@@ -6,10 +6,13 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.4 $
+ *  Current $Revision: 1.5 $
  *
  *  $Log: tk.c,v $
- *  Revision 1.4  2005-11-22 20:07:56  ambrmi09
+ *  Revision 1.5  2005-11-22 23:33:54  ambrmi09
+ *  New stack_t in place and tested for XC167. We seem to have some include confilict also between regs166.h and main.h (both system includes)
+ *
+ *  Revision 1.4  2005/11/22 20:07:56  ambrmi09
  *  Separated architecture specific code by introducing tk_hwsys_<TARGET>.h
  *  files.
  *  Prepared for new stack_t type (not introduced yet).
@@ -133,7 +136,7 @@ void createKern( void ){
       proc_stat[i].stack_size = 0;
       proc_stat[i].stack = NULL;
       proc_stat[i].sp = NULL;
-     proc_stat[i].wakeupEvent = 0;
+      proc_stat[i].wakeupEvent = 0;
    }
    //The Root proc is already created but must be registred
    proc_stat[0].state = READY;

@@ -60,38 +60,39 @@ off variable, and to add them back when you assign your user-stack pointer
 @note Orientation of bitfiels are compilor specific. Use commandline or pragma 
 to ensure correct layout.
 
-*/ 
+*/
+#pragma pack(1)     /* byte alignment */
+#pragma bytealign   /* ptrs to byte-aligned objects */
+ 
 
-typedef struct { 
-   union{ 
-      unsigned long linear; 
-      union {
-         struct {
-            unsigned char padding8;     // These two togeathers should be 14 bi
-            unsigned int  padding6  :6; //
-            unsigned int _seg       :10;         
-         }seg_24;
-         struct {
-            unsigned int _offs      :14; 
-            unsigned int padding2   :2;
-            unsigned char padding8;
-         }offs_24;  
-      };
-   }; 
+typedef union{ 
+   unsigned long linear; 
+   union {
+      struct {
+         unsigned char padding8;     // These two togeathers must be 14 bit            
+		unsigned int  padding6     :6; //
+		unsigned int _seg          :10;                     
+      }seg24;
+      struct {
+         unsigned int _offs      :14; 
+         unsigned int padding2   :2;
+         unsigned char padding8;
+      }offs24;  
+   }u;
 }userstackaddr_t;
 
-typedef struct { 
-   union{ 
-      unsigned long linear; 
-      struct { 
-         unsigned int _seg;
-         unsigned int _offs; 
-      }segmented; 
-      struct { 
-         unsigned int _SPSEG; 
-         unsigned int _SP; 
-      }reg; 
-   }; 
+#pragma pack()    /* reset to default alignment */
+
+typedef union{ 
+   unsigned long linear; 
+   struct { 
+      unsigned int _offs; 
+	   unsigned int _seg;         
+   }segmented; 
+   struct { 
+      unsigned int _SP; 
+	   unsigned int _SPSEG;          
+   }reg; 
 }systemstackaddr_t;
 
 /*! 
@@ -101,10 +102,12 @@ thread, that each is best represented in a different way. Both these
 ways hhowever also have a linear adrees for conveniant lookup in
 physical memory.
 */
+
 typedef struct { 
-   userstackaddr_t   userstack; 
+   userstackaddr_t   userstack;    
    systemstackaddr_t systemstack; 
 }stack_t;
+
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
@@ -265,5 +268,11 @@ sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
 
 #define GET_THREADS_RETVAL( THRETVAL )                                                                        \
 
+#define SET_SP_TO_ZERO( SP )                                                                                  \
+   SP.systemstack.u.linear = 0;                                                                               \
+   SP.userstack.u.linear = 0;
+
 
 #endif
+
+

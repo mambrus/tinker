@@ -5,7 +5,7 @@ This is a replacement file for Keils version of putchar.c
 */
 
 
-#include <tk.h>
+//#include <tk.h>  //!< will create lots of redef warnings
 
 /*! Stupid dave requires MAIN.H to be included before any of the other 
 dave files instead of including it in the .H files itself */

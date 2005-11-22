@@ -62,18 +62,8 @@ typedef char * stack_t;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+#define SET_SP_TO_ZERO( SP )
 
 #endif
+
+
