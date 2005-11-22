@@ -49,7 +49,7 @@
   #endif
 #endif
 
-/*
+/*!
  * Memory pool block structure and typedefs.
  * Memory is laid out as follows:
  *
@@ -59,16 +59,16 @@
  *          mp.len + sizeof (struct mp)
  */
 
-struct __mp__  {                   /* memory pool */
-  struct __mp__ MTYP *next;        /* single-linked list */
-  TLEN                 len;        /* length of following block */
+struct __mp__  {                   //!< memory pool 
+  struct __mp__ MTYP *next;        //!< single-linked list 
+  TLEN                 len;        //!< length of following block
 };
 
 void MTYP * MTYP __mp__;    /* Memory Pool Head */
 
 #define	HLEN  (sizeof (struct __mp__))
 
-/*
+/*! 
  *  Memory pool headers.  __mp__ points to the first available block or is
  *  NULL if there are no free blocks. 
  *
@@ -78,18 +78,19 @@ void MTYP * MTYP __mp__;    /* Memory Pool Head */
  */
 
 void init_mempool (
-  void MTYP *pool,           /* address of the memory pool  */
-  TLEN size)  {              /* size of the pool in bytes   */
+  void MTYP *pool,           //!< address of the memory pool
+  TLEN size)                 //!< size of the pool in bytes  
+{              
 
-/*  Set the __mp__ to point to the beginning of the pool and set
- *  the pool size.                                                         */
+   /*  Set the __mp__ to point to the beginning of the pool and set
+    *  the pool size.                                                        */
 
-  __mp__ = pool;
+   __mp__ = pool;
 
-/*  Set the link of the block in the pool to NULL (since it's the only
- *  block) and initialize the size of its data area.                       */
+   /*  Set the link of the block in the pool to NULL (since it's the only
+    *  block) and initialize the size of its data area.                      */
 
-  ((struct __mp__ MTYP *) pool)->next       = NULL;
-  //((struct __mp__ MTYP *) pool)->next       = __mp__;
-  ((struct __mp__ MTYP *) pool)->len        = size - HLEN;
+   ((struct __mp__ MTYP *) pool)->next       = NULL;
+   //((struct __mp__ MTYP *) pool)->next       = __mp__;
+   ((struct __mp__ MTYP *) pool)->len        = size - HLEN;
 }

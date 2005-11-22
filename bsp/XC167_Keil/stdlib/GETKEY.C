@@ -16,14 +16,23 @@
 /*                                                                     */
 /***********************************************************************/
 
-#include <reg166.h>
+#define REGH( DEV ) \
+   <DEV.h>
+
+#if defined( DEVICE )
+   #include REGH( DEVICE )   
+#else
+   #error "Error, No device specified - can't determine register definition file !!!!!!!!!!! __FILE__"
+#endif
+
 
 
 signed char _getkey (void)  {
   char c;
-
+/*
   while (!S0RIR);
   c = (char) S0RBUF;
   S0RIR = 0;
   return (c);
+*/
 }

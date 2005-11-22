@@ -1,54 +1,79 @@
-/***********************************************************************/
-/*  This file is part of the C166 Compiler package                     */
-/*  Copyright KEIL ELEKTRONIK GmbH 1992-2003                           */
-/***********************************************************************/
-/*                                                                     */
-/*  PUTCHAR.C:  This routine is the general character output of C166.  */
-/*                                                                     */
-/*  To translate this file use C166 with the following invocation:     */
-/*                                                                     */
-/*     C166 PUTCHAR.C                                                  */
-/*                                                                     */
-/*  To link the modified PUTCHAR.OBJ file to your application use the  */
-/*  following L166 invocation:                                         */
-/*                                                                     */
-/*     L166 <your object file list>, PUTCHAR.OBJ <controls>            */
-/*                                                                     */
-/***********************************************************************/
+/*
 
-#include <reg166.h>
+This is a replacement file for Keils version of putchar.c
+
+*/
+
+
+#include <tk.h>
+
+/*! Stupid dave requires MAIN.H to be included before any of the other 
+dave files instead of including it in the .H files itself */
+#include <dave/MAIN.H>    
+#include <dave/ASC0.H>
 
 #define XON  0x11
 #define XOFF 0x13
 
+/*! 
+Set this device if you want this driver to work on another device.
+This should be the only place you need to modify.
+
+*/
+#define dev()              ASC0
+
+/*! 
+The interrupt control register us used to determine if tx has been sent.
+
+@note Remeber to clear it when done (no ISR will do it for us). 
+*/
+#define LAST_TX_SENT           dev()##_TBIC_IR
+
+#define FIFO_ENABLED           dev()##_TXFCON_TXFEN
+#define FIFO_TRANSPARENT_MODE  dev()##_TXFCON_TXTMEN  
+
+typedef unsigned int fsleep( unsigned int time );
+typedef fsleep *fsleep_p;
+
+extern unsigned int busywait( unsigned int time_ms );
+
+//fsleep_p sleepf = msleep; //unsafe with printf. Same probs as with preempt. use when semaphores are working
+fsleep_p sleepf = busywait;
+
 signed char putchar (signed char c)  {
 
-  if (c == '\n')  {
-    if (S0RIR)  {
-      if (S0RBUF == XOFF)  {
-        do  {
-          S0RIR = 0;
-          while (!S0RIR);
-        }
-        while (S0RBUF != XON);
-        S0RIR = 0; 
+   if (FIFO_ENABLED  && FIFO_TRANSPARENT_MODE) {
+      if (!LAST_TX_SENT ){
+         //TxFFO set to 8 bytes and baudrate set to 9,6kbits/s implies a wait of ~
+         //1k byte/sek
+         sleepf(10); //<! dont be stingy, a missed time frame will cost a extra loop
       }
-    }
-    while (!S0TIR);
-    S0TIR = 0;
-    S0TBUF = 0x0d;                         /* output CR  */
-  }
-  if (S0RIR)  {
-    if (S0RBUF == XOFF)  {
-      do  {
-        S0RIR = 0;
-        while (!S0RIR);
+      LAST_TX_SENT = 0;
+
+      if ( c == '\n' || c == '\r' || c == 0 ){
+         ASC0_vSendData(0x0D);
+		 if (!LAST_TX_SENT) sleepf(1);
+		 LAST_TX_SENT = 0;
+         ASC0_vSendData(0x0A);
+      }else{
+         ASC0_vSendData(c);
       }
-      while (S0RBUF != XON);
-      S0RIR = 0; 
-    }
-  }
-  while (!S0TIR);
-  S0TIR = 0;
-  return (S0TBUF = c);
+   } else {
+      if ( c == '\n' || c == '\r' || c == 0 ){
+         ASC0_vSendData(0x0D);
+         if (!LAST_TX_SENT) sleepf(1);
+         LAST_TX_SENT = 0;
+         ASC0_vSendData(0x0A);
+         if (!LAST_TX_SENT) sleepf(1);
+         LAST_TX_SENT = 0;
+      }else{
+         ASC0_vSendData(c);
+         if (!LAST_TX_SENT) sleepf(1);
+         LAST_TX_SENT = 0;
+      }
+   }
+
+   return (1);
+   
+
 }
