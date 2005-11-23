@@ -6,10 +6,14 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.7 $
+ *  Current $Revision: 1.8 $
  *
  *  $Log: tk.c,v $
- *  Revision 1.7  2005-11-23 11:31:06  ambrmi09
+ *  Revision 1.8  2005-11-23 20:46:43  ambrmi09
+ *  Finally stacks seems OK. A bit worried about some "garbage" that turns up
+ *  at each TOS at each tasks start
+ *
+ *  Revision 1.7  2005/11/23 11:31:06  ambrmi09
  *  New stack structure is in place. Now all we have to do should be to just
  *  attach DDP2:R0 to the user_stack part of it, and we "should" be done with
  *  the XC167 stack bug.
@@ -91,12 +95,12 @@
 #endif
 
 
-proc_t proc_stat[TK_MAX_PROCS];
-//This is not perfect. PiD will be reused when more than TK_MAX_PROCS has
+proc_t proc_stat[TK_MAX_THREADS];
+//This is not perfect. PiD will be reused when more than TK_MAX_THREADS has
 //been used. I wold have wanted a Pid range that is much bigger and a lookup-
 //table (gives greater uniquety - specially usefull i case of RPC) but that
 //is costly (I think)
-//coord_t lookUpTable[TK_MAX_PROCS];
+//coord_t lookUpTable[TK_MAX_THREADS];
 
 typedef struct{
    unsigned short procs_at_prio;    //Used for optimizing sheduler.
@@ -133,7 +137,7 @@ proc_t *MyProc_p( void ){
 void createKern( void ){
    int i,j;
 
-   for (i=0; i<TK_MAX_PROCS; i++){
+   for (i=0; i<TK_MAX_THREADS; i++){
       proc_stat[i].state         = ZOMBIE;
       proc_stat[i].wakeuptime    = 0;
       proc_stat[i].isInit        = FALSE;
@@ -142,7 +146,7 @@ void createKern( void ){
       proc_stat[i].Pid           = 0;
       proc_stat[i].noChilds      = 0;
       proc_stat[i].stack_size    = 0;
-      STACK_PTR(proc_stat[i].stack_begin) = NULL;
+      STACK_PTR(proc_stat[i].stack_begin) = 0uL;
       proc_stat[i].curr_sp       = NULL;
       proc_stat[i].wakeupEvent   = 0;
    }
@@ -237,12 +241,16 @@ int deleteTask(unsigned int Pid){
    return(TK_OK);
 }
 
-//sfr  SPSEG                = 0xFF0C;       //Stack Pointer Segment Register
 
-static char *ctTSP1, *ctTSP2; //!< fony temporary stackpointer used in the process of setting TOS
-static unsigned long ctTEMP;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
-static char *ctTTOS;          //!< Top of stack pointer (temporary), return value storage from macro
-
+/*
+Storage variable - to be used in macros (can't be on local stack since
+we are manipulateing that)
+*/
+static char *ct_oldTOS;    //!< will contain old top of stack adress
+static char *ct_newSP;     //!< new stack-pointer. Is a return value storage from macro
+static char *ct_temp1;     //!< fony temporary stackpointer used in the process of setting TOS
+static unsigned long ct_temp2;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
+static stack_t ct_stack_struct;
 
 
 unsigned int createTask(
@@ -263,7 +271,7 @@ unsigned int createTask(
 
    //Error handling needs improvment (don't forget taking special care of
    //proc_idx)
-   if (procs_in_use >= TK_MAX_PROCS){
+   if (procs_in_use >= TK_MAX_THREADS){
       printf("tk: Error - Total amount of processer exceeds limit\n");
       tk_exit(1);
    }
@@ -280,7 +288,7 @@ unsigned int createTask(
    //Find next empty slot - which is also the CREATED Pid
    do{
       proc_idx++;
-      proc_idx %= TK_MAX_PROCS;
+      proc_idx %= TK_MAX_THREADS;
    }while (proc_stat[proc_idx].isInit == TRUE);
    //Test if the assigned name fits
    if (strlen(name)<TK_THREAD_NAME_LEN)
@@ -327,24 +335,21 @@ unsigned int createTask(
    
    real_stack_size = REAL_STACK_SIZE(proc_stat[proc_idx].stack_begin);
 
-   //v_p = (void *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[ REAL_STACK_SIZE(proc_stat[proc_idx].stack_begin) - 0x4];
    v_p = (void *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0x4];
    *(unsigned int*)v_p = (unsigned int)inpar;
 
-   //f_p = (funk_p *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[REAL_STACK_SIZE(proc_stat[proc_idx].stack_begin) - 0x8];
    f_p = (funk_p *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0x8];
    *f_p = destructor;
 
-   //f_p = (funk_p *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[REAL_STACK_SIZE(proc_stat[proc_idx].stack_begin) - 0xC];
    f_p = (funk_p *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0xC];
    *f_p = f;
 
-   //ctTSP1 = &STACK_PTR(proc_stat[proc_idx].stack_begin)[REAL_STACK_SIZE(proc_stat[proc_idx].stack_begin) - 0xC];
-   ctTSP1 = &STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0xC];
+   ct_oldTOS = &STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0xC];
+   ct_stack_struct = proc_stat[proc_idx].stack_begin;
 
    //MARKALL();
-
-   PREP_TOS( ctTSP2, ctTSP1, ctTTOS, ctTEMP );   
+   
+   PREP_TOS( ct_oldTOS, ct_newSP, ct_temp1, ct_temp2, ct_stack_struct );   
     //#pragma src
     //#pragma asm                                                                                                 
    //   MOV R1,R5                                                                                                
@@ -352,7 +357,7 @@ unsigned int createTask(
 
    //Assign the stackpointer to top of stack
    //proc_stat[proc_idx].sp = &proc_stat[proc_idx].stack[stack_size - 0x34];
-   proc_stat[proc_idx].curr_sp = ctTTOS;
+   proc_stat[proc_idx].curr_sp = ct_newSP;
    //Put process in scedule - assume tight tight schedule
    theSchedule[prio][slot_idx] = proc_idx;
    //Increase the amount of procs at same prio
@@ -438,7 +443,7 @@ void wakeUpSleepers( void ){
    act_time = clock();
    //Do not optimize this to "active_procs" until fragmentation of deleted procs
    //is solved.
-   for(i=0;i<TK_MAX_PROCS;i++){
+   for(i=0;i<TK_MAX_THREADS;i++){
       if (proc_stat[i].state & SLEEP){
          if (proc_stat[i].isInit){           //dubble check
             if ( act_time >= proc_stat[i].wakeuptime ){

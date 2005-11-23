@@ -24,10 +24,10 @@ user_stack_size                           := ratio * whlole_stack_size / ( 1+ ra
 
 */
 
-_tk_reinit_stackaddr_xc167keil( 
+void _tk_reinit_stackaddr_xc167keil( 
    stack_t *addr, 
-   size_t size )
-{
+   size_t size 
+){
    size_t usr_stack_size;
    size_t sys_stack_size;
    

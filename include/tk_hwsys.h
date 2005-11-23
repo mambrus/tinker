@@ -57,10 +57,11 @@ is to have these variables in the code segment (i.e. globally declared).
 
 */
 #define PREP_TOS(                                                             \
-   TSP2,    //!< Temporary stackpointer for internal manipulations            \
-   TSP1,    //!< in:  The newly created stacks start adress                   \
-   TOS,     //!< out: The resultin SP. I.e. (char*)(TSP1+lengt-tos_data)      \
-   TEMP     //!< Extra variable for internal stuff (not needed by all targets)\ 
+   _oldTOS, //!< in:  The newly created stacks start adress                   \
+   _newSP,  //!< out: The resulting SP. I.e. (char*)(TSP1+lengt-tos_data)     \
+   _temp1,  //!< Temporary stackpointer for internal manipulations            \   
+   _temp2,  //!< Extra variable for internal stuff (not needed by all targets)\ 
+   _stack_struct //!< Some targets need to manipulate the TCB stack struct    \
 )
 
 

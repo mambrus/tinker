@@ -9,12 +9,12 @@ offset.
 typedef char * stack_t;
 
 
-#define PREP_TOS( TSP2, TSP1, TOS )                                                                            \
+#define PREP_TOS( _oldTOS, _newSP, _temp1 )                                                                            \
                                                                                                                \
     __asm{ pushfd                       } /*Save CPU states affected so that we migth continue*/               \
     __asm{ pushad                       }                                                                      \
-    __asm{ mov TSP2,esp                 } /*Cange the stack pointer to the actual one*/                        \
-    __asm{ mov esp,TSP1                 }                                                                      \
+    __asm{ mov _temp1,esp                 } /*Cange the stack pointer to the actual one*/                        \
+    __asm{ mov esp,_oldTOS                 }                                                                      \
                                                                                                                \
     /*---> Compiler specific*/                                                                                 \
     /*push ebp*/                                                                                               \
@@ -36,8 +36,8 @@ typedef char * stack_t;
     __asm{ pushfd                       }/*Part of the stack content our kernel expects to find on the stack*/ \
     __asm{ pushad                       }                                                                      \
                                                                                                                \
-    __asm{ mov TOS,esp                  } /*The current SP is now the new TOS, save it..     */                \
-    __asm{ mov esp,TSP2                 } /*Restore the stack pointer so that we can continue*/                \                                                                      \
+    __asm{ mov _newSP,esp                  } /*The current SP is now the new _newSP, save it..     */                \
+    __asm{ mov esp,_temp1                 } /*Restore the stack pointer so that we can continue*/                \                                                                      \
                                                                                                                \
     __asm{ popad                        } /*Restore the CPU to the state befor this process was invoked*/      \
     __asm{ popfd                        }

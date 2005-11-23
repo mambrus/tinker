@@ -6,10 +6,14 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.7 $
+ *  Current $Revision: 1.8 $
  *
  *  $Log: tk.h,v $
- *  Revision 1.7  2005-11-23 11:31:05  ambrmi09
+ *  Revision 1.8  2005-11-23 20:46:43  ambrmi09
+ *  Finally stacks seems OK. A bit worried about some "garbage" that turns up
+ *  at each TOS at each tasks start
+ *
+ *  Revision 1.7  2005/11/23 11:31:05  ambrmi09
  *  New stack structure is in place. Now all we have to do should be to just
  *  attach DDP2:R0 to the user_stack part of it, and we "should" be done with
  *  the XC167 stack bug.
@@ -67,7 +71,7 @@
 #include <tk_hwsys.h>   //should be OK now
 
 /** local definitions **/
-#define TK_MAX_PROCS            10
+#define TK_MAX_THREADS          10
 #define TK_MAX_PRIO_LEVELS      0x10  //fix this, Idle needs to bee last in last prio( needs one extra )
 #define TK_MAX_THREADS_AT_PRIO  0x8
 #define TK_THREAD_NAME_LEN      0x08

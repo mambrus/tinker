@@ -113,8 +113,8 @@ typedef struct {
    systemstackaddr_t systemstack;      
    userstackaddr_t   userstack;   
    
-   size_t            sys_stack_size;    //These two added matches exactlly 
-   size_t            usr_stack_size;    //..the real stack size
+   size_t            sys_stack_size;    //These two added togeather constitutes 
+   size_t            usr_stack_size;    //the actual memory allocated
 }stack_t;
 
 
@@ -225,37 +225,47 @@ sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
 
 
 
-#define PREP_TOS( TSP2, TSP1, TOS, TEMP )                                                                     \
-   PUSHALL();                           /*Push everything for later*/                                         \
-   /*Store the current SP for later*/                                                                         \
-   __asm{ mov TSP2,SPSEG              }                                                                       \
-   TEMP = (unsigned long)TSP2;                                                                          \
-   TEMP <<= 16;                                                                          \
-   __asm{ mov TSP2,SP                 }                                                                       \
-   TSP2 = TEMP + TSP2;                                                                                        \
-                                                                                                              \
-   /*Cange the stack pointer to the intended one*/                                                            \
-   TEMP = (unsigned long)TSP1 >> 16;                                                                          \
-   __asm{ mov SP,TSP1                 }                                                                       \
-   __asm{ mov SPSEG,TEMP              }                                                                       \
-                                                                                                              \
-                                                                                                              \
-   /*---> Compiler specific*/                                                                                 \
-   /*<--- Compiler specific*/                                                                                 \
-                                                                                                              \
-                                                                                                              \
-  PUSHALL();                             /*Push everything on the new stack, simulating a context state - MIGHT NEED OVERLOOCKING (R0 used for param pass)*/     \
-                                                                                                              \
-   TOS = 0ul;                            /*  Important, or the next assembly "cast" will fail (not clearing 16 MSB */ \
-   __asm{ mov TOS,SP                   } /*The current SP is now the new TOS, save it.      */                \
-   TOS = ((unsigned long)SPSEG<<16) + (unsigned long)TOS;                    /*  This value will then be copied into the TCB    */                \
-                                                                                                              \
-                                                                                                              \
-   /*Restore the old stack pointer and CPU conten so that we can continue, */                                 \
-   TEMP = (unsigned long)TSP2 >> 16;                                                                          \   
-   __asm{ mov SP,TSP2                 }                                                                       \
-   __asm{ mov SPSEG,TEMP              }                                                                       \
-                                                                                                              \
+#define PREP_TOS( _oldTOS, _newSP, _temp1, _temp2, _stack_struct )                                             \
+   PUSHALL();                           /*Push everything for later*/                                          \
+   /*Store the current SP for later*/                                                                          \
+   __asm{ mov _temp1,SPSEG          }                                                                          \
+   _temp2 = (unsigned long)_temp1;                                                                             \
+   _temp2 <<= 16;                                                                                              \
+   __asm{ mov _temp1,SP             }                                                                          \
+   _temp1 = _temp2 + _temp1;                                                                                   \
+                                                                                                               \
+   /*Cange the stack pointer to the intended one*/                                                             \
+   _temp2 = (unsigned long)_oldTOS >> 16;                                                                      \
+   __asm{ mov SP,_oldTOS            }                                                                          \
+   __asm{ mov SPSEG,_temp2          }                                                                          \
+                                                                                                               \
+                                                                                                               \
+   /*---> Compiler specific*/                                                                                  \
+   __asm{ mov R1,R0                 }                                                                          \
+   __asm{ mov R2,DPP0               }                                                                          \
+   _temp2 = _stack_struct.userstack.u.offs24._offs;                                                            \
+   __asm{ mov R0,_temp2             }                                                                          \
+   _temp2 = _stack_struct.userstack.u.seg24._seg;                                                              \
+   __asm{ mov DPP0,_temp2           }                                                                          \
+                                                                                                               \
+   /*<--- Compiler specific*/                                                                                  \
+                                                                                                               \
+                                                                                                               \
+  PUSHALL();                          /*Push everything on the new stack, simulating a context state - MIGHT NEED OVERLOOCKING (R0 used for param pass)*/ \
+   __asm{ mov R0,R1                 }                                                                          \
+   __asm{ mov DPP0,R2               }                                                                          \
+                                                                                                               \
+                                                                                                               \
+   _newSP = 0ul;                      /*Important, or the next assembly "cast" will fail (not clearing 16 MSB */ \
+   __asm{ mov _newSP,SP             } /*The current SP is now the new _newSP, save it.      */                 \
+   _newSP = ((unsigned long)SPSEG<<16) + (unsigned long)_newSP;                    /*  This value will then be copied into the TCB    */                  \
+                                                                                                               \
+                                                                                                               \
+   /*Restore the old stack pointer and CPU conten so that we can continue, */                                  \
+   _temp2 = (unsigned long)_temp1 >> 16;                                                                       \   
+   __asm{ mov SP,_temp1             }                                                                          \
+   __asm{ mov SPSEG,_temp2          }                                                                          \
+                                                                                                               \
   POPALL();   
 
 
@@ -294,7 +304,7 @@ Read ratio as x:y or user_size/system_size
 
 #define MINIMUM_STACK_SIZE 0xC0 
 
-_tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
+void _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
 
 #define REINIT_STACKADDR( ADDR, size )  \
    _tk_reinit_stackaddr_xc167keil( &ADDR, size )
@@ -302,7 +312,18 @@ _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
 #define REAL_STACK_SIZE( ADDR )  \
    ( ADDR.sys_stack_size ) 
 
+/*
+   _temp2 = _stack_struct.userstack.u.offs24._offs;                                                            \
+   __asm{ mov R0,_temp2             }                                                                          \
+   _temp2 = _stack_struct.userstack.u.seg24._seg;                                                              \
+   __asm{ mov DPP2,_temp2             }                                                                        \
+   
+   
+   __asm{ mov R1,R0                 }                                                                          \
+   __asm{ mov R2,DPP2               }                                                                          \
 
+
+*/
 
 #endif
 

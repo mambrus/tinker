@@ -6,10 +6,14 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.2 $
+ *  Current $Revision: 1.3 $
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.2  2005-11-23 11:27:19  ambrmi09
+ *  Revision 1.3  2005-11-23 20:46:43  ambrmi09
+ *  Finally stacks seems OK. A bit worried about some "garbage" that turns up
+ *  at each TOS at each tasks start
+ *
+ *  Revision 1.2  2005/11/23 11:27:19  ambrmi09
  *  Unix line-endings corrected. Iny one LF per line should now be in the file on CVS server
  *
  *  Revision 1.1.1.1  2005/11/17 09:59:09  ambrmi09
@@ -389,7 +393,7 @@ static unsigned long unlock_stage(
 {	
 	proc_t *Him;			/* A pointer to the process to release  */
 	unsigned int i;
-	unsigned int t_idx,t_prio = max_prio_levels + 2;
+	unsigned int t_idx,t_prio = TK_MAX_PRIO_LEVELS + 2;
 	
 	if (ipc_array[qid]->token < 0)  { /* Oops someone is perhaps waiting for me */
 		if (ipc_array[qid]->flags & PRIOR) {
@@ -432,7 +436,7 @@ static unsigned long unlock_stage(
 			
 			/*Now the highest waiting process should be found*/
 			p_bQ(40,21,qid);
-			assert(t_prio != (max_prio_levels + 2)); /*Could not find anyone to release*/
+			assert(t_prio != (TK_MAX_PRIO_LEVELS + 2)); /*Could not find anyone to release*/
 			ipc_array[qid]->blocked_procs[t_idx]->state &= ~_____QST; 
 			ipc_array[qid]->blocked_procs[t_idx]->wakeupEvent = E_IPC;
 			//ipc_array[qid]->token++;
