@@ -6,11 +6,14 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.1 $
+ *  Current $Revision: 1.2 $
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.1  2005-11-17 09:59:09  ambrmi09
- *  Initial revision
+ *  Revision 1.2  2005-11-23 11:27:19  ambrmi09
+ *  Unix line-endings corrected. Iny one LF per line should now be in the file on CVS server
+ *
+ *  Revision 1.1.1.1  2005/11/17 09:59:09  ambrmi09
+ *  Created CVS jhome for TinKer from scratch. RCS history lost in database (kept in sourcecode)
  *
  *  Revision 1.10  1998/02/16 18:02:28  mickey
  *  Corrected bugs in previous version. This seams to behave stable.
