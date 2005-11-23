@@ -6,10 +6,13 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.5 $
+ *  Current $Revision: 1.6 $
  *
  *  $Log: tk.h,v $
- *  Revision 1.5  2005-11-22 23:33:53  ambrmi09
+ *  Revision 1.6  2005-11-23 07:47:44  ambrmi09
+ *  Simple namechange
+ *
+ *  Revision 1.5  2005/11/22 23:33:53  ambrmi09
  *  New stack_t in place and tested for XC167. We seem to have some include confilict also between regs166.h and main.h (both system includes)
  *
  *  Revision 1.4  2005/11/22 20:07:56  ambrmi09
@@ -106,8 +109,8 @@ information the kernel needs to know about a thread.
 
 @note the type for various stack pointers. This type is supplied by BSP
 adaptions to cover certain architectures special aspects of a "stack".
-In a 32bit "normal" CPU this is often a char*, but for some obscure MPU
-like C166 family, this is a muck mor complex structure.
+In a 32bit "normal" CPU this is often a char*, but for some obscure MPU:s
+like the C166 family, this is a much more complex structure.
 */
 typedef struct    proc_t_s{
    unsigned int   Pid,Gid;             //!< Process ID and Parent ID (Gid)
@@ -115,12 +118,11 @@ typedef struct    proc_t_s{
    char           name[proc_name_len]; //!< Name of the process
    BOOL           isInit;              //!< Memory for stack is allocated
    PROCSTATE      state;               //!< State of the process
-//   stack_t        stack;               //!< Bottom of stack
-   char*        stack;               //!< Bottom of stack
-//   stack_t        sp;                  //!< Top of stack
-   char*        sp;                  //!< Top of stack
-//   size_t         stack_size;          //!< Size of stack
-   char*         stack_size;          //!< Size of stack
+   stack_t        stack_begin;         //!< First address of stack memory
+//   char*          stack_begin;         //!< First address of stack memory
+//   char*          curr_sp;             //!< Current stackpointer of this thread
+   char*          curr_sp;             //!< Current stackpointer of this thread
+   size_t         stack_size;          //!< Size of stack
    clock_t        wakeuptime;          //!< When to wake up if sleeping
    wakeE_t        wakeupEvent;         //!< Helper variable mainly for IPC
    unsigned int   Prio,Idx;            //!< Helpers, prevent need of lookup

@@ -6,10 +6,13 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.5 $
+ *  Current $Revision: 1.6 $
  *
  *  $Log: tk.c,v $
- *  Revision 1.5  2005-11-22 23:33:54  ambrmi09
+ *  Revision 1.6  2005-11-23 07:47:44  ambrmi09
+ *  Simple namechange
+ *
+ *  Revision 1.5  2005/11/22 23:33:54  ambrmi09
  *  New stack_t in place and tested for XC167. We seem to have some include confilict also between regs166.h and main.h (both system includes)
  *
  *  Revision 1.4  2005/11/22 20:07:56  ambrmi09
@@ -126,17 +129,17 @@ void createKern( void ){
    int i,j;
 
    for (i=0; i<max_procs; i++){
-      proc_stat[i].state = ZOMBIE;
-      proc_stat[i].wakeuptime = 0;
-      proc_stat[i].isInit = FALSE;
-      //proc_stat[i].name ="";
-      proc_stat[i].Gid = 0;
-      proc_stat[i].Pid = 0;
-      proc_stat[i].noChilds = 0;
-      proc_stat[i].stack_size = 0;
-      proc_stat[i].stack = NULL;
-      proc_stat[i].sp = NULL;
-      proc_stat[i].wakeupEvent = 0;
+      proc_stat[i].state         = ZOMBIE;
+      proc_stat[i].wakeuptime    = 0;
+      proc_stat[i].isInit        = FALSE;
+      //proc_stat[i].name        ="";
+      proc_stat[i].Gid           = 0;
+      proc_stat[i].Pid           = 0;
+      proc_stat[i].noChilds      = 0;
+      proc_stat[i].stack_size    = 0;
+      proc_stat[i].stack_begin   = NULL;
+      proc_stat[i].curr_sp       = NULL;
+      proc_stat[i].wakeupEvent   = 0;
    }
    //The Root proc is already created but must be registred
    proc_stat[0].state = READY;
@@ -224,7 +227,7 @@ int deleteTask(unsigned int Pid){
       scheduleIdxs[Prio].curr_idx = 0;
    }
    //Make it final
-   free(proc_stat[Pid].stack);
+   free(proc_stat[Pid].stack_begin);
    proc_stat[Pid].isInit = FALSE;
    return(TK_OK);
 }
@@ -282,7 +285,7 @@ unsigned int createTask(
    }
    //Try to allocate memory for stack
 
-   if ((proc_stat[proc_idx].stack = (char *) malloc(stack_size)) == NULL){
+   if ((proc_stat[proc_idx].stack_begin = (char *) malloc(stack_size)) == NULL){
        printf("tk: Error - Can't create process (can't allocate memory for stack)\n");
        tk_exit(1);  // terminate program if out of memory
    }
@@ -300,7 +303,7 @@ unsigned int createTask(
 
    #ifdef DEBUG
    for (i=0;i<stack_size;i++)
-      proc_stat[proc_idx].stack[i]=0xff;
+      proc_stat[proc_idx].stack_begin[i]=0xff;
    #endif
    //Here's the secret.
    //preparing the stack
@@ -312,16 +315,16 @@ unsigned int createTask(
    //#0x4=pushf
    //#0x20=pusha 
 
-   v_p = (void *)&proc_stat[proc_idx].stack[stack_size - 0x4];
+   v_p = (void *)&proc_stat[proc_idx].stack_begin[stack_size - 0x4];
    *(unsigned int*)v_p = (unsigned int)inpar;
 
-   f_p = (funk_p *)&proc_stat[proc_idx].stack[stack_size - 0x8];
+   f_p = (funk_p *)&proc_stat[proc_idx].stack_begin[stack_size - 0x8];
    *f_p = destructor;
 
-   f_p = (funk_p *)&proc_stat[proc_idx].stack[stack_size - 0xC];
+   f_p = (funk_p *)&proc_stat[proc_idx].stack_begin[stack_size - 0xC];
    *f_p = f;
 
-   ctTSP1 = &proc_stat[proc_idx].stack[stack_size - 0xC];
+   ctTSP1 = &proc_stat[proc_idx].stack_begin[stack_size - 0xC];
 
    //MARKALL();
 
@@ -331,9 +334,9 @@ unsigned int createTask(
    //   MOV R1,R5                                                                                                
     //#pragma endasm  
 
-   //Assigne the stackpointer to top of stack
+   //Assign the stackpointer to top of stack
    //proc_stat[proc_idx].sp = &proc_stat[proc_idx].stack[stack_size - 0x34];
-   proc_stat[proc_idx].sp = ctTTOS;
+   proc_stat[proc_idx].curr_sp = ctTTOS;
    //Put process in scedule - assume tight tight schedule
    theSchedule[prio][slot_idx] = proc_idx;
    //Increase the amount of procs at same prio
@@ -467,9 +470,9 @@ static unsigned int cswTEMP;  //!< Extra storage. For some targets used to manip
 
 void runTask(unsigned int RID,unsigned int SID){
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );   
-   proc_stat[SID].sp=cswTSP;
+   proc_stat[SID].curr_sp=cswTSP;
    
-   cswTSP=proc_stat[RID].sp;
+   cswTSP=proc_stat[RID].curr_sp;
    active_task=RID;
    /*************** OBS OBS - TESTPURPOSE ONLY *****************/
    STKUN = 0x7200;

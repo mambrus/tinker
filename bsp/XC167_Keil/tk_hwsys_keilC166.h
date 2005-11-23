@@ -60,6 +60,10 @@ off variable, and to add them back when you assign your user-stack pointer
 @note Orientation of bitfiels are compilor specific. Use commandline or pragma 
 to ensure correct layout.
 
+@note Keil C166 seem to lack directives for byte order within a struct.
+This struct is empirically defined. Be observant about changes of
+behaviour when changing compiler and/or version.
+
 */
 #pragma pack(1)     /* byte alignment */
 #pragma bytealign   /* ptrs to byte-aligned objects */
@@ -69,9 +73,9 @@ typedef union{
    unsigned long linear; 
    union {
       struct {
-         unsigned char padding8;     // These two togeathers must be 14 bit            
-		unsigned int  padding6     :6; //
-		unsigned int _seg          :10;                     
+         unsigned char padding8;     // These two togeather must be 
+         unsigned int  padding6  :6; // ... exacylly 14 bits long.
+         unsigned int _seg       :10;                     
       }seg24;
       struct {
          unsigned int _offs      :14; 
@@ -87,11 +91,11 @@ typedef union{
    unsigned long linear; 
    struct { 
       unsigned int _offs; 
-	   unsigned int _seg;         
+      unsigned int _seg;         
    }segmented; 
    struct { 
       unsigned int _SP; 
-	   unsigned int _SPSEG;          
+      unsigned int _SPSEG;          
    }reg; 
 }systemstackaddr_t;
 
