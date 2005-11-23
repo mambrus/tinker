@@ -50,6 +50,8 @@ http://www.keil.com/support/man/docs/c166/c166_reentrant.htm
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
+#include <stddef.h>
+
 /*!
 
 @note that the offset addres does not contain the 2 MSB bits that defines wich
@@ -103,13 +105,16 @@ typedef union{
 Architecture specific representation of a stack adress. In this obscure
 MPU/Compiler compo this need to be devided in two stacks for each
 thread, that each is best represented in a different way. Both these
-ways hhowever also have a linear adrees for conveniant lookup in
+ways however also have a linear adrees for conveniant lookup in
 physical memory.
 */
 
 typedef struct { 
-   userstackaddr_t   userstack;    
-   systemstackaddr_t systemstack; 
+   systemstackaddr_t systemstack;      
+   userstackaddr_t   userstack;   
+   
+   size_t            sys_stack_size;    //These two added matches exactlly 
+   size_t            usr_stack_size;    //..the real stack size
 }stack_t;
 
 
@@ -272,9 +277,31 @@ sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
 
 #define GET_THREADS_RETVAL( THRETVAL )                                                                        \
 
-#define SET_SP_TO_ZERO( SP )                                                                                  \
-   SP.systemstack.u.linear = 0;                                                                               \
-   SP.userstack.u.linear = 0;
+#define STACK_PTR( ADDR )                                                                                       \
+   ((char *)ADDR.systemstack.linear)
+   
+   
+/*!
+Defines where the userstack is within the mallocated area. The system
+stack will be on highest addresand the user stack will be below that.
+
+Read ratio as x:y or user_size/system_size
+*/
+#define USR_SYS_RATIO 2
+
+//Note that system stack has to fit even after usr_stack has been subtracted
+//With a rato of 2 this will give a stack size for sys_stack of 64
+
+#define MINIMUM_STACK_SIZE 0xC0 
+
+_tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
+
+#define REINIT_STACKADDR( ADDR, size )  \
+   _tk_reinit_stackaddr_xc167keil( &ADDR, size )
+ 
+#define REAL_STACK_SIZE( ADDR )  \
+   ( ADDR.sys_stack_size ) 
+
 
 
 #endif

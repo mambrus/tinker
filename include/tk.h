@@ -6,10 +6,15 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.6 $
+ *  Current $Revision: 1.7 $
  *
  *  $Log: tk.h,v $
- *  Revision 1.6  2005-11-23 07:47:44  ambrmi09
+ *  Revision 1.7  2005-11-23 11:31:05  ambrmi09
+ *  New stack structure is in place. Now all we have to do should be to just
+ *  attach DDP2:R0 to the user_stack part of it, and we "should" be done with
+ *  the XC167 stack bug.
+ *
+ *  Revision 1.6  2005/11/23 07:47:44  ambrmi09
  *  Simple namechange
  *
  *  Revision 1.5  2005/11/22 23:33:53  ambrmi09
@@ -62,10 +67,10 @@
 #include <tk_hwsys.h>   //should be OK now
 
 /** local definitions **/
-#define max_procs          10
-#define max_prio_levels    0x10  //fix this, Idle needs to bee last in last prio( needs one extra )
-#define max_procs_at_prio  0x8
-#define proc_name_len      0x08
+#define TK_MAX_PROCS            10
+#define TK_MAX_PRIO_LEVELS      0x10  //fix this, Idle needs to bee last in last prio( needs one extra )
+#define TK_MAX_THREADS_AT_PRIO  0x8
+#define TK_THREAD_NAME_LEN      0x08
 
 //Some defines for the logic
 #define TK_OK              0
@@ -115,7 +120,7 @@ like the C166 family, this is a much more complex structure.
 typedef struct    proc_t_s{
    unsigned int   Pid,Gid;             //!< Process ID and Parent ID (Gid)
    unsigned int   noChilds;            //!< Numb of procs this has created
-   char           name[proc_name_len]; //!< Name of the process
+   char           name[TK_THREAD_NAME_LEN]; //!< Name of the process
    BOOL           isInit;              //!< Memory for stack is allocated
    PROCSTATE      state;               //!< State of the process
    stack_t        stack_begin;         //!< First address of stack memory

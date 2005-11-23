@@ -6,10 +6,15 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.6 $
+ *  Current $Revision: 1.7 $
  *
  *  $Log: tk.c,v $
- *  Revision 1.6  2005-11-23 07:47:44  ambrmi09
+ *  Revision 1.7  2005-11-23 11:31:06  ambrmi09
+ *  New stack structure is in place. Now all we have to do should be to just
+ *  attach DDP2:R0 to the user_stack part of it, and we "should" be done with
+ *  the XC167 stack bug.
+ *
+ *  Revision 1.6  2005/11/23 07:47:44  ambrmi09
  *  Simple namechange
  *
  *  Revision 1.5  2005/11/22 23:33:54  ambrmi09
@@ -86,20 +91,20 @@
 #endif
 
 
-proc_t proc_stat[max_procs];
-//This is not perfect. PiD will be reused when more than max_procs has
+proc_t proc_stat[TK_MAX_PROCS];
+//This is not perfect. PiD will be reused when more than TK_MAX_PROCS has
 //been used. I wold have wanted a Pid range that is much bigger and a lookup-
 //table (gives greater uniquety - specially usefull i case of RPC) but that
 //is costly (I think)
-//coord_t lookUpTable[max_procs];
+//coord_t lookUpTable[TK_MAX_PROCS];
 
 typedef struct{
    unsigned short procs_at_prio;    //Used for optimizing sheduler.
    unsigned short curr_idx;
 }prio_stat_t;
 
-static unsigned int theSchedule[max_prio_levels][max_procs_at_prio];
-static prio_stat_t scheduleIdxs[max_prio_levels];
+static unsigned int theSchedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
+static prio_stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
 
 static unsigned int active_task = 0;
 static unsigned int task_to_run = 0;
@@ -128,7 +133,7 @@ proc_t *MyProc_p( void ){
 void createKern( void ){
    int i,j;
 
-   for (i=0; i<max_procs; i++){
+   for (i=0; i<TK_MAX_PROCS; i++){
       proc_stat[i].state         = ZOMBIE;
       proc_stat[i].wakeuptime    = 0;
       proc_stat[i].isInit        = FALSE;
@@ -137,7 +142,7 @@ void createKern( void ){
       proc_stat[i].Pid           = 0;
       proc_stat[i].noChilds      = 0;
       proc_stat[i].stack_size    = 0;
-      proc_stat[i].stack_begin   = NULL;
+      STACK_PTR(proc_stat[i].stack_begin) = NULL;
       proc_stat[i].curr_sp       = NULL;
       proc_stat[i].wakeupEvent   = 0;
    }
@@ -148,18 +153,18 @@ void createKern( void ){
    procs_in_use = 1;
    proc_idx = 0;
    //Clear the tables (before creating idle - task)
-   for (i=0; i<max_prio_levels; i++){
+   for (i=0; i<TK_MAX_PRIO_LEVELS; i++){
       //Clear the help table
       scheduleIdxs[i].procs_at_prio = 0;
       scheduleIdxs[i].curr_idx = 0;
-      for (j=0; j<max_procs_at_prio; j++){
+      for (j=0; j<TK_MAX_THREADS_AT_PRIO; j++){
          //init the table to root everywhere
          theSchedule[i][j]=0;
       }
    }
    //Create a Idle task, whoes sole purpose is to burn up time
    //when nobody else is running
-   idle_Pid = createTask("idle",max_prio_levels - 1,__tk_idle,NULL,64);
+   idle_Pid = createTask("idle",TK_MAX_PRIO_LEVELS - 1,__tk_idle,NULL,MINIMUM_STACK_SIZE);
    //IdleProc must like root, i.e. bee owned by itself
    proc_stat[proc_stat[idle_Pid].Gid].noChilds--;
    //Awkward way to say that root has created one process less than it has
@@ -171,8 +176,8 @@ void createKern( void ){
    theSchedule[0][0]=0;
    //Put idle task in shedule at lowest prio
    /*
-   scheduleIdxs[max_prio_levels - 1].procs_at_prio = 1;
-   theScedule[max_prio_levels - 1][0]=idle_Pid;
+   scheduleIdxs[TK_MAX_PRIO_LEVELS - 1].procs_at_prio = 1;
+   theScedule[TK_MAX_PRIO_LEVELS - 1][0]=idle_Pid;
    */ /* NOT NEEDED, DONE ALREADY */
 }
 
@@ -227,7 +232,7 @@ int deleteTask(unsigned int Pid){
       scheduleIdxs[Prio].curr_idx = 0;
    }
    //Make it final
-   free(proc_stat[Pid].stack_begin);
+   free( STACK_PTR(proc_stat[Pid].stack_begin) );
    proc_stat[Pid].isInit = FALSE;
    return(TK_OK);
 }
@@ -248,36 +253,37 @@ unsigned int createTask(
    size_t stack_size
 ){
    //where in theScheduler to put task id
-   unsigned int slot_idx = scheduleIdxs[prio].procs_at_prio;
-   funk_p *f_p;
-   void *v_p;
+   unsigned int   slot_idx = scheduleIdxs[prio].procs_at_prio;
+   funk_p        *f_p;
+   void          *v_p;
+   size_t         real_stack_size;
    #ifdef DEBUG
-   int i;
+   int            i;
    #endif
 
    //Error handling needs improvment (don't forget taking special care of
    //proc_idx)
-   if (procs_in_use >= max_procs){
+   if (procs_in_use >= TK_MAX_PROCS){
       printf("tk: Error - Total amount of processer exceeds limit\n");
       tk_exit(1);
    }
    //Check if chosen prio is within limits
-   if (prio >= max_prio_levels){
+   if (prio >= TK_MAX_PRIO_LEVELS){
       printf("tk: Error - Chosen priority exceed bounds\n");
       tk_exit(1);
    }
    //Check if there will be enough room at that prio
-   if (max_procs_at_prio <= ( scheduleIdxs[prio].procs_at_prio ) ){
+   if (TK_MAX_THREADS_AT_PRIO <= ( scheduleIdxs[prio].procs_at_prio ) ){
       printf("tk: Error - To many processes at prio\n");
       tk_exit(1);
    }
    //Find next empty slot - which is also the CREATED Pid
    do{
       proc_idx++;
-      proc_idx %= max_procs;
+      proc_idx %= TK_MAX_PROCS;
    }while (proc_stat[proc_idx].isInit == TRUE);
    //Test if the assigned name fits
-   if (strlen(name)<proc_name_len)
+   if (strlen(name)<TK_THREAD_NAME_LEN)
       strcpy(proc_stat[proc_idx].name,name);
    else{
       printf("tk: Error - Process name to long\n");
@@ -285,15 +291,19 @@ unsigned int createTask(
    }
    //Try to allocate memory for stack
 
-   if ((proc_stat[proc_idx].stack_begin = (char *) malloc(stack_size)) == NULL){
+   if (( STACK_PTR(proc_stat[proc_idx].stack_begin) = (char *) malloc(stack_size)) == NULL){
        printf("tk: Error - Can't create process (can't allocate memory for stack)\n");
        tk_exit(1);  // terminate program if out of memory
    }
+   
+   REINIT_STACKADDR( proc_stat[proc_idx].stack_begin, stack_size );
+   
    proc_stat[proc_idx].isInit       = TRUE;
    proc_stat[proc_idx].state        = READY;
    proc_stat[proc_idx].Pid          = proc_idx;    //for future compability with lage Pid:s
    proc_stat[proc_idx].Gid          = active_task; //Owned by..
    proc_stat[proc_idx].noChilds     = 0;
+   proc_stat[proc_idx].stack_size   = stack_size;
    proc_stat[proc_idx].Prio         = prio;
    proc_stat[proc_idx].Idx          = slot_idx;
    proc_stat[proc_idx].wakeupEvent  = 0;
@@ -303,7 +313,7 @@ unsigned int createTask(
 
    #ifdef DEBUG
    for (i=0;i<stack_size;i++)
-      proc_stat[proc_idx].stack_begin[i]=0xff;
+      STACK_PTR(proc_stat[proc_idx].stack_begin)[i] = (unsigned char)proc_idx;
    #endif
    //Here's the secret.
    //preparing the stack
@@ -314,17 +324,23 @@ unsigned int createTask(
    //#4=EBP
    //#0x4=pushf
    //#0x20=pusha 
+   
+   real_stack_size = REAL_STACK_SIZE(proc_stat[proc_idx].stack_begin);
 
-   v_p = (void *)&proc_stat[proc_idx].stack_begin[stack_size - 0x4];
+   //v_p = (void *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[ REAL_STACK_SIZE(proc_stat[proc_idx].stack_begin) - 0x4];
+   v_p = (void *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0x4];
    *(unsigned int*)v_p = (unsigned int)inpar;
 
-   f_p = (funk_p *)&proc_stat[proc_idx].stack_begin[stack_size - 0x8];
+   //f_p = (funk_p *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[REAL_STACK_SIZE(proc_stat[proc_idx].stack_begin) - 0x8];
+   f_p = (funk_p *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0x8];
    *f_p = destructor;
 
-   f_p = (funk_p *)&proc_stat[proc_idx].stack_begin[stack_size - 0xC];
+   //f_p = (funk_p *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[REAL_STACK_SIZE(proc_stat[proc_idx].stack_begin) - 0xC];
+   f_p = (funk_p *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0xC];
    *f_p = f;
 
-   ctTSP1 = &proc_stat[proc_idx].stack_begin[stack_size - 0xC];
+   //ctTSP1 = &STACK_PTR(proc_stat[proc_idx].stack_begin)[REAL_STACK_SIZE(proc_stat[proc_idx].stack_begin) - 0xC];
+   ctTSP1 = &STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0xC];
 
    //MARKALL();
 
@@ -422,7 +438,7 @@ void wakeUpSleepers( void ){
    act_time = clock();
    //Do not optimize this to "active_procs" until fragmentation of deleted procs
    //is solved.
-   for(i=0;i<max_procs;i++){
+   for(i=0;i<TK_MAX_PROCS;i++){
       if (proc_stat[i].state & SLEEP){
          if (proc_stat[i].isInit){           //dubble check
             if ( act_time >= proc_stat[i].wakeuptime ){
@@ -441,7 +457,7 @@ unsigned int next(){
    return_Pid  = idle_Pid; //In case no runnable proc is found...
    found       = FALSE;
 
-   for(prio=0;prio<max_prio_levels && !found;prio++){ //prio from highets to lowest
+   for(prio=0;prio<TK_MAX_PRIO_LEVELS && !found;prio++){ //prio from highets to lowest
       p_at_p = scheduleIdxs[prio].procs_at_prio;
       if (p_at_p != 0){ //No procs at prio to run.. prevent division by zero
          //Manual RR from current to next ready

@@ -287,9 +287,10 @@ void STKUF_trap (void) interrupt 0x06  {
 }
 
 
+
 /*
  * Class B Hardware Trap:
- *   ->  Undefined Opcode
+ *   ->  Undefined Opcode              - 10 TFR.4  = PACER     Illegal or erroneous access to program memory interface
  *   ->  Protected Instruction Fault
  *   ->  Illegal Word Operand Access
  *   ->  Illegal Instruction Access

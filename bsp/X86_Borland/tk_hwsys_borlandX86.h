@@ -62,7 +62,11 @@ typedef char * stack_t;
 
 
 
-#define SET_SP_TO_ZERO( SP )
+//Allready a char', no need to do handle in any special way.
+#define STACK_PTR( ADDR ) ADDR
+
+//Not needed to do anything. Deliberatlly empty.
+#define REINIT_STACKADDR( ADDR, size )
 
 #endif
 

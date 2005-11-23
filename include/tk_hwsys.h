@@ -111,10 +111,64 @@ from the corresponding threads TCB.
 /**
 @ingroup kernel_internals
         
-@brief Sets a stack adress (a stack_t type of variable) to zero
+@brief Refer to a stack address as a pointer. 
+
+Refer to a stack address as a pointer. Only the stacks actual adress
+will be handled (assuming the whole of a stack can be referred to with
+one address).
+
+@note In case you system has complex stacks you might need to
+post-adjust this.
+
+@note In a XC167/Keil combo target, a thread has two stacks. One
+system-stack (for return adresses and parameter passing) and one
+user-stack (local function data). Only the real stack, i.e. the system
+stack, is treated with this macro. Since we assume (i.e. we have
+defined), that there is always one ond only one adress for a stack there
+must be a relation between system- and user-stacks, and any user-stack
+adress can be deducted from the system-stack address. However, note that
+to set everything up correct in the structure one has to run a
+post-operative stack normalization.
+
+
+@note This will work on the targets supported up until TinKer's state up
+until now (051123), but might need to be reworked or replaced with a
+function later on. In future implementations a stack_t might not carry
+an linear address at all, but a id. In that case a simple macro will not
+do at all.
 */
 
-#define SET_SP_TO_ZERO( SP )
+#define STACK_PTR( ADDR )
+
+
+/*
+@brief Initialize or re-initialize a stack_t address
+
+On some targets where the stack address in complex, this macro makes the
+pos operative operation mentioned for STACK_PTR. On targets where
+stack_t is a simple char*, this macro does nothing.
+
+@note Always remember to run this macro after a assignement of a new
+stack addres if you want the stack to have up-to-date structural
+information.
+
+@note In a XC167/Keil combo target, this is especially important. The
+macro recalculates a user stack, based on the system-stack and some
+additional information about where to find it (hardcoded and internal).
+
+*/
+#define REINIT_STACKADDR( ADDR, size )
+
+/*
+@brief Gets the real stack size.
+
+Gets the real stack size to be used to get top of stack for return adresses.
+
+@note <b>NOT TO BE USED FOR CALC ADRESSES FOR DATA</b> (some obscure
+processors make a difference between those stacks.)
+
+*/
+#define REAL_STACK_SIZE( ADDR ) 
 
 
    

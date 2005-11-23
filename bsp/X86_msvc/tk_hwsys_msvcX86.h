@@ -60,6 +60,14 @@ typedef char * stack_t;
 
 #define GET_THREADS_RETVAL( THRETVAL )                                                                         \
    __asm{ mov THRETVAL,EAX             }
+   
+
+//Allready a char', no need to do handle in any special way.
+#define STACK_PTR( ADDR ) ADDR
+
+//Not needed to do anything. Deliberatlly empty.
+#define REINIT_STACKADDR( ADDR, size )
+
 
 
 #endif
