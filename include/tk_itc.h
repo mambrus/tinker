@@ -6,11 +6,15 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.1 $
+ *  Current $Revision: 1.2 $
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.1  2005-11-17 09:59:10  ambrmi09
- *  Initial revision
+ *  Revision 1.2  2005-11-24 19:40:12  ambrmi09
+ *  Lots of kernel API name changing. To support consistency and to prepare for
+ *  the pthreads port.
+ *
+ *  Revision 1.1.1.1  2005/11/17 09:59:10  ambrmi09
+ *  Created CVS jhome for TinKer from scratch. RCS history lost in database (kept in sourcecode)
  *
  *  Revision 1.4  1998/02/14 10:32:30  mickey
  *  Minor changes
@@ -86,7 +90,7 @@ typedef struct {
     /*unsigned long     sizeof_m;*/         /* Size of every message (qv) */
     unsigned long   maxSizeof_m;        /* Max size of message (This is stupid ,pSos)*/ 
     t_ipctype       b_type;
-    proc_t**        blocked_procs;      /* blocked_procs[MAX_BLOCKED_ON_Q];*/
+    tk_tcb_t**        blocked_procs;      /* blocked_procs[MAX_BLOCKED_ON_Q];*/
     unsigned long   in_idx;             /* Input index for the blocked proc fifo */
     unsigned long   out_idx;            /* Output index for the blocked proc fifo */
     unsigned long   min_idx;            /* Input index for the blocked message fifo */

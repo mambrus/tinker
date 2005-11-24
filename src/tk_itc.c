@@ -6,10 +6,14 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.3 $
+ *  Current $Revision: 1.4 $
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.3  2005-11-23 20:46:43  ambrmi09
+ *  Revision 1.4  2005-11-24 19:40:12  ambrmi09
+ *  Lots of kernel API name changing. To support consistency and to prepare for
+ *  the pthreads port.
+ *
+ *  Revision 1.3  2005/11/23 20:46:43  ambrmi09
  *  Finally stacks seems OK. A bit worried about some "garbage" that turns up
  *  at each TOS at each tasks start
  *
@@ -131,7 +135,7 @@ int proveConcistency(unsigned int qid) {
 #ifndef NDEBUG			 
 
 int no_duplicateBlock(unsigned int qid, unsigned int mark) {
-	proc_t *checkProc,*refProc = ipc_array[qid]->blocked_procs[mark];
+	tk_tcb_t *checkProc,*refProc = ipc_array[qid]->blocked_procs[mark];
 	unsigned int in = ipc_array[qid]->in_idx;
 	unsigned int out = ipc_array[qid]->out_idx;
 	unsigned int i;
@@ -284,13 +288,13 @@ static unsigned long lock_stage(
 	unsigned long qid, 
 	unsigned long timeout) 
 {
-	proc_t *MySelf;			/* A pointer to my own process PCB */
+	tk_tcb_t *MySelf;			/* A pointer to my own process PCB */
 	clock_t act_time;
 	clock_t timeout_time;	/* When to timeout if timeoutable */
 	unsigned int mark_idx;
 	
 	act_time = clock()/CLK_TCK*1000;
-	MySelf = MyProc_p();
+	MySelf = _tk_current_tcb();
 	
 	if ( ipc_array[qid]->token > 0 ) {	/*  */
 		/* Wow, gone tru */
@@ -313,7 +317,7 @@ static unsigned long lock_stage(
 			//assert(0);
 			MySelf->state = ( (MySelf->state) | _____Q__);
 			MySelf->wakeupEvent = 0;
-			schedul();
+			tk_yield();
 			/* OK, I've been blocked and now I'm free*/		
 			return(ERR_OK);
 		}else {
@@ -323,7 +327,7 @@ static unsigned long lock_stage(
 			MySelf->wakeuptime = timeout_time;
 			/*In case need to remove from list (timerelease)*/
 			mark_idx = ipc_array[qid]->in_idx; /*One to far, correct later*/
-			schedul();
+			tk_yield();
 			
 			/* who waked me?*/
 			if (MySelf->wakeupEvent == E_TIMER) {
@@ -391,7 +395,7 @@ static unsigned long lock_stage(
 static unsigned long unlock_stage(
 	unsigned long qid) 
 {	
-	proc_t *Him;			/* A pointer to the process to release  */
+	tk_tcb_t *Him;			/* A pointer to the process to release  */
 	unsigned int i;
 	unsigned int t_idx,t_prio = TK_MAX_PRIO_LEVELS + 2;
 	
@@ -441,7 +445,7 @@ static unsigned long unlock_stage(
 			ipc_array[qid]->blocked_procs[t_idx]->wakeupEvent = E_IPC;
 			//ipc_array[qid]->token++;
 			removeBlocked(ipc_array[qid],t_idx);	
-			schedul(); 
+			tk_yield(); 
 			
 		}else {
 			do {
@@ -456,7 +460,7 @@ static unsigned long unlock_stage(
 			 /*Should be obsolite now, but is not*/
 			Him->state = ( (Him->state) & ~_____QST); /* In case of timeout active release that to */
 			Him->wakeupEvent = E_IPC;
-			schedul(); /*In case the one you've just released has higher prio, run it*/	
+			tk_yield(); /*In case the one you've just released has higher prio, run it*/	
 		}
 	}else 				  
 		ipc_array[qid]->token++;	/* Increase number of tokens anyway */	   
@@ -731,8 +735,8 @@ unsigned long sm_create(
 		}						
 	}else if ((ipc_array[ipc_idx] = (t_ipc*)malloc(sizeof(t_ipc)) ) == NULL) {
 		return(ERR_NOMEM);
-	/* Allocate memory for pointertable of proc_t pointers */
-	}else if ((ipc_array[ipc_idx]->blocked_procs = (proc_t**)malloc(MAX_BLOCKED_ON_Q * sizeof(proc_t*)) ) == NULL) {
+	/* Allocate memory for pointertable of tk_tcb_t pointers */
+	}else if ((ipc_array[ipc_idx]->blocked_procs = (tk_tcb_t**)malloc(MAX_BLOCKED_ON_Q * sizeof(tk_tcb_t*)) ) == NULL) {
 			return(ERR_NOMEM);
 	}
 	

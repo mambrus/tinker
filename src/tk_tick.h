@@ -34,10 +34,10 @@ Call this from your timer ISR.
 
 Usable for systems where <b>100kHz</b> interrupt frequency is suitable
 
-@see __tk_tick_100uS()
-@see __tk_tick_1mS()
+@see _tk_tick_100uS()
+@see _tk_tick_1mS()
 */
-#define __tk_tick_10uS()               \
+#define _tk_tick_10uS()               \
   sys_tick+=10;                        \
                                        \
   if (!sys_tick){                      \
@@ -54,12 +54,12 @@ Call this from your timer ISR.
 Usable for systems where <b>1kHz</b> interrupt frequency is suitable. This will give the 
 highest possible relulution for tinker since 1 sys_tick is equal to 100uS.
 
-@see __tk_tick_1mS() 
-@see __tk_tick_10uS()
-@see __tk_tick_1mS()
-@see __tk_tick_PC()
+@see _tk_tick_1mS() 
+@see _tk_tick_10uS()
+@see _tk_tick_1mS()
+@see _tk_tick_PC()
 */
-#define __tk_tick_100us()              \
+#define _tk_tick_100us()              \
   sys_tick++;                          \
                                        \
   if (!sys_tick){                      \
@@ -74,12 +74,12 @@ Call this from your timer ISR.
 
 Usable for systems where <b>1KHz</b> interrupt frequency is suitable
 
-@see __tk_tick_10uS()
-@see __tk_tick_100uS()
-@see __tk_tick_1mS()
-@see __tk_tick_PC()
+@see _tk_tick_10uS()
+@see _tk_tick_100uS()
+@see _tk_tick_1mS()
+@see _tk_tick_PC()
 */
-#define __tk_tick_1mS()                \
+#define _tk_tick_1mS()                \
   sys_tick++;                          \
                                        \
   if (!sys_tick){                      \
@@ -94,12 +94,12 @@ Call this from your timer ISR.
 
 Usable for systems where <b>100Hz</b> interrupt frequency is suitable (slow system)
 
-@see __tk_tick_10uS()
-@see __tk_tick_100uS()
-@see __tk_tick_1mS()
-@see __tk_tick_PC()
+@see _tk_tick_10uS()
+@see _tk_tick_100uS()
+@see _tk_tick_1mS()
+@see _tk_tick_PC()
 */
-#define __tk_tick_10mS()               \
+#define _tk_tick_10mS()               \
   sys_tick+=10;                        \
                                        \
   if (!sys_tick){                      \
@@ -114,12 +114,12 @@ Call this from your timer ISR.
 
 Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC system)
 
-@see __tk_tick_10uS()
-@see __tk_tick_100uS()
-@see __tk_tick_1mS()
-@see __tk_tick_10mS()
+@see _tk_tick_10uS()
+@see _tk_tick_100uS()
+@see _tk_tick_1mS()
+@see _tk_tick_10mS()
 */
-#define __tk_tick_PC()                 \
+#define _tk_tick_PC()                 \
   sys_tick+=10;                        \
                                        \
   if (!sys_tick){                      \

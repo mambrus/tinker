@@ -6,10 +6,14 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.8 $
+ *  Current $Revision: 1.9 $
  *
  *  $Log: tk.h,v $
- *  Revision 1.8  2005-11-23 20:46:43  ambrmi09
+ *  Revision 1.9  2005-11-24 19:40:12  ambrmi09
+ *  Lots of kernel API name changing. To support consistency and to prepare for
+ *  the pthreads port.
+ *
+ *  Revision 1.8  2005/11/23 20:46:43  ambrmi09
  *  Finally stacks seems OK. A bit worried about some "garbage" that turns up
  *  at each TOS at each tasks start
  *
@@ -90,7 +94,7 @@
 #  define assert(p)   ((void)0)
 #else
 #  
-#  define assert(p) ((p) ? (void)0 : (void) __tk_assertfail( \
+#  define assert(p) ((p) ? (void)0 : (void) _tk_assertfail( \
                     #p, __FILE__, __LINE__ ) )              
 #endif
 
@@ -121,7 +125,7 @@ adaptions to cover certain architectures special aspects of a "stack".
 In a 32bit "normal" CPU this is often a char*, but for some obscure MPU:s
 like the C166 family, this is a much more complex structure.
 */
-typedef struct    proc_t_s{
+typedef struct    tk_tcb_t_s{
    unsigned int   Pid,Gid;             //!< Process ID and Parent ID (Gid)
    unsigned int   noChilds;            //!< Numb of procs this has created
    char           name[TK_THREAD_NAME_LEN]; //!< Name of the process
@@ -135,7 +139,7 @@ typedef struct    proc_t_s{
    clock_t        wakeuptime;          //!< When to wake up if sleeping
    wakeE_t        wakeupEvent;         //!< Helper variable mainly for IPC
    unsigned int   Prio,Idx;            //!< Helpers, prevent need of lookup
-}proc_t;
+}tk_tcb_t;
 
 /** default settings **/
 
@@ -144,6 +148,16 @@ typedef struct    proc_t_s{
 /** external data **/
 
 /** internal functions **/
+void           _tk_assertfail(    /* emulates __assertfail */
+   char *assertstr, 
+   char *filestr, 
+   int line
+);
+
+tk_tcb_t      *_tk_current_tcb( void );/* Gives a way to enter my own proc (for TKOS only)*/
+void           _tk_context_switch_to_thread(unsigned int RID,unsigned int SID);
+void           _tk_main( void );
+
 
 /** public data **/
 
@@ -151,35 +165,32 @@ typedef struct    proc_t_s{
 
 /** public functions **/
 
-void tk_main( void );
 
-void runTask(unsigned int RID,unsigned int SID);
-int deleteTask(unsigned int PID);
-unsigned int createTask(
-   char *name,
-   unsigned int prio,
-   funk_p f,
-   void *inpar,
-   size_t stack_size
+int            tk_delete_thread(unsigned int PID);
+
+unsigned int   tk_create_thread(
+   char          *name,
+   unsigned int   prio,
+   funk_p         start_func,
+   void          *inpar,
+   size_t         stack_size
 );
 //Allocate at least 2k stack if you use printf in task
 //else 64bytes is probably sufficent.
-void createKern( void );
-void deleteKern( void );
-void schedul( void );
-void tk_exit( int ec );
-unsigned int msleep( unsigned int time );
-unsigned int MyPid( void );            
-proc_t *MyProc_p( void );/* Gives a way to enter my own proc (for TKOS only)*/
-extern void root( void );/* supplied by the developper */
+void           tk_create_kernel( void );
+void           tk_delete_kernel( void );
+void           tk_yield( void );
+void           tk_exit( int ec );
+unsigned int   tk_msleep( unsigned int time_ms );
+unsigned int   tk_thread_id( void );            
 
-void __tk_assertfail(    /* emulates __assertfail */
-   char *assertstr, 
-   char *filestr, 
-   int line
-);
+extern void    root( void ); /*! supplied by YOU - constitutes the root thread function*/
 
 /** private functions **/
+
+
+
+
 #endif
 
 

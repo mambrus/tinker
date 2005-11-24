@@ -6,10 +6,14 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.8 $
+ *  Current $Revision: 1.9 $
  *
  *  $Log: tk.c,v $
- *  Revision 1.8  2005-11-23 20:46:43  ambrmi09
+ *  Revision 1.9  2005-11-24 19:40:12  ambrmi09
+ *  Lots of kernel API name changing. To support consistency and to prepare for
+ *  the pthreads port.
+ *
+ *  Revision 1.8  2005/11/23 20:46:43  ambrmi09
  *  Finally stacks seems OK. A bit worried about some "garbage" that turns up
  *  at each TOS at each tasks start
  *
@@ -79,6 +83,8 @@
 /** external data **/
 
 /** internal functions **/
+unsigned int _tk_destructor( void *foo );
+unsigned int _tk_idle( void *foo );
 
 /** public data **/
 
@@ -95,7 +101,7 @@
 #endif
 
 
-proc_t proc_stat[TK_MAX_THREADS];
+tk_tcb_t proc_stat[TK_MAX_THREADS];
 //This is not perfect. PiD will be reused when more than TK_MAX_THREADS has
 //been used. I wold have wanted a Pid range that is much bigger and a lookup-
 //table (gives greater uniquety - specially usefull i case of RPC) but that
@@ -113,28 +119,42 @@ static prio_stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
 static unsigned int active_task = 0;
 static unsigned int task_to_run = 0;
 /*static*/ unsigned int procs_in_use = 0;
-static unsigned int proc_idx;             //points at the last proc_t created
+static unsigned int proc_idx;             //points at the last tk_tcb_t created
 static unsigned int idle_Pid;             //idle_Pid must be known;
 
-unsigned int __tk_idle( void *foo ){          //idle loop (non public)
+unsigned int _tk_idle( void *foo ){          //idle loop (non public)
    while (TRUE){
-      schedul();
+      tk_yield();
    }
 }
 
-void deleteKern( void ){
-      deleteTask(idle_Pid);
+void tk_delete_kernel( void ){
+      tk_delete_thread(idle_Pid);
 }
 
-unsigned int MyPid( void ){
+unsigned int tk_thread_id( void ){
    return(active_task);
 }
 
-proc_t *MyProc_p( void ){
+/*
+@ingroup kernel_glue
+
+This gets the current threads internal thread control block (TCB). Function is
+"public" but is <b>not</b> ment to be used by application developers, rather as
+a way for different layers of TinKer to interact.
+
+*/
+tk_tcb_t *_tk_current_tcb( void ){
    return(&proc_stat[active_task]);
 }
 
-void createKern( void ){
+/*
+@ingroup kernel
+
+Creates the kernel. This is TinKers "init" funtion. All targets need to run
+this once, but only once.
+*/
+void tk_create_kernel( void ){
    int i,j;
 
    for (i=0; i<TK_MAX_THREADS; i++){
@@ -168,7 +188,7 @@ void createKern( void ){
    }
    //Create a Idle task, whoes sole purpose is to burn up time
    //when nobody else is running
-   idle_Pid = createTask("idle",TK_MAX_PRIO_LEVELS - 1,__tk_idle,NULL,MINIMUM_STACK_SIZE);
+   idle_Pid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,NULL,MINIMUM_STACK_SIZE);
    //IdleProc must like root, i.e. bee owned by itself
    proc_stat[proc_stat[idle_Pid].Gid].noChilds--;
    //Awkward way to say that root has created one process less than it has
@@ -185,25 +205,35 @@ void createKern( void ){
    */ /* NOT NEEDED, DONE ALREADY */
 }
 
-unsigned int destructor( void *foo ){
-   //function enters as a result of a ret instruction. EAX is passed
-   //as the return value. Not shure if it works on every processor
+/*!
+This function is entered as a result of a ret instruction from a thread. EAX
+is passed as the return value. Not shure if it works on every processor 
+*/
+unsigned int _tk_destructor( void *foo ){
    unsigned int retval;
-
-
    GET_THREADS_RETVAL( retval );
    
    //This is critical, no more stack, will not work as is in a preemtive kernal
    #ifdef DEBUG
    printf("Dieing task is returning %d\n\n",retval);
    #endif
-   deleteTask(active_task);
-   schedul();
+   tk_delete_thread(active_task);
+   tk_yield();
    //should never tk_exit
    return(0);
 }
 
-int deleteTask(unsigned int Pid){
+/*!
+@ingroup kernel
+
+Delete a thread
+
+@note be carefull about killing running threads. Any non-kernel resources
+allocated will not be freed. Always prefere a controlled exit of a thread.
+*/
+int tk_delete_thread(
+   unsigned int Pid              //!< Threads identity
+){
    unsigned int Prio,Idx,i;
    
    if ( proc_stat[Pid].isInit == FALSE )  {
@@ -253,12 +283,20 @@ static unsigned long ct_temp2;  //!< Extra storage. For some targets used to man
 static stack_t ct_stack_struct;
 
 
-unsigned int createTask(
-   char *name,
-   unsigned int prio,
-   funk_p f,
-   void * inpar,
-   size_t stack_size
+/*
+@ingroup kernel
+
+Creates a thread and puts it in runnable state (READY). Thread is not
+run though, until next yeald (or interrupt in case of a preemtable
+version). 
+
+*/
+unsigned int tk_create_thread(      
+   char          *name,          //!< Name 
+   unsigned int   prio,          //!< Priority 
+   funk_p         f,             //!< Start function
+   void          *inpar,         //!< Any variable or value to start of with
+   size_t         stack_size     //!< Stack size
 ){
    //where in theScheduler to put task id
    unsigned int   slot_idx = scheduleIdxs[prio].procs_at_prio;
@@ -292,9 +330,9 @@ unsigned int createTask(
    }while (proc_stat[proc_idx].isInit == TRUE);
    //Test if the assigned name fits
    if (strlen(name)<TK_THREAD_NAME_LEN)
-      strcpy(proc_stat[proc_idx].name,name);
+      strncpy(proc_stat[proc_idx].name,name,TK_THREAD_NAME_LEN);
    else{
-      printf("tk: Error - Process name to long\n");
+      printf("tk: Error - Thread-name to long\n");
       tk_exit(1);
    }
    //Try to allocate memory for stack
@@ -327,7 +365,7 @@ unsigned int createTask(
    //preparing the stack
    //=============================
    //#0x4=inpar (fony pushed param)    //The stack looks like calling schedule
-   //return adress to "destructor"     //from function destructor
+   //return adress to "_tk_destructor"     //from function _tk_destructor
    //#4=return adress (which is also calling adress of function task)
    //#4=EBP
    //#0x4=pushf
@@ -339,7 +377,7 @@ unsigned int createTask(
    *(unsigned int*)v_p = (unsigned int)inpar;
 
    f_p = (funk_p *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0x8];
-   *f_p = destructor;
+   *f_p = _tk_destructor;
 
    f_p = (funk_p *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0xC];
    *f_p = f;
@@ -367,7 +405,7 @@ unsigned int createTask(
 
 /**
 
-@ingroup kernel   
+@ingroup kernel
         
 @brief Sleeps for ms amount of time. 
 
@@ -418,7 +456,7 @@ timeout is greater than the size of an integer. This needs to be solved.
    
 */
 
-unsigned int msleep( unsigned int time_ms ){
+unsigned int tk_msleep( unsigned int time_ms ){
 /* It's our kernal so we "know" that a clock equals 1uS */
    clock_t act_time_us; 
    clock_t wkp_time_us;
@@ -429,14 +467,14 @@ unsigned int msleep( unsigned int time_ms ){
    //need a function t_diff that handles wraparound
    proc_stat[active_task].wakeuptime = wkp_time_us;
    proc_stat[active_task].state |= SLEEP;
-   schedul();
+   tk_yield();
    act_time_us    = clock();
 /* returns diff in clocks, i.e. uS  */
    latency_us = difftime(proc_stat[active_task].wakeuptime,act_time_us);
    return latency_us;
 }
 
-void wakeUpSleepers( void ){
+void _tk_wakeup_timedout_threads( void ){
    int i;
    clock_t act_time;
 
@@ -455,7 +493,13 @@ void wakeUpSleepers( void ){
    }
 }
 
-unsigned int next(){
+/*
+@ingroup kernel_internal
+
+Get the identity of the next thread to run. 
+Scheduling policy is used to determine which one that would be.
+*/
+unsigned int _tk_next_runable_thread(){
    int idx,prio,cidx,midx,nbTry,loop,return_Pid,p_at_p;
    BOOL found;
 
@@ -488,8 +532,10 @@ unsigned int next(){
 static char *cswTSP;          //!< fony temporary stackpointer used in the process of setting TOS
 static unsigned int cswTEMP;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
 
-
-void runTask(unsigned int RID,unsigned int SID){
+/*
+@ingroup kernel_internal
+*/
+void _tk_context_switch_to_thread(unsigned int RID,unsigned int SID){
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );   
    proc_stat[SID].curr_sp=cswTSP;
    
@@ -504,10 +550,26 @@ void runTask(unsigned int RID,unsigned int SID){
    //IEN = 1;
 }
 
-void schedul( void ){
-   wakeUpSleepers();
-   task_to_run = next();
-   runTask(task_to_run,active_task);
+/*
+Dispach or yeald to another thread that has more "right" to run.
+
+I.e. <b>seach</b> for another potential thread that is now in runnable state
+and that has higher priority. In non-preemptive mode, create simulated
+timeout-events on all threads currentlly sleepem, but whos timeout has expired
+(i.e. seach for timouts and change state to READY).
+
+@note This is the function to put here and there in you application if you run
+a non-preemptable version of TinKer. Any execution will not be context swiched
+until you either execute this function or run any other kernel function. <b>Any
+other TinKer kernelfunction is also a context switching point.<b>. If you don't
+want that behaviour you have to use the non-yealded version of that function
+(i.e. with suffix -ny)
+ */
+
+ void tk_yield( void ){
+   _tk_wakeup_timedout_threads();
+   task_to_run = _tk_next_runable_thread();
+   _tk_context_switch_to_thread(task_to_run,active_task);
 }
 
 void tk_exit( int ec) {
@@ -519,7 +581,15 @@ void tk_exit( int ec) {
    }
 }
 
-void __tk_assertfail(
+/*
+@ingroup kernel_glue
+
+Works as the assert macro exept that you have to use the __file_ and __line_
+explicitlly. Typically the assert macro calls this function on targets that do
+not have assert implemented.
+
+*/
+void _tk_assertfail(
    char *assertstr, 
    char *filestr, 
    int line
@@ -528,8 +598,14 @@ void __tk_assertfail(
    tk_exit(3);
 }
 
-void tk_main( void ){
-   createKern();
+/*
+@ingroup kernel_glue
+
+Called from your real main() or from your start-up code 
+
+*/
+void _tk_main( void ){
+   tk_create_kernel();
    #ifdef IPC
    createIPC();
    #endif
@@ -539,14 +615,14 @@ void tk_main( void ){
    #ifdef IPC
    deleteIPC();
    #endif 
-   deleteKern();
+   tk_delete_kernel();
 }
 
 
 #if defined(_MSVC_) || defined(WIN32) 
 int main(int argc, char **argv);
 int main(int argc, char **argv){
-   tk_main();
+   _tk_main();
    return 0;
 }
 #endif
@@ -554,9 +630,9 @@ int main(int argc, char **argv){
 /*
 void Test_scheduler( void ){
    while (TRUE){
-      runTask(T1,ROOT);
-      runTask(T2,ROOT);
-      runTask(T3,ROOT);
+      _tk_context_switch_to_thread(T1,ROOT);
+      _tk_context_switch_to_thread(T2,ROOT);
+      _tk_context_switch_to_thread(T3,ROOT);
    }
 }
 */

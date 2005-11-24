@@ -37,7 +37,7 @@ typedef fsleep *fsleep_p;
 
 extern unsigned int busywait( unsigned int time_ms );
 
-//fsleep_p sleepf = msleep; //unsafe with printf. Same probs as with preempt. use when semaphores are working
+//fsleep_p sleepf = tk_msleep; //unsafe with printf. Same probs as with preempt. use when semaphores are working
 fsleep_p sleepf = busywait;
 
 signed char putchar (signed char c)  {
