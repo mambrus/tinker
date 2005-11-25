@@ -6,10 +6,19 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.11 $
+ *  Current $Revision: 1.12 $
  *
  *  $Log: tk.c,v $
- *  Revision 1.11  2005-11-25 17:55:29  ambrmi09
+ *  Revision 1.12  2005-11-25 18:06:40  ambrmi09
+ *  Unstability bug found. Didnt think about that lot of time is spent in the
+ *  idle loop and that interrupts will quite likelly put RET adresses there.
+ *  By giving thread a fair stack, unstability was removed. Make a mental note
+ *  about this, since it will happen again (with faster ISR's).
+ *
+ *  Post mortem was not succesfull in printing out the correct thread. It reported
+ *  (root) thread, but I'm pretty syre problem was (idle) thread.
+ *
+ *  Revision 1.11  2005/11/25 17:55:29  ambrmi09
  *  Detection of a free-running kernel. Output post-mortem dump, then wait
  *  for real reset.
  *
@@ -214,7 +223,7 @@ void tk_create_kernel( void ){
    }
    //Create a Idle thread, whoes sole purpose is to burn up time
    //when nobody else is running
-   idle_Pid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,NULL,/*0x600*/MINIMUM_STACK_SIZE);
+   idle_Pid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,NULL,0x600/*MINIMUM_STACK_SIZE*/);
    //IdleProc must like root, i.e. bee owned by itself
    proc_stat[proc_stat[idle_Pid].Gid].noChilds--;
    //Awkward way to say that root has created one process less than it has
