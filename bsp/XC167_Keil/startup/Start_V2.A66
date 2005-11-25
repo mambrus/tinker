@@ -1641,6 +1641,9 @@ $IF (CLR_MEMORY = 1)
 
                 EXTRN   ?C_CLRMEMSECSTART : WORD
 Clr_Memory:
+                MOV     R5,PSW                 ; If started without reset, skip zero of ram
+                AND     R5,#0F000H             ; Mask out ILVL
+                JMPR    cc_NZ,Init_Vars        ; Value corresponds NOT that after a reset (i.e. 0)
 $IF TINY
                 MOV     R8,#?C_CLRMEMSECSTART
                 JMPR    cc_Z,EndClear
