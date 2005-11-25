@@ -6,10 +6,16 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.12 $
+ *  Current $Revision: 1.13 $
  *
  *  $Log: tk.c,v $
- *  Revision 1.12  2005-11-25 18:06:40  ambrmi09
+ *  Revision 1.13  2005-11-25 21:20:03  ambrmi09
+ *  Post mortem will now output the correct thread ID that broke.
+ *
+ *  A quick-n dirty solution for reading stdin is in place. Real files need to
+ *  be implemented soon ;)
+ *
+ *  Revision 1.12  2005/11/25 18:06:40  ambrmi09
  *  Unstability bug found. Didnt think about that lot of time is spent in the
  *  idle loop and that interrupts will quite likelly put RET adresses there.
  *  By giving thread a fair stack, unstability was removed. Make a mental note
@@ -133,14 +139,13 @@ typedef struct{
 static unsigned int theSchedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
 static prio_stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
 
-static unsigned int active_thread      = 0;
-static unsigned int thread_to_run      = 0;
-/*static*/ unsigned int procs_in_use   = 0;
-static unsigned int proc_idx;             //points at the last tk_tcb_t created
-static unsigned int idle_Pid;             //idle_Pid must be known, therefor public in this module (file)
+static unsigned int active_thread;        //!< Deliberatlly left uninitialized to support post mortem analysis
+static unsigned int thread_to_run   = 0;
+static unsigned int procs_in_use    = 0;
+static unsigned int proc_idx;             //!< Points at the last tk_tcb_t created
+static unsigned int idle_Pid;             //!< Idle_Pid must be known, therefor public in this module (file)
 
-
-unsigned int _tk_idle( void *foo ){          //idle loop (non public)
+unsigned int _tk_idle( void *foo ){       //!< idle loop (non public)
    while (TRUE){
       tk_yield();
    }
@@ -185,8 +190,9 @@ void tk_create_kernel( void ){
    testArea = malloc(TSTSZ);
    if (strncmp(testPatt,testArea,TSTSZ) == 0){   
       printf("Error: Kernel running amok detected\n");
-      printf("Broken thread was %d (%s)\n",active_thread,proc_stat[active_thread].name);
-	  memset (testArea, '\0', TSTSZ);     //Clear area then wait for reset
+      printf("Broken thread was ID=%d (name=\"%s\")\n",\
+         active_thread,proc_stat[active_thread].name);
+      memset (testArea, '\0', TSTSZ);     //Clear area then wait for reset
       tk_exit(2);
    }else{
       strncpy(testArea,testPatt,TSTSZ);

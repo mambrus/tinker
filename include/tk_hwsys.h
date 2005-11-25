@@ -6,6 +6,19 @@
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 /**
+@ingroup kernel_internals
+        
+@brief Prevents <b>all</b> interruppts on the target
+
+@note You have to change the SP to the new stack before using this macro
+
+@todo Verify for XC167
+   
+*/
+#define TK_CLI()
+
+
+/**
 @ingroup kernel_internals   
         
 @brief Pushes all CPU on current stack
