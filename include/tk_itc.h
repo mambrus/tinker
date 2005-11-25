@@ -6,10 +6,14 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.2 $
+ *  Current $Revision: 1.3 $
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.2  2005-11-24 19:40:12  ambrmi09
+ *  Revision 1.3  2005-11-25 14:35:16  ambrmi09
+ *  A first naive aproach of ISR to thread syncronisation mechanism. It works
+ *  but it is unstable.
+ *
+ *  Revision 1.2  2005/11/24 19:40:12  ambrmi09
  *  Lots of kernel API name changing. To support consistency and to prepare for
  *  the pthreads port.
  *
@@ -118,6 +122,41 @@ typedef struct {
 void createIPC( void );
 void deleteIPC( void );
 
+/*
+#if defined (PREEMPTABLE)
+
+#define q_vcreate    q_vcreate_ny
+#define q_vdelete    q_vdelete_ny
+#define q_vreceive   q_vreceive_ny
+#define q_vsend      q_vsend_ny
+#define q_create     q_create_ny
+#define q_delete     q_delete_ny
+#define q_receive    q_receive_ny
+#define q_send       q_send_ny
+#define sm_create    sm_create_ny
+#define sm_delete    sm_delete_ny
+#define sm_p         sm_p_ny
+#define sm_v         sm_v_ny
+#define q_vcreate    q_vcreate_ny
+#define q_vdelete    q_vdelete_ny
+#define q_vreceive   q_vreceive_ny
+#define q_vsend      q_vsend_ny
+#define q_create     q_create_ny
+#define q_delete     q_delete_ny
+#define q_receive    q_receive_ny
+#define q_send       q_send_ny
+#define sm_create    sm_create_ny
+#define sm_delete    sm_delete_ny
+#define sm_p         sm_p_ny
+#define sm_v         sm_v_ny
+
+#endif
+*/
+
+
+
+
+
 unsigned long q_vcreate(
    char name[4],            /*!< name                                       */
    unsigned long flags,     /*!< attrib                                     */
@@ -188,4 +227,79 @@ unsigned long sm_p(         /*!< sm_receive or sm_get                       */
 unsigned long sm_v(         /*!< sm_send or sm_put                          */
    unsigned long qid        /*!< id                                         */
 );
+
+/* Non-yield versions of the same API - to be used by ISRs or in PREEPTABLE versions of kernel */
+
+unsigned long q_vcreate_ny(
+   char name[4],            /*!< name                                       */
+   unsigned long flags,     /*!< attrib                                     */
+   unsigned long count,     /*!< queue size                                 */
+   unsigned long mmlen,     /*!< max message length                         */
+   unsigned long *qid       /*!< id                                         */
+);
+
+unsigned long q_vdelete_ny(
+    unsigned long qid       /*!< id                                         */
+);
+
+unsigned long q_vreceive_ny(
+   unsigned long qid,       /*!< id                                         */
+   unsigned long flags,     /*!< attrib                                     */
+   unsigned long timeout,   /*!< timeout in clock ticks !?vafan             */
+   void *msg_buf,           /*!< message buffer                             */
+   unsigned long buf_len,   /*!< The size of your allocated buffer          */
+   unsigned long *msg_len   /*!< The size of the message                    */
+);
+
+unsigned long q_vsend_ny(
+   unsigned long qid,       /*!< id                                         */
+   void *msg_buf,           /*!< message buffer                             */
+   unsigned long msg_len    /*!< The length of this message                 */
+);
+
+unsigned long q_create_ny(
+   char name[4],            /*!< name                                       */
+   unsigned long count,     /*!< queue size                                 */
+   unsigned long flags,     /*!< attrib                                     */
+   unsigned long *qid       /*!< id                                         */
+);
+
+unsigned long q_delete_ny(
+    unsigned long qid       /*!< id                                         */
+);
+
+unsigned long q_receive_ny(
+   unsigned long qid,       /*!< id                                         */
+   unsigned long flags,     /*!< attrib                                     */
+   unsigned long timeout,   /*!< timeout in clock ticks !?vafan             */
+   unsigned long msg_buf[4] /*!< message buffer                             */
+);
+
+unsigned long q_send_ny(
+   unsigned long qid,       /*!< id                                         */
+   unsigned long msg_buf[4] /*!< message buffer                             */
+);
+
+unsigned long sm_create_ny(
+   char name[4],            /*!< name                                       */
+   unsigned long count,     /*!< initial number of tokens                   */
+   unsigned long flags,     /*!< attrib                                     */
+   unsigned long *qid       /*!< id                                         */
+);
+
+unsigned long sm_delete_ny(
+   unsigned long pid        /*!< id                                         */
+);
+
+unsigned long sm_p_ny(         /*!< sm_receive or sm_get                       */
+   unsigned long qid,       /*!< id                                         */
+   unsigned long flags,     /*!< attrib                                     */
+   unsigned long timeout    /*!< timeout in clock ticks !?vafan             */
+);
+
+unsigned long sm_v_ny(         /*!< sm_send or sm_put                          */
+   unsigned long qid        /*!< id                                         */
+);
+
+
 #endif

@@ -1,4 +1,5 @@
 #include "tk_hwsys_keilC166.h"
+#include <tk_ipc.h>
 
 
 /*
@@ -44,4 +45,10 @@ void _tk_reinit_stackaddr_xc167keil(
    addr->sys_stack_size = sys_stack_size;
    
    addr->userstack.linear = addr->systemstack.linear + usr_stack_size;   
+}
+
+unsigned long Q_ASC0;
+
+void _tk_initialize_system_ques( ){
+   q_create_ny("ASC0",0x05,FIFO,&Q_ASC0);
 }

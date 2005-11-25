@@ -306,6 +306,11 @@ Read ratio as x:y or user_size/system_size
 
 void _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
 
+//#include <tk_ipc.h>  //< will create stupid errors
+
+extern unsigned long Q_ASC0;
+void _tk_initialize_system_ques( );
+
 #define REINIT_STACKADDR( ADDR, size )  \
    _tk_reinit_stackaddr_xc167keil( &ADDR, size )
  

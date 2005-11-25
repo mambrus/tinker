@@ -6,10 +6,14 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.9 $
+ *  Current $Revision: 1.10 $
  *
  *  $Log: tk.c,v $
- *  Revision 1.9  2005-11-24 19:40:12  ambrmi09
+ *  Revision 1.10  2005-11-25 14:35:16  ambrmi09
+ *  A first naive aproach of ISR to thread syncronisation mechanism. It works
+ *  but it is unstable.
+ *
+ *  Revision 1.9  2005/11/24 19:40:12  ambrmi09
  *  Lots of kernel API name changing. To support consistency and to prepare for
  *  the pthreads port.
  *
@@ -608,6 +612,7 @@ void _tk_main( void ){
    tk_create_kernel();
    #ifdef IPC
    createIPC();
+   _tk_initialize_system_ques( );
    #endif
     
    root();
