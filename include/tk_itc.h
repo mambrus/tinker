@@ -6,10 +6,14 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.3 $
+ *  Current $Revision: 1.4 $
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.3  2005-11-25 14:35:16  ambrmi09
+ *  Revision 1.4  2005-11-25 17:55:29  ambrmi09
+ *  Detection of a free-running kernel. Output post-mortem dump, then wait
+ *  for real reset.
+ *
+ *  Revision 1.3  2005/11/25 14:35:16  ambrmi09
  *  A first naive aproach of ISR to thread syncronisation mechanism. It works
  *  but it is unstable.
  *
@@ -58,7 +62,7 @@
 #define ERR_FULL            0x35 /* The message buffer is full */
 #define ERR_NOSCB           0x41 /* Exceeds max numer of semaphores */
 #define ERR_NOSEM           0x42 /* Only if NOWAIT was selected */
-#define ERR_TATSDEL         0x44 /* There were tasks waiting */
+#define ERR_TATSDEL         0x44 /* There were threads waiting */
 
 #define ERR_NOMEM           0x100/* No more memory */
 #define ERR_BLOCKLIMIT      0x101/* Can't block more procs on queue or semaphore */

@@ -6,10 +6,14 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.9 $
+ *  Current $Revision: 1.10 $
  *
  *  $Log: tk.h,v $
- *  Revision 1.9  2005-11-24 19:40:12  ambrmi09
+ *  Revision 1.10  2005-11-25 17:55:29  ambrmi09
+ *  Detection of a free-running kernel. Output post-mortem dump, then wait
+ *  for real reset.
+ *
+ *  Revision 1.9  2005/11/24 19:40:12  ambrmi09
  *  Lots of kernel API name changing. To support consistency and to prepare for
  *  the pthreads port.
  *
@@ -175,7 +179,7 @@ unsigned int   tk_create_thread(
    void          *inpar,
    size_t         stack_size
 );
-//Allocate at least 2k stack if you use printf in task
+//Allocate at least 2k stack if you use printf in thread
 //else 64bytes is probably sufficent.
 void           tk_create_kernel( void );
 void           tk_delete_kernel( void );

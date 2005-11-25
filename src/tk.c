@@ -6,10 +6,14 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.10 $
+ *  Current $Revision: 1.11 $
  *
  *  $Log: tk.c,v $
- *  Revision 1.10  2005-11-25 14:35:16  ambrmi09
+ *  Revision 1.11  2005-11-25 17:55:29  ambrmi09
+ *  Detection of a free-running kernel. Output post-mortem dump, then wait
+ *  for real reset.
+ *
+ *  Revision 1.10  2005/11/25 14:35:16  ambrmi09
  *  A first naive aproach of ISR to thread syncronisation mechanism. It works
  *  but it is unstable.
  *
@@ -120,11 +124,12 @@ typedef struct{
 static unsigned int theSchedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
 static prio_stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
 
-static unsigned int active_task = 0;
-static unsigned int task_to_run = 0;
-/*static*/ unsigned int procs_in_use = 0;
+static unsigned int active_thread      = 0;
+static unsigned int thread_to_run      = 0;
+/*static*/ unsigned int procs_in_use   = 0;
 static unsigned int proc_idx;             //points at the last tk_tcb_t created
-static unsigned int idle_Pid;             //idle_Pid must be known;
+static unsigned int idle_Pid;             //idle_Pid must be known, therefor public in this module (file)
+
 
 unsigned int _tk_idle( void *foo ){          //idle loop (non public)
    while (TRUE){
@@ -137,7 +142,7 @@ void tk_delete_kernel( void ){
 }
 
 unsigned int tk_thread_id( void ){
-   return(active_task);
+   return(active_thread);
 }
 
 /*
@@ -149,7 +154,7 @@ a way for different layers of TinKer to interact.
 
 */
 tk_tcb_t *_tk_current_tcb( void ){
-   return(&proc_stat[active_task]);
+   return(&proc_stat[active_thread]);
 }
 
 /*
@@ -158,8 +163,25 @@ tk_tcb_t *_tk_current_tcb( void ){
 Creates the kernel. This is TinKers "init" funtion. All targets need to run
 this once, but only once.
 */
+
+#define TSTSZ 0x10
+static const char testPatt[TSTSZ] = "TinKer is king!";
 void tk_create_kernel( void ){
    int i,j;
+   char *testArea;
+   
+   /*
+   Detect if a kernel is running amok.    
+   */
+   testArea = malloc(TSTSZ);
+   if (strncmp(testPatt,testArea,TSTSZ) == 0){   
+      printf("Error: Kernel running amok detected\n");
+      printf("Broken thread was %d (%s)\n",active_thread,proc_stat[active_thread].name);
+	  memset (testArea, '\0', TSTSZ);     //Clear area then wait for reset
+      tk_exit(2);
+   }else{
+      strncpy(testArea,testPatt,TSTSZ);
+   }
 
    for (i=0; i<TK_MAX_THREADS; i++){
       proc_stat[i].state         = ZOMBIE;
@@ -180,7 +202,7 @@ void tk_create_kernel( void ){
    strcpy(proc_stat[0].name,"root");
    procs_in_use = 1;
    proc_idx = 0;
-   //Clear the tables (before creating idle - task)
+   //Clear the tables (before creating idle - thread)
    for (i=0; i<TK_MAX_PRIO_LEVELS; i++){
       //Clear the help table
       scheduleIdxs[i].procs_at_prio = 0;
@@ -190,9 +212,9 @@ void tk_create_kernel( void ){
          theSchedule[i][j]=0;
       }
    }
-   //Create a Idle task, whoes sole purpose is to burn up time
+   //Create a Idle thread, whoes sole purpose is to burn up time
    //when nobody else is running
-   idle_Pid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,NULL,MINIMUM_STACK_SIZE);
+   idle_Pid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,NULL,/*0x600*/MINIMUM_STACK_SIZE);
    //IdleProc must like root, i.e. bee owned by itself
    proc_stat[proc_stat[idle_Pid].Gid].noChilds--;
    //Awkward way to say that root has created one process less than it has
@@ -202,7 +224,7 @@ void tk_create_kernel( void ){
    //Put the root in the scedule
    scheduleIdxs[0].procs_at_prio = 1;
    theSchedule[0][0]=0;
-   //Put idle task in shedule at lowest prio
+   //Put idle thread in shedule at lowest prio
    /*
    scheduleIdxs[TK_MAX_PRIO_LEVELS - 1].procs_at_prio = 1;
    theScedule[TK_MAX_PRIO_LEVELS - 1][0]=idle_Pid;
@@ -219,9 +241,9 @@ unsigned int _tk_destructor( void *foo ){
    
    //This is critical, no more stack, will not work as is in a preemtive kernal
    #ifdef DEBUG
-   printf("Dieing task is returning %d\n\n",retval);
+   printf("Dieing thread is returning %d\n\n",retval);
    #endif
-   tk_delete_thread(active_task);
+   tk_delete_thread(active_thread);
    tk_yield();
    //should never tk_exit
    return(0);
@@ -302,7 +324,7 @@ unsigned int tk_create_thread(
    void          *inpar,         //!< Any variable or value to start of with
    size_t         stack_size     //!< Stack size
 ){
-   //where in theScheduler to put task id
+   //where in theScheduler to put thread id
    unsigned int   slot_idx = scheduleIdxs[prio].procs_at_prio;
    funk_p        *f_p;
    void          *v_p;
@@ -351,14 +373,14 @@ unsigned int tk_create_thread(
    proc_stat[proc_idx].isInit       = TRUE;
    proc_stat[proc_idx].state        = READY;
    proc_stat[proc_idx].Pid          = proc_idx;    //for future compability with lage Pid:s
-   proc_stat[proc_idx].Gid          = active_task; //Owned by..
+   proc_stat[proc_idx].Gid          = active_thread; //Owned by..
    proc_stat[proc_idx].noChilds     = 0;
    proc_stat[proc_idx].stack_size   = stack_size;
    proc_stat[proc_idx].Prio         = prio;
    proc_stat[proc_idx].Idx          = slot_idx;
    proc_stat[proc_idx].wakeupEvent  = 0;
 
-   proc_stat[active_task].noChilds++;
+   proc_stat[active_thread].noChilds++;
    procs_in_use++;
 
    #ifdef DEBUG
@@ -370,7 +392,7 @@ unsigned int tk_create_thread(
    //=============================
    //#0x4=inpar (fony pushed param)    //The stack looks like calling schedule
    //return adress to "_tk_destructor"     //from function _tk_destructor
-   //#4=return adress (which is also calling adress of function task)
+   //#4=return adress (which is also calling adress of function thread)
    //#4=EBP
    //#0x4=pushf
    //#0x20=pusha 
@@ -469,12 +491,12 @@ unsigned int tk_msleep( unsigned int time_ms ){
    act_time_us    = clock();
    wkp_time_us    = act_time_us + (time_ms * 1000uL);
    //need a function t_diff that handles wraparound
-   proc_stat[active_task].wakeuptime = wkp_time_us;
-   proc_stat[active_task].state |= SLEEP;
+   proc_stat[active_thread].wakeuptime = wkp_time_us;
+   proc_stat[active_thread].state |= SLEEP;
    tk_yield();
    act_time_us    = clock();
 /* returns diff in clocks, i.e. uS  */
-   latency_us = difftime(proc_stat[active_task].wakeuptime,act_time_us);
+   latency_us = difftime(proc_stat[active_thread].wakeuptime,act_time_us);
    return latency_us;
 }
 
@@ -544,7 +566,7 @@ void _tk_context_switch_to_thread(unsigned int RID,unsigned int SID){
    proc_stat[SID].curr_sp=cswTSP;
    
    cswTSP=proc_stat[RID].curr_sp;
-   active_task=RID;
+   active_thread=RID;
    /*************** OBS OBS - TESTPURPOSE ONLY *****************/
    STKUN = 0x7200;
    STKOV = 0x6500;
@@ -572,8 +594,8 @@ want that behaviour you have to use the non-yealded version of that function
 
  void tk_yield( void ){
    _tk_wakeup_timedout_threads();
-   task_to_run = _tk_next_runable_thread();
-   _tk_context_switch_to_thread(task_to_run,active_task);
+   thread_to_run = _tk_next_runable_thread();
+   _tk_context_switch_to_thread(thread_to_run,active_thread);
 }
 
 void tk_exit( int ec) {
