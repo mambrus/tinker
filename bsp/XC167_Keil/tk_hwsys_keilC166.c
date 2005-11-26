@@ -1,27 +1,41 @@
 #include "tk_hwsys_keilC166.h"
 #include <tk_ipc.h>
 
-
 /*
 
+@ingroup kernel_internal_BSP
+
+@brief Reinitializes the stack.
+
+On XC167 (and other C166 derivate using Keil as compiler) there are always
+<b>two</b> stacks. Conceptually TinKer knows only of one, and this function
+helps to create the two stacks within the same TinKer stack, i.e. within
+the same memory area (usually allocated from heap with malloc).
+
+Below are some notes for where the stacks are deducted to be.
+
 ratio             :=  user_stack_size/system_stack_size
-whlole_stack_size :=  (system_stack_size + user_stack_size)
+whole_stack_size  :=  (system_stack_size + user_stack_size)
 
 =>
 
 user_stack_size   := ratio * system_stack_size
-system_stack_size := whlole_stack_size - user_stack_size
+system_stack_size := whole_stack_size - user_stack_size
 
 =>
 
-user_stack_size   := ratio * (whlole_stack_size - user_stack_size)
-user_stack_size   := ratio * whlole_stack_size - ratio * user_stack_size
+user_stack_size   := ratio * (whole_stack_size - user_stack_size)
+user_stack_size   := ratio * whole_stack_size - ratio * user_stack_size
 
 
-user_stack_size + ratio * user_stack_size := ratio * whlole_stack_size
-user_stack_size * ( 1+ ratio )            := ratio * whlole_stack_size
+user_stack_size + ratio * user_stack_size := ratio * whole_stack_size
+user_stack_size * ( 1+ ratio )            := ratio * whole_stack_size
 
-user_stack_size                           := ratio * whlole_stack_size / ( 1+ ratio )
+user_stack_size                           := ratio * whole_stack_size / ( 1+ ratio )
+
+@note According to the XC167 manual: <i>Only word accesses are supported to 
+the system stack.</i> Therefor we need the word alignement as you se in the 
+code.
 
 */
 

@@ -6,39 +6,9 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.4 $
- *
- *  $Log: tk_itc.h,v $
- *  Revision 1.4  2005-11-25 17:55:29  ambrmi09
- *  Detection of a free-running kernel. Output post-mortem dump, then wait
- *  for real reset.
- *
- *  Revision 1.3  2005/11/25 14:35:16  ambrmi09
- *  A first naive aproach of ISR to thread syncronisation mechanism. It works
- *  but it is unstable.
- *
- *  Revision 1.2  2005/11/24 19:40:12  ambrmi09
- *  Lots of kernel API name changing. To support consistency and to prepare for
- *  the pthreads port.
- *
- *  Revision 1.1.1.1  2005/11/17 09:59:10  ambrmi09
- *  Created CVS jhome for TinKer from scratch. RCS history lost in database (kept in sourcecode)
- *
- *  Revision 1.4  1998/02/14 10:32:30  mickey
- *  Minor changes
- *  Handling of tokentest in semaphores added (NOWAIT)
- *
- *  Revision 1.3  1998/02/04 20:49:19  mickey
- *  FIrst atteptt to solve priority semaphores (has errors)
- *
- *  Revision 1.2  1998/02/01 20:03:28  mickey
- *  Jiihaa, first version of a working semaphore
- *
- *  Revision 1.1  1998/01/28 21:34:37  mickey
- *  Initial revision
+ *  Current $Revision: 1.5 $
  *
  *******************************************************************/
- 
 #ifndef tk_ipc_h
 #define tk_ipc_h
 
@@ -307,3 +277,42 @@ unsigned long sm_v_ny(         /*!< sm_send or sm_put                          *
 
 
 #endif
+
+
+
+
+  
+/*******************************************************************
+ *  $Log: tk_itc.h,v $
+ *  Revision 1.5  2005-11-26 11:38:40  ambrmi09
+ *  Cosmetic changes concerning CVS logs in source.
+ *
+ *  Revision 1.4  2005/11/25 17:55:29  ambrmi09
+ *  Detection of a free-running kernel. Output post-mortem dump, then wait
+ *  for real reset.
+ *
+ *  Revision 1.3  2005/11/25 14:35:16  ambrmi09
+ *  A first naive aproach of ISR to thread syncronisation mechanism. It works
+ *  but it is unstable.
+ *
+ *  Revision 1.2  2005/11/24 19:40:12  ambrmi09
+ *  Lots of kernel API name changing. To support consistency and to prepare for
+ *  the pthreads port.
+ *
+ *  Revision 1.1.1.1  2005/11/17 09:59:10  ambrmi09
+ *  Created CVS jhome for TinKer from scratch. RCS history lost in database (kept in sourcecode)
+ *
+ *  Revision 1.4  1998/02/14 10:32:30  mickey
+ *  Minor changes
+ *  Handling of tokentest in semaphores added (NOWAIT)
+ *
+ *  Revision 1.3  1998/02/04 20:49:19  mickey
+ *  FIrst atteptt to solve priority semaphores (has errors)
+ *
+ *  Revision 1.2  1998/02/01 20:03:28  mickey
+ *  Jiihaa, first version of a working semaphore
+ *
+ *  Revision 1.1  1998/01/28 21:34:37  mickey
+ *  Initial revision
+ *
+ *******************************************************************/

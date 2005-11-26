@@ -6,87 +6,8 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.13 $
+ *  Current $Revision: 1.14 $
  *
- *  $Log: tk.c,v $
- *  Revision 1.13  2005-11-25 21:20:03  ambrmi09
- *  Post mortem will now output the correct thread ID that broke.
- *
- *  A quick-n dirty solution for reading stdin is in place. Real files need to
- *  be implemented soon ;)
- *
- *  Revision 1.12  2005/11/25 18:06:40  ambrmi09
- *  Unstability bug found. Didnt think about that lot of time is spent in the
- *  idle loop and that interrupts will quite likelly put RET adresses there.
- *  By giving thread a fair stack, unstability was removed. Make a mental note
- *  about this, since it will happen again (with faster ISR's).
- *
- *  Post mortem was not succesfull in printing out the correct thread. It reported
- *  (root) thread, but I'm pretty syre problem was (idle) thread.
- *
- *  Revision 1.11  2005/11/25 17:55:29  ambrmi09
- *  Detection of a free-running kernel. Output post-mortem dump, then wait
- *  for real reset.
- *
- *  Revision 1.10  2005/11/25 14:35:16  ambrmi09
- *  A first naive aproach of ISR to thread syncronisation mechanism. It works
- *  but it is unstable.
- *
- *  Revision 1.9  2005/11/24 19:40:12  ambrmi09
- *  Lots of kernel API name changing. To support consistency and to prepare for
- *  the pthreads port.
- *
- *  Revision 1.8  2005/11/23 20:46:43  ambrmi09
- *  Finally stacks seems OK. A bit worried about some "garbage" that turns up
- *  at each TOS at each tasks start
- *
- *  Revision 1.7  2005/11/23 11:31:06  ambrmi09
- *  New stack structure is in place. Now all we have to do should be to just
- *  attach DDP2:R0 to the user_stack part of it, and we "should" be done with
- *  the XC167 stack bug.
- *
- *  Revision 1.6  2005/11/23 07:47:44  ambrmi09
- *  Simple namechange
- *
- *  Revision 1.5  2005/11/22 23:33:54  ambrmi09
- *  New stack_t in place and tested for XC167. We seem to have some include confilict also between regs166.h and main.h (both system includes)
- *
- *  Revision 1.4  2005/11/22 20:07:56  ambrmi09
- *  Separated architecture specific code by introducing tk_hwsys_<TARGET>.h
- *  files.
- *  Prepared for new stack_t type (not introduced yet).
- *
- *  Revision 1.3  2005/11/18 13:18:27  ambrmi09
- *  Finally got the timing right (tested and verifyed). Amazing accurancy!
- *  accurancy from 60000mS to 1mS (executed 10000 ti,es) both show the same
- *  constant error (that they are equal can only be explained due to the
- *  meassuring method). Still need to work some on getting portability between
- *  fast and slow targets right so trimming of kernal will be easy.
- *
- *  Revision 1.2  2005/11/18 11:23:32  ambrmi09
- *  Starting to document and to clean up kernel internals.
- *
- *  Revision 1.1.1.1  2005/11/17 09:59:09  ambrmi09
- *  Created CVS jhome for TinKer from scratch. RCS history lost in database (kept in sourcecode)
- *
- *  Revision 1.6  1998/02/16 18:03:41  mickey
- *  Added tk_assertFail
- *
- *  Revision 1.5  1998/02/14 10:35:42  mickey
- *  tk_exit added
- *  Handling av wakeup event. Needed for IPC to be able why a IPC object was
- *  released.
- *
- *  Revision 1.4  1998/02/01 20:03:29  mickey
- *  Jiihaa, first version of a working semaphore
- *
- *  Revision 1.2  1998/01/28 21:32:27  mickey
- *  First working revision after tidying, with both Borland and Codewright IDE
- *
- *  Revision 1.1  1998/01/28 20:12:08  mickey
- *  Initial revision
- *
- *  
  *******************************************************************/
 
 /** include files **/
@@ -607,7 +528,7 @@ want that behaviour you have to use the non-yealded version of that function
 (i.e. with suffix -ny)
  */
 
- void tk_yield( void ){
+void tk_yield( void ){
    _tk_wakeup_timedout_threads();
    thread_to_run = _tk_next_runable_thread();
    _tk_context_switch_to_thread(thread_to_run,active_thread);
@@ -679,3 +600,93 @@ void Test_scheduler( void ){
 }
 */
 
+
+
+
+
+  
+/*******************************************************************
+ *
+ *  $Log: tk.c,v $
+ *  Revision 1.14  2005-11-26 11:38:40  ambrmi09
+ *  Cosmetic changes concerning CVS logs in source.
+ *
+ *  Revision 1.13  2005/11/25 21:20:03  ambrmi09
+ *  Post mortem will now output the correct thread ID that broke.
+ *
+ *  A quick-n dirty solution for reading stdin is in place. Real files need to
+ *  be implemented soon ;)
+ *
+ *  Revision 1.12  2005/11/25 18:06:40  ambrmi09
+ *  Unstability bug found. Didnt think about that lot of time is spent in the
+ *  idle loop and that interrupts will quite likelly put RET adresses there.
+ *  By giving thread a fair stack, unstability was removed. Make a mental note
+ *  about this, since it will happen again (with faster ISR's).
+ *
+ *  Post mortem was not succesfull in printing out the correct thread. It reported
+ *  (root) thread, but I'm pretty syre problem was (idle) thread.
+ *
+ *  Revision 1.11  2005/11/25 17:55:29  ambrmi09
+ *  Detection of a free-running kernel. Output post-mortem dump, then wait
+ *  for real reset.
+ *
+ *  Revision 1.10  2005/11/25 14:35:16  ambrmi09
+ *  A first naive aproach of ISR to thread syncronisation mechanism. It works
+ *  but it is unstable.
+ *
+ *  Revision 1.9  2005/11/24 19:40:12  ambrmi09
+ *  Lots of kernel API name changing. To support consistency and to prepare for
+ *  the pthreads port.
+ *
+ *  Revision 1.8  2005/11/23 20:46:43  ambrmi09
+ *  Finally stacks seems OK. A bit worried about some "garbage" that turns up
+ *  at each TOS at each tasks start
+ *
+ *  Revision 1.7  2005/11/23 11:31:06  ambrmi09
+ *  New stack structure is in place. Now all we have to do should be to just
+ *  attach DDP2:R0 to the user_stack part of it, and we "should" be done with
+ *  the XC167 stack bug.
+ *
+ *  Revision 1.6  2005/11/23 07:47:44  ambrmi09
+ *  Simple namechange
+ *
+ *  Revision 1.5  2005/11/22 23:33:54  ambrmi09
+ *  New stack_t in place and tested for XC167. We seem to have some include confilict also between regs166.h and main.h (both system includes)
+ *
+ *  Revision 1.4  2005/11/22 20:07:56  ambrmi09
+ *  Separated architecture specific code by introducing tk_hwsys_<TARGET>.h
+ *  files.
+ *  Prepared for new stack_t type (not introduced yet).
+ *
+ *  Revision 1.3  2005/11/18 13:18:27  ambrmi09
+ *  Finally got the timing right (tested and verifyed). Amazing accurancy!
+ *  accurancy from 60000mS to 1mS (executed 10000 ti,es) both show the same
+ *  constant error (that they are equal can only be explained due to the
+ *  meassuring method). Still need to work some on getting portability between
+ *  fast and slow targets right so trimming of kernal will be easy.
+ *
+ *  Revision 1.2  2005/11/18 11:23:32  ambrmi09
+ *  Starting to document and to clean up kernel internals.
+ *
+ *  Revision 1.1.1.1  2005/11/17 09:59:09  ambrmi09
+ *  Created CVS jhome for TinKer from scratch. RCS history lost in database (kept in sourcecode)
+ *
+ *  Revision 1.6  1998/02/16 18:03:41  mickey
+ *  Added tk_assertFail
+ *
+ *  Revision 1.5  1998/02/14 10:35:42  mickey
+ *  tk_exit added
+ *  Handling av wakeup event. Needed for IPC to be able why a IPC object was
+ *  released.
+ *
+ *  Revision 1.4  1998/02/01 20:03:29  mickey
+ *  Jiihaa, first version of a working semaphore
+ *
+ *  Revision 1.2  1998/01/28 21:32:27  mickey
+ *  First working revision after tidying, with both Borland and Codewright IDE
+ *
+ *  Revision 1.1  1998/01/28 20:12:08  mickey
+ *  Initial revision
+ *
+ *  
+ *******************************************************************/

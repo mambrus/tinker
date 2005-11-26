@@ -6,62 +6,8 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.5 $
- *
- *  $Log: tk_itc.c,v $
- *  Revision 1.5  2005-11-25 14:35:16  ambrmi09
- *  A first naive aproach of ISR to thread syncronisation mechanism. It works
- *  but it is unstable.
- *
- *  Revision 1.4  2005/11/24 19:40:12  ambrmi09
- *  Lots of kernel API name changing. To support consistency and to prepare for
- *  the pthreads port.
- *
- *  Revision 1.3  2005/11/23 20:46:43  ambrmi09
- *  Finally stacks seems OK. A bit worried about some "garbage" that turns up
- *  at each TOS at each tasks start
- *
- *  Revision 1.2  2005/11/23 11:27:19  ambrmi09
- *  Unix line-endings corrected. Iny one LF per line should now be in the file on CVS server
- *
- *  Revision 1.1.1.1  2005/11/17 09:59:09  ambrmi09
- *  Created CVS jhome for TinKer from scratch. RCS history lost in database (kept in sourcecode)
- *
- *  Revision 1.10  1998/02/16 18:02:28  mickey
- *  Corrected bugs in previous version. This seams to behave stable.
- *  Still a bit unsecure about all the solutions. Don't understand then all
- *  aspecially  R 291. Assert technology found some cases that I missed .
- *
- *  Revision 1.9  1998/02/14 19:32:54  mickey
- *  Found cases when previous version bailed out ( >1 timerreleases)
- *  This version works better, but I'n ot satisfied. Solution will cause trouble
- *  in priority semaphores
- *
- *  Revision 1.8  1998/02/14 10:37:42  mickey
- *  Timeoutable semaphores. 1st implementation.
- *  This was a hard nut to crack.
- *
- *  Revision 1.7  1998/02/10 20:58:35  mickey
- *  Working priority semaphore. Poor solution. Static sm will not work with
- *  more than one semaphores. Gives slow performance.
- *
- *  Revision 1.6  1998/02/04 20:49:18  mickey
- *  FIrst atteptt to solve priority semaphores (has errors)					 
- *
- *  Revision 1.5  1998/02/01 20:03:27  mickey
- *  Jiihaa, first version of a working semaphore
- *
- *  Revision 1.4  1998/01/28 20:36:59  mickey
- *  First revision
- *
- *  Revision 1.3  1998/01/28 20:33:27  mickey
- *  <>
- *
- *  Revision 1.2  1998/01/28 20:32:18  mickey
- *  First Revision
- *  
+ *  Current $Revision: 1.6 $
  *******************************************************************/
-  
 /** include files **/
 #include <stdio.h>			    	          	       	   	      	   
 #include <stdlib.h>
@@ -1317,3 +1263,67 @@ unsigned long sm_v_ny(  /* sm_send or sm_put */
 }
 
 #endif
+
+
+
+
+   
+/*******************************************************************  
+ *
+ *  $Log: tk_itc.c,v $
+ *  Revision 1.6  2005-11-26 11:38:40  ambrmi09
+ *  Cosmetic changes concerning CVS logs in source.
+ *
+ *  Revision 1.5  2005/11/25 14:35:16  ambrmi09
+ *  A first naive aproach of ISR to thread syncronisation mechanism. It works
+ *  but it is unstable.
+ *
+ *  Revision 1.4  2005/11/24 19:40:12  ambrmi09
+ *  Lots of kernel API name changing. To support consistency and to prepare for
+ *  the pthreads port.
+ *
+ *  Revision 1.3  2005/11/23 20:46:43  ambrmi09
+ *  Finally stacks seems OK. A bit worried about some "garbage" that turns up
+ *  at each TOS at each tasks start
+ *
+ *  Revision 1.2  2005/11/23 11:27:19  ambrmi09
+ *  Unix line-endings corrected. Iny one LF per line should now be in the file on CVS server
+ *
+ *  Revision 1.1.1.1  2005/11/17 09:59:09  ambrmi09
+ *  Created CVS jhome for TinKer from scratch. RCS history lost in database (kept in sourcecode)
+ *
+ *  Revision 1.10  1998/02/16 18:02:28  mickey
+ *  Corrected bugs in previous version. This seams to behave stable.
+ *  Still a bit unsecure about all the solutions. Don't understand then all
+ *  aspecially  R 291. Assert technology found some cases that I missed .
+ *
+ *  Revision 1.9  1998/02/14 19:32:54  mickey
+ *  Found cases when previous version bailed out ( >1 timerreleases)
+ *  This version works better, but I'n ot satisfied. Solution will cause trouble
+ *  in priority semaphores
+ *
+ *  Revision 1.8  1998/02/14 10:37:42  mickey
+ *  Timeoutable semaphores. 1st implementation.
+ *  This was a hard nut to crack.
+ *
+ *  Revision 1.7  1998/02/10 20:58:35  mickey
+ *  Working priority semaphore. Poor solution. Static sm will not work with
+ *  more than one semaphores. Gives slow performance.
+ *
+ *  Revision 1.6  1998/02/04 20:49:18  mickey
+ *  FIrst atteptt to solve priority semaphores (has errors)					 
+ *
+ *  Revision 1.5  1998/02/01 20:03:27  mickey
+ *  Jiihaa, first version of a working semaphore
+ *
+ *  Revision 1.4  1998/01/28 20:36:59  mickey
+ *  First revision
+ *
+ *  Revision 1.3  1998/01/28 20:33:27  mickey
+ *  <>
+ *
+ *  Revision 1.2  1998/01/28 20:32:18  mickey
+ *  First Revision
+ *  
+ *******************************************************************/
+

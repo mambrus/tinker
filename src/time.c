@@ -15,15 +15,18 @@
 //return (clock_t)(-1);
 
 
-/**
+/*!
 
-@ingroup POSIX
+@ingroup @ingroup kernel_internal_POSIX
         
 @brief returns time since startup in 1 millionth of a second (uS)
 
+This function is used by the kernal, but can also be used by the application.
+We try to follow POSIX standard as close as possible with some minor exeptions:
+
 The formal POSIX clock is somewhat different. There the time is relative
 to since the calling <b>process</b> was started. On most small embedded
-systems, including those using this kernel there is only one process and
+systems, including those using this kernel, there is only one process and
 that is the whole binary it self. I.e. the meaning of a process is
 the whole program and our clock funtion relates to time since startup
 (reset).
@@ -39,6 +42,9 @@ References:<br>
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#CPU%20Time
    
 @return time since start in uS
+
+@note Not all targets need this module. If supported by your compiler
+use that module instead.
    
    
 */
