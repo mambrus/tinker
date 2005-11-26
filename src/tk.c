@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.14 $
+ *  Current $Revision: 1.15 $
  *
  *******************************************************************/
 
@@ -128,8 +128,8 @@ void tk_create_kernel( void ){
       proc_stat[i].Pid           = 0;
       proc_stat[i].noChilds      = 0;
       proc_stat[i].stack_size    = 0;
-      STACK_PTR(proc_stat[i].stack_begin) = 0uL;
-      proc_stat[i].curr_sp       = NULL;
+      STACK_PTR(proc_stat[i].stack_begin)   = 0uL;
+      STACK_PTR(proc_stat[i].curr_sp)       = 0uL;
       proc_stat[i].wakeupEvent   = 0;
    }
    //The Root proc is already created but must be registred
@@ -357,7 +357,7 @@ unsigned int tk_create_thread(
 
    //Assign the stackpointer to top of stack
    //proc_stat[proc_idx].sp = &proc_stat[proc_idx].stack[stack_size - 0x34];
-   proc_stat[proc_idx].curr_sp = ct_newSP;
+   STACK_PTR(proc_stat[proc_idx].curr_sp) = ct_newSP;
    //Put process in scedule - assume tight tight schedule
    theSchedule[prio][slot_idx] = proc_idx;
    //Increase the amount of procs at same prio
@@ -499,9 +499,9 @@ static unsigned int cswTEMP;  //!< Extra storage. For some targets used to manip
 */
 void _tk_context_switch_to_thread(unsigned int RID,unsigned int SID){
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );   
-   proc_stat[SID].curr_sp=cswTSP;
+   STACK_PTR( proc_stat[SID].curr_sp ) = cswTSP;
    
-   cswTSP=proc_stat[RID].curr_sp;
+   cswTSP = STACK_PTR( proc_stat[RID].curr_sp );
    active_thread=RID;
    /*************** OBS OBS - TESTPURPOSE ONLY *****************/
    STKUN = 0x7200;
@@ -608,7 +608,10 @@ void Test_scheduler( void ){
 /*******************************************************************
  *
  *  $Log: tk.c,v $
- *  Revision 1.14  2005-11-26 11:38:40  ambrmi09
+ *  Revision 1.15  2005-11-26 11:53:51  ambrmi09
+ *  Made context switches of stack-pointers more consistent with other stack info.
+ *
+ *  Revision 1.14  2005/11/26 11:38:40  ambrmi09
  *  Cosmetic changes concerning CVS logs in source.
  *
  *  Revision 1.13  2005/11/25 21:20:03  ambrmi09

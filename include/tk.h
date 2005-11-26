@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.11 $
+ *  Current $Revision: 1.12 $
  *
  *******************************************************************/
  
@@ -76,9 +76,7 @@ typedef struct    tk_tcb_t_s{
    BOOL           isInit;              //!< Memory for stack is allocated
    PROCSTATE      state;               //!< State of the process
    stack_t        stack_begin;         //!< First address of stack memory
-//   char*          stack_begin;         //!< First address of stack memory
-//   char*          curr_sp;             //!< Current stackpointer of this thread
-   char*          curr_sp;             //!< Current stackpointer of this thread
+   stack_t        curr_sp;             //!< Current stackpointer of this thread
    size_t         stack_size;          //!< Size of stack
    clock_t        wakeuptime;          //!< When to wake up if sleeping
    wakeE_t        wakeupEvent;         //!< Helper variable mainly for IPC
@@ -140,7 +138,10 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
   
 /*******************************************************************
  *  $Log: tk.h,v $
- *  Revision 1.11  2005-11-26 11:38:40  ambrmi09
+ *  Revision 1.12  2005-11-26 11:53:51  ambrmi09
+ *  Made context switches of stack-pointers more consistent with other stack info.
+ *
+ *  Revision 1.11  2005/11/26 11:38:40  ambrmi09
  *  Cosmetic changes concerning CVS logs in source.
  *
  *  Revision 1.10  2005/11/25 17:55:29  ambrmi09
