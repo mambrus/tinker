@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.15 $
+ *  Current $Revision: 1.16 $
  *
  *******************************************************************/
 
@@ -83,13 +83,27 @@ unsigned int tk_thread_id( void ){
 /*
 @ingroup kernel_glue
 
+@brief Gives a way to enter my own threads TCB
+
 This gets the current threads internal thread control block (TCB). Function is
 "public" but is <b>not</b> ment to be used by application developers, rather as
 a way for different layers of TinKer to interact.
 
+@note <b>For TinKer internal use only</b>
+
 */
 tk_tcb_t *_tk_current_tcb( void ){
    return(&proc_stat[active_thread]);
+}
+
+/*
+@ingroup kernel_glue
+
+Same as tk_current_tcb but gets info for a specific thread
+*/
+
+tk_tcb_t *_tk_get_tcb( unsigned int id ){
+   return(&proc_stat[id]);
 }
 
 /*
@@ -504,8 +518,10 @@ void _tk_context_switch_to_thread(unsigned int RID,unsigned int SID){
    cswTSP = STACK_PTR( proc_stat[RID].curr_sp );
    active_thread=RID;
    /*************** OBS OBS - TESTPURPOSE ONLY *****************/
+   /*
    STKUN = 0x7200;
    STKOV = 0x6500;
+   */
    /*************** OBS OBS - TESTPURPOSE ONLY *****************/
    //IEN = 0;
    CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );   
@@ -608,7 +624,29 @@ void Test_scheduler( void ){
 /*******************************************************************
  *
  *  $Log: tk.c,v $
- *  Revision 1.15  2005-11-26 11:53:51  ambrmi09
+ *  Revision 1.16  2005-11-26 16:13:19  ambrmi09
+ *  Relevant for XC167 only.
+ *
+ *  Code for protecting system stacks added. Noted that if recursed functions
+ *  used withing a thread and local variables are on user stack, that user stack
+ *  will grow much more rapidly. This will lead to a kernel break that
+ *  STKOV/STKUN can't catch. Suggestion:
+ *  1. Let dispatcher set current user stack pointer on each context switch also
+ *  2. Check agains max,min values against info in TOB, and try to
+ *     detect out of boundary usage (high risk stack is broken allready though
+ *     but hopefuly not for the current thread or we will not be able to output
+ *     any diagnosics at all).
+ *  3. If out of bouds detected, create a soft trap (for consistency with
+ *     STKOF/STKUN error handling).
+ *  4. Improve post mortem info. IP and CSP can't possibly be correct now. Also
+ *     dump whole CPU and the whole current TCB. Try to look up adress in symbol
+ *     table and print function name if possible.
+ *  5. LVM and HVM (water marks) might be combined with pkt2.
+ *
+ *  Deliberate "bug" left in code to help my memory while creating debugging
+ *  situation (0xA0).
+ *
+ *  Revision 1.15  2005/11/26 11:53:51  ambrmi09
  *  Made context switches of stack-pointers more consistent with other stack info.
  *
  *  Revision 1.14  2005/11/26 11:38:40  ambrmi09

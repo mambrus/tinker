@@ -51,6 +51,7 @@ sbit  IEN      = PSW^11;
 
 #include <intrins.h>
 #include <stdio.h>
+#include <tk.h>
 
 
 #ifdef PRINT_TRAP             // print trap information
@@ -196,6 +197,8 @@ void printtrap(
 ){
   unsigned char bitloop;
   unsigned int  mask;
+  unsigned int  tid;
+  tk_tcb_t     *curr_tcb;
   bit oIEN;
   
   oIEN = IEN;
@@ -218,6 +221,14 @@ void printtrap(
     }
      mask = mask << 1;     
   }
+  safeprint ("\nInfo about violating thread:\n"); 
+  tid = tk_thread_id();
+  curr_tcb = _tk_current_tcb();
+  safeprint ("Thread ID: 0x");
+  safeprint (i2shex(tid));
+  safeprint (", name: \"");
+  safeprint (curr_tcb->name);
+  safeprint ("\"\n");
   IEN = oIEN;
 }
   

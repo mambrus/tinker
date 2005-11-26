@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.12 $
+ *  Current $Revision: 1.13 $
  *
  *******************************************************************/
  
@@ -96,7 +96,8 @@ void           _tk_assertfail(    /* emulates __assertfail */
    int line
 );
 
-tk_tcb_t      *_tk_current_tcb( void );/* Gives a way to enter my own proc (for TKOS only)*/
+tk_tcb_t      *_tk_current_tcb( void );
+tk_tcb_t      *_tk_specific_tcb( unsigned int id );
 void           _tk_context_switch_to_thread(unsigned int RID,unsigned int SID);
 void           _tk_main( void );
 
@@ -138,7 +139,29 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
   
 /*******************************************************************
  *  $Log: tk.h,v $
- *  Revision 1.12  2005-11-26 11:53:51  ambrmi09
+ *  Revision 1.13  2005-11-26 16:13:19  ambrmi09
+ *  Relevant for XC167 only.
+ *
+ *  Code for protecting system stacks added. Noted that if recursed functions
+ *  used withing a thread and local variables are on user stack, that user stack
+ *  will grow much more rapidly. This will lead to a kernel break that
+ *  STKOV/STKUN can't catch. Suggestion:
+ *  1. Let dispatcher set current user stack pointer on each context switch also
+ *  2. Check agains max,min values against info in TOB, and try to
+ *     detect out of boundary usage (high risk stack is broken allready though
+ *     but hopefuly not for the current thread or we will not be able to output
+ *     any diagnosics at all).
+ *  3. If out of bouds detected, create a soft trap (for consistency with
+ *     STKOF/STKUN error handling).
+ *  4. Improve post mortem info. IP and CSP can't possibly be correct now. Also
+ *     dump whole CPU and the whole current TCB. Try to look up adress in symbol
+ *     table and print function name if possible.
+ *  5. LVM and HVM (water marks) might be combined with pkt2.
+ *
+ *  Deliberate "bug" left in code to help my memory while creating debugging
+ *  situation (0xA0).
+ *
+ *  Revision 1.12  2005/11/26 11:53:51  ambrmi09
  *  Made context switches of stack-pointers more consistent with other stack info.
  *
  *  Revision 1.11  2005/11/26 11:38:40  ambrmi09

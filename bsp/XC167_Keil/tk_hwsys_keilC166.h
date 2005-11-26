@@ -143,6 +143,13 @@ device must follow Keils predifined devices, which you can find as files in the 
 #include <dave/MAIN.H>
 sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
 */
+
+/*!
+@note According to XC167 manual chapter 4.3.4, subchapter 
+<i>"CSFRs Affecting the Whole CPU"</i>, modifying STKOV, STKUN indirectlly 
+via push and pop should be OK until next "real" OP code that uses that SFR.
+*/
+
 #define PUSHALL()                                                                                             \
    __asm{ push  PSW                    }                                                                      \    
    __asm{ push  R0                     }                                                                      \    
@@ -168,9 +175,13 @@ sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
    __asm{ push  MDL                    }                                                                      \
    __asm{ push  MDH                    }                                                                      \
    __asm{ push  MDC                    }                                                                      \
+   __asm{ push  STKOV                  }                                                                      \      
+   __asm{ push  STKUN                  }                                                                      \         
    
       
 #define POPALL()                                                                                              \
+   __asm{ pop  STKUN                   }                                                                      \
+   __asm{ pop  STKOV                   }                                                                      \   
    __asm{ pop  MDC                     }                                                                      \
    __asm{ pop  MDH                     }                                                                      \
    __asm{ pop  MDL                     }                                                                      \
@@ -243,10 +254,17 @@ sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
    /*---> Compiler specific*/                                                                                  \
    __asm{ mov R1,R0                 }                                                                          \
    __asm{ mov R2,DPP0               }                                                                          \
+   __asm{ mov R3,STKOV              }                                                                          \
+   __asm{ mov R4,STKUN              }                                                                          \   
    _temp2 = _stack_struct.userstack.u.offs24._offs;                                                            \
    __asm{ mov R0,_temp2             }                                                                          \
    _temp2 = _stack_struct.userstack.u.seg24._seg;                                                              \
    __asm{ mov DPP0,_temp2           }                                                                          \
+   _temp2 = _stack_struct.systemstack.reg._SP + 0xA0;                                                      \
+   __asm{ mov STKOV,_temp2          }                                                                          \
+   _temp2 = _stack_struct.systemstack.reg._SP + _stack_struct.sys_stack_size;                                  \
+   __asm{ mov STKUN,_temp2          }                                                                          \
+                                                                                                               \
                                                                                                                \
    /*<--- Compiler specific*/                                                                                  \
                                                                                                                \
@@ -254,6 +272,8 @@ sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
   PUSHALL();                          /*Push everything on the new stack, simulating a context state - MIGHT NEED OVERLOOCKING (R0 used for param pass)*/ \
    __asm{ mov R0,R1                 }                                                                          \
    __asm{ mov DPP0,R2               }                                                                          \
+   __asm{ mov STKOV,R3              }                                                                          \
+   __asm{ mov STKUN,R4              }                                                                          \   
                                                                                                                \
                                                                                                                \
    _newSP = 0ul;                      /*Important, or the next assembly "cast" will fail (not clearing 16 MSB */ \
@@ -287,7 +307,7 @@ sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
 
 #define GET_THREADS_RETVAL( THRETVAL )                                                                        \
 
-#define STACK_PTR( ADDR )                                                                                       \
+#define STACK_PTR( ADDR )                                                                                     \
    ((char *)ADDR.systemstack.linear)
    
    
@@ -327,6 +347,33 @@ void _tk_initialize_system_ques( );
    __asm{ mov R1,R0                 }                                                                          \
    __asm{ mov R2,DPP2               }                                                                          \
 
+
+*/
+
+//
+//
+//   /*Try to trigger aSTKUN trap*/                                                                             \
+//   __asm{ push R1          }                                                                                  \
+//   __asm{ pop  R1          }                                                                                  \
+//   __asm{ pop  R1          }                                                                                  \
+//   __asm{ mov  R2,R1       }                                                                                  \
+//   __asm{ add  R1,R2       }                                                                                  \
+//   __asm{ push R2          }                                                                                  \   
+//   /*Try to trigger a STKOV trap*/                                                                            \
+//   __asm{ push R1          }                                                                                  \
+//   __asm{ add  R1,R2       }                                                                                  \
+//   __asm{ push R1          }                                                                                  \
+//   __asm{ add  R1,R2       }                                                                                  \
+//   __asm{ pop  R1          }                                                                                  \   
+//   __asm{ pop  R1          }                                                                                  \      
+//                                                                                                              \   
+//
+
+/*
+   _temp2 = 0;                                                                                                 \
+   __asm{ mov STKOV,_temp2          }                                                                          \
+   _temp2 = 0xFFFF;                                                                                            \
+   __asm{ mov STKUN,_temp2          }                                                                          \      
 
 */
 
