@@ -68,3 +68,10 @@ unsigned long Q_ASC0;
 void _tk_initialize_system_ques( ){
    q_create_ny("ASC0",0x05,FIFO,&Q_ASC0);
 }
+
+void _do_trap (unsigned int num){
+   __asm { 
+      mov R3, num   
+      trap #0x0D
+   }                                                      
+}

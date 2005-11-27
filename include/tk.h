@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.13 $
+ *  Current $Revision: 1.14 $
  *
  *******************************************************************/
  
@@ -32,6 +32,30 @@
 
 //Include components 
 #define  IPC               YES
+
+//Kernel termination codes (bit adressable) - Note, per kernel and not per thread codes
+
+#define TK_NOERR           0x0000   //!< Termination without errors
+
+#define TK_ERR_1           0x0001
+#define TK_ERR_2           0x0002
+#define TK_ERR_3           0x0004
+#define TK_ERR_4           0x0008
+
+#define TK_ERR_STACK       0x0010   //!< Stack out of bounds check faliure
+#define TK_ERR_6           0x0020
+#define TK_ERR_7           0x0040
+#define TK_ERR_8           0x0080
+
+#define TK_ERR_9           0x0100
+#define TK_ERR_10          0x0200
+#define TK_ERR_11          0x0400
+#define TK_ERR_12          0x0800
+
+#define TK_ERR_13          0x1000
+#define TK_ERR_14          0x2000
+#define TK_ERR_15          0x4000
+#define TK_ERR_16          0x8000
 
 //assert macro
 #ifdef NDEBUG
@@ -139,7 +163,13 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
   
 /*******************************************************************
  *  $Log: tk.h,v $
- *  Revision 1.13  2005-11-26 16:13:19  ambrmi09
+ *  Revision 1.14  2005-11-27 20:02:00  ambrmi09
+ *  - Detection of UserStack out-of bounds detection added.
+ *  - Added error generic handling mechanism (TRAP)
+ *  - Several new macros (that also need to be ported btw)
+ *  - Tested error mechanisms for stacks quite well. Those issues should be OK now
+ *
+ *  Revision 1.13  2005/11/26 16:13:19  ambrmi09
  *  Relevant for XC167 only.
  *
  *  Code for protecting system stacks added. Noted that if recursed functions

@@ -5,17 +5,66 @@
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
+/*
+@ingroup kernel_internals
+
+@brief Sets a minimum safety area from stack bottom.
+
+
+This value is used when kernel is crashing due to stack-stavation
+Value should be set as low as possible, but just enough to allow a few extra 
+invocations of printf to output some diagnostic text abou the reason of the 
+crash.
+*/
+
+#define SAFEZONE  0
+
+/*
+@ingroup kernel_internals
+
+@brief Defines the least amount of stack you can use
+
+
+Never go below this. In fact, don't even come close. Remeber ISR might put return 
+adresses at your threads stack whithout your explicit control.
+
+*/
+#define MINIMUM_STACK_SIZE 0
+
 /**
 @ingroup kernel_internals
         
 @brief Prevents <b>all</b> interruppts on the target
 
-@note You have to change the SP to the new stack before using this macro
-
-@todo Verify for XC167
+Will increse a counter after the actual CLI.
+The counter aids nesting (nesting however be avoided),
    
 */
 #define TK_CLI()
+
+/**
+@ingroup kernel_internals
+        
+@brief Restores <b>all</b> interruppts on the target
+
+Actual STI will not be invoced untill counter set by TK_CLI is zero.
+This aids nesting (should however be avoided),
+   
+*/
+#define TK_STI()
+
+
+/**
+@ingroup kernel_internals
+        
+@brief Call for error handler 
+
+Dieing kernel will call this macro as part of it's error-handling. This
+is typically implemented as a software interrupt on targets that support
+that. On others, this is just a call to a function.
+
+*/
+#define TRAP( NUM )
 
 
 /**
@@ -183,6 +232,24 @@ processors make a difference between those stacks.)
 
 */
 #define REAL_STACK_SIZE( ADDR ) 
+
+
+/*
+@brief Inspects the stack for overflow errors.
+
+Inspects the stack and tries to find stack overflows. On some targets this can 
+be implemented in hardware. On others who have more than one stack per
+thread, one stack might be HW guarded and the other not. Implementation
+of this macro varies a lot between targets.
+
+@note this macro will only make a simple LWM check using its own
+stack-pointer. In a situation where a thread has made deep recursion
+but nested all the way back, the stack-pointer could be OK, but it could
+still have trashed neighbouring threads stacks.
+
+*/
+
+#define TRY_CATCH_STACK_ERROR( STACK_T, temp )
 
 
    

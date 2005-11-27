@@ -52,6 +52,22 @@ http://www.keil.com/support/man/docs/c166/c166_reentrant.htm
 
 #include <stddef.h>
 
+#define SAFEZONE        0x40
+/*!
+Defines where the userstack is within the mallocated area. The system
+stack will be on highest addresand the user stack will be below that.
+
+Read ratio as x:y or user_size/system_size
+*/
+#define USR_SYS_RATIO 2
+
+//Note that system stack has to fit even after usr_stack has been subtracted
+//With a rato of 2 this will give a stack size for sys_stack of 64
+
+#define minimum_system_stack_size  0xC0
+#define MINIMUM_STACK_SIZE ((minimum_system_stack_size + 1)*USR_SYS_RATIO) + SAFEZONE)
+
+
 /*!
 
 @note that the offset addres does not contain the 2 MSB bits that defines wich
@@ -314,19 +330,6 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    ((char *)ADDR.systemstack.linear)
    
    
-/*!
-Defines where the userstack is within the mallocated area. The system
-stack will be on highest addresand the user stack will be below that.
-
-Read ratio as x:y or user_size/system_size
-*/
-#define USR_SYS_RATIO 2
-
-//Note that system stack has to fit even after usr_stack has been subtracted
-//With a rato of 2 this will give a stack size for sys_stack of 64
-
-#define MINIMUM_STACK_SIZE 0xC0 
-
 void _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
 
 //#include <tk_ipc.h>  //< will create stupid errors
@@ -339,68 +342,25 @@ void _tk_initialize_system_ques( );
  
 #define REAL_STACK_SIZE( ADDR )  \
    ( ADDR.sys_stack_size ) 
-
-/*
-   _temp2 = _stack_struct.userstack.u.offs24._offs;                                                            \
-   __asm{ mov R0,_temp2             }                                                                          \
-   _temp2 = _stack_struct.userstack.u.seg24._seg;                                                              \
-   __asm{ mov DPP2,_temp2             }                                                                        \
    
+
+#define TRY_CATCH_STACK_ERROR( STACK_T, temp2 )                               \
+   __asm { mov temp2, R0 }                                                    \
+   if ( temp2 < STACK_T.userstack.u.offs24._offs + SAFEZONE ){                \
+      printf("tk: Error - user stack trashed!\n");                            \
+      tk_exit(TK_ERR_STACK);                                                  \
+   }                                                                          \
+   if ( DPP0 < STACK_T.userstack.u.seg24._seg ){                              \
+      printf("tk: Error - user stack trashed!\n");                            \
+      tk_exit(TK_ERR_STACK);                                                  \
+   }
    
-   __asm{ mov R1,R0                 }                                                                          \
-   __asm{ mov R2,DPP2               }                                                                          \
+
+#define TRAP( NUM )                                                           \
+   _do_trap( NUM )
 
 
-*/
 
-//
-//
-//   /*Try to trigger aSTKUN trap*/                                                                             \
-//   __asm{ push R1          }                                                                                  \
-//   __asm{ pop  R1          }                                                                                  \
-//   __asm{ pop  R1          }                                                                                  \
-//   __asm{ mov  R2,R1       }                                                                                  \
-//   __asm{ add  R1,R2       }                                                                                  \
-//   __asm{ push R2          }                                                                                  \   
-//   /*Try to trigger a STKOV trap*/                                                                            \
-//   __asm{ push R1          }                                                                                  \
-//   __asm{ add  R1,R2       }                                                                                  \
-//   __asm{ push R1          }                                                                                  \
-//   __asm{ add  R1,R2       }                                                                                  \
-//   __asm{ pop  R1          }                                                                                  \   
-//   __asm{ pop  R1          }                                                                                  \      
-//                                                                                                              \   
-//
-
-/*
-   _temp2 = 0;                                                                                                 \
-   __asm{ mov STKOV,_temp2          }                                                                          \
-   _temp2 = 0xFFFF;                                                                                            \
-   __asm{ mov STKUN,_temp2          }                                                                          \      
-
-*/
-
-
-/*
-   
-   This wont work. Probably because we are trashing the stack we stand on (scope plus local var will do that) .
-   {                                                                                                           \
-      userstackaddr_t userTOS;                                                                                 \
-      userTOS.linear = 0uL;                                                                                    \
-      userTOS.linear = _stack_struct.userstack.linear + (unsigned long)_stack_struct.usr_stack_size;           \
-      _temp2 = userTOS.u.offs24._offs;                                                                         \
-      __asm{ mov R0,_temp2             }                                                                       \
-      _temp2 = userTOS.u.seg24._seg;                                                                           \
-      __asm{ mov DPP0,_temp2           }                                                                       \
-   }                                                                                                           \
-
-
-   _temp2 = _stack_struct.userstack.u.offs24._offs + _stack_struct.usr_stack_size;                             \
-   __asm{ mov R0,_temp2             }                                                                          \
-   _temp2 = _stack_struct.userstack.u.seg24._seg;                                                              \
-   __asm{ mov DPP0,_temp2           }                                                                          \
-
-*/
 #endif
 
 

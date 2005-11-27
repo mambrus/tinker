@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.17 $
+ *  Current $Revision: 1.18 $
  *
  *******************************************************************/
 
@@ -80,7 +80,7 @@ unsigned int tk_thread_id( void ){
    return(active_thread);
 }
 
-/*
+/*!
 @ingroup kernel_glue
 
 @brief Gives a way to enter my own threads TCB
@@ -96,7 +96,7 @@ tk_tcb_t *_tk_current_tcb( void ){
    return(&proc_stat[active_thread]);
 }
 
-/*
+/*!
 @ingroup kernel_glue
 
 Same as tk_current_tcb but gets info for a specific thread
@@ -106,7 +106,7 @@ tk_tcb_t *_tk_get_tcb( unsigned int id ){
    return(&proc_stat[id]);
 }
 
-/*
+/*!
 @ingroup kernel
 
 Creates the kernel. This is TinKers "init" funtion. All targets need to run
@@ -258,7 +258,7 @@ static char *ct_temp1;     //!< fony temporary stackpointer used in the process 
 static unsigned long ct_temp2;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
 static stack_t ct_stack_struct; //!< Will be changed in macro. Never use outside of it (don't trust it)
 
-/*
+/*!
 @ingroup kernel
 
 Creates a thread and puts it in runnable state (READY). Thread is not
@@ -378,7 +378,7 @@ unsigned int tk_create_thread(
    return proc_idx ;
 }
 
-/**
+/*!
 
 @ingroup kernel
         
@@ -506,28 +506,43 @@ unsigned int _tk_next_runable_thread(){
 
 static char *cswTSP;          //!< fony temporary stackpointer used in the process of setting TOS
 static unsigned int cswTEMP;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
+static unsigned int cswTEMP2; //!< Extra storage. 
 
-/*
+/*!
 @ingroup kernel_internal
+
+@brief Context switch to next tread. 
+
+Makes a context switch. Will prior to that also try to detect stack 
+out-of-bounds errors.
+
+@tbd Besides out of bounds check, a check for stack consistency would be
+nice. Suggestion: Before each block, calculate CRC of the 0x10 bytes
+from top and bottom of stack(s) and store in TCB. On each waking up, redo
+the calculation and check against stored values. This should catch more
+sophisticated out-of-bounds application bugs. (see note in about
+TRY_CATCH_STACK_ERROR)
+
+@see TRY_CATCH_STACK_ERROR
+
 */
-void _tk_context_switch_to_thread(unsigned int RID,unsigned int SID){
+void _tk_context_switch_to_thread(
+   unsigned int RID,                //!< Thread ID to switch to
+   unsigned int SID                 /*!< Thread ID to switch from. I.e. 
+                                         current thread ID to put away in TCB*/
+){
+   TRY_CATCH_STACK_ERROR( proc_stat[SID].stack_begin, cswTEMP2 );   
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );   
+
    STACK_PTR( proc_stat[SID].curr_sp ) = cswTSP;
    
    cswTSP = STACK_PTR( proc_stat[RID].curr_sp );
    active_thread=RID;
-   /*************** OBS OBS - TESTPURPOSE ONLY *****************/
-   /*
-   STKUN = 0x7200;
-   STKOV = 0x6500;
-   */
-   /*************** OBS OBS - TESTPURPOSE ONLY *****************/
-   //IEN = 0;
+
    CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );   
-   //IEN = 1;
 }
 
-/*
+/*!
 Dispach or yeald to another thread that has more "right" to run.
 
 I.e. <b>seach</b> for another potential thread that is now in runnable state
@@ -549,16 +564,17 @@ void tk_yield( void ){
    _tk_context_switch_to_thread(thread_to_run,active_thread);
 }
 
-void tk_exit( int ec) {
+void tk_exit( int ec ) {
    if (ec==0)
       printf("tk: Program terminated normally");
    else
       printf("tk: Warning - Program terminated with errorcode [%d]",ec);
    while (1) {
+      TRAP(ec);
    }
 }
 
-/*
+/*!
 @ingroup kernel_glue
 
 Works as the assert macro exept that you have to use the __file_ and __line_
@@ -575,7 +591,7 @@ void _tk_assertfail(
    tk_exit(3);
 }
 
-/*
+/*!
 @ingroup kernel_glue
 
 Called from your real main() or from your start-up code 
@@ -623,7 +639,13 @@ void Test_scheduler( void ){
 /*******************************************************************
  *
  *  $Log: tk.c,v $
- *  Revision 1.17  2005-11-27 15:07:25  ambrmi09
+ *  Revision 1.18  2005-11-27 20:02:00  ambrmi09
+ *  - Detection of UserStack out-of bounds detection added.
+ *  - Added error generic handling mechanism (TRAP)
+ *  - Several new macros (that also need to be ported btw)
+ *  - Tested error mechanisms for stacks quite well. Those issues should be OK now
+ *
+ *  Revision 1.17  2005/11/27 15:07:25  ambrmi09
  *  Found a serious bug about how user stacks lacalization. This is an intermediate
  *  but working check-in. Need fixing for handling word boudary overfolw.
  *

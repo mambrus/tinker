@@ -86,7 +86,9 @@ create a busy-wait macro also.
  */
 
 
-static const char const* trapinfo[16]={
+static const char const* trapinfo[17]={
+/*none*/ "<noinfo>  - TFR not set (Very strange!!!) \n",
+
 /* 0*/   "<noinfo>  - Illegal External Bus Access (no external BUS defined for address)\n",
 /* 2*/   "<noinfo>  - Illegal Instruction Access  (branch to odd address)\n",
 /* 2*/   "ILLOPA    - Illegal Word Operand Access (word read/write on odd address)\n",
@@ -105,7 +107,32 @@ static const char const* trapinfo[16]={
 /*12*/   "SOFTBRK   - Software break event\n",
 /*13*/   "STKUF     - Stack Underflow\n",
 /*14*/   "STKOF     - Stack Overflow\n",
-/*15*/   "NMI       - Non Maskable Interrupt\n",
+/*15*/   "NMI       - Non Maskable Interrupt\n"
+};
+
+
+static const char const* kerneltraps[]={
+/*none*/ "TK_NOERR  - TinKer Termination without any errors\n",
+
+/* 0*/   "TBD       - TinKer error TBD\n",
+/* 2*/   "TBD       - TinKer error TBD\n",
+/* 2*/   "TBD       - TinKer error TBD\n",
+/* 3*/   "TBD       - TinKer error TBD\n",
+
+/* 4*/   "STACK     - User stack out of bounds\n",
+/* 5*/   "TBD       - TinKer error TBD\n",
+/* 6*/   "TBD       - TinKer error TBD\n",
+/* 7*/   "TBD       - TinKer error TBD\n",
+
+/* 8*/   "TBD       - TinKer error TBD\n",
+/* 9*/   "TBD       - TinKer error TBD\n",
+/*10*/   "TBD       - TinKer error TBD\n",
+/*11*/   "TBD       - TinKer error TBD\n",
+
+/*12*/   "TBD       - TinKer error TBD\n",
+/*13*/   "TBD       - TinKer error TBD\n",
+/*14*/   "TBD       - TinKer error TBD\n",
+/*15*/   "TBD       - TinKer error TBD\n"
 };
  
 
@@ -195,6 +222,7 @@ char *i2shex(int i){
 
 void printtrap(
    const char *leadtext,
+   char *lookuptable[],
    unsigned int ip, 
    unsigned int csp,
    unsigned int tfr
@@ -206,12 +234,14 @@ void printtrap(
    bit oIEN;
   
    oIEN = IEN;
-   if ((leadtext == 0uL) || (leadtext[0] < 'A') || (leadtext[0] > 'z') ){
+   if ((leadtext == 0uL) || (leadtext[0] > 'z') ){
       //In case DDPx was broken, no pointers will work properlly
       PRINT_6_LETTERS('N','U','L','L','_','P');
       PRINT_6_LETTERS('D','D','P','0','B','R');
+      PRINT_6_LETTERS('N','O','T','R','U','S');
       //oputunistic aproach. Try set DDP0 to some known "valid" value.
       DPP0 = 0x0101;      
+      __asm{ mov R0, #0x18AC};  //Just guessing a value
    };      
    IEN  = 0;  
    safeprint ("\n"); 
@@ -228,11 +258,15 @@ void printtrap(
    //tfr = 0xFFFF;  //set to test lookup table only
 
    IEN  = 0;  
-   for (bitloop=0,mask=1; bitloop<16; bitloop++){
-      if (tfr & mask){
-         safeprint (trapinfo[bitloop]); 
+   if (tfr){
+      for (bitloop=0,mask=1; bitloop<16; bitloop++){
+         if (tfr & mask){
+            safeprint (lookuptable[bitloop+1]); 
+         }
+         mask = mask << 1;     
       }
-      mask = mask << 1;     
+   }else{
+      safeprint (lookuptable[0]); 
    }
    IEN  = 1;
    safeprint ("\nInfo about violating thread:\n"); 
@@ -266,7 +300,7 @@ void NMI_trap (void) interrupt 0x02  {
   tfr = TFR;
 
   PRINT_6_LETTERS('T','R','A','P','_','N');
-  printtrap("\nNon-Maskable Trap (NMI)",ip,csp,tfr); 
+  printtrap("\nNon-Maskable Trap (NMI)",trapinfo,ip,csp,tfr); 
   safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
 
 #endif 
@@ -288,7 +322,7 @@ void STKOF_trap (void) interrupt 0x04  {
   tfr = TFR;
 
   PRINT_6_LETTERS('T','R','A','P','_','B');
-  printtrap("\nStack Overflow Trap (STKOF)",ip,csp,tfr); 
+  printtrap("\nStack Overflow Trap (STKOF)",trapinfo,ip,csp,tfr); 
   safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
 
 #endif 
@@ -310,7 +344,7 @@ void STKUF_trap (void) interrupt 0x06  {
   tfr = TFR;
 
   PRINT_6_LETTERS('T','R','A','P','_','U');
-  printtrap("\nStack Underflow Trap (STKUF)",ip,csp,tfr); 
+  printtrap("\nStack Underflow Trap (STKUF)",trapinfo,ip,csp,tfr); 
   safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
 
 #endif 
@@ -341,7 +375,27 @@ void Class_B_trap (void) interrupt 0x0A  {
   tfr = TFR;
 
   PRINT_6_LETTERS('T','R','A','P','_','B');
-  printtrap("\nClass B Trap",ip,csp,tfr); 
+  printtrap("\nClass B Trap",trapinfo,ip,csp,tfr); 
+  safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
+
+#endif 
+  /* add your code here */
+  while (1);                 /* end-less loop */
+}
+
+
+void user_trap (void) interrupt 0x0D  {
+
+#ifdef PRINT_TRAP
+  unsigned int ip, csp;
+  unsigned int _tfr;
+  
+  ip  = _pop_ ();
+  csp = _pop_ ();
+  __asm{ mov _tfr, R3 };
+
+  PRINT_6_LETTERS('T','K','_','T','R','P');
+  printtrap("\nTinKer Error Trap",kerneltraps,ip,csp,_tfr); 
   safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
 
 #endif 
