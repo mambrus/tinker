@@ -238,6 +238,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
 
 #define PREP_TOS( _oldTOS, _newSP, _temp1, _temp2, _stack_struct )                                             \
    PUSHALL();                           /*Push everything for later*/                                          \
+   _stack_struct.userstack.linear = _stack_struct.userstack.linear + _stack_struct.usr_stack_size;             \
    /*Store the current SP for later*/                                                                          \
    __asm{ mov _temp1,SPSEG          }                                                                          \
    _temp2 = (unsigned long)_temp1;                                                                             \
@@ -257,7 +258,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ mov R3,STKOV              }                                                                          \
    __asm{ mov R4,STKUN              }                                                                          \
                                                                                                                \
-   _temp2 = _stack_struct.userstack.u.offs24._offs + _stack_struct.usr_stack_size;                             \
+   _temp2 = _stack_struct.userstack.u.offs24._offs;                                                            \
    __asm{ mov R0,_temp2             }                                                                          \
    _temp2 = _stack_struct.userstack.u.seg24._seg;                                                              \
    __asm{ mov DPP0,_temp2           }                                                                          \
@@ -381,6 +382,8 @@ void _tk_initialize_system_ques( );
 
 
 /*
+   
+   This wont work. Probably because we are trashing the stack we stand on (scope plus local var will do that) .
    {                                                                                                           \
       userstackaddr_t userTOS;                                                                                 \
       userTOS.linear = 0uL;                                                                                    \
