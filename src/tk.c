@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.16 $
+ *  Current $Revision: 1.17 $
  *
  *******************************************************************/
 
@@ -256,8 +256,7 @@ static char *ct_oldTOS;    //!< will contain old top of stack adress
 static char *ct_newSP;     //!< new stack-pointer. Is a return value storage from macro
 static char *ct_temp1;     //!< fony temporary stackpointer used in the process of setting TOS
 static unsigned long ct_temp2;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
-static stack_t ct_stack_struct;
-
+static stack_t ct_stack_struct; //!< Will be changed in macro. Never use outside of it (don't trust it)
 
 /*
 @ingroup kernel
@@ -624,7 +623,15 @@ void Test_scheduler( void ){
 /*******************************************************************
  *
  *  $Log: tk.c,v $
- *  Revision 1.16  2005-11-26 16:13:19  ambrmi09
+ *  Revision 1.17  2005-11-27 15:07:25  ambrmi09
+ *  Found a serious bug about how user stacks lacalization. This is an intermediate
+ *  but working check-in. Need fixing for handling word boudary overfolw.
+ *
+ *  Also Traps are made a little bit more robust in case DPP0:R0 are trashed.
+ *  DPP0 is deducted in such case, but could need some extra info about good value
+ *  for R0.
+ *
+ *  Revision 1.16  2005/11/26 16:13:19  ambrmi09
  *  Relevant for XC167 only.
  *
  *  Code for protecting system stacks added. Noted that if recursed functions

@@ -28,37 +28,41 @@
 /*     L166 <your object file list>, TRAPS.OBJ <controls>              */
 /*                                                                     */
 /***********************************************************************/
-
-#define PRINT_TRAP            //<! set to print trap information
-/*
-#include <dave/MAIN.H>        //primitives for output on rs232 in case of printing
-#include <dave/ASC0.H>
-*/
-
-/*
-#define REGH( DEV ) \
-   <DEV.h>
-
-#if defined( DEVICE )
-   #include REGH( DEVICE )   
-#else
-   #error "Error, No device specified - can't determine register definition file !!!!!!!!!!!"
-#endif
-*/
-
-sfr   PSW      = 0xFF10;
-sbit  IEN      = PSW^11;
-
 #include <intrins.h>
 #include <stdio.h>
 #include <tk.h>
 
+#define PRINT_TRAP            //<! set to print trap information
 
-#ifdef PRINT_TRAP             // print trap information
+sfr   PSW      = 0xFF10;
+sbit  IEN      = PSW^11;
+sfr   TFR      = 0xFFAC;      // TFR contais Trap Reason
 
-#pragma NOFRAME               // do not save registers for interrupt
 
-sfr TFR = 0xFFAC;             // TFR contais Trap Reason
+/*!
+The most primitive of all prints. This will print anything even if
+there is no valid stack that works. 
+
+@note It will print the first letter alway, but we might want to
+create a busy-wait macro also.
+*/
+#define PRINT_6_LETTERS( A, B, C, D, E, F )  \
+  ASC0_vSendData(0x0D); busywait(10);        \
+  ASC0_vSendData(0x0A); busywait(10);        \
+  ASC0_vSendData( A );  busywait(10);        \
+  ASC0_vSendData( B );  busywait(10);        \
+  ASC0_vSendData( C );  busywait(10);        \
+  ASC0_vSendData( D );  busywait(10);        \
+  ASC0_vSendData( E );  busywait(10);        \
+  ASC0_vSendData( F );  busywait(10);        \  
+  ASC0_vSendData(0x0D); busywait(10);        \
+  ASC0_vSendData(0x0A); busywait(10);
+
+
+#ifdef PRINT_TRAP             // If print trap information wanted
+#pragma NOFRAME               // Do not save registers for interrupt
+
+
 
 /* Value in hex */
 /*  |           */
@@ -82,7 +86,7 @@ sfr TFR = 0xFFAC;             // TFR contais Trap Reason
  */
 
 
-static const char *trapinfo[16]={
+static const char const* trapinfo[16]={
 /* 0*/   "<noinfo>  - Illegal External Bus Access (no external BUS defined for address)\n",
 /* 2*/   "<noinfo>  - Illegal Instruction Access  (branch to odd address)\n",
 /* 2*/   "ILLOPA    - Illegal Word Operand Access (word read/write on odd address)\n",
@@ -190,46 +194,60 @@ char *i2shex(int i){
 }
 
 void printtrap(
-	char *leadtext,
-	unsigned int ip, 
-	unsigned int csp,
-	unsigned int tfr
-){
-  unsigned char bitloop;
-  unsigned int  mask;
-  unsigned int  tid;
-  tk_tcb_t     *curr_tcb;
-  bit oIEN;
+   const char *leadtext,
+   unsigned int ip, 
+   unsigned int csp,
+   unsigned int tfr
+){   
+   unsigned char bitloop;
+   unsigned int  mask;
+   unsigned int  tid;
+   tk_tcb_t     *curr_tcb;
+   bit oIEN;
   
-  oIEN = IEN;
-  IEN  = 0;
-  safeprint ("\n"); 
-  safeprint (leadtext); 
-  safeprint (" at PC="); 
-  safeprint (i2shex(csp));
-  safeprint (":");
-  safeprint (i2shex(ip));  
-  safeprint (" TFR="); 
-  safeprint (i2shex(tfr));
-  safeprint ("\nTFR meaning explained as follows:\n"); 
+   oIEN = IEN;
+   if ((leadtext == 0uL) || (leadtext[0] < 'A') || (leadtext[0] > 'z') ){
+      //In case DDPx was broken, no pointers will work properlly
+      PRINT_6_LETTERS('N','U','L','L','_','P');
+      PRINT_6_LETTERS('D','D','P','0','B','R');
+      //oputunistic aproach. Try set DDP0 to some known "valid" value.
+      DPP0 = 0x0101;      
+   };      
+   IEN  = 0;  
+   safeprint ("\n"); 
+   safeprint (leadtext); 
+   IEN  = 1;
+   safeprint (" at PC="); 
+   safeprint (i2shex(csp));
+   safeprint (":");
+   safeprint (i2shex(ip));  
+   safeprint (" TFR="); 
+   safeprint (i2shex(tfr));
+   safeprint ("\nTFR meaning explained as follows:\n"); 
   
-  //tfr = 0xFFFF;  //set to test lookup table only
-  
-  for (bitloop=0,mask=1; bitloop<16; bitloop++){
-     if (tfr & mask){
-       safeprint (trapinfo[bitloop]); 
-    }
-     mask = mask << 1;     
-  }
-  safeprint ("\nInfo about violating thread:\n"); 
-  tid = tk_thread_id();
-  curr_tcb = _tk_current_tcb();
-  safeprint ("Thread ID: 0x");
-  safeprint (i2shex(tid));
-  safeprint (", name: \"");
-  safeprint (curr_tcb->name);
-  safeprint ("\"\n");
-  IEN = oIEN;
+   //tfr = 0xFFFF;  //set to test lookup table only
+
+   IEN  = 0;  
+   for (bitloop=0,mask=1; bitloop<16; bitloop++){
+      if (tfr & mask){
+         safeprint (trapinfo[bitloop]); 
+      }
+      mask = mask << 1;     
+   }
+   IEN  = 1;
+   safeprint ("\nInfo about violating thread:\n"); 
+   
+   IEN  = 0;
+   tid = tk_thread_id();
+   curr_tcb = _tk_current_tcb();
+   
+   IEN  = 1;
+   safeprint ("Thread ID: 0x");
+   safeprint (i2shex(tid));
+   safeprint (", name: \"");
+   safeprint (curr_tcb->name);
+   safeprint ("\"\n");
+   IEN = oIEN;
 }
   
 #endif 
@@ -247,6 +265,7 @@ void NMI_trap (void) interrupt 0x02  {
   csp = _pop_ ();
   tfr = TFR;
 
+  PRINT_6_LETTERS('T','R','A','P','_','N');
   printtrap("\nNon-Maskable Trap (NMI)",ip,csp,tfr); 
   safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
 
@@ -268,6 +287,7 @@ void STKOF_trap (void) interrupt 0x04  {
   csp = _pop_ ();
   tfr = TFR;
 
+  PRINT_6_LETTERS('T','R','A','P','_','B');
   printtrap("\nStack Overflow Trap (STKOF)",ip,csp,tfr); 
   safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
 
@@ -289,6 +309,7 @@ void STKUF_trap (void) interrupt 0x06  {
   csp = _pop_ ();
   tfr = TFR;
 
+  PRINT_6_LETTERS('T','R','A','P','_','U');
   printtrap("\nStack Underflow Trap (STKUF)",ip,csp,tfr); 
   safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
 
@@ -319,6 +340,7 @@ void Class_B_trap (void) interrupt 0x0A  {
   csp = _pop_ ();
   tfr = TFR;
 
+  PRINT_6_LETTERS('T','R','A','P','_','B');
   printtrap("\nClass B Trap",ip,csp,tfr); 
   safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
 

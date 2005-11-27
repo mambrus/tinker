@@ -51,14 +51,16 @@ void _tk_reinit_stackaddr_xc167keil(
 
    //make sure we have 32 bit alignement (sys stack will contain return adresses)
    for (;sys_stack_size % 4;sys_stack_size++);
-
+   
    usr_stack_size = size - sys_stack_size;
 
    
    addr->usr_stack_size = usr_stack_size;
    addr->sys_stack_size = sys_stack_size;
    
-   addr->userstack.linear = addr->systemstack.linear + usr_stack_size;   
+   addr->userstack.linear = addr->systemstack.linear + sys_stack_size;                      //Need also adjust in TOS
+   //addr->userstack.linear = addr->systemstack.linear + sys_stack_size + usr_stack_size;   //good as temp solution
+   //addr->userstack.linear = addr->systemstack.linear + usr_stack_size;                    //old
 }
 
 unsigned long Q_ASC0;

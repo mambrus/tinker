@@ -103,7 +103,7 @@ typedef union{
 
 /*! 
 Architecture specific representation of a stack adress. In this obscure
-MPU/Compiler compo this need to be devided in two stacks for each
+MPU/Compiler combo, this need to be devided in two stacks for each
 thread, that each is best represented in a different way. Both these
 ways however also have a linear adrees for conveniant lookup in
 physical memory.
@@ -255,12 +255,14 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ mov R1,R0                 }                                                                          \
    __asm{ mov R2,DPP0               }                                                                          \
    __asm{ mov R3,STKOV              }                                                                          \
-   __asm{ mov R4,STKUN              }                                                                          \   
-   _temp2 = _stack_struct.userstack.u.offs24._offs;                                                            \
+   __asm{ mov R4,STKUN              }                                                                          \
+                                                                                                               \
+   _temp2 = _stack_struct.userstack.u.offs24._offs + _stack_struct.usr_stack_size;                             \
    __asm{ mov R0,_temp2             }                                                                          \
    _temp2 = _stack_struct.userstack.u.seg24._seg;                                                              \
    __asm{ mov DPP0,_temp2           }                                                                          \
-   _temp2 = _stack_struct.systemstack.reg._SP + 0xA0;                                                      \
+                                                                                                               \
+   _temp2 = _stack_struct.systemstack.reg._SP /*+ 0xA0*/;                                                      \
    __asm{ mov STKOV,_temp2          }                                                                          \
    _temp2 = _stack_struct.systemstack.reg._SP + _stack_struct.sys_stack_size;                                  \
    __asm{ mov STKUN,_temp2          }                                                                          \
@@ -377,6 +379,25 @@ void _tk_initialize_system_ques( );
 
 */
 
+
+/*
+   {                                                                                                           \
+      userstackaddr_t userTOS;                                                                                 \
+      userTOS.linear = 0uL;                                                                                    \
+      userTOS.linear = _stack_struct.userstack.linear + (unsigned long)_stack_struct.usr_stack_size;           \
+      _temp2 = userTOS.u.offs24._offs;                                                                         \
+      __asm{ mov R0,_temp2             }                                                                       \
+      _temp2 = userTOS.u.seg24._seg;                                                                           \
+      __asm{ mov DPP0,_temp2           }                                                                       \
+   }                                                                                                           \
+
+
+   _temp2 = _stack_struct.userstack.u.offs24._offs + _stack_struct.usr_stack_size;                             \
+   __asm{ mov R0,_temp2             }                                                                          \
+   _temp2 = _stack_struct.userstack.u.seg24._seg;                                                              \
+   __asm{ mov DPP0,_temp2           }                                                                          \
+
+*/
 #endif
 
 
