@@ -4,10 +4,7 @@
 Target (XC167), 0x0002 // Tools: '166/167'
 
 Group (Dave Files)
-Group (User Files)
 Group (TinKer)
-Group (startup)
-Group (stdlib)
 
 File 1,1,<..\dave\SSC0.C><SSC0.C> 0x0 
 File 1,1,<..\dave\ASC0.C><ASC0.C> 0x0 
@@ -17,20 +14,10 @@ File 1,1,<..\dave\GPT2.C><GPT2.C> 0x0
 File 1,1,<..\dave\IO.C><IO.C> 0x0 
 File 1,1,<..\dave\MAIN.C><MAIN.C> 0x0 
 File 1,1,<..\dave\ADC.C><ADC.C> 0x0 
-File 3,1,<.\src\tk_ipc.c><tk_ipc.c> 0x0 
-File 3,1,<.\src\tk.c><tk.c> 0x0 
-File 3,1,<.\src\time.c><time.c> 0x0 
-File 3,1,<.\bsp\XC167_Keil\tk_hwsys_keilC166.c><tk_hwsys_keilC166.c> 0x0 
-File 4,5,<.\bsp\XC167_Keil\startup\README.TXT><README.TXT> 0x0 
-File 4,2,<.\bsp\XC167_Keil\startup\Start_V2.A66><Start_V2.A66> 0x0 
-File 4,1,<.\bsp\XC167_Keil\startup\TRAPS.C><TRAPS.C> 0x0 
-File 5,1,<.\bsp\XC167_Keil\stdlib\REALLOC.C><REALLOC.C> 0x0 
-File 5,1,<.\bsp\XC167_Keil\stdlib\FREE.C><FREE.C> 0x0 
-File 5,1,<.\bsp\XC167_Keil\stdlib\GETKEY.C><GETKEY.C> 0x0 
-File 5,1,<.\bsp\XC167_Keil\stdlib\INIT_MEM.C><INIT_MEM.C> 0x0 
-File 5,1,<.\bsp\XC167_Keil\stdlib\MALLOC.C><MALLOC.C> 0x0 
-File 5,1,<.\bsp\XC167_Keil\stdlib\PUTCHAR.C><PUTCHAR.C> 0x0 
-File 5,1,<.\bsp\XC167_Keil\stdlib\CALLOC.C><CALLOC.C> 0x0 
+File 2,1,<.\src\tk_ipc.c><tk_ipc.c> 0x0 
+File 2,1,<.\src\tk.c><tk.c> 0x0 
+File 2,1,<.\src\time.c><time.c> 0x0 
+File 2,1,<.\bsp\XC167_Keil\tk_hwsys_keilC166.c><tk_hwsys_keilC166.c> 0x0 
 
 
 Options 1,0,0  // Target 'XC167'
@@ -58,7 +45,7 @@ Options 1,0,0  // Target 'XC167'
  OrgReg ()
  TgStat=16
  OutDir (.\tmp\XC167\)
- OutName (..\..\xc167)
+ OutName (..\..\TinKer)
  GenApp=0
  GenLib=1
  GenHex=1

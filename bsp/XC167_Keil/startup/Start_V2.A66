@@ -3,7 +3,7 @@ $MODV2                                  ; Define C166v2 core mode
 
 ;
 ;------------------------------------------------------------------------------
-;  This file is part of the C166 Compiler package
+;  This file is part of the C166 Compiler package    
 ;  Copyright KEIL ELEKTRONIK GmbH 1993 - 2004
 ;  Version 5.01
 ;  Note:  PHAx default set to 0 as bypass for TwinCAN device problem.
