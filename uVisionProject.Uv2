@@ -33,19 +33,15 @@ Options 1,0,0  // Target 'XC167'
  A ()
  RL ()
  OH ()
- DBC_IFX ()
- DBC_CMS ()
- DBC_AMS ()
- DBC_LMS ()
  UseEnv=0
  EnvBin ()
  EnvInc ()
  EnvLib ()
  EnvReg ()
  OrgReg ()
- TgStat=16
+ TgStat=0
  OutDir (.\tmp\XC167\)
- OutName (..\..\TinKer)
+ OutName (..\..\TinKer_XC167)
  GenApp=0
  GenLib=1
  GenHex=1
@@ -139,6 +135,5 @@ Options 1,0,0  // Target 'XC167'
  FLASH1 { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 ()
  FLASH3 ("" ())
- FLASH4 ()
 EndOpt
 

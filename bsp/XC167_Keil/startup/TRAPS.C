@@ -86,7 +86,7 @@ create a busy-wait macro also.
  */
 
 
-static const char const* trapinfo[17]={
+static const char * trapinfo[17]={
 /*none*/ "<noinfo>  - TFR not set (Very strange!!!) \n",
 
 /* 0*/   "<noinfo>  - Illegal External Bus Access (no external BUS defined for address)\n",
@@ -111,7 +111,7 @@ static const char const* trapinfo[17]={
 };
 
 
-static const char const* kerneltraps[]={
+static const char * kerneltraps[]={
 /*none*/ "TK_NOERR  - TinKer Termination without any errors\n",
 
 /* 0*/   "TBD       - TinKer error TBD\n",

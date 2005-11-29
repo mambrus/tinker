@@ -1382,7 +1382,8 @@ ENDIF
 ?C_RESET        PROC TASK C_STARTUP INTNO RESET = 0
 ?C_STARTUP:     LABEL   Model
 
-$INCLUDE (..\..\..\..\dave\Dave.asm)
+;$INCLUDE (..\..\..\..\dave\Dave.asm)        ;If build by uVision
+$INCLUDE (dave\Dave.asm)                     ;If build by makefile
 
 
 $IF (WATCHDOG = 0)
