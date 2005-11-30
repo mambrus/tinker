@@ -1,8 +1,8 @@
 #ifndef TK_HWSYS_KEILC166_H
-#define TK_HWSYS_KEILC166_H
+#define TK_HWSYS_KEILC166_H      
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*
-
+                                                                      
 The following pragmas are important compilor directives to ensure correct
 behavious of the kernal. They should be supplied on the command line or in the
 "misc control" of Uv2 project setting. For fonveniance (and for explanation)
@@ -147,8 +147,6 @@ device must follow Keils predifined devices, which you can find as files in the 
 %install_dir%\Keil\C166\INC\ .
 */
 
-//#include <XC16X.H>
-
 #if defined( DEVICE )
    #include REGH( DEVICE )   
 #else
@@ -167,8 +165,8 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
 */
 
 #define PUSHALL()                                                                                             \
-   __asm{ push  PSW                    }                                                                      \    
-   __asm{ push  R0                     }                                                                      \    
+   __asm{ push  PSW                    }                                                                      \
+   __asm{ push  R0                     }                                                                      \
    __asm{ push  R1                     }                                                                      \
    __asm{ push  R2                     }                                                                      \
    __asm{ push  R3                     }                                                                      \
@@ -191,13 +189,13 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ push  MDL                    }                                                                      \
    __asm{ push  MDH                    }                                                                      \
    __asm{ push  MDC                    }                                                                      \
-   __asm{ push  STKOV                  }                                                                      \      
-   __asm{ push  STKUN                  }                                                                      \         
+   __asm{ push  STKOV                  }                                                                      \
+   __asm{ push  STKUN                  }                                                                      \
    
       
 #define POPALL()                                                                                              \
    __asm{ pop  STKUN                   }                                                                      \
-   __asm{ pop  STKOV                   }                                                                      \   
+   __asm{ pop  STKOV                   }                                                                      \
    __asm{ pop  MDC                     }                                                                      \
    __asm{ pop  MDH                     }                                                                      \
    __asm{ pop  MDL                     }                                                                      \
@@ -205,7 +203,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ pop  DPP2                    }                                                                      \
    __asm{ pop  DPP1                    }                                                                      \
    __asm{ pop  DPP0                    }                                                                      \
-   __asm{ pop  R15                     }                                                                      \    
+   __asm{ pop  R15                     }                                                                      \
    __asm{ pop  R14                     }                                                                      \
    __asm{ pop  R13                     }                                                                      \
    __asm{ pop  R12                     }                                                                      \
@@ -221,36 +219,8 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ pop  R2                      }                                                                      \
    __asm{ pop  R1                      }                                                                      \
    __asm{ pop  R0                      }                                                                      \
-   __asm{ pop  PSW                     }                                                                      \    
+   __asm{ pop  PSW                     }                                                                      \
    
-#define MARKALL()                                                                                              \
-   __asm{ mov R0,  #0203h              }                                                                       \    
-   __asm{ mov R1,  #0405h              }                                                                       \
-   __asm{ mov R2,  #0607h              }                                                                       \
-   __asm{ mov R3,  #0809h              }                                                                       \
-   __asm{ mov R4,  #0A0Bh              }                                                                       \
-   __asm{ mov R5,  #0C0Dh              }                                                                       \
-   __asm{ mov R6,  #0E0Fh              }                                                                       \
-   __asm{ mov R7,  #1011h              }                                                                       \
-   __asm{ mov R8,  #1213h              }                                                                       \
-   __asm{ mov R9,  #1415h              }                                                                       \
-   __asm{ mov R10, #1617h              }                                                                       \
-   __asm{ mov R11, #1819h              }                                                                       \
-   __asm{ mov R12, #1A1Bh              }                                                                       \
-   __asm{ mov R13, #1C1Dh              }                                                                       \
-   __asm{ mov R14, #1E1Fh              }                                                                       \
-   __asm{ mov R15, #2021h              }                                                                       \
-/* __asm{ mov DPP0,#2223h              } */  /*Avoid modifying these - set/used by compilor*/                  \
-/* __asm{ mov DPP1,#2425h              } */                                                                    \
-/* __asm{ mov DPP2,#2627h              } */                                                                    \
-/* __asm{ mov DPP3,#2829h              } */                                                                    \
-   __asm{ mov MDL, #2A2Bh              }                                                                       \
-   __asm{ mov MDH, #2C2Dh              }                                                                       \
-   __asm{ mov MDC, #0010h              } /*Only one bit that can be set ATM - set it for test*/                \
-   __asm{ mov PSW, #0001h              }                                                                       \    
-   
-
-
 
 #define PREP_TOS( _oldTOS, _newSP, _temp1, _temp2, _stack_struct )                                             \
    PUSHALL();                           /*Push everything for later*/                                          \
@@ -292,7 +262,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ mov R0,R1                 }                                                                          \
    __asm{ mov DPP0,R2               }                                                                          \
    __asm{ mov STKOV,R3              }                                                                          \
-   __asm{ mov STKUN,R4              }                                                                          \   
+   __asm{ mov STKUN,R4              }                                                                          \
                                                                                                                \
                                                                                                                \
    _newSP = 0ul;                      /*Important, or the next assembly "cast" will fail (not clearing 16 MSB */ \
@@ -301,7 +271,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
                                                                                                                \
                                                                                                                \
    /*Restore the old stack pointer and CPU conten so that we can continue, */                                  \
-   _temp2 = (unsigned long)_temp1 >> 16;                                                                       \   
+   _temp2 = (unsigned long)_temp1 >> 16;                                                                       \
    __asm{ mov SP,_temp1             }                                                                          \
    __asm{ mov SPSEG,_temp2          }                                                                          \
                                                                                                                \
@@ -314,7 +284,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                                                   \
    PUSHALL()                                                                                                  \
    __asm{ mov TSP1,SPSEG              }                                                                       \
-   TEMP = (unsigned long)TSP1 << 16;                                                                          \   
+   TEMP = (unsigned long)TSP1 << 16;                                                                          \
    __asm{ mov TSP1,SP                 }                                                                       \
    TSP1 = TEMP + (unsigned long)TSP1;                                                                         \
   
@@ -322,7 +292,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    TEMP = (unsigned long)TSP1 >> 16;                                                                          \
    __asm{ mov SP,TSP1                 }                                                                       \
    __asm{ mov SPSEG,TEMP              }                                                                       \
-   POPALL();                                                                                                  \   
+   POPALL();                                                                                                  \
 
 #define GET_THREADS_RETVAL( THRETVAL )                                                                        \
 
@@ -344,9 +314,9 @@ void _tk_initialize_system_ques( );
    ( ADDR.sys_stack_size ) 
    
 
-#define TRY_CATCH_STACK_ERROR( STACK_T, temp2 )                               \
-   __asm { mov temp2, R0 }                                                    \
-   if ( temp2 < STACK_T.userstack.u.offs24._offs + SAFEZONE ){                \
+#define TRY_CATCH_STACK_ERROR( STACK_T, TEMP )                                \
+   __asm { mov TEMP, R0 }                                                     \
+   if ( TEMP < STACK_T.userstack.u.offs24._offs + SAFEZONE ){                 \
       printf("tk: Error - user stack trashed!\n");                            \
       tk_exit(TK_ERR_STACK);                                                  \
    }                                                                          \
@@ -359,8 +329,93 @@ void _tk_initialize_system_ques( );
 #define TRAP( NUM )                                                           \
    _do_trap( NUM )
 
+#define TK_CLI()                                                              \
+   __asm{ BCLR PSW_IEN }                                                      \
+   Tk_IntFlagCntr++;                                                          \   
+
+
+#define TK_STI()	                                                            \
+   Tk_IntFlagCntr--;  /*Is ok since CLI is active no one can interfere*/      \
+   if (Tk_IntFlagCntr == 0)                                                   \
+      __asm{ BSET PSW_IEN }
+      
+
+#define STK_CRC_CALC( TEMP )                                               \
+   __asm { mov TEMP, R0 }                                                  \
+   TEMP = TEMP - 32 - 4;       /*Stupid, but due to [Rx-] bug*/            \
+   __asm { mov R3, TEMP }                                                  \
+   TEMP = 0;                                                               \
+   __asm { mov R2, TEMP }                                                  \
+   TEMP = 1;                                                               \
+   __asm { mov R4, TEMP }                                                  \
+                           \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { add R2, [R3+] } \
+   __asm { ROL R2, R4 }    \
+   __asm { mov TEMP, R2 }  \
+   
+
+
+/*!
+@ingroup kernel_internals
+
+TBD
+
+*/
+#define INTEGRITY_CERTIFY_STACK( TCB_T, TEMP)               \
+   STK_CRC_CALC( TEMP );                                    \  
+   TCB_T.stack_crc = TEMP                                   \
+
+
+
+/*!
+@ingroup kernel_internals
+
+TBD
+
+*/
+#define TRY_CATCH_STACK_INTEGRITY_VIOLATION( TCB_T, TEMP)   \
+   if ( TCB_T.stack_crc != 0 ){ \
+   STK_CRC_CALC( TEMP );                                    \
+   if ( TCB_T.stack_crc != TEMP )	{                       \
+      printf ("\ntk: Error - Thread 0x%02X \"%s\" has got a tainted stack\n",TCB_T.Pid,TCB_T.name); \
+      tk_exit( TK_ERR_STKINT );                             \
+   }                                                        \
+   } \
+
 
 
 #endif
 
+/*
 
+*/

@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.18 $
+ *  Current $Revision: 1.19 $
  *
  *******************************************************************/
 
@@ -33,6 +33,8 @@ unsigned int _tk_idle( void *foo );
 /** public data **/
 
 /** private data **/
+
+int Tk_IntFlagCntr;
 
 /** public functions **/
 
@@ -144,6 +146,7 @@ void tk_create_kernel( void ){
       proc_stat[i].stack_size    = 0;
       STACK_PTR(proc_stat[i].stack_begin)   = 0uL;
       STACK_PTR(proc_stat[i].curr_sp)       = 0uL;
+	  proc_stat[i].stack_crc     = 0;
       proc_stat[i].wakeupEvent   = 0;
    }
    //The Root proc is already created but must be registred
@@ -256,6 +259,7 @@ static char *ct_oldTOS;    //!< will contain old top of stack adress
 static char *ct_newSP;     //!< new stack-pointer. Is a return value storage from macro
 static char *ct_temp1;     //!< fony temporary stackpointer used in the process of setting TOS
 static unsigned long ct_temp2;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
+static unsigned int ct_temp3;   //!< Extra storage. 
 static stack_t ct_stack_struct; //!< Will be changed in macro. Never use outside of it (don't trust it)
 
 /*!
@@ -327,6 +331,7 @@ unsigned int tk_create_thread(
    proc_stat[proc_idx].stack_size   = stack_size;
    proc_stat[proc_idx].Prio         = prio;
    proc_stat[proc_idx].Idx          = slot_idx;
+   proc_stat[proc_idx].stack_crc    = 0;
    proc_stat[proc_idx].wakeupEvent  = 0;
 
    proc_stat[active_thread].noChilds++;
@@ -375,6 +380,9 @@ unsigned int tk_create_thread(
    theSchedule[prio][slot_idx] = proc_idx;
    //Increase the amount of procs at same prio
    scheduleIdxs[prio].procs_at_prio++;
+   
+   //Make a integrity certification on the stack of this thread
+	//INTEGRITY_CERTIFY_STACK(proc_stat[proc_idx], ct_temp3);
    return proc_idx ;
 }
 
@@ -504,9 +512,6 @@ unsigned int _tk_next_runable_thread(){
    return return_Pid;
 }
 
-static char *cswTSP;          //!< fony temporary stackpointer used in the process of setting TOS
-static unsigned int cswTEMP;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
-static unsigned int cswTEMP2; //!< Extra storage. 
 
 /*!
 @ingroup kernel_internal
@@ -526,12 +531,19 @@ TRY_CATCH_STACK_ERROR)
 @see TRY_CATCH_STACK_ERROR
 
 */
+static char *cswTSP;          //!< fony temporary stackpointer used in the process of setting TOS
+static unsigned int cswTEMP;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
+static unsigned int cswTEMP2; //!< Extra storage.
+
 void _tk_context_switch_to_thread(
    unsigned int RID,                //!< Thread ID to switch to
    unsigned int SID                 /*!< Thread ID to switch from. I.e. 
                                          current thread ID to put away in TCB*/
 ){
-   TRY_CATCH_STACK_ERROR( proc_stat[SID].stack_begin, cswTEMP2 );   
+   TRY_CATCH_STACK_ERROR( proc_stat[SID].stack_begin, cswTEMP2 );
+   INTEGRITY_CERTIFY_STACK( proc_stat[SID], cswTEMP2 ); //Certify the stack we're leaving from
+
+   
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );   
 
    STACK_PTR( proc_stat[SID].curr_sp ) = cswTSP;
@@ -540,6 +552,7 @@ void _tk_context_switch_to_thread(
    active_thread=RID;
 
    CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );   
+   TRY_CATCH_STACK_INTEGRITY_VIOLATION( proc_stat[active_thread], cswTEMP2 ); //Check integrity is OK before running 
 }
 
 /*!
@@ -588,8 +601,9 @@ void _tk_assertfail(
    int line
 ) {
    printf("tk: Error - Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line);
-   tk_exit(3);
+   tk_exit( TK_ERR_ASSERT );
 }
+
 
 /*!
 @ingroup kernel_glue
@@ -639,7 +653,13 @@ void Test_scheduler( void ){
 /*******************************************************************
  *
  *  $Log: tk.c,v $
- *  Revision 1.18  2005-11-27 20:02:00  ambrmi09
+ *  Revision 1.19  2005-11-30 22:21:22  ambrmi09
+ *  Mechanism for detecting stack integrity violation introduced. It needs more
+ *  work. An interrupt will taint the current stack if it's using any kernel
+ *  functions. This is not what we want, but the main idea is captured in this
+ *  check-in.
+ *
+ *  Revision 1.18  2005/11/27 20:02:00  ambrmi09
  *  - Detection of UserStack out-of bounds detection added.
  *  - Added error generic handling mechanism (TRAP)
  *  - Several new macros (that also need to be ported btw)

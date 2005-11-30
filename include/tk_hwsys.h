@@ -1,5 +1,5 @@
 #ifndef TK_HWSYS_H
-#define TK_HWSYS_H
+#define TK_HWSYS_H    
 
 #if defined(DOXYGEN_ONLY)
 
@@ -249,7 +249,41 @@ still have trashed neighbouring threads stacks.
 
 */
 
-#define TRY_CATCH_STACK_ERROR( STACK_T, temp )
+#define TRY_CATCH_STACK_ERROR( STACK_T, TEMP )
+
+/*
+@ingroup kernel_internals
+
+@brief Calculate a stack integryty value.
+
+Calculate a stack integryty value on the stack pointed out by arg 1
+
+@note Due to that this operation is rather costly, certain targets or
+cases might want to replace this with a NOP.
+
+*/
+#define INTEGRITY_CERTIFY_STACK( TCB_T, TEMP )
+
+
+
+
+/*
+@ingroup kernel_internals
+
+@brief Calculate a stack integryty value.
+
+Calculate a stack integryty value on the stack pointed out by arg 1
+
+
+@note Due to that this operation is rather costly, certain targets or
+cases might want to replace this with a NOP.
+
+*/
+#define TRY_CATCH_STACK_INTEGRITY_VIOLATION( TCB_T, TEMP )
+
+
+
+
 
 
    
@@ -269,7 +303,7 @@ still have trashed neighbouring threads stacks.
 #error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"
 
 #else
-#error "Can\'t determine the target for the TINKER kernel"   
+//#error "Can\'t determine the target for the TINKER kernel"   
 
 #endif
 

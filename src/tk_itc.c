@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.6 $
+ *  Current $Revision: 1.7 $
  *******************************************************************/
 /** include files **/
 #include <stdio.h>			    	          	       	   	      	   
@@ -1153,15 +1153,17 @@ unsigned long q_send_ny(
    unsigned long msg_buf[4]
 ){
    unsigned long rc;
+   TK_CLI();
+   PSW_IEN = 0;	   
    
    /* Test if the id is valid */
    if (ipc_array[qid] == NULL )
-      return(ERR_OBJDEL);
+      { return(ERR_OBJDEL); TK_STI(); }
    if (ipc_array[qid]->b_type != S_QUEUE )
-      return(ERR_OBJTYPE);
+      { return(ERR_OBJTYPE); TK_STI(); }
    if (ipc_array[qid]->token > 0)
       if (!(ipc_array[qid]->token < ipc_array[qid]->sizeof_q))
-         return(ERR_FULL);
+         { return(ERR_FULL); TK_STI(); }
       
    
    /* put the message in the message queue */
@@ -1173,11 +1175,12 @@ unsigned long q_send_ny(
    if (!(proveConcistency(qid)))
       assert(0);
    if (rc !=  ERR_OK)
-      return(rc);
+      { return(rc); TK_STI(); }
+   TK_STI();
    return(ERR_OK);
 }
 
-unsigned long sm_create_ny(
+unsigned long sm_create_ny(	  
    char name[4],           
    unsigned long count,    
    unsigned long flags,    
@@ -1271,7 +1274,13 @@ unsigned long sm_v_ny(  /* sm_send or sm_put */
 /*******************************************************************  
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.6  2005-11-26 11:38:40  ambrmi09
+ *  Revision 1.7  2005-11-30 22:21:22  ambrmi09
+ *  Mechanism for detecting stack integrity violation introduced. It needs more
+ *  work. An interrupt will taint the current stack if it's using any kernel
+ *  functions. This is not what we want, but the main idea is captured in this
+ *  check-in.
+ *
+ *  Revision 1.6  2005/11/26 11:38:40  ambrmi09
  *  Cosmetic changes concerning CVS logs in source.
  *
  *  Revision 1.5  2005/11/25 14:35:16  ambrmi09

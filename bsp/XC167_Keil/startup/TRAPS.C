@@ -115,12 +115,12 @@ static const char * kerneltraps[]={
 /*none*/ "TK_NOERR  - TinKer Termination without any errors\n",
 
 /* 0*/   "TBD       - TinKer error TBD\n",
-/* 2*/   "TBD       - TinKer error TBD\n",
+/* 2*/   "ASSERT    - Assertion failed. See earlier text output for more info\n",
 /* 2*/   "TBD       - TinKer error TBD\n",
 /* 3*/   "TBD       - TinKer error TBD\n",
 
 /* 4*/   "STACK     - User stack out of bounds\n",
-/* 5*/   "TBD       - TinKer error TBD\n",
+/* 5*/   "STKINT    - Stack integrity faliure detected\n",
 /* 6*/   "TBD       - TinKer error TBD\n",
 /* 7*/   "TBD       - TinKer error TBD\n",
 
@@ -276,7 +276,7 @@ void printtrap(
    curr_tcb = _tk_current_tcb();
    
    IEN  = 1;
-   safeprint ("Thread ID: 0x");
+   safeprint ("Thread ID: ");
    safeprint (i2shex(tid));
    safeprint (", name: \"");
    safeprint (curr_tcb->name);
@@ -393,6 +393,7 @@ void user_trap (void) interrupt 0x0D  {
   ip  = _pop_ ();
   csp = _pop_ ();
   __asm{ mov _tfr, R3 };
+  //_tfr = TFR;
 
   PRINT_6_LETTERS('T','K','_','T','R','P');
   printtrap("\nTinKer Error Trap",kerneltraps,ip,csp,_tfr); 

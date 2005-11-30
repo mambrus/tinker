@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.14 $
+ *  Current $Revision: 1.15 $
  *
  *******************************************************************/
  
@@ -38,12 +38,12 @@
 #define TK_NOERR           0x0000   //!< Termination without errors
 
 #define TK_ERR_1           0x0001
-#define TK_ERR_2           0x0002
+#define TK_ERR_ASSERT      0x0002   //!< Assertion failed
 #define TK_ERR_3           0x0004
 #define TK_ERR_4           0x0008
 
 #define TK_ERR_STACK       0x0010   //!< Stack out of bounds check faliure
-#define TK_ERR_6           0x0020
+#define TK_ERR_STKINT      0x0020   //!< Stack integrity faliure detected
 #define TK_ERR_7           0x0040
 #define TK_ERR_8           0x0080
 
@@ -102,6 +102,7 @@ typedef struct    tk_tcb_t_s{
    stack_t        stack_begin;         //!< First address of stack memory
    stack_t        curr_sp;             //!< Current stackpointer of this thread
    size_t         stack_size;          //!< Size of stack
+   unsigned long  stack_crc;           //!< Control value of integrity check
    clock_t        wakeuptime;          //!< When to wake up if sleeping
    wakeE_t        wakeupEvent;         //!< Helper variable mainly for IPC
    unsigned int   Prio,Idx;            //!< Helpers, prevent need of lookup
@@ -129,6 +130,7 @@ void           _tk_main( void );
 /** public data **/
 
 /** private data **/
+extern int Tk_IntFlagCntr;
 
 /** public functions **/
 
@@ -163,7 +165,13 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
   
 /*******************************************************************
  *  $Log: tk.h,v $
- *  Revision 1.14  2005-11-27 20:02:00  ambrmi09
+ *  Revision 1.15  2005-11-30 22:21:22  ambrmi09
+ *  Mechanism for detecting stack integrity violation introduced. It needs more
+ *  work. An interrupt will taint the current stack if it's using any kernel
+ *  functions. This is not what we want, but the main idea is captured in this
+ *  check-in.
+ *
+ *  Revision 1.14  2005/11/27 20:02:00  ambrmi09
  *  - Detection of UserStack out-of bounds detection added.
  *  - Added error generic handling mechanism (TRAP)
  *  - Several new macros (that also need to be ported btw)
