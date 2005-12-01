@@ -286,9 +286,10 @@ cases might want to replace this with a NOP.
 
 
 
+#endif  //DOXYGEN_ONLY
    
 //------1---------2---------3---------4---------5---------6---------7---------8
-#elif defined(WIN32) && defined(_MSVC_)
+#if defined(WIN32) && defined(_MSVC_)
 #include <../bsp/X86_msvc/tk_hwsys_msvcX86.h>
 
 #elif defined(WIN32) && defined(_BC50_)
@@ -303,7 +304,7 @@ cases might want to replace this with a NOP.
 #error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"
 
 #else
-//#error "Can\'t determine the target for the TINKER kernel"   
+#error "Can\'t determine the target for the TINKER kernel"   
 
 #endif
 

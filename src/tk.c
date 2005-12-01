@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.19 $
+ *  Current $Revision: 1.20 $
  *
  *******************************************************************/
 
@@ -16,13 +16,17 @@
 #include <string.h>
 
 #include <tk.h>
+#include <tk_sysqueues.h>
 #include "tk_hwsys.h"
+
 
 /** local definitions **/
 
 /* default settings */
 
 /** external functions **/
+//Temporary - is not portable
+extern void _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
 
 /** external data **/
 
@@ -342,7 +346,7 @@ unsigned int tk_create_thread(
       STACK_PTR(proc_stat[proc_idx].stack_begin)[i] = (unsigned char)proc_idx;
    #endif
    //Here's the secret.
-   //preparing the stack
+   //preparing the stack  
    //=============================
    //#0x4=inpar (fony pushed param)    //The stack looks like calling schedule
    //return adress to "_tk_destructor"     //from function _tk_destructor
@@ -552,7 +556,7 @@ void _tk_context_switch_to_thread(
    active_thread=RID;
 
    CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );   
-   TRY_CATCH_STACK_INTEGRITY_VIOLATION( proc_stat[active_thread], cswTEMP2 ); //Check integrity is OK before running 
+   //TRY_CATCH_STACK_INTEGRITY_VIOLATION( proc_stat[active_thread], cswTEMP2 ); //Check integrity is OK before running 
 }
 
 /*!
@@ -572,9 +576,11 @@ want that behaviour you have to use the non-yealded version of that function
  */
 
 void tk_yield( void ){
+   PUSHALL();
    _tk_wakeup_timedout_threads();
    thread_to_run = _tk_next_runable_thread();
    _tk_context_switch_to_thread(thread_to_run,active_thread);
+   POPALL();
 }
 
 void tk_exit( int ec ) {
@@ -615,7 +621,8 @@ void _tk_main( void ){
    tk_create_kernel();
    #ifdef IPC
    createIPC();
-   _tk_initialize_system_ques( );
+   if (_tk_create_system_queues( ) != 0)
+      tk_exit(1);
    #endif
     
    root();
@@ -653,7 +660,20 @@ void Test_scheduler( void ){
 /*******************************************************************
  *
  *  $Log: tk.c,v $
- *  Revision 1.19  2005-11-30 22:21:22  ambrmi09
+ *  Revision 1.20  2005-12-01 13:05:25  ambrmi09
+ *  This check-in if for preparing for peemtive mechanism (first try)
+ *  Done since last check-in
+ *
+ *  - Got rid of a nasty include bug for the target dependant sys-files
+ *  - Added yet anoter sys header file with type only, so that kernel doesn't
+ *    have to include the whole lot (which will render in  another "bug" due
+ *    to that Keil and Dave define the same thing. This might be solved
+ *    differently later, but the separation doesnt hurt anyway.
+ *  - Started a concept of system queues - which I hope will be the basis for
+ *    the TinKer drivers concept (yet to be invented).
+ *  - Made first crude attempts with preemtion.
+ *
+ *  Revision 1.19  2005/11/30 22:21:22  ambrmi09
  *  Mechanism for detecting stack integrity violation introduced. It needs more
  *  work. An interrupt will taint the current stack if it's using any kernel
  *  functions. This is not what we want, but the main idea is captured in this

@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.15 $
+ *  Current $Revision: 1.16 $
  *
  *******************************************************************/
  
@@ -16,7 +16,7 @@
 /** include files **/
 #include <stddef.h>
 #include <time.h>
-#include <tk_hwsys.h>   //should be OK now
+#include <tk_hwtypes.h>   //should be OK now
 
 /** local definitions **/
 #define TK_MAX_THREADS          10
@@ -93,6 +93,7 @@ adaptions to cover certain architectures special aspects of a "stack".
 In a 32bit "normal" CPU this is often a char*, but for some obscure MPU:s
 like the C166 family, this is a much more complex structure.
 */
+
 typedef struct    tk_tcb_t_s{
    unsigned int   Pid,Gid;             //!< Process ID and Parent ID (Gid)
    unsigned int   noChilds;            //!< Numb of procs this has created
@@ -165,7 +166,20 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
   
 /*******************************************************************
  *  $Log: tk.h,v $
- *  Revision 1.15  2005-11-30 22:21:22  ambrmi09
+ *  Revision 1.16  2005-12-01 13:05:24  ambrmi09
+ *  This check-in if for preparing for peemtive mechanism (first try)
+ *  Done since last check-in
+ *
+ *  - Got rid of a nasty include bug for the target dependant sys-files
+ *  - Added yet anoter sys header file with type only, so that kernel doesn't
+ *    have to include the whole lot (which will render in  another "bug" due
+ *    to that Keil and Dave define the same thing. This might be solved
+ *    differently later, but the separation doesnt hurt anyway.
+ *  - Started a concept of system queues - which I hope will be the basis for
+ *    the TinKer drivers concept (yet to be invented).
+ *  - Made first crude attempts with preemtion.
+ *
+ *  Revision 1.15  2005/11/30 22:21:22  ambrmi09
  *  Mechanism for detecting stack integrity violation introduced. It needs more
  *  work. An interrupt will taint the current stack if it's using any kernel
  *  functions. This is not what we want, but the main idea is captured in this
@@ -265,11 +279,6 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  *
  *  
  *******************************************************************/
-
-
-
-
-
 
 
 

@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.7 $
+ *  Current $Revision: 1.8 $
  *******************************************************************/
 /** include files **/
 #include <stdio.h>			    	          	       	   	      	   
@@ -15,6 +15,7 @@
 
 #define NDEBUG
 #include <tk.h>
+#include <tk_hwsys.h>
 #include <tk_ipc.h>
 
 #ifdef IPC /* Should not test at sharp (libfile) version */
@@ -780,7 +781,7 @@ unsigned long q_create(
 ){
 	unsigned long rc;
 	
-    if ((rc =sm_create(name,0,flags,qid)) != ERR_OK)
+   if ((rc =sm_create(name,0,flags,qid)) != ERR_OK)
 		return(rc);
 	/* Allocate memory for the message queue */
 	if ((ipc_array[ipc_idx]->m.q = (q_t*)calloc(count,sizeof(q_t)) ) == NULL) {
@@ -1092,7 +1093,7 @@ unsigned long q_create_ny(
 ){
    unsigned long rc;
    
-    if ((rc =sm_create(name,0,flags,qid)) != ERR_OK)
+   if ((rc =sm_create(name,0,flags,qid)) != ERR_OK)
       return(rc);
    /* Allocate memory for the message queue */
    if ((ipc_array[ipc_idx]->m.q = (q_t*)calloc(count,sizeof(q_t)) ) == NULL) {
@@ -1154,7 +1155,6 @@ unsigned long q_send_ny(
 ){
    unsigned long rc;
    TK_CLI();
-   PSW_IEN = 0;	   
    
    /* Test if the id is valid */
    if (ipc_array[qid] == NULL )
@@ -1274,7 +1274,20 @@ unsigned long sm_v_ny(  /* sm_send or sm_put */
 /*******************************************************************  
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.7  2005-11-30 22:21:22  ambrmi09
+ *  Revision 1.8  2005-12-01 13:05:25  ambrmi09
+ *  This check-in if for preparing for peemtive mechanism (first try)
+ *  Done since last check-in
+ *
+ *  - Got rid of a nasty include bug for the target dependant sys-files
+ *  - Added yet anoter sys header file with type only, so that kernel doesn't
+ *    have to include the whole lot (which will render in  another "bug" due
+ *    to that Keil and Dave define the same thing. This might be solved
+ *    differently later, but the separation doesnt hurt anyway.
+ *  - Started a concept of system queues - which I hope will be the basis for
+ *    the TinKer drivers concept (yet to be invented).
+ *  - Made first crude attempts with preemtion.
+ *
+ *  Revision 1.7  2005/11/30 22:21:22  ambrmi09
  *  Mechanism for detecting stack integrity violation introduced. It needs more
  *  work. An interrupt will taint the current stack if it's using any kernel
  *  functions. This is not what we want, but the main idea is captured in this

@@ -32,6 +32,16 @@
 #include <stdio.h>
 #include <tk.h>
 
+#define REGH( DEV ) \
+   <DEV.h>
+#if defined( DEVICE )
+   #include REGH( DEVICE )   
+#else
+   #error "Error, No device specified - can't determine register definition file !!!!!!!!!!!"
+#endif
+
+extern unsigned int ASC0_uwGetData(void);
+
 #define PRINT_TRAP            //<! set to print trap information
 
 sfr   PSW      = 0xFF10;
@@ -159,6 +169,8 @@ unsigned int busywait( unsigned int time_ms ){
          for (y=0;y<(ywait+1);y++)
             for (z=0;z<100;z++)
                rc = burntime(x,y,z);
+
+   return 0;			   
 }
 
 void safeprint(char *s){

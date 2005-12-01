@@ -39,6 +39,7 @@ code.
 
 */
 
+void _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
 void _tk_reinit_stackaddr_xc167keil( 
    stack_t *addr, 
    size_t size 
@@ -63,11 +64,6 @@ void _tk_reinit_stackaddr_xc167keil(
    //addr->userstack.linear = addr->systemstack.linear + usr_stack_size;                    //old
 }
 
-unsigned long Q_ASC0;
-
-void _tk_initialize_system_ques( ){
-   q_create_ny("ASC0",0x05,FIFO,&Q_ASC0);
-}
 
 void _do_trap (unsigned int num){
    __asm { 

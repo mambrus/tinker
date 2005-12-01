@@ -26,7 +26,13 @@
 // @Project Includes
 //****************************************************************************
 
+
+
 #include "MAIN.H"
+//#include <tk.h>
+#include <tk_sysqueues.h>
+
+
 
 // USER CODE BEGIN (ASC0_General,2)
 
@@ -336,16 +342,41 @@ void ASC0_viTx(void) interrupt ASC0_TINT
 //****************************************************************************
 
 // USER CODE BEGIN (Rx,1)
+sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
+
+typedef union{ 
+   unsigned long linear; 
+   struct { 
+      unsigned int _offs; 
+      unsigned int _seg;         
+   }segmented; 
+   struct { 
+      unsigned int _SP; 
+      unsigned int _SPSEG;          
+   }reg; 
+}systemstackaddr_t;
+
+systemstackaddr_t stack_p;
 
 extern unsigned long q_send_ny(
    unsigned long qid,       
    unsigned long msg_buf[4] 
 );
 
-extern unsigned long Q_ASC0;
+extern void tk_yield( void );
+
+typedef void yfunk(void);
+typedef yfunk *yfunk_p;
+
+yfunk_p        *f_p;
+
+
+//extern unsigned long Q_ASC0;
 unsigned long mybuff[4];
 
 // USER CODE END
+
+
 
 void ASC0_viRx(void) interrupt ASC0_RINT
 {
@@ -355,7 +386,22 @@ void ASC0_viRx(void) interrupt ASC0_RINT
      TK_CLI();
      //ASC0_RIC_IR = 0;
      mybuff[0] = ASC0_uwGetData();
-     q_send_ny(Q_ASC0,mybuff); 
+     q_send_ny(tk_sys_queues[Q_SERIAL_0_I],mybuff); 
+     stack_p.segmented._offs = SP;
+     stack_p.segmented._seg = SPSEG;
+     
+     //f_p  = (funk_p *)  
+     
+     //(char*)(stack_p.linear-2);
+     
+     f_p = (yfunk_p *)(stack_p.linear+6);
+     *f_p = tk_yield;
+     
+     /*
+      - 2);
+     *f_p = tk_yield;
+     */
+
      TK_CLI();
   //}
 
