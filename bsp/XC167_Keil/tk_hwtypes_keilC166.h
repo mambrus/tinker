@@ -4,10 +4,17 @@
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-//#include <stddef.h>
+
+#include <stddef.h>  //Needed for size_t
 
 #pragma pack(1)     /* byte alignment */
-#pragma bytealign   /* ptrs to byte-aligned objects */
+
+//BIG NOTE!! The following #pragma will crash in dave file who use pointercasts for SFR data
+//======================================================================
+//Output will not work (in best case), in worst case C166 crashes
+//Leave it here as a reference so that I remeber. Also, will tinket work?
+//Structures might change, does it matter?
+//#pragma bytealign   /* ptrs to byte-aligned objects */
  
 /*!
 
@@ -43,6 +50,7 @@ typedef union{
 }userstackaddr_t;
 
 #pragma pack()    /* reset to default alignment */
+
 
 
 /*!

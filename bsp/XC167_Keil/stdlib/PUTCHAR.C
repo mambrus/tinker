@@ -14,6 +14,15 @@ dave files instead of including it in the .H files itself */
 
 #define XON  0x11
 #define XOFF 0x13
+/*
+//Due to bug in C166...
+sfr  mASC0_TBUF            = 0xFEB0;       //Serial Channel 0 Transmitter Buffer Register (WO)
+void ASC0_vSendData(uword uwData)
+{
+   mASC0_TBUF    = uwData;
+} //  End of function ASC0_vSendData
+*/
+
 
 /*! 
 Set this device if you want this driver to work on another device.
