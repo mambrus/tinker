@@ -26,17 +26,20 @@
 // @Project Includes
 //****************************************************************************
 
+
 #include "MAIN.H"
 
 // USER CODE BEGIN (ASC0_General,2)
 #include <tk_sysqueues.h>
+#include <tk_ipc.h>
+/*
 
 #define TK_CLI() \
    PSW_IEN = 0;   
 
 #define TK_STI() \
    PSW_IEN = 1;   
-      
+*/      
 // USER CODE END
 
 
@@ -128,6 +131,7 @@
 
 void ASC0_vInit(void)
 {
+
   // USER CODE BEGIN (Init,2)
 
   // USER CODE END
@@ -243,13 +247,24 @@ void ASC0_vInit(void)
 
 // USER CODE BEGIN (SendData,1)
 
+// C166 used to crash around the line:
+//  ASC0_TBUF    = uwData;   //  load transmit buffer register
+
+//Try to remark it out if it happens again, then un-remark it back ... (!?)
+
+//#pragma bytealign - here will crash even a clean DAVE file
 // USER CODE END
+
+
 
 void ASC0_vSendData(uword uwData)
 {
-  ASC0_TBUF    = uwData;   //  load transmit buffer register
+
+   ASC0_TBUF    = uwData;
+
 
 } //  End of function ASC0_vSendData
+
 
 
 //****************************************************************************
@@ -337,37 +352,18 @@ void ASC0_viTx(void) interrupt ASC0_TINT
 //****************************************************************************
 
 // USER CODE BEGIN (Rx,1)
-sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
 
-typedef union{ 
-   unsigned long linear; 
-   struct { 
-      unsigned int _offs; 
-      unsigned int _seg;         
-   }segmented; 
-   struct { 
-      unsigned int _SP; 
-      unsigned int _SPSEG;          
-   }reg; 
-}systemstackaddr_t;
+sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesn't generate this
 
 systemstackaddr_t stack_p;
-
-extern unsigned long q_send_ny(
-   unsigned long qid,       
-   unsigned long msg_buf[4] 
-);
-
-extern void tk_yield( void );
 
 typedef void yfunk(void);
 typedef yfunk *yfunk_p;
 
 yfunk_p        *f_p;
 
-
-//extern unsigned long Q_ASC0;
 unsigned long mybuff[4];
+
 
 // USER CODE END
 
@@ -376,26 +372,25 @@ void ASC0_viRx(void) interrupt ASC0_RINT
 
   // USER CODE BEGIN (Rx,2)
   //while (ASC0_RIC_IR){
-     TK_CLI();
+     //TK_CLI();
      //ASC0_RIC_IR = 0;
-     mybuff[0] = ASC0_uwGetData();
+
+     
+	 mybuff[0] = ASC0_uwGetData();
      q_send_ny(tk_sys_queues[Q_SERIAL_0_I],mybuff); 
+
+
      stack_p.segmented._offs = SP;
      stack_p.segmented._seg = SPSEG;
      
-     //f_p  = (funk_p *)  
      
-     //(char*)(stack_p.linear-2);
      
      f_p = (yfunk_p *)(stack_p.linear+6);
      *f_p = tk_yield;
      
-     /*
-      - 2);
-     *f_p = tk_yield;
-     */
+     
 
-     TK_CLI();
+     //TK_CLI();
   //}
 
   // USER CODE END
