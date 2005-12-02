@@ -18,6 +18,7 @@ File 2,1,<.\src\tk_ipc.c><tk_ipc.c> 0x0
 File 2,1,<.\src\tk.c><tk.c> 0x0 
 File 2,1,<.\src\time.c><time.c> 0x0 
 File 2,1,<.\bsp\XC167_Keil\tk_hwsys_keilC166.c><tk_hwsys_keilC166.c> 0x0 
+File 2,1,<.\src\tk_sysqueues.c><tk_sysqueues.c> 0x0 
 
 
 Options 1,0,0  // Target 'XC167'

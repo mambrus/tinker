@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.21 $
+ *  Current $Revision: 1.22 $
  *
  *******************************************************************/
 
@@ -597,10 +597,10 @@ void tk_yield( void ){
    _tk_context_switch_to_thread(thread_to_run,active_thread);
    
    POPALL();
-   /*
-   __asm { SUB SP, #4 }
+   
+   __asm { SUB SP, #6 }
    PUSHALL();
-	*/
+	
    /* Make sure no funny-business happens on the stack for this last few
    lines when porting (or we have to create yet another boring assembly
    macro */
@@ -629,20 +629,32 @@ void tk_yield( void ){
       //__asm { JMPS tseg, tk_exit }  //< accepted (strange)
 	  
 	  POPALL();
-	  __asm { mov r3, tseg }
-	  __asm { push r3 }
-	  __asm { mov r3, toffs }
-	  __asm { push r3 }
+	  __asm { BCLR PSW_IEN }
+	  __asm { ADD  SP, #6 }
+	  __asm { PUSH r7 }
+	  __asm { MOV  r7, tseg }
+	  __asm { PUSH r7 }
+	  __asm { MOV  r7, toffs }
+	  __asm { PUSH r7 }
+	  
+     
+     //__asm { mov r7, [SP + #6] } //could use something like this...
+     __asm { ADD SP, #4 }
+     __asm { POP R7 }
+     __asm { SUB SP, #6 }
+	 __asm { BSET PSW_IEN }
+     
+
 
 	  //__asm { add SP, #4 }
 	  
-	  __asm { ret }
+	  __asm { rets }
      
    } 
-   /*
+
    POPALL();
-   __asm { ADD SP, #4 }
-   */
+   __asm { ADD SP, #6 }
+
 }
 
 /*!
@@ -730,7 +742,21 @@ void Test_scheduler( void ){
 /*******************************************************************
  *
  *  $Log: tk.c,v $
- *  Revision 1.21  2005-12-02 07:52:24  ambrmi09
+ *  Revision 1.22  2005-12-02 09:44:10  ambrmi09
+ *  A better version on the "aternative method" of preemtive context swithing.
+ *  This one actually works (if you skip the last part where R7 is popped back).
+ *  Once again, checked in to seve as a reminder if the new method I have in mind
+ *  turns hout to have drawbacks.
+ *
+ *  This method has one major drawback (even if I get it to work), and that is that
+ *  validation of CPU context after switching back is very hars and close to
+ *  impossible. The principle of the code checked in now should be clear, but
+ *  at least one register is NOT restored properlly - and that is PSW. That could
+ *  prolly be handled the same way as R7, byt the more complicated this mechanism
+ *  gets, the harder it is to validate - it takes hours just to cover one iteration
+ *  (and you need "a lot" of iterations to be even fairlly confident).
+ *
+ *  Revision 1.21  2005/12/02 07:52:24  ambrmi09
  *  Working snap of preemtive sceduling. Comments saved of an alternative way
  *  (which has many advantages but is harder to get running).
  *

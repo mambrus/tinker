@@ -381,9 +381,9 @@ void ASC0_viRx(void) interrupt ASC0_RINT
      
 	  mybuff[0] = ASC0_uwGetData();
      q_send_ny(tk_sys_queues[Q_SERIAL_0_I],mybuff); 
-     tk_yield();
+     //tk_yield();
 
-/*     
+
      stack_p.segmented._offs = SP;
      stack_p.segmented._seg = SPSEG;
      
@@ -395,7 +395,7 @@ void ASC0_viRx(void) interrupt ASC0_RINT
      //Swhich the return adress, but save it in TCB for later
      current_tcb->prmtRetAddr = *f_p;              
      *f_p = tk_yield;
-*/
+
      
 
      //TK_CLI();
