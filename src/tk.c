@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.22 $
+ *  Current $Revision: 1.23 $
  *
  *******************************************************************/
 
@@ -561,110 +561,75 @@ void _tk_context_switch_to_thread(
    //TRY_CATCH_STACK_INTEGRITY_VIOLATION( proc_stat[active_thread], cswTEMP2 ); //Check integrity is OK before running 
 }
 
-void *tk_yield_prmtRetAddr;
-typedef void pfunk(void);
-typedef pfunk *pfunk_p;
-
-pfunk_p        *prmtf_p;
-pfunk_p         prmtf;
-
-unsigned int tseg,toffs;
-systemstackaddr_t sysaddr;
-
 /*!
-Dispach or yield to another thread that has more "right" to run.
+Dispatch or yield to another thread that has more "right" to run.
 
-I.e. <b>seach</b> for another potential thread that is now in runnable state
+I.e. <b>sealch</b> for another potential thread that is now in runable
+state
 and that has higher priority. In non-preemptive mode, create simulated
-timeout-events on all threads currentlly sleepem, but whos timeout has expired
-(i.e. seach for timouts and change state to READY).
+timeout-events on all threads currently sleeping, but who's timeout has
+expired
+(i.e. search for timeouts and change state to READY).
+
+The concept of passively sleeping threads, actively woken up by the
+kernel constantly searching for who's ready to run in a thread of its
+own (the idle thread or lowest prio thread) concept is a key-concept in
+non-preemptable mode.
 
 @note This is the function to put here and there in you application if you run
-a non-preemptable version of TinKer. Any execution will not be context swiched
+a non-preemptable version of TinKer. Any execution will not be context
+switched
 until you either execute this function or run any other kernel function. <b>Any
-other TinKer kernelfunction is also a context switching point.<b>. If you don't
-want that behaviour you have to use the non-yealded version of that function
+other TinKer kernel function is also a context switching point.<b>. If
+you don't
+want that behaviour you have to use the non-yielded version of that
+function
 (i.e. with suffix -ny)
 
 @note to use this function in preemptable mode </b> you must make sure that
-there is no prefix-posix stuff happening on the stack, neither before
+there is no prefix-postfix stuff happening on the stack, neither before
 the first PUSHALL nor after the last POPALL.
 */
+
 void tk_yield( void ){
    PUSHALL();
    _tk_wakeup_timedout_threads();
    thread_to_run = _tk_next_runable_thread();
-   _tk_context_switch_to_thread(thread_to_run,active_thread);
-   
+   _tk_context_switch_to_thread(thread_to_run,active_thread);   
    POPALL();
-   
-   __asm { SUB SP, #6 }
-   PUSHALL();
-	
-   /* Make sure no funny-business happens on the stack for this last few
-   lines when porting (or we have to create yet another boring assembly
-   macro */
-   if ( proc_stat[active_thread].prmtRetAddr != NULL ){
-      tk_yield_prmtRetAddr = proc_stat[active_thread].prmtRetAddr;
-      prmtf_p              = proc_stat[active_thread].prmtRetAddr;
-      prmtf                = *prmtf_p;
-      
-	  
-	  sysaddr.linear = proc_stat[active_thread].prmtRetAddr;
-	  tseg = sysaddr.segmented._seg;
-	  toffs = sysaddr.segmented._offs;
-
-
-	  proc_stat[active_thread].prmtRetAddr = 0;
-
-
-      //__asm { JMPS cc_UC, tk_yield_prmtRetAddr }
-      //__asm { JMPR    cc_NZ,tk_exit }
-      //Init_Vars
-      //__asm { JMPI R0 }
-      //prmtf();
-      
-      //__asm { JMPA cc_UC, tk_yield_prmtRetAddr }
-      //__asm { JMPA cc_UC,tk_yield_prmtRetAddr }
-      //__asm { JMPS tseg, tk_exit }  //< accepted (strange)
-	  
-	  POPALL();
-	  __asm { BCLR PSW_IEN }
-	  __asm { ADD  SP, #6 }
-	  __asm { PUSH r7 }
-	  __asm { MOV  r7, tseg }
-	  __asm { PUSH r7 }
-	  __asm { MOV  r7, toffs }
-	  __asm { PUSH r7 }
-	  
-     
-     //__asm { mov r7, [SP + #6] } //could use something like this...
-     __asm { ADD SP, #4 }
-     __asm { POP R7 }
-     __asm { SUB SP, #6 }
-	 __asm { BSET PSW_IEN }
-     
-
-
-	  //__asm { add SP, #4 }
-	  
-	  __asm { rets }
-     
-   } 
-
-   POPALL();
-   __asm { ADD SP, #6 }
-
 }
 
 /*!
+
+Dispatch or yield to another thread that has more "right" to run.
+
+This is basically identical with tk_yield(), but it doesn't try to
+search for threads to wake up that are sleeping on non-preempting
+timers. This function is meant to be used for preemptable scheduling
+and to be called from an event source (i.e. ISR).
+
+@see void tk_yield( void )
+
+*/
+
+void tk_yield_event( void ){
+   PUSHALL();
+   thread_to_run = _tk_next_runable_thread();
+   _tk_context_switch_to_thread(thread_to_run,active_thread);   
+   POPALL();
+}
+
+/*!
+
 Last thing that is called when a thread gives up live freely or when an
 error of some sort happened (either kernel internal or user program
 specific).
 
 In case of en error, this function also acts as a critical error-handler
 entr point (critical = execution is deemed to stop).
+
 */
+
 void tk_exit( int ec ) {
    if (ec==0)
       printf("tk: Program terminated normally");
@@ -697,6 +662,12 @@ void _tk_assertfail(
 @ingroup kernel_glue
 
 Called from your real main() or from your start-up code 
+
+@note (for deeply embedded developers) You target have to fulfill two
+things at least
+
+- malloc has to work and return valid pointers - You need a working
+printf to see run-time errors
 
 */
 void _tk_main( void ){
@@ -742,7 +713,15 @@ void Test_scheduler( void ){
 /*******************************************************************
  *
  *  $Log: tk.c,v $
- *  Revision 1.22  2005-12-02 09:44:10  ambrmi09
+ *  Revision 1.23  2005-12-02 14:40:51  ambrmi09
+ *  First version of what is going to be the prefered way of preemptive
+ *  coding. TinKer needed very little modifications to be able to do this.
+ *  Only one function is added tk_event_yield(), which is to be uused from any ISR.
+ *
+ *  New test app is also provided for testing and validating preemptiveness:
+ *  test-preepmt.c
+ *
+ *  Revision 1.22  2005/12/02 09:44:10  ambrmi09
  *  A better version on the "aternative method" of preemtive context swithing.
  *  This one actually works (if you skip the last part where R7 is popped back).
  *  Once again, checked in to seve as a reminder if the new method I have in mind

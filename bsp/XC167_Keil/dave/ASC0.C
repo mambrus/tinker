@@ -355,51 +355,18 @@ void ASC0_viTx(void) interrupt ASC0_TINT
 // USER CODE BEGIN (Rx,1)
 
 sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesn't generate this
-
-systemstackaddr_t stack_p;
-
-typedef void yfunk(void);
-typedef yfunk *yfunk_p;
-
-yfunk_p        *f_p;
-
-unsigned long mybuff[4];
-
-tk_tcb_t *current_tcb;
-
+unsigned long cbuff[4];
 
 // USER CODE END
+
 
 void ASC0_viRx(void) interrupt ASC0_RINT
 {
 
   // USER CODE BEGIN (Rx,2)
-  //while (ASC0_RIC_IR){
-     //TK_CLI();
-     //ASC0_RIC_IR = 0;
-
-     
-	  mybuff[0] = ASC0_uwGetData();
-     q_send_ny(tk_sys_queues[Q_SERIAL_0_I],mybuff); 
-     //tk_yield();
-
-
-     stack_p.segmented._offs = SP;
-     stack_p.segmented._seg = SPSEG;
-     
-     f_p = (yfunk_p *)(stack_p.linear+6);     
-     
-     current_tcb = _tk_current_tcb();
-
-
-     //Swhich the return adress, but save it in TCB for later
-     current_tcb->prmtRetAddr = *f_p;              
-     *f_p = tk_yield;
-
-     
-
-     //TK_CLI();
-  //}
+   cbuff[0] = ASC0_uwGetData();
+   q_send_ny(tk_sys_queues[Q_SERIAL_0_I],cbuff);         
+   tk_yield_event(); 
 
   // USER CODE END
 
@@ -409,6 +376,32 @@ void ASC0_viRx(void) interrupt ASC0_RINT
 
 
 // USER CODE BEGIN (ASC0_General,10)
+
+/*
+
+//Alternative - doesn't work
+
+void ASC0_viRx(void) interrupt ASC0_RINT
+{
+
+  
+  while (ASC0_RIC_IR){
+     //TK_CLI();
+     ASC0_RIC_IR = 0;
+
+     
+	  mybuff[0] = ASC0_uwGetData();
+     q_send_ny(tk_sys_queues[Q_SERIAL_0_I],mybuff); 
+     
+     //TK_STI();
+     tk_yield_event();
+  }
+
+
+
+} 
+
+*/
 
 // USER CODE END
 
