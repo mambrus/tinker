@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.20 $
+ *  Current $Revision: 1.21 $
  *
  *******************************************************************/
 
@@ -150,7 +150,8 @@ void tk_create_kernel( void ){
       proc_stat[i].stack_size    = 0;
       STACK_PTR(proc_stat[i].stack_begin)   = 0uL;
       STACK_PTR(proc_stat[i].curr_sp)       = 0uL;
-	  proc_stat[i].stack_crc     = 0;
+      proc_stat[i].stack_crc     = 0;
+      proc_stat[i].prmtRetAddr   = NULL;
       proc_stat[i].wakeupEvent   = 0;
    }
    //The Root proc is already created but must be registred
@@ -336,6 +337,7 @@ unsigned int tk_create_thread(
    proc_stat[proc_idx].Prio         = prio;
    proc_stat[proc_idx].Idx          = slot_idx;
    proc_stat[proc_idx].stack_crc    = 0;
+   proc_stat[proc_idx].prmtRetAddr  = NULL;
    proc_stat[proc_idx].wakeupEvent  = 0;
 
    proc_stat[active_thread].noChilds++;
@@ -386,7 +388,7 @@ unsigned int tk_create_thread(
    scheduleIdxs[prio].procs_at_prio++;
    
    //Make a integrity certification on the stack of this thread
-	//INTEGRITY_CERTIFY_STACK(proc_stat[proc_idx], ct_temp3);
+   //INTEGRITY_CERTIFY_STACK(proc_stat[proc_idx], ct_temp3);
    return proc_idx ;
 }
 
@@ -559,8 +561,18 @@ void _tk_context_switch_to_thread(
    //TRY_CATCH_STACK_INTEGRITY_VIOLATION( proc_stat[active_thread], cswTEMP2 ); //Check integrity is OK before running 
 }
 
+void *tk_yield_prmtRetAddr;
+typedef void pfunk(void);
+typedef pfunk *pfunk_p;
+
+pfunk_p        *prmtf_p;
+pfunk_p         prmtf;
+
+unsigned int tseg,toffs;
+systemstackaddr_t sysaddr;
+
 /*!
-Dispach or yeald to another thread that has more "right" to run.
+Dispach or yield to another thread that has more "right" to run.
 
 I.e. <b>seach</b> for another potential thread that is now in runnable state
 and that has higher priority. In non-preemptive mode, create simulated
@@ -573,16 +585,74 @@ until you either execute this function or run any other kernel function. <b>Any
 other TinKer kernelfunction is also a context switching point.<b>. If you don't
 want that behaviour you have to use the non-yealded version of that function
 (i.e. with suffix -ny)
- */
 
+@note to use this function in preemptable mode </b> you must make sure that
+there is no prefix-posix stuff happening on the stack, neither before
+the first PUSHALL nor after the last POPALL.
+*/
 void tk_yield( void ){
    PUSHALL();
    _tk_wakeup_timedout_threads();
    thread_to_run = _tk_next_runable_thread();
    _tk_context_switch_to_thread(thread_to_run,active_thread);
+   
    POPALL();
+   /*
+   __asm { SUB SP, #4 }
+   PUSHALL();
+	*/
+   /* Make sure no funny-business happens on the stack for this last few
+   lines when porting (or we have to create yet another boring assembly
+   macro */
+   if ( proc_stat[active_thread].prmtRetAddr != NULL ){
+      tk_yield_prmtRetAddr = proc_stat[active_thread].prmtRetAddr;
+      prmtf_p              = proc_stat[active_thread].prmtRetAddr;
+      prmtf                = *prmtf_p;
+      
+	  
+	  sysaddr.linear = proc_stat[active_thread].prmtRetAddr;
+	  tseg = sysaddr.segmented._seg;
+	  toffs = sysaddr.segmented._offs;
+
+
+	  proc_stat[active_thread].prmtRetAddr = 0;
+
+
+      //__asm { JMPS cc_UC, tk_yield_prmtRetAddr }
+      //__asm { JMPR    cc_NZ,tk_exit }
+      //Init_Vars
+      //__asm { JMPI R0 }
+      //prmtf();
+      
+      //__asm { JMPA cc_UC, tk_yield_prmtRetAddr }
+      //__asm { JMPA cc_UC,tk_yield_prmtRetAddr }
+      //__asm { JMPS tseg, tk_exit }  //< accepted (strange)
+	  
+	  POPALL();
+	  __asm { mov r3, tseg }
+	  __asm { push r3 }
+	  __asm { mov r3, toffs }
+	  __asm { push r3 }
+
+	  //__asm { add SP, #4 }
+	  
+	  __asm { ret }
+     
+   } 
+   /*
+   POPALL();
+   __asm { ADD SP, #4 }
+   */
 }
 
+/*!
+Last thing that is called when a thread gives up live freely or when an
+error of some sort happened (either kernel internal or user program
+specific).
+
+In case of en error, this function also acts as a critical error-handler
+entr point (critical = execution is deemed to stop).
+*/
 void tk_exit( int ec ) {
    if (ec==0)
       printf("tk: Program terminated normally");
@@ -660,7 +730,11 @@ void Test_scheduler( void ){
 /*******************************************************************
  *
  *  $Log: tk.c,v $
- *  Revision 1.20  2005-12-01 13:05:25  ambrmi09
+ *  Revision 1.21  2005-12-02 07:52:24  ambrmi09
+ *  Working snap of preemtive sceduling. Comments saved of an alternative way
+ *  (which has many advantages but is harder to get running).
+ *
+ *  Revision 1.20  2005/12/01 13:05:25  ambrmi09
  *  This check-in if for preparing for peemtive mechanism (first try)
  *  Done since last check-in
  *

@@ -31,6 +31,7 @@
 
 // USER CODE BEGIN (ASC0_General,2)
 #include <tk_sysqueues.h>
+#include <tk.h>
 #include <tk_ipc.h>
 /*
 
@@ -364,6 +365,8 @@ yfunk_p        *f_p;
 
 unsigned long mybuff[4];
 
+tk_tcb_t *current_tcb;
+
 
 // USER CODE END
 
@@ -376,18 +379,23 @@ void ASC0_viRx(void) interrupt ASC0_RINT
      //ASC0_RIC_IR = 0;
 
      
-	 mybuff[0] = ASC0_uwGetData();
+	  mybuff[0] = ASC0_uwGetData();
      q_send_ny(tk_sys_queues[Q_SERIAL_0_I],mybuff); 
+     tk_yield();
 
-
+/*     
      stack_p.segmented._offs = SP;
      stack_p.segmented._seg = SPSEG;
      
+     f_p = (yfunk_p *)(stack_p.linear+6);     
      
-     
-     f_p = (yfunk_p *)(stack_p.linear+6);
+     current_tcb = _tk_current_tcb();
+
+
+     //Swhich the return adress, but save it in TCB for later
+     current_tcb->prmtRetAddr = *f_p;              
      *f_p = tk_yield;
-     
+*/
      
 
      //TK_CLI();

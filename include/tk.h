@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.16 $
+ *  Current $Revision: 1.17 $
  *
  *******************************************************************/
  
@@ -106,6 +106,7 @@ typedef struct    tk_tcb_t_s{
    unsigned long  stack_crc;           //!< Control value of integrity check
    clock_t        wakeuptime;          //!< When to wake up if sleeping
    wakeE_t        wakeupEvent;         //!< Helper variable mainly for IPC
+   void          *prmtRetAddr;         //!< Preempted return adress - used in preempted mode.
    unsigned int   Prio,Idx;            //!< Helpers, prevent need of lookup
 }tk_tcb_t;
 
@@ -166,7 +167,11 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
   
 /*******************************************************************
  *  $Log: tk.h,v $
- *  Revision 1.16  2005-12-01 13:05:24  ambrmi09
+ *  Revision 1.17  2005-12-02 07:52:24  ambrmi09
+ *  Working snap of preemtive sceduling. Comments saved of an alternative way
+ *  (which has many advantages but is harder to get running).
+ *
+ *  Revision 1.16  2005/12/01 13:05:24  ambrmi09
  *  This check-in if for preparing for peemtive mechanism (first try)
  *  Done since last check-in
  *
