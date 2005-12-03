@@ -1,0 +1,31 @@
+/** 
+
+@defgroup BLOGS TinKer-peoples blogs
+@ingroup DOCS
+
+   Ka-bla ka-bla
+
+   @section INTRODUCTION INTRODUCTION
+
+      Intro bla bla
+
+
+   @section GENERAL_DESCRIPTION General description
+
+      General description bla bla 
+
+      @see aFuntuinNameOrOtherIdentifyer
+
+	   @link #aFuntuinNameOrOtherIdentifyer aFuntuinNameOrOtherIdentifyer @endlink
+	   - A test link <br>
+
+
+   @section OTHER Other info - Bla bla *TBD*
+    
+      More bla bla-ha
+   
+
+   @todo todo bla bla
+
+*/
+

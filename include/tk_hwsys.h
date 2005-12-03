@@ -1,3 +1,16 @@
+/*******************************************************************
+ *
+ *  DESCRIPTION: TinKerOS.
+ *
+ *  AUTHOR: Michael Ambrus
+ *                              
+ *  HISTORY:    
+ *
+ *  Current $Revision: 1.10 $
+ *
+ *******************************************************************/
+  
+
 #ifndef TK_HWSYS_H
 #define TK_HWSYS_H    
 
@@ -312,6 +325,17 @@ cases might want to replace this with a NOP.
 
 #endif  //TK_HWSYS_H
 
+  
+/*! 
+ * @addtogroup CVSLOG CVSLOG
+ *
+ *  $Log: tk_hwsys.h,v $
+ *  Revision 1.10  2005-12-03 14:04:30  ambrmi09
+ *  A crude documentation structure added. Sorce files modified a little, but
+ *  only in comments (for Doxygens sake).
+ *
+ *
+ *******************************************************************/
 
 
 

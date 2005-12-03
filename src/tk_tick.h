@@ -1,3 +1,15 @@
+/*******************************************************************
+ *
+ *  DESCRIPTION: TinKerOS.
+ *
+ *  AUTHOR: Michael Ambrus
+ *                              
+ *  HISTORY:    
+ *
+ *  Current $Revision: 1.4 $
+ *
+ *******************************************************************/
+  
 
 #ifndef TK_TICK_H
 #define TK_TICK_H
@@ -130,4 +142,15 @@ Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC syste
 
 #endif
 
+  
+/*!
+ * @addtogroup CVSLOG CVSLOG
+ *
+ *  $Log: tk_tick.h,v $
+ *  Revision 1.4  2005-12-03 14:04:31  ambrmi09
+ *  A crude documentation structure added. Sorce files modified a little, but
+ *  only in comments (for Doxygens sake).
+ *
+ *
+ *******************************************************************/
 

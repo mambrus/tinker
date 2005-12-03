@@ -6,9 +6,11 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.17 $
+ *  Current $Revision: 1.18 $
  *
  *******************************************************************/
+   
+
  
 #ifndef TK_H
 #define TK_H
@@ -165,9 +167,15 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
 #endif
 
   
-/*******************************************************************
+/*! 
+ * @addtogroup CVSLOG CVSLOG
+ *
  *  $Log: tk.h,v $
- *  Revision 1.17  2005-12-02 07:52:24  ambrmi09
+ *  Revision 1.18  2005-12-03 14:04:30  ambrmi09
+ *  A crude documentation structure added. Sorce files modified a little, but
+ *  only in comments (for Doxygens sake).
+ *
+ *  Revision 1.17  2005/12/02 07:52:24  ambrmi09
  *  Working snap of preemtive sceduling. Comments saved of an alternative way
  *  (which has many advantages but is harder to get running).
  *

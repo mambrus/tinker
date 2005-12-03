@@ -1,3 +1,16 @@
+/*******************************************************************
+ *
+ *  DESCRIPTION: TinKerOS.
+ *
+ *  AUTHOR: Michael Ambrus
+ *                              
+ *  HISTORY:    
+ *
+ *  Current $Revision: 1.2 $
+ *
+ *******************************************************************/
+  
+
 #ifndef TK_HWTYPES_H
 #define TK_HWTYPES_H    
 
@@ -34,6 +47,17 @@
 
 #endif  //TK_HWSYS_H
 
+  
+/*!
+ * @addtogroup CVSLOG CVSLOG
+ *
+ *  $Log: tk_hwtypes.h,v $
+ *  Revision 1.2  2005-12-03 14:04:30  ambrmi09
+ *  A crude documentation structure added. Sorce files modified a little, but
+ *  only in comments (for Doxygens sake).
+ *
+ *
+ *******************************************************************/
 
 
 

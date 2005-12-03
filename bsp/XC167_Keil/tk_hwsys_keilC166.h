@@ -1,3 +1,16 @@
+/*******************************************************************
+ *
+ *  DESCRIPTION: TinKerOS.
+ *
+ *  AUTHOR: Michael Ambrus
+ *                              
+ *  HISTORY:    
+ *
+ *  Current $Revision: 1.13 $
+ *
+ *******************************************************************/
+  
+
 #ifndef TK_HWSYS_KEILC166_H
 #define TK_HWSYS_KEILC166_H      
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -354,3 +367,15 @@ TBD
 /*
 
 */
+
+  
+/*!
+ * @addtogroup CVSLOG CVSLOG
+ *
+ *  $Log: tk_hwsys_keilC166.h,v $
+ *  Revision 1.13  2005-12-03 14:04:30  ambrmi09
+ *  A crude documentation structure added. Sorce files modified a little, but
+ *  only in comments (for Doxygens sake).
+ *
+ *
+ *******************************************************************/

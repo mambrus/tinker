@@ -6,9 +6,11 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.1 $
+ *  Current $Revision: 1.2 $
  *
  *******************************************************************/
+   
+
 #ifndef tk_sysqueues_h
 #define tk_sysqueues_h
 
@@ -55,9 +57,15 @@ unsigned long _tk_create_system_queues();
 
 
   
-/*******************************************************************
+/*!
+ * @addtogroup CVSLOG CVSLOG
+ *
  *  $Log: tk_sysqueues.h,v $
- *  Revision 1.1  2005-12-01 13:05:25  ambrmi09
+ *  Revision 1.2  2005-12-03 14:04:30  ambrmi09
+ *  A crude documentation structure added. Sorce files modified a little, but
+ *  only in comments (for Doxygens sake).
+ *
+ *  Revision 1.1  2005/12/01 13:05:25  ambrmi09
  *  This check-in if for preparing for peemtive mechanism (first try)
  *  Done since last check-in
  *

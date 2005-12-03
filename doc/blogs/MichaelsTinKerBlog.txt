@@ -1,0 +1,295 @@
+/** 
+@defgroup BlogMichael Michaels TinKer Blog 
+@ingroup BLOGS
+@brief A place my thoughts call home ;)
+
+    Ka-bla ka-bla
+
+    @section INTRODUCTION INTRODUCTION
+
+
+    @section GENERAL_DESCRIPTION General description
+
+    A 
+
+    @see PUMPMOD_vCheckBrkChTimeout
+
+	@link #PUMPMOD_vCheckBrkChTimeout PUMPMOD_vCheckBrkChTimeout@endlink
+	 - Check Break Channel Timeouts <br>
+	@link #PUMPMOD_vCheckBrkChTimeout PUMPMOD_vCheckBrkChTimeout@endlink
+	 - Check Break Channel Timeouts <br>
+
+
+ @section OTHER Other info - move this to higher abstaction *TBD*
+    
+    Evrery messagae is send periodically, except adjustments. The fact
+	taht a message is missing it's time frame is valuavble information.
+   
+
+    @todo What is the name of the other pump FW device
+
+*/
+
+
+
+
+
+
+
+
+
+
+  
+/** 
+@defgroup Blog051125 051125
+@ingroup BlogMichael
+@ref main
+@brief Birthday - Man, what a birthday present! TinKer is finally proving it can take the heat!
+
+
+
+I just got the stumbling first steps of TinKer running with interrupts
+working, after being somewhat inspired yesterday. Here is a sample of
+how to write code without putting everything in an ISR.
+
+\code
+void ASC0_viRx(void) interrupt ASC0_RINT
+{
+
+  // USER CODE BEGIN (Rx,2)
+  PSW_IEN = 0;
+  mybuff[0] = ASC0_uwGetData();
+  q_send_ny(Q_ASC0,mybuff); 
+  PSW_IEN = 1;
+
+  // USER CODE END
+
+}
+\endcode
+
+TinKer defines and pre-creates a couple of queues as system queues,
+which allows you to send from an ISR to a normal thread for further
+processing like this:
+
+\code
+unsigned int task5(void *inpar){
+   unsigned long msg_buf[4];
+   
+   while(1){
+      q_receive(Q_ASC0,WAIT,0,msg_buf);
+      printf("Task5 received fron stdin: %c\n",msg_buf[0]);
+   }
+}
+\endcode
+
+Do you see the benefit? Almost all time criticality normally attached
+with any ISR is taken away. Data (and time itself) is serialized into a
+FIFO buffer so that some other piece of code can process it in it's own
+pace later. The only thing we have to do, is to create a queue that
+contains enough elements to swallow any jittering, and to empty it with
+a mean rate that is faster than postings arrive. Time begins to play a
+much lesser role now... Naturally real-time still plays a role, but it
+takes on another dimension, and it becomes much more formal which means
+you can create "schedules" based on "events", "actions" and "timeliness"
+(or time criteria).
+
+This technique can be refined and the receiving thread(s) could be just
+a first "barrier" that we could call a "device driver". This is b.t.w.
+exactly how QNX OS works, all drivers and daemons are just threads (or
+light weight processes) not different from any application threads in
+the perspective of the kernel.
+
+Another great benefit is that you can easily simulate your hardware,
+simply by replacing your "drivers" with other threads that in the
+simplest case replay predefined streams of data. Then all of a sudden,
+you can start to debug on other targets that are more powerful or has
+debuggers or "what-not" that you are more used to.
+
+/Michael
+
+P.s. I still have some stability problems with TinKer and interrupts,
+but then again I just got it to run... Several late nights are beginning
+to take it's toll on this tired ol' programmer... Goodnight... and...
+zzZZzz (snoars) d.s.s
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+  
+/** 
+@defgroup Blog051202_1 051202 (1)
+@ingroup BlogMichael
+@ref main
+@brief Preemptive at last
+
+TinKer is now also working in  full  pre-emptive mode *very happy smile*
+:D I'm very soon about to re-establish the port back to x86 (where
+TinKer  originally stems from) to be able to validate that the code is
+still transparent and portable enough to adress yet many more targets.
+And then - go for the  last remainin goals:
+
+- POSIX 1003.1c <b>compatibility</b> (pThreads)
+- POSIX 1003.1b <b>compatibility</b> (embedded inter-thread messaging).
+- ARM port based on the GNU tool-chain
+
+This will take quite some time, but the first two points are already in
+principle working (not following standard POSIX API yet though).
+However, I'm, considering going public earlier than I originally thought
+because I now aim a little bit higher and I'm going to need (your?) help
+. TinKer could in fact become an embryo for not only a kernel, but for a
+complete embedded OS. The aspects that remain are:
+Ability to load programs that are not pre-built in binary (not to
+be confused with a boot-loader, that's something different). This
+involves a relocator which can be hard to implement on a target without
+virtual addressing (i.e. ability to program the address decoder to
+provide the program running with addresses that fit the program but that
+are not necessarily the same as the physical addresses).
+
+- A boot loader (hoping  for someone interested in helping out with this
+one).
+- A file system concept. RAM disk, Flash disk, physical driver (HD)
+- A file orientated drivers concept
+- A shell with ability to load programs from "devices" and to do so in
+"processes"
+- A scripting language port - I'm considering Python or TCL - both are
+suited for embedding.
+
+Optionally
+
+- TCP/IP stack following BSD standard (same as most OS:es except
+Windoze)
+- A network disk/device - lightweight version, i.e. not NFS - MOSIX has
+something I might port...
+ 
+As you can see the projects could easily become very big and ambitious
+and I'm going to be open for accepting help once I go public. Can you
+figure out a good name for the next nevel b.t.w.? TinKerOS maybe or TUX
+or why not YARTOS ;)
+
+/Michael
+*/
+
+
+
+
+
+
+
+
+
+
+
+  
+/** 
+@defgroup Blog051202_2 051202 (2)
+@ingroup BlogMichael
+@ref main
+@brief The difference - a code example
+
+ 
+What's pre-emptability anyways?
+ 
+Consider the following code:
+
+\code 
+unsigned long cbuff[4];
+void ASC0_viRx(void) interrupt ASC0_RINT
+{
+   cbuff[0] = ASC0_uwGetData();
+   q_send_ny(tk_sys_queues[Q_SERIAL_0_I],cbuff);         
+}
+ 
+unsigned int thread2(void *inpar){        
+   unsigned long msg_buf[4];
+   int depth = 0;
+ 
+   printf("Thread 2 started with prio 5\n");
+   while (1){
+      q_receive(tk_sys_queues[Q_SERIAL_0_I],WAIT,0,msg_buf);
+      depth++; 
+      printf("Thread2 (%d) received fron stdin: %c\n",depth,msg_buf[0]);
+   }
+}
+ 
+unsigned int cpu_hog(void *inpar){        
+   int depth = 0;
+   int k,l,x,y,z;
+ 
+   printf("CPU \"hogg\ started with prio 7\n");
+   while (1){
+      for (k=0;k<10;k++)
+         for (x=0;x<1000;x++)
+            for (y=0;y<1000;y++)
+               for (z=0;z<1000;z++)
+                  l = (((x+y+1)*k)/z) % 10;
+    depth++; 
+    printf("Hogg completed round: (%d): %d \n",depth,l);
+   }
+}
+ 
+void root(void){
+   clock_t latency = 0;
+   
+   printf("Hello world o f  TinKer targets\n");
+   tk_create_thread("T2",    5,thread2,1,0x600);
+   tk_create_thread("HOGG",7,cpu_hog,1,0x600);
+ 
+   printf("Root started\n");
+   while (TRUE) {      
+      latency = tk_msleep(10000);
+      printf("Root \"bling\"!\n");
+   }
+ 
+   tk_exit(0); 
+} 
+\endcode
+ 
+Since we created thread2 before cpu_hog, that thread will actually
+execute once, but that's it! Since no yield or sleep is executed in
+cpu_hog, that thread will once it's started effectively block execution
+from all other threads too - including threads with higher priority!
+ 
+However, in TinKer we can easily create pre-emptive scheduling simply by
+calling the function tk_yield_event() in any event triggered function
+(like from an ISR as in this example). Simply add the call <b>before you
+exit the ISR</b>:
+
+\code
+void ASC0_viRx(void) interrupt ASC0_RINT
+{
+   cbuff[0] = ASC0_uwGetData();
+   q_send_ny(tk_sys_queues[Q_SERIAL_0_I],cbuff);         
+   tk_yield_event();
+}
+\endcode
+ 
+Now, whenever an interrupt is received (serial interrupt for XC167 in
+this case), thread2 will be awaken and do it's job, assuming it has
+priority enough to do so - which as a coincidence it has in our example.
+ 
+This example shows one major drawback with non-pre-emptive scheduling.
+It's not that bad as you would think though - and in most cases that
+mode works well enough. In fact preemptable kernels have many drawback's
+that non-preeptable kernels don't have, so you should carefully consider
+if you really need that type of scheduler anyways. TinKer has both
+abilities (on certain targets), but it's up you you whether you use one
+of the other - <b>YOU HAVE BEEN WARNED THOUGH ;)</b>
+ 
+The sample above has been tested and verified against the text. Give it
+a try...
+ 
+Have fun!
+
+/Michael
+
+*/
+

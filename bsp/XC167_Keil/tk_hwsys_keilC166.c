@@ -1,3 +1,16 @@
+/*******************************************************************
+ *
+ *  DESCRIPTION: TinKerOS.
+ *
+ *  AUTHOR: Michael Ambrus
+ *                              
+ *  HISTORY:    
+ *
+ *  Current $Revision: 1.8 $
+ *
+ *******************************************************************/
+  
+
 #include "tk_hwsys_keilC166.h"
 #include <tk_ipc.h>
 
@@ -71,3 +84,17 @@ void _do_trap (unsigned int num){
       trap #0x0D
    }                                                      
 }
+
+
+  
+
+/*! 
+ * @addtogroup CVSLOG CVSLOG
+ *
+ *  $Log: tk_hwsys_keilC166.c,v $
+ *  Revision 1.8  2005-12-03 14:04:30  ambrmi09
+ *  A crude documentation structure added. Sorce files modified a little, but
+ *  only in comments (for Doxygens sake).
+ *
+ *
+ *******************************************************************/

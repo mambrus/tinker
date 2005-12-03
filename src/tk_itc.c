@@ -6,8 +6,10 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.8 $
+ *  Current $Revision: 1.9 $
  *******************************************************************/
+   
+
 /** include files **/
 #include <stdio.h>			    	          	       	   	      	   
 #include <stdlib.h>
@@ -1271,10 +1273,15 @@ unsigned long sm_v_ny(  /* sm_send or sm_put */
 
 
    
-/*******************************************************************  
+/*!
+ * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.8  2005-12-01 13:05:25  ambrmi09
+ *  Revision 1.9  2005-12-03 14:04:30  ambrmi09
+ *  A crude documentation structure added. Sorce files modified a little, but
+ *  only in comments (for Doxygens sake).
+ *
+ *  Revision 1.8  2005/12/01 13:05:25  ambrmi09
  *  This check-in if for preparing for peemtive mechanism (first try)
  *  Done since last check-in
  *

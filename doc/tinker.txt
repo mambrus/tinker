@@ -1,0 +1,463 @@
+/** 
+@mainpage TinKer - A Tiny Kernel for small embedded targets
+
+   This is the mainpage for TinKer - A Tiny Kernel for small embedded targets
+
+   @section INTRODUCTION INTRODUCTION
+
+      Intro bla bla
+
+
+   @section GENERAL_DESCRIPTION General description
+
+      General description bla bla 
+
+      @see aFuntuinNameOrOtherIdentifyer
+
+	   @link #aFuntuinNameOrOtherIdentifyer aFuntuinNameOrOtherIdentifyer @endlink
+	   - A test link <br>
+
+
+   @section OTHER Other info - Bla bla *TBD*
+    
+      More bla bla-ha
+   
+
+   @todo todo bla bla
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+    /** @defgroup CODEMOD Code
+        @ingroup TinKer
+        @ref main
+        @brief Pieces of code cross-file that constiture some sort of module
+
+        Pieces of code, sometimes cross-file, that constiture some sort of module
+
+        */
+        /** @defgroup kernel Kernel 
+            @ingroup CODEMOD
+            @ref main
+            @brief Bla bla
+
+            More bla bla
+
+            */
+        /** @defgroup kernel_internal Kernel internals
+            @ingroup CODEMOD
+            @ref main
+            @brief Bla bla
+
+            More bla bla
+
+            */
+        /** @defgroup kernel_glue Kernel "glue"
+            @ingroup CODEMOD
+            @ref main
+            @brief Bla bla
+
+            More bla bla
+
+            */
+        /** @defgroup kernel_internal_BSP Kernel-internal BSP stuff
+            @ingroup CODEMOD
+            @ref main
+            @brief Bla bla
+
+            More bla bla
+
+            */
+
+
+
+
+
+    /** @defgroup DOCS Doc stuff
+        @ingroup TinKer
+        @ref main
+        @brief Check-in CVS log
+
+        Here you'll find all the CVS log entries
+
+        */
+    
+    /** @defgroup LOGS LOGS
+        @ingroup DOCS
+        @ref main
+        @brief Check-in CVS log
+
+        Here you'll find all the CVS log entries
+
+        */
+
+    /** @defgroup CVSLOG CVSLOG
+        @ingroup LOGS
+        @ref main
+        @brief Check-in CVS log
+
+        Here you'll find all the CVS log entries
+
+        */
+
+     /** @defgroup OtherStuff Other stuff
+        @ingroup OtherStuff
+        @ref main
+        @brief Other stuff
+
+        Here you'll find Other stuff
+
+        */
+
+
+    /** @defgroup Managers Managers
+        @ingroup OtherStuff
+        @ref main
+        @brief Manages I/O
+        
+        Managers in a HL30 FW module is conseptually an abstraction of a
+        certain I/O function. That I/O function can physically be part
+        of the same MPU as the program itself is running or another
+        device or piece of HW somewhwre eles. 
+        
+        The job of manager (conceptually speaking) is to provide an
+        abstraction upwards so that the details on an upper level is
+        unnessesary to know about. 
+        
+        The PCM uses three different types of managers (any othe 
+        FW module could use the same three, none or some other
+        manages): ADCMNG, DEVMNG, PICMNG*/
+
+        /** @defgroup ADCMNG ADCMNG
+            @ingroup Managers
+            @brief {Analog to digital manager}
+
+            This module-group handles one (or several) ADC convertor(s).
+            The module delivers a raw value from the physical
+            world, not knoing exactlly what the value represents.
+            
+            The value is however the meanvalue of several samples.
+
+            Theoretically a ADCMNG can lay outside the boundaries of the
+            FW module itself. But in PCM's case this module abstracts HW
+            that is part of the same MPU.
+            */
+
+        /** @defgroup DEVMNG DEVMNG       
+            @ingroup Managers
+            @brief Handles devices (external or internal)
+
+            DEVMNG handles type of I/O that has a slight intelligence.
+            Similar in concept to an ADCMNG, but the values (in and out)
+            represents a physical value.
+
+            For instance a device in this retrospect can be a
+            temperature sensor or a bubble sensor.
+
+            In TinKer the DEVMNG handels the following device(s)
+
+            @todo <b>Roli:</b>which devices are a PCM DEVMNG handling?
+
+            */
+
+
+        /** @defgroup PICMNG PICMNG
+            @ingroup Managers
+            @brief {An abstraction for "handling" the PIC}
+
+            On PCM there is a special device responsible for checking
+            the TinKer itself - The safety system. The safety system
+            (referred to as PCM_SS) is based on a PIC controller. This
+            manager handles the communication of this device.
+
+            @todo <b>Roli:</b> explain a lilltle more in detail <b>what</b> (but now
+            <b>how</b>) this module does or works.
+            */
+
+
+
+
+    /** @defgroup COM_LAYER Communication
+        @ingroup OtherStuff
+        @brief PCM communication
+
+        @section ADJ_PROC Adjustment processes from a PCM perspective
+
+		An "adjustment process" (actually an adjustment cycle - but
+		process is kept for historical reasons) is a special case
+		adjustment processes (see overall description regarding
+		adjustment cathegoriy 3 at at the firmware level) where the
+		invoking super system (i.e. CU) does not know and/or doesent
+		care who or which sub-system is actually involved.
+
+        In those aspects an invoker regards the whole "pump" as
+        ONE subsystem. Therefore PCM needs to act as an interface and
+        handle the actual sub-adjustmens in one single,continuas and
+        syncronus "cycle" internally.
+
+		Only when all sub ajustment processes are finished
+		(acknowledged), PCM will acknowledge the "original" adjustment
+		process as a whole to the supes-system.
+
+		There is a "general rule" (strictlly followed) whith a chain of
+		sub-adjustemts as exemplified below:
+
+		1. CU initiates an Calibration factor adjustment (by sending the
+		corresponding message)
+
+        2. PCM determines that this is an subcathegory adjustmet setting
+        that involves dividing the process in parts. By reciving (and
+        determining this special case) it starts the mentined
+        internal PCM adjustment process.
+
+        3. It sends an ajdustment DDC_AS and waits util it's
+        acnowledgement.
+        
+        4. It sends an ajdustment DDC_SS and waits util it's
+		acnowledgement.
+
+        5. When all previous steps are finished, the whole cycle is
+        ended by PCM sending it's acknowledge to the CU and resetting
+        the internal flag (adjustment cycle) to idle.
+
+        Main-entry functions involved with this process are as follows:
+
+        @see DM_vProcessRecMSGsCAN2 DM_vCAN2_SetupAdjustmentCycle
+        DM_vCAN2_SetupCommunication DM_vCAN2_Communication
+        DM_vCAN2_DDCAS_AckProcessing DM_vCAN2_DDCSS_AckProcessing
+        DM_vDDC_AdjustTimeoutCheck
+
+ */
+
+	    /** @defgroup SERIAL Serial communication
+	        @ingroup COM_LAYER
+	        @brief Serial line comunication layer
+			*/
+
+	    /** @defgroup CANCOM_LAYER CAN (Controller Area Networks)
+	        @ingroup COM_LAYER
+	        @brief Can Comunication layer
+			*/
+
+            /** @defgroup CANCOM_LAYER_FUNCTIONS Functions organized by functionality
+                @ingroup CANCOM_LAYER 
+                @brief Funtionality perspective
+				*/
+
+				/** @defgroup com_can_control Controlling functions (start,stop e.t.a.)
+				    @ingroup CANCOM_LAYER_FUNCTIONS 
+	                @brief TBD
+
+                    @see void  PUMPMOD_vStartSendingGenValues (void) 
+					*/
+				/** @defgroup com_can_send Sending functions
+				    @ingroup CANCOM_LAYER_FUNCTIONS 
+	                @brief TBD
+					*/
+				/** @defgroup com_can_receive Receiving functions
+				    @ingroup CANCOM_LAYER_FUNCTIONS 
+	                @brief TBD
+					*/
+
+
+
+		    /** @defgroup CANCOM_LAYER_CMODULES CAN (Controller Area Networks)
+		        @ingroup CANCOM_LAYER
+		        @brief C-modules that holds functions involved
+
+                This is a  placeholder for the two C sub-modules in
+                TinKer FW that are resonsible for handling
+                communication.
+
+		        The PCM has two busses that it's connected two, hence this
+		        module has two sub-modules.
+		        */
+
+		        /** @defgroup PUMPMOD PUMPMOD
+		            @ingroup CANCOM_LAYER 
+		            @brief {Sys-CAN handling}
+		            
+		            This abstraction is responible for taking care of the
+		            communication on the <b>Sys-CAN</b> CAN-bus
+		            
+		            */
+
+		        /** @defgroup PUMPREG PUMPREG
+		            @ingroup CANCOM_LAYER
+		            @brief {Pump-CAN handling}
+		            
+		            This abstraction is responsible for taking care of the
+		            communication on the <b>Pump-CAN</b> CAN-bus
+		            
+		            */    
+
+    
+    /** @defgroup Shared Shared - Global
+        @ingroup OtherStuff
+        @brief Shared definitions, macros e.t.a
+
+        Bla bla
+
+        @todo <b>Michael:</b> Write something here
+        */
+
+    /** @defgroup TinKer_Shared Shared - TinKer specific
+        @ingroup OtherStuff
+        @brief {Shared modules}
+
+        Any FW module uses a certain amount of source files from a
+        library of files called 'shared'. This files and their functions
+        can conceptually be regarded as normal library functions. The
+        difference however is that they are actually compiled (possibly
+        with different <b>#defines</b>) togeather with each module.
+
+        For each shared modules specific documentation you are referred to 
+        the documentation of the whole shared. In this documentation only 
+        the names are reffered too.
+
+        @todo <b>Michael:</b> Link to the shared doc-project
+        */
+
+
+        /** @addtogroup COMMONID COMMONID
+            @ingroup OtherStuff_Shared
+            */
+
+        /** @addtogroup COMTEXT COMTEXT
+            @ingroup OtherStuff_Shared
+            */
+
+        /** @addtogroup Eeprom Eeprom
+            @ingroup OtherStuff_Shared
+            */
+
+        /** @addtogroup Traps Traps
+            @ingroup OtherStuff_Shared
+            */
+
+        /** @addtogroup DOWN_TX DOWN_TX
+            @ingroup OtherStuff_Shared
+            */
+
+        /** @addtogroup DOWN DOWN
+            @ingroup OtherStuff_Shared
+            */
+
+    /** @defgroup DAvE DAvE
+        @ingroup OtherStuff
+        @brief Files and functions produced (or managed) by DAvE 
+
+        Due to the methodology in FW, there exists in every FW module a
+        abstaction-layer that is the closest to the HW itself: This
+        abstraction is provided by a case tool called DAvE. 
+        
+        Since the code from that tool is autgenerated, the files it
+        provides are not suitable to (fully) integrate with the
+        documentation project.
+
+        @note To get a list of all the files that DAvE produced, you cab invoce the following
+
+        <EM>find . -iregex ".*\.[ch]$" -printf "" -exec isdave.sh '{}' ';'</EM>
+
+        @todo <b>Both:</b> We need to makup automated from added functions in DAvE
+
+        
+        */
+
+    /** @defgroup Processes Processes
+        @ingroup OtherStuff
+        @brief This section describes the various "tasks" that PCM is
+        doing
+
+        Processes.... read definition bla bla bak...
+
+		PCM deploys all three cathegories off the processes concept in
+		FW periodic tasks, hot loop functions and interrupt functions.
+		
+		*/ 
+		/** @defgroup pfuncs_60ms Process functions 62,4ms
+		    @ingroup Processes			
+			*/	
+           
+           /** @defgroup pfuncs_60ms_Com COM-Processes
+		   @ingroup pfuncs_60ms			
+		   */	    
+
+		/** @defgroup pfuncs_500ms Process functions 500ms
+		    @ingroup Processes			
+			*/	    
+
+           /** @defgroup pfuncs_500ms_Com COM-Processes
+		   @ingroup pfuncs_500ms			
+		   */	    
+
+
+		/** @defgroup pfuncs_1s Process functions 1s
+		    @ingroup Processes			
+			*/	    
+		/** @defgroup pfuncs_interrupts Interrupts functions
+		    @ingroup Processes			
+			*/	    
+
+		/** @defgroup pfuncs_hotloop Hot-loop functions
+		    @ingroup Processes
+		    
+		    Hot loop functions are the periodic tasks that execute in
+		    the "idle loop". I.e. they execute as fast as possible over
+		    and over again in a never ending loop, <b>but only</b> if
+		    there is time left from the other type of processes (hence
+		    motivates term "idle" - i.e. when the system has nothing
+		    else more important to do).
+
+            In PCM the hoot-loop processes are mostly involved with
+            (deailed description should follow)...
+            */      
+    
+
+        
+
+
+
+
+              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

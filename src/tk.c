@@ -6,9 +6,10 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.23 $
+ *  Current $Revision: 1.24 $
  *
  *******************************************************************/
+  
 
 /** include files **/
 #include <stdio.h>                                                      
@@ -710,10 +711,14 @@ void Test_scheduler( void ){
 
 
   
-/*******************************************************************
- *
+/*! 
+ * @addtogroup CVSLOG CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.23  2005-12-02 14:40:51  ambrmi09
+ *  Revision 1.24  2005-12-03 14:04:30  ambrmi09
+ *  A crude documentation structure added. Sorce files modified a little, but
+ *  only in comments (for Doxygens sake).
+ *
+ *  Revision 1.23  2005/12/02 14:40:51  ambrmi09
  *  First version of what is going to be the prefered way of preemptive
  *  coding. TinKer needed very little modifications to be able to do this.
  *  Only one function is added tk_event_yield(), which is to be uused from any ISR.

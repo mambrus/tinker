@@ -6,9 +6,11 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.5 $
+ *  Current $Revision: 1.6 $
  *
  *******************************************************************/
+   
+
 #ifndef tk_ipc_h
 #define tk_ipc_h
 
@@ -278,13 +280,16 @@ unsigned long sm_v_ny(         /*!< sm_send or sm_put                          *
 
 #endif
 
-
-
-
   
-/*******************************************************************
+/*!
+ * @addtogroup CVSLOG CVSLOG
+ *
  *  $Log: tk_itc.h,v $
- *  Revision 1.5  2005-11-26 11:38:40  ambrmi09
+ *  Revision 1.6  2005-12-03 14:04:30  ambrmi09
+ *  A crude documentation structure added. Sorce files modified a little, but
+ *  only in comments (for Doxygens sake).
+ *
+ *  Revision 1.5  2005/11/26 11:38:40  ambrmi09
  *  Cosmetic changes concerning CVS logs in source.
  *
  *  Revision 1.4  2005/11/25 17:55:29  ambrmi09
