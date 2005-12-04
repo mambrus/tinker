@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.18 $
+ *  Current $Revision: 1.19 $
  *
  *******************************************************************/
    
@@ -34,6 +34,7 @@
 
 //Include components 
 #define  IPC               YES
+#define  PTIMER            YES
 
 //Kernel termination codes (bit adressable) - Note, per kernel and not per thread codes
 
@@ -97,7 +98,7 @@ like the C166 family, this is a much more complex structure.
 */
 
 typedef struct    tk_tcb_t_s{
-   unsigned int   Pid,Gid;             //!< Process ID and Parent ID (Gid)
+   unsigned int   Thid,Gid;             //!< Process ID and Parent ID (Gid)
    unsigned int   noChilds;            //!< Numb of procs this has created
    char           name[TK_THREAD_NAME_LEN]; //!< Name of the process
    BOOL           isInit;              //!< Memory for stack is allocated
@@ -171,7 +172,13 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.18  2005-12-03 14:04:30  ambrmi09
+ *  Revision 1.19  2005-12-04 15:48:52  ambrmi09
+ *  API for ne pre-emptable timers in place. Implementing this will be a
+ *  hard but fun "nut" to crack. ptime has the potential of comming
+ *  very close to the high-res timers that POSIX 1003.1c define and is a
+ *  good pointer whether pthreads is a good next step or not for TinKer.
+ *
+ *  Revision 1.18  2005/12/03 14:04:30  ambrmi09
  *  A crude documentation structure added. Sorce files modified a little, but
  *  only in comments (for Doxygens sake).
  *

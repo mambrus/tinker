@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.24 $
+ *  Current $Revision: 1.25 $
  *
  *******************************************************************/
   
@@ -54,7 +54,7 @@ int Tk_IntFlagCntr;
 
 tk_tcb_t proc_stat[TK_MAX_THREADS];
 //This is not perfect. PiD will be reused when more than TK_MAX_THREADS has
-//been used. I wold have wanted a Pid range that is much bigger and a lookup-
+//been used. I wold have wanted a Thid range that is much bigger and a lookup-
 //table (gives greater uniquety - specially usefull i case of RPC) but that
 //is costly (I think)
 //coord_t lookUpTable[TK_MAX_THREADS];
@@ -71,7 +71,7 @@ static unsigned int active_thread;        //!< Deliberatlly left uninitialized t
 static unsigned int thread_to_run   = 0;
 static unsigned int procs_in_use    = 0;
 static unsigned int proc_idx;             //!< Points at the last tk_tcb_t created
-static unsigned int idle_Pid;             //!< Idle_Pid must be known, therefor public in this module (file)
+static unsigned int idle_Thid;             //!< Idle_Thid must be known, therefor public in this module (file)
 
 unsigned int _tk_idle( void *foo ){       //!< idle loop (non public)
    while (TRUE){
@@ -80,7 +80,7 @@ unsigned int _tk_idle( void *foo ){       //!< idle loop (non public)
 }
 
 void tk_delete_kernel( void ){
-      tk_delete_thread(idle_Pid);
+      tk_delete_thread(idle_Thid);
 }
 
 unsigned int tk_thread_id( void ){
@@ -146,7 +146,7 @@ void tk_create_kernel( void ){
       proc_stat[i].isInit        = FALSE;
       //proc_stat[i].name        ="";
       proc_stat[i].Gid           = 0;
-      proc_stat[i].Pid           = 0;
+      proc_stat[i].Thid           = 0;
       proc_stat[i].noChilds      = 0;
       proc_stat[i].stack_size    = 0;
       STACK_PTR(proc_stat[i].stack_begin)   = 0uL;
@@ -173,11 +173,11 @@ void tk_create_kernel( void ){
    }
    //Create a Idle thread, whoes sole purpose is to burn up time
    //when nobody else is running
-   idle_Pid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,NULL,0x600/*MINIMUM_STACK_SIZE*/);
+   idle_Thid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,NULL,0x600/*MINIMUM_STACK_SIZE*/);
    //IdleProc must like root, i.e. bee owned by itself
-   proc_stat[proc_stat[idle_Pid].Gid].noChilds--;
+   proc_stat[proc_stat[idle_Thid].Gid].noChilds--;
    //Awkward way to say that root has created one process less than it has
-   proc_stat[idle_Pid].Gid = proc_stat[idle_Pid].Pid;
+   proc_stat[idle_Thid].Gid = proc_stat[idle_Thid].Thid;
    //Idle ownde by it self
    //Init shedule tables
    //Put the root in the scedule
@@ -186,7 +186,7 @@ void tk_create_kernel( void ){
    //Put idle thread in shedule at lowest prio
    /*
    scheduleIdxs[TK_MAX_PRIO_LEVELS - 1].procs_at_prio = 1;
-   theScedule[TK_MAX_PRIO_LEVELS - 1][0]=idle_Pid;
+   theScedule[TK_MAX_PRIO_LEVELS - 1][0]=idle_Thid;
    */ /* NOT NEEDED, DONE ALREADY */
 }
 
@@ -217,24 +217,24 @@ Delete a thread
 allocated will not be freed. Always prefere a controlled exit of a thread.
 */
 int tk_delete_thread(
-   unsigned int Pid              //!< Threads identity
+   unsigned int Thid              //!< Threads identity
 ){
    unsigned int Prio,Idx,i;
    
-   if ( proc_stat[Pid].isInit == FALSE )  {
+   if ( proc_stat[Thid].isInit == FALSE )  {
       //The process you are trying to delete does not exist
       return(TK_ERROR);    
    }
-   Prio = proc_stat[Pid].Prio;
-   Idx = proc_stat[Pid].Idx;
+   Prio = proc_stat[Thid].Prio;
+   Idx = proc_stat[Thid].Idx;
    procs_in_use--;
-   proc_stat[Pid].state = ZOMBIE;
+   proc_stat[Thid].state = ZOMBIE;
    //Tell the parent proc that one more child is gone if parent exists
    //else don't bother "" and then try to free "sleep until no workers"
-   if (proc_stat[proc_stat[Pid].Gid].isInit) {
-      proc_stat[proc_stat[Pid].Gid].noChilds--;
-      if ( (proc_stat[proc_stat[Pid].Gid].noChilds == 0) &&
-           ( proc_stat[proc_stat[Pid].Gid].state & _______T ) ) {
+   if (proc_stat[proc_stat[Thid].Gid].isInit) {
+      proc_stat[proc_stat[Thid].Gid].noChilds--;
+      if ( (proc_stat[proc_stat[Thid].Gid].noChilds == 0) &&
+           ( proc_stat[proc_stat[Thid].Gid].state & _______T ) ) {
       }
    }
    //Take away the process fom theSchedule and compress gap at prio
@@ -251,8 +251,8 @@ int tk_delete_thread(
       scheduleIdxs[Prio].curr_idx = 0;
    }
    //Make it final
-   free( STACK_PTR(proc_stat[Pid].stack_begin) );
-   proc_stat[Pid].isInit = FALSE;
+   free( STACK_PTR(proc_stat[Thid].stack_begin) );
+   proc_stat[Thid].isInit = FALSE;
    return(TK_OK);
 }
 
@@ -308,7 +308,7 @@ unsigned int tk_create_thread(
       printf("tk: Error - To many processes at prio\n");
       tk_exit(1);
    }
-   //Find next empty slot - which is also the CREATED Pid
+   //Find next empty slot - which is also the CREATED Thid
    do{
       proc_idx++;
       proc_idx %= TK_MAX_THREADS;
@@ -331,7 +331,7 @@ unsigned int tk_create_thread(
    
    proc_stat[proc_idx].isInit       = TRUE;
    proc_stat[proc_idx].state        = READY;
-   proc_stat[proc_idx].Pid          = proc_idx;    //for future compability with lage Pid:s
+   proc_stat[proc_idx].Thid          = proc_idx;    //for future compability with lage Thid:s
    proc_stat[proc_idx].Gid          = active_thread; //Owned by..
    proc_stat[proc_idx].noChilds     = 0;
    proc_stat[proc_idx].stack_size   = stack_size;
@@ -490,10 +490,10 @@ Get the identity of the next thread to run.
 Scheduling policy is used to determine which one that would be.
 */
 unsigned int _tk_next_runable_thread(){
-   int idx,prio,cidx,midx,nbTry,loop,return_Pid,p_at_p;
+   int idx,prio,cidx,midx,nbTry,loop,return_Thid,p_at_p;
    BOOL found;
 
-   return_Pid  = idle_Pid; //In case no runnable proc is found...
+   return_Thid  = idle_Thid; //In case no runnable proc is found...
    found       = FALSE;
 
    for(prio=0;prio<TK_MAX_PRIO_LEVELS && !found;prio++){ //prio from highets to lowest
@@ -507,7 +507,7 @@ unsigned int _tk_next_runable_thread(){
                loop < nbTry && !found;
                loop++){
             if (proc_stat[theSchedule[prio][idx]].state == READY){
-               return_Pid = theSchedule[prio][idx];
+               return_Thid = theSchedule[prio][idx];
                found = TRUE;
             }
             //Next proc at this prio that should try to run
@@ -516,7 +516,7 @@ unsigned int _tk_next_runable_thread(){
          }
       }
    }
-   return return_Pid;
+   return return_Thid;
 }
 
 
@@ -674,15 +674,21 @@ printf to see run-time errors
 void _tk_main( void ){
    tk_create_kernel();
    #ifdef IPC
-   createIPC();
-   if (_tk_create_system_queues( ) != 0)
-      tk_exit(1);
+      createIPC();
+      if (_tk_create_system_queues( ) != 0)
+         tk_exit(1);
+      #ifdef PTIMER
+         tk_create_ptime();
+      #endif
    #endif
     
    root();
 
    #ifdef IPC
-   deleteIPC();
+      deleteIPC();
+      #ifdef PTIMER
+         tk_delete_ptime();
+      #endif
    #endif 
    tk_delete_kernel();
 }
@@ -714,7 +720,13 @@ void Test_scheduler( void ){
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.24  2005-12-03 14:04:30  ambrmi09
+ *  Revision 1.25  2005-12-04 15:48:52  ambrmi09
+ *  API for ne pre-emptable timers in place. Implementing this will be a
+ *  hard but fun "nut" to crack. ptime has the potential of comming
+ *  very close to the high-res timers that POSIX 1003.1c define and is a
+ *  good pointer whether pthreads is a good next step or not for TinKer.
+ *
+ *  Revision 1.24  2005/12/03 14:04:30  ambrmi09
  *  A crude documentation structure added. Sorce files modified a little, but
  *  only in comments (for Doxygens sake).
  *

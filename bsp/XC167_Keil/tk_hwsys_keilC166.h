@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.13 $
+ *  Current $Revision: 1.14 $
  *
  *******************************************************************/
   
@@ -355,7 +355,7 @@ TBD
    if ( TCB_T.stack_crc != 0 ){ \
    STK_CRC_CALC( TEMP );                                    \
    if ( TCB_T.stack_crc != TEMP )	{                       \
-      printf ("\ntk: Error - Thread 0x%02X \"%s\" has got a tainted stack\n",TCB_T.Pid,TCB_T.name); \
+      printf ("\ntk: Error - Thread 0x%02X \"%s\" has got a tainted stack\n",TCB_T.Thid,TCB_T.name); \
       tk_exit( TK_ERR_STKINT );                             \
    }                                                        \
    } \
@@ -373,7 +373,13 @@ TBD
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.h,v $
- *  Revision 1.13  2005-12-03 14:04:30  ambrmi09
+ *  Revision 1.14  2005-12-04 15:48:52  ambrmi09
+ *  API for ne pre-emptable timers in place. Implementing this will be a
+ *  hard but fun "nut" to crack. ptime has the potential of comming
+ *  very close to the high-res timers that POSIX 1003.1c define and is a
+ *  good pointer whether pthreads is a good next step or not for TinKer.
+ *
+ *  Revision 1.13  2005/12/03 14:04:30  ambrmi09
  *  A crude documentation structure added. Sorce files modified a little, but
  *  only in comments (for Doxygens sake).
  *
