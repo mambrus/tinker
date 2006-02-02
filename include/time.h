@@ -77,8 +77,8 @@ Honestly speaking, I don't understand why yhis struct is needed since the struct
 */
 struct timeval{
    long int tv_sec;  //!< This represents the number of whole seconds of elapsed time. 
-   long int tv_usec  //!< This is the rest of the elapsed time (a fraction of a second), represented as the number of <b>microseconds</b>. It is always less than one million.  
-}
+   long int tv_usec; //!< This is the rest of the elapsed time (a fraction of a second), represented as the number of <b>microseconds</b>. It is always less than one million.  
+};
 
 /*!
 The struct timespec structure represents an elapsed time. It is declared in time.h
@@ -91,8 +91,8 @@ A 32 bit signed storage for tv_nsec is enough to store a fraction of a secons in
 */
 struct timespec{
    long int tv_sec;  //!< This represents the number of whole seconds of elapsed time. 
-   long int tv_nsec  //!< This is the rest of the elapsed time (a fraction of a second), represented as the number of <b>nanoseconds</b>. It is always less than one billion
-}
+   long int tv_nsec; //!< This is the rest of the elapsed time (a fraction of a second), represented as the number of <b>nanoseconds</b>. It is always less than one billion
+};
 
 
 /*!
@@ -109,6 +109,8 @@ Works like the POSIX spec says, excepth that timezone is alway ignored.
 @note This function will on some supported targes give the time in accurate uS resolution ecen if systetem tick is updated with a frequency lower than 1uS. This is achcheived by a cobination of reading the system timer and the HW clock dricing the system timer. 
 
 @tbd investigate the timezone thingy and if there is an equivlent API wit nS resoution
+
+@tbd implement this
 */
 int gettimeofday (struct timeval *tp, struct timezone *tzp);
 
@@ -117,6 +119,8 @@ int gettimeofday (struct timeval *tp, struct timezone *tzp);
 Works like the POSIX spec says, excepth that timezone is alway ignored.
 
 @tbd investigate the timezone thingy and if there is an equivlent API wit nS resoution
+
+@tbd implement this
 */
 int settimeofday (const struct timeval *tp, const struct timezone *tzp);
 
@@ -146,14 +150,10 @@ written to suit both HW and kernel, and in the kernal itself).
 
 @note wrapping is handled properly only by scalar types with
 representation size equal to that of unsigned long
-
-
-
 */ 
 
 #define difftime(t1, t2) \
    t1 <= t2 ? t2 - t1 : t2 + (ULONG_MAX - t1);
-
 
 
 clock_t clock();

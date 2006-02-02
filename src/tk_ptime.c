@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.2 $
+ *  Current $Revision: 1.3 $
  *
  *******************************************************************/
   
@@ -16,7 +16,7 @@
 #include <tk_ipc.h>
 #include <tk_sysqueues.h>
 #include <tk_ptime.h>
-#include <tk_hwclock.h>
+#include <kernel/src/tk_hwclock.h>
 #include <tk_hwsys.h>
 #include <string.h>
 
@@ -89,7 +89,7 @@ void tk_create_ptime( void ){
    tk_getHWclock_Quality(	CLK2, &HWclock_stats );
    tk_disarmHWclock(        CLK2 );
    tk_getHWclock(           CLK2, &hw_ticks );
-   hw_ticks=HWclock_stats.maxTicks;
+   hw_ticks=HWclock_stats.maxPebbles;
    tk_setHWclock(           CLK2, hw_ticks );
    tk_armHWclock(           CLK2 );
 
@@ -304,7 +304,10 @@ unsigned int timerdeamon(void *inpar ){
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_ptime.c,v $
- *  Revision 1.2  2006-02-02 15:51:02  ambrmi09
+ *  Revision 1.3  2006-02-02 16:25:02  ambrmi09
+ *  Minor syntax errors fixed
+ *
+ *  Revision 1.2  2006/02/02 15:51:02  ambrmi09
  *  A lot of thought has been invested into the new PTIME component. Had to
  *  change things even in the systime parts (integrated in the SHEDUL
  *  component) to make it more generic. Think this will be really nice when

@@ -7,12 +7,14 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.2 $
+ *  Current $Revision: 1.3 $
  *******************************************************************/
    
 
 #define TICK_OWNER
-#include <tk_tick.h>
+#include "tk_tick.h"
+#include <tk.h>
+#include <stdio.h>
 #include <time.h>
 
 #define HW_CLOCKED   /*!< If HWclock operations are supported or not. 
@@ -20,7 +22,7 @@
                           find another home. */
 
 #if defined(HW_CLOCKED)
-   #include <tk_hwclock.h>
+   #include "tk_hwclock.h"
 #endif
 
 /*
@@ -78,7 +80,7 @@ but with the following beaning:<p>
 */
 
 int getuptime (struct timespec *tp){
-   unsigned long        MSmS;     //! 32-bit <b>H</b>igh part of millisecons
+   unsigned long        MSS,MSmS; //! 32-bit <b>H</b>igh part of seconds, millisecons
    unsigned long        LSS,LSmS; //! 32-bit <b>L</b>ow part of seconds, millisecons
    unsigned long        pebbles;  //!< Remainig value in HWclock register
    unsigned long        nS;       //!< Time passed since last update of tick expressed in nS. Lets hope we dont need a 64 bit value for this.
@@ -102,17 +104,17 @@ int getuptime (struct timespec *tp){
    
    #if defined(HW_CLOCKED)
    tk_getHWclock_Quality( CLK1, &HWclock_stats );
-   tk_disarmHWclock(      CLK1 );
-   tk_getHWclock          CLK1, &pebbles)
+   //tk_disarmHWclock(      CLK1 );
+   //tk_getHWclock          CLK1, &pebbles)
    #endif
    
    MSmS = sys_mackey; 
    LSmS = sys_mickey; 
       
    #if defined(HW_CLOCKED)
-   tk_armHWclock(         CLK1 );
+   //tk_armHWclock(         CLK1 );
 
-   if ((HWclock_stats.res > 16) && (HWclock_stats.freq < 1000000)) {
+   if ((HWclock_stats.res > 16) && (HWclock_stats.freq_khz < 1000000)) {
       printf("tk: to high resolution HW clock. TinKer can't handle this ATM \n");
       tk_exit(1);
    }
@@ -129,12 +131,17 @@ int getuptime (struct timespec *tp){
    LSS = LSmS / 1000L + MSmS % 1000L;
    MSS = MSmS / 1000L;
    
-   nS  = ( LSmS % 1000L ) * 1000000L
+   nS  = ( LSmS % 1000L ) * 1000000L;
    
    //Add the fraction originally expressed in pebbles and compensate seconds if needed
    nS  = nS + TnS;
    LSS = LSS + nS/1000000000L;  // should increase with 1 at the most (if more, then we're buggd)
-   nS  =  nS%1000000000L;       // take away the amount that got into seconds
+   nS  = nS%1000000000L;        // take away the amount that got into seconds
+
+   //MSS is not compensated - bug will not be seen unless running system for 60 years, and only if nS 
+   //frac caouses overflow that ripples though both nS and S. Compensating for this will cause 
+   //extra code to run on every invocation and that will most certanlly never do anything (waste 
+   //of time). Besides MSS is not used outside this function (double waste).
    
 //Finally we should have the information requested. Copy to caller
    tp->tv_sec  = LSS;
@@ -147,7 +154,10 @@ int getuptime (struct timespec *tp){
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.c,v $
- *  Revision 1.2  2006-02-02 15:45:07  ambrmi09
+ *  Revision 1.3  2006-02-02 16:25:02  ambrmi09
+ *  Minor syntax errors fixed
+ *
+ *  Revision 1.2  2006/02/02 15:45:07  ambrmi09
  *  Low level API for internal high-res clock operations added (note: no <b>direct</b> HW dependency)
  *
  *
