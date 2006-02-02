@@ -7,7 +7,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.1 $
+ *  Current $Revision: 1.2 $
  *******************************************************************/
    
 
@@ -141,6 +141,19 @@ int getuptime (struct timespec *tp){
    tp->tv_nsec = nS;
 
 }
+
+  
+/*!
+ * @addtogroup CVSLOG CVSLOG
+ *
+ *  $Log: tk_tick.c,v $
+ *  Revision 1.2  2006-02-02 15:45:07  ambrmi09
+ *  Low level API for internal high-res clock operations added (note: no <b>direct</b> HW dependency)
+ *
+ *
+ *******************************************************************/
+
+
 
 
 
