@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.1 $
+ *  Current $Revision: 1.2 $
  *
  *******************************************************************/
    
@@ -17,6 +17,7 @@
 
 /** include files **/
 //#include <time.h>
+
 
 /** public definitions **/
 
@@ -168,7 +169,10 @@ allready happened.
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_hwclock.h,v $
- *  Revision 1.1  2006-02-02 15:40:26  ambrmi09
+ *  Revision 1.2  2006-02-02 17:44:40  ambrmi09
+ *  Workaround for Keil include header bug (again)
+ *
+ *  Revision 1.1  2006/02/02 15:40:26  ambrmi09
  *  HW clock definitions added
  *
  *  

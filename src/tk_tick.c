@@ -7,7 +7,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.3 $
+ *  Current $Revision: 1.4 $
  *******************************************************************/
    
 
@@ -16,6 +16,8 @@
 #include <tk.h>
 #include <stdio.h>
 #include <time.h>
+#include <tk_hwsys.h> //Should really be moved into tk_hwclock.h, but we cant since Keil prepocessor is buggd. 
+
 
 #define HW_CLOCKED   /*!< If HWclock operations are supported or not. 
                           @note Only temporary in this file, needs to 
@@ -25,7 +27,7 @@
    #include "tk_hwclock.h"
 #endif
 
-/*
+/*!
 @brief returns time since startup of the target expressed in seconds and
 fractions in nS. Precision limited only by HW (if supported).
 
@@ -64,12 +66,12 @@ most cases though.
 timespec. It's easy to limit the maximum time in between to, both 1/2 and
 1/4 of it's maximum of 68 years.
 
-@note <i>"A beloved child has many names"</i>. We call the internal timer value a
-"tick". Other names that occure in "kernal lingo" are "mickeys", "mackeys",
-"jiffies" and "pebbles". They all mean more or less the same thing: time
-since a certain time (often startup), fractioned in some sort of unit
-(often interrupt period time). In TinKer we use most of these words, 
-but with the following beaning:<p>
+@note It is said that <i>"A beloved child has many names"</i>. We call
+the internal timer value a "tick". Other names that occure in "kernal
+lingo" are "mickeys", "mackeys", "jiffies" and "pebbles". They all mean
+more or less the same thing: time since a certain time (often startup),
+fractioned in some sort of unit (often interrupt period time). In
+TinKer we use most of these words, but with the following beaning:<p>
 - tick    - is the internal time. This is represented in mS
 - mickey  - mickeys are the LS part of a tick (32 bit value)
 - mackey  - mackeys are the MS part of a tick (32 bit value)
@@ -79,12 +81,14 @@ but with the following beaning:<p>
 
 */
 
-int getuptime (struct timespec *tp){
-   unsigned long        MSS,MSmS; //! 32-bit <b>H</b>igh part of seconds, millisecons
-   unsigned long        LSS,LSmS; //! 32-bit <b>L</b>ow part of seconds, millisecons
-   unsigned long        pebbles;  //!< Remainig value in HWclock register
-   unsigned long        nS;       //!< Time passed since last update of tick expressed in nS. Lets hope we dont need a 64 bit value for this.
-   unsigned long        TnS;      //!< Temp of the above
+int getuptime (
+   struct timespec *tp            //!< The returned uptime
+){
+   unsigned long        MSS,MSmS; // 32-bit <b>H</b>igh part of seconds, millisecons
+   unsigned long        LSS,LSmS; // 32-bit <b>L</b>ow part of seconds, millisecons
+   unsigned long        pebbles;  // Remainig value in HWclock register
+   unsigned long        nS;       // Time passed since last update of tick expressed in nS. Lets hope we dont need a 64 bit value for this.
+   unsigned long        TnS;      // Temp of the above
    
    #if defined(HW_CLOCKED)
    HWclock_stats_t      HWclock_stats;
@@ -104,15 +108,15 @@ int getuptime (struct timespec *tp){
    
    #if defined(HW_CLOCKED)
    tk_getHWclock_Quality( CLK1, &HWclock_stats );
-   //tk_disarmHWclock(      CLK1 );
-   //tk_getHWclock          CLK1, &pebbles)
+   tk_disarmHWclock(      CLK1 );
+   tk_getHWclock(         CLK1, &pebbles);
    #endif
    
    MSmS = sys_mackey; 
    LSmS = sys_mickey; 
       
    #if defined(HW_CLOCKED)
-   //tk_armHWclock(         CLK1 );
+   tk_armHWclock(         CLK1 );
 
    if ((HWclock_stats.res > 16) && (HWclock_stats.freq_khz < 1000000)) {
       printf("tk: to high resolution HW clock. TinKer can't handle this ATM \n");
@@ -154,7 +158,10 @@ int getuptime (struct timespec *tp){
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.c,v $
- *  Revision 1.3  2006-02-02 16:25:02  ambrmi09
+ *  Revision 1.4  2006-02-02 17:44:40  ambrmi09
+ *  Workaround for Keil include header bug (again)
+ *
+ *  Revision 1.3  2006/02/02 16:25:02  ambrmi09
  *  Minor syntax errors fixed
  *
  *  Revision 1.2  2006/02/02 15:45:07  ambrmi09
