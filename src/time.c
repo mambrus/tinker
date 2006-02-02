@@ -4,7 +4,7 @@
 //  resolution so that the POSIX requirements for CLOCKS_PER_SEC is fullfilled.
 //  The current resolution is 1000 tics per second (1kHZ interrupts). The 
 //  POSIX CLOCKS_PER_SEC is preset to 1*10e6. How many clock_ticks is there 
-//  (or would there be) in a sys_tick.
+//  (or would there be) in a sys_mickey.
 
 #define TICK_PER_CLK 1000  //<! How much a tick is advanced on
 //each interrupt
@@ -50,7 +50,16 @@ use that module instead.
 */
 
 clock_t clock(){
-   return TICK_PER_CLK * sys_tick;
+   return TICK_PER_CLK * sys_mickey;
 }
+
+
+int gettimeofday (struct timeval *tp, struct timezone *tzp){
+}
+
+
+int settimeofday (const struct timeval *tp, const struct timezone *tzp){
+}
+
 
 

@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.3 $
+ *  Current $Revision: 1.4 $
  *
  *******************************************************************/
   
@@ -61,6 +61,113 @@ typedef union{
       }offs24;  
    }u;
 }userstackaddr_t;
+
+
+/*!
+@brief GTT1 core (T3) - Control register bit fields 
+
+@ingroup XC167_SFR_bitfields
+*/
+typedef struct{ 
+   unsigned int TcI       :3;  //<! Timer x Input Parameter Selection
+   unsigned int TcM       :3;  //<! Timer x Mode Control 
+   unsigned int TcR       :1;  //<! Timer x Run Bit         (1 = runs)
+   unsigned int TcUD      :1;  //<! Timer x Up/Down Control (1 = counting down)
+   unsigned int TcUDE     :1;  //<! Timer x External Up/Down Enable ( 1 = counting direction is externally controlled by line TaEUD)
+
+   unsigned int TcOE      :1;  //<! Overflow/Underflow Output Enable
+   unsigned int TcOTL     :1;  //<! Timer 3 Overflow Toggle Latch
+   unsigned int BPS1      :2;  //<! Timer Block Prescaler 1 (Prescales T2,T3,T4)
+
+   unsigned int TcEDGE    :1;  //<! Timer x Edge Detection
+   unsigned int TcCHDIR   :1;  //<! Timer x Count Direction Change
+   unsigned int TcRDIR    :1;  //<! Timer x Rotation Direction
+}GPT1_ControlRegCore_t;
+
+/*!
+@brief GTT1 Aux (T2, T4) - Control register bit fields 
+
+@ingroup XC167_SFR_bitfields
+*/
+typedef struct{ 
+   unsigned int TaI       :3;  //<! Timer x Input Parameter Selection
+   unsigned int TaM       :3;  //<! Timer x Mode Control (Basic Operating Mode)
+   unsigned int TaR       :1;  //<! Timer x Run Bit          (1 = runs)
+   unsigned int TaUD      :1;  //<! Timer x Up/Down Control  (1 = counting down)
+   unsigned int TaUDE     :1;  //<! Timer x External Up/Down Enable ( 1 = counting direction is externally controlled by line TaEUD)
+
+   unsigned int TaRC      :1;  //<! Timer x Remote Control
+   unsigned int _paddingA :2;  //<! reserved for future use; reading returns 0;
+   unsigned int TaIRDIS   :1;  //<! Timer x Interrupt Disable
+
+   unsigned int TaEDGE    :1;  //<! Timer x Edge Detection
+   unsigned int TaCHDIR   :1;  //<! Timer x Count Direction Change
+   unsigned int TaRDIR    :1;  //<! Timer x Rotation Direction
+}GPT1_ControlRegAux_t;
+
+/*!
+@brief GTT2 core (T6) - Control register bit fields
+
+@ingroup XC167_SFR_bitfields
+*/
+typedef struct{ 
+   unsigned int TcI       :3;  //<! Timer x Input Parameter Selection
+   unsigned int TcM       :3;  //<! Timer x Mode Control 
+   unsigned int TcR       :1;  //<! Timer x Run Bit           (1 = runs)
+   unsigned int TcUD      :1;  //<! Timer x Up/Down Control   (1 = counting down)
+
+   unsigned int _paddingC1:1;  //<! 
+
+   unsigned int TcOE      :1;  //<! Overflow/Underflow Output Enable
+   unsigned int TcOTL     :1;  //<! Timer 3 Overflow Toggle Latch
+   unsigned int BPS2      :2;  //<! Timer Block Prescaler 2 (Prescales T5,T6)
+
+   unsigned int _paddingC2:1;  //<! 
+   unsigned int TcCLR     :1;  //<! 
+   unsigned int TcSR      :1;  //<! 
+}GPT2_ControlRegCore_t;
+
+/*!
+@brief GTT2 Aux (T5) - Control register bit fields 
+
+@ingroup XC167_SFR_bitfields
+*/
+typedef struct{ 
+   unsigned int TaI       :3;  //<! Timer x Input Parameter Selection
+   unsigned int TaM       :3;  //<! Timer x Mode Control (Basic Operating Mode)
+   unsigned int TaR       :1;  //<! Timer x Run Bit           (1 = runs)
+   unsigned int TaUD      :1;  //<! Timer x Up/Down Control   (1 = counting down)
+
+   unsigned int _paddingA1:1;  //<! 
+
+   unsigned int TaRC      :1;  //<! Timer x Remote Control
+   unsigned int TaCTc     :1;  //<! 
+   unsigned int TaCC      :1;  //<! 
+
+   unsigned int TaCI      :2;  //<! 
+   unsigned int TaCLR     :1;  //<! 
+   unsigned int TaSC      :1;  //<! 
+}GPT2_ControlRegAux_t;
+
+/*!
+@brief Interrupt Control Register(s)
+
+The layout of the interrupt control registers is applicable
+to all xxIC registers.
+
+All prioritiy level values means higher priority for higher value.
+
+@ingroup XC167_SFR_bitfields
+*/
+typedef struct{ 
+   unsigned int GLVL      :2;  //<! Group Priority Level 
+   unsigned int ILVL      :4;  //<! Interrupt Priority Level
+   unsigned int IE        :1;  //<! Interrupt Enable Control Bit (1= enabled)
+   unsigned int IR        :1;  //<! (rhw) Interrupt Request Flag @note protected bit
+   unsigned int GPX       :1;  //<! Group Priority Extension (extends GLVL)
+   unsigned int _padding  :7;  //<! padding reads zero 
+}IC_t;
+
 
 #pragma pack()    /* reset to default alignment */
 
@@ -118,7 +225,14 @@ typedef struct {
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_hwtypes_keilC166.h,v $
- *  Revision 1.3  2005-12-03 14:04:30  ambrmi09
+ *  Revision 1.4  2006-02-02 15:51:02  ambrmi09
+ *  A lot of thought has been invested into the new PTIME component. Had to
+ *  change things even in the systime parts (integrated in the SHEDUL
+ *  component) to make it more generic. Think this will be really nice when
+ *  it's ready, but has been a long road to get PTIME running (and I'm
+ *  still not there).
+ *
+ *  Revision 1.3  2005/12/03 14:04:30  ambrmi09
  *  A crude documentation structure added. Sorce files modified a little, but
  *  only in comments (for Doxygens sake).
  *

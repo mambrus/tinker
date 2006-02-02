@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.19 $
+ *  Current $Revision: 1.20 $
  *
  *******************************************************************/
    
@@ -33,7 +33,7 @@
 #define NO                 0
 
 //Include components 
-#define  IPC               YES
+#define  ITC               YES
 #define  PTIMER            YES
 
 //Kernel termination codes (bit adressable) - Note, per kernel and not per thread codes
@@ -85,7 +85,7 @@ typedef enum {
 }PROCSTATE;
 
 typedef enum{TERM=1,SLEEP=2,QUEUE=4}STATEBITS;
-typedef enum{E_CHILDDEATH, E_TIMER, E_IPC, E_IPC2}wakeE_t;
+typedef enum{E_CHILDDEATH, E_TIMER, E_ITC, E_ITC2}wakeE_t;
 
 /*!
 Thread control block (TCB). This structure contains all
@@ -100,7 +100,7 @@ like the C166 family, this is a much more complex structure.
 typedef struct    tk_tcb_t_s{
    unsigned int   Thid,Gid;             //!< Process ID and Parent ID (Gid)
    unsigned int   noChilds;            //!< Numb of procs this has created
-   char           name[TK_THREAD_NAME_LEN]; //!< Name of the process
+   char           name[TK_THREAD_NAME_LEN]; //!< Name of the thread
    BOOL           isInit;              //!< Memory for stack is allocated
    PROCSTATE      state;               //!< State of the process
    stack_t        stack_begin;         //!< First address of stack memory
@@ -108,7 +108,7 @@ typedef struct    tk_tcb_t_s{
    size_t         stack_size;          //!< Size of stack
    unsigned long  stack_crc;           //!< Control value of integrity check
    clock_t        wakeuptime;          //!< When to wake up if sleeping
-   wakeE_t        wakeupEvent;         //!< Helper variable mainly for IPC
+   wakeE_t        wakeupEvent;         //!< Helper variable mainly for ITC
    void          *prmtRetAddr;         //!< Preempted return adress - used in preempted mode.
    unsigned int   Prio,Idx;            //!< Helpers, prevent need of lookup
 }tk_tcb_t;
@@ -172,7 +172,14 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.19  2005-12-04 15:48:52  ambrmi09
+ *  Revision 1.20  2006-02-02 15:51:02  ambrmi09
+ *  A lot of thought has been invested into the new PTIME component. Had to
+ *  change things even in the systime parts (integrated in the SHEDUL
+ *  component) to make it more generic. Think this will be really nice when
+ *  it's ready, but has been a long road to get PTIME running (and I'm
+ *  still not there).
+ *
+ *  Revision 1.19  2005/12/04 15:48:52  ambrmi09
  *  API for ne pre-emptable timers in place. Implementing this will be a
  *  hard but fun "nut" to crack. ptime has the potential of comming
  *  very close to the high-res timers that POSIX 1003.1c define and is a

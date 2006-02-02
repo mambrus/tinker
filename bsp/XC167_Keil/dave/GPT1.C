@@ -12,7 +12,7 @@
 // @Description   This file contains functions that use the GPT1 module.
 //
 //----------------------------------------------------------------------------
-// @Date          2005-11-25 21:27:33
+// @Date          2006-02-01 13:04:43
 //
 //****************************************************************************
 
@@ -37,7 +37,7 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 #include "MAIN.H"
 
 // USER CODE BEGIN (GPT1_General,2)
-
+#include <../bsp/XC167_Keil/tk_hwtypes_keilC166.h> //Note: This is a shaky thingy. This header must not in turn include any Keil regs.h
 // USER CODE END
 
 
@@ -119,7 +119,7 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2005-11-25
+// @Date          2006-02-01
 //
 //****************************************************************************
 
@@ -130,6 +130,7 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 void GPT1_vInit(void)
 {
   // USER CODE BEGIN (Init,2)
+  unsigned int tmp1,tmp2;
 
   // USER CODE END
 
@@ -204,6 +205,17 @@ void GPT1_vInit(void)
 
   // USER CODE BEGIN (GPT1_Function,3)
 
+     /* testing the bit fields */
+     tmp1 = ((GPT1_ControlRegCore_t*)&GPT12E_T3CON)->BPS1;
+     tmp2 = tmp1;
+     ((GPT1_ControlRegCore_t*)&GPT12E_T3CON)->BPS1 = tmp2;
+     
+     tmp1 = ((GPT1_ControlRegAux_t*)&GPT12E_T2CON)->TaI;
+     tmp2 = tmp1;
+     ((GPT1_ControlRegAux_t*)&GPT12E_T2CON)->TaI = tmp2;
+	 /* testing the bit fields */
+
+
   // USER CODE END
 
 } //  End of function GPT1_vInit
@@ -230,14 +242,14 @@ void GPT1_vInit(void)
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2005-11-25
+// @Date          2006-02-01
 //
 //****************************************************************************
 
 // USER CODE BEGIN (Tmr2,1)
 //unsigned long idata sys_mackey = 0;
-//unsigned long idata sys_tick = 0;
-#define TICK_OWNER
+//unsigned long idata sys_mickey = 0;
+//#define TICK_OWNER
 #include <../src/tk_tick.h>
 
 // USER CODE END
@@ -250,9 +262,9 @@ void GPT1_viTmr2(void) interrupt T2INT
   _tk_tick_1mS();
 
 /*
-  sys_tick++;
+  sys_mickey++;
 
-  if (!sys_tick){ //Will occure every 4294967,295 seconds (1193 hrs and	aprox 3 minuts)
+  if (!sys_mickey){ //Will occure every 4294967,295 seconds (1193 hrs and aprox 3 minuts)
     sys_mackey++;
   }
 */
@@ -269,6 +281,14 @@ void GPT1_viTmr2(void) interrupt T2INT
 
 
 // USER CODE BEGIN (GPT1_General,10)
+
+void tk_getHWclock_Quality_CLK1(HWclock_stats_t *HWclock_stats){
+   HWclock_stats->freq_khz     = 40000 / 8; /*40MHz, could this be determined using PLLCON?*/
+   HWclock_stats->res          = 16;
+   HWclock_stats->perPebbles   = 0x1387;     /*Trim this to hold the desired timeout interval time*/
+   HWclock_stats->maxPebbles   = 1234;       /*dummy value. Fix this*/
+
+}
 
 // USER CODE END
 

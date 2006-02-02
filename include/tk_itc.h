@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.6 $
+ *  Current $Revision: 1.7 $
  *
  *******************************************************************/
    
@@ -24,10 +24,10 @@
 
 /** Error codes **/
 #define ERR_OK              0x00 /* No error */
-#define ERR_TIMEOUT         0x01 /* IPC has timedout */
-#define ERR_OBJDEL          0x05 /* IPC has been deleted */
-#define ERR_OBJID           0x06 /* IPC id incorrect ?? */
-#define ERR_OBJTYPE         0x07 /* IPC type doesn'e mach object id */
+#define ERR_TIMEOUT         0x01 /* ITC has timedout */
+#define ERR_OBJDEL          0x05 /* ITC has been deleted */
+#define ERR_OBJID           0x06 /* ITC id incorrect ?? */
+#define ERR_OBJTYPE         0x07 /* ITC type doesn'e mach object id */
 #define ERR_OBJFULL         0x08 /* Nodes objecttable is full */
 #define ERR_BUFSIZ          0x32 /* The allocated buffer is smaller than a message could be */
 #define ERR_NOQCB           0x33 /* Exceeds max numer of queues */
@@ -95,8 +95,8 @@ typedef struct {
 /** public functions **/
 
 /** private functions **/
-void createIPC( void );
-void deleteIPC( void );
+void createITC( void );
+void deleteITC( void );
 
 /*
 #if defined (PREEMPTABLE)
@@ -285,7 +285,14 @@ unsigned long sm_v_ny(         /*!< sm_send or sm_put                          *
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.6  2005-12-03 14:04:30  ambrmi09
+ *  Revision 1.7  2006-02-02 15:51:02  ambrmi09
+ *  A lot of thought has been invested into the new PTIME component. Had to
+ *  change things even in the systime parts (integrated in the SHEDUL
+ *  component) to make it more generic. Think this will be really nice when
+ *  it's ready, but has been a long road to get PTIME running (and I'm
+ *  still not there).
+ *
+ *  Revision 1.6  2005/12/03 14:04:30  ambrmi09
  *  A crude documentation structure added. Sorce files modified a little, but
  *  only in comments (for Doxygens sake).
  *

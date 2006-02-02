@@ -6,15 +6,17 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.1 $
+ *  Current $Revision: 1.2 $
  *
  *******************************************************************/
   
 
 /** include files **/
 #include <tk.h>
+#include <tk_ipc.h>
 #include <tk_sysqueues.h>
 #include <tk_ptime.h>
+#include <tk_hwclock.h>
 #include <tk_hwsys.h>
 #include <string.h>
 
@@ -23,6 +25,8 @@
 /** local definitions **/
 #define TK_MAX_PTIMERS TK_MAX_THREADS //!< Makes no sense to have more timer than threads
 
+#define HWClkID CLK1 //hmm, doesn't work as intended
+
 /* default settings */
 
 /** external functions **/
@@ -30,10 +34,11 @@
 /** external data **/
 
 /** internal functions **/
-unsigned int timersThread(void *inpar );
 
-void insertInPendingList(ptimer_t *timer);
-void deleteFromPendingList(ptimer_t *timer);
+/*void insertInPendingList(ptimer_t *timer);*/
+/*void deleteFromPendingList(ptimer_t *timer);*/
+unsigned int timerdeamon(void *inpar );
+
 
 /** public data **/
 
@@ -51,7 +56,7 @@ ptimer_t *pendingTimers;             /*!< Sorted linked list to pending times.
                                           The first one is also pending 
                                           awaitinng triggering from 
                                           timerEvent */
-pgunstats_t pgunstats;               /*!< The quality statistics of the fireing 
+HWclock_stats_t HWclock_stats;        /*!< The quality statistics of the fireing 
                                           mechanism the lower level provides. 
                                           This value must be asked for and
                                           will not containg valid values 
@@ -60,12 +65,15 @@ pgunstats_t pgunstats;               /*!< The quality statistics of the fireing
 //Pubplic API
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
-Creates and initializes the ptime component
+Creates and initializes the ptime component 
 */
+//#define tk_setHWclock_pCLK1(ticks) ( GPT1_vLoadTmr(GPT1_TIMER_3, ticks) )
 
 void tk_create_ptime( void ){
    int i;
-   pendingTimers = NULL;
+   HWtick_t hw_ticks;
+
+   pendingTimers = NULL;   
    
    for (i=0;i<TK_MAX_PTIMERS; i++){
       strncpy(&timer_pool[i].name,"ZOMB",4);
@@ -78,6 +86,14 @@ void tk_create_ptime( void ){
       timer_pool[i].count       = 0;
       timer_pool[i].next        = NULL;
    }
+   tk_getHWclock_Quality(	CLK2, &HWclock_stats );
+   tk_disarmHWclock(        CLK2 );
+   tk_getHWclock(           CLK2, &hw_ticks );
+   hw_ticks=HWclock_stats.maxTicks;
+   tk_setHWclock(           CLK2, hw_ticks );
+   tk_armHWclock(           CLK2 );
+
+   tk_create_thread("TIME",0,timerdeamon,1,0x600);
 }
 
 /*!
@@ -180,8 +196,9 @@ unsigned long tk_ptimer_remove(
   //Stuff finished - safe to reactivate event sources
   TK_STI();
 }
-//------1---------2---------3---------4---------5---------6---------7---------8
 
+//glue API
+//------1---------2---------3---------4---------5---------6---------7---------8
 
 /*!
 @ingroup kernel_glue
@@ -199,9 +216,11 @@ ptimer_t *_tk_ptimer( unsigned int tid ){
    return(&timer_pool[tid]);
 }
 
+//module internal API
+//------1---------2---------3---------4---------5---------6---------7---------8
 
 /*!
-@brief Internal thread that handles timers
+@brief Internal thread that handles pending timer even requests
 
 On a very low leve (or HW level) the system can only provide <b>one</b>
 real time-out event. And even worse: it's limited in either lengt or 
@@ -212,20 +231,87 @@ This manager thread on the other hand, makes it possibe to handle all the
 mentioed drawbacks. A time-out event can be of very high resolution AND
 destined to happen very far in the future, and when it expieres it can
 wake up any number of threads pending on it. Also, you can have several
-pending timers pending at the same ptimer event,
+pending timers pending at the same ptimer event.
 
-@note <b>For TinKer internal use only</b>
+Notice that we dont want to be to dependant of any other clocks, which 
+is an <b> architectural design issue </b>. I used to think two HW clocks were
+nesessarey, but I've desided that that aproach would be to resky since it's 
+more complex. Using only the the same clock HW as for all the pending timers
+might introduce a higher in accurancy, but I estimate that those errors will 
+be handleble. In general this is due to a combination of latency within this 
+componens critical parts, tinteger truncation and the frequency of both 
+pending timer timeouts and on the fClock used (i.e. the interrupt frecuency). 
+In general one can say that the more often the deamon is awaken, the bigger 
+will the dirift (and inheritly the inaccurency) be.
+
+Design wise one can argue which parts of the service should be handled in 
+this thread. For the time being I tend to let it do as little as possible 
+since it will be running on highest priority. The issue is whether it should
+organize the pending timer list or not (sort list on each newly started timer 
+e.t.a.) as opposed to "share" the timer list with any thread whishing to start 
+or cancel a new timer. In the latter case some sort of synchronization must 
+be used. However I have a feeling that normal semaphores might not be the right
+technique for that.
+
+@note <b>For TinKer internal use only</b> This function is not declared 
+public in a headerfile and should never be accessed from outside this module.
+
+@todo Introduce a component area for each component. Where both the adressed 
+issue, the solution and the quirks and considerations are described.
 
 */
-unsigned int timersThread(void *inpar ){
+unsigned int timerdeamon(void *inpar ){
+   unsigned long msg_buf[4];   
+
+   printf("Timer deamon started. Preemtive hi-res timer events now possible\n");
+   while (1){
+      q_receive(tk_sys_queues[Q_HW_TIMER_EVENT],WAIT,0,msg_buf);
+      printf("Timer deamon: %d\n",msg_buf[THWP_EVENT_ID]);
+      /*
+      THWP_EVENT_ID
+      THWP_TIMER_ID                                      
+      THWP_RTIME                
+      THWP_LATCY
+      
+      ET_TIMEOUT     
+      ET_TIMEOUT_P   
+      ET_RELOAD_NEW  
+      ET_CANCELLED
+      */
+      switch (msg_buf[THWP_EVENT_ID]){
+      case ET_TIMEOUT: 
+         break;
+      case ET_TIMEOUT_P: 
+         break;
+      case ET_RELOAD_NEW: 
+         break;
+      case ET_CANCELLED: 
+         break;
+      default:
+         printf("tk_ptime: Error - we really need to polish the error handling...\n");
+         tk_exit(1);
+      };
+
+   }
+
 }
+/*
+
+*/
 
 
   
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_ptime.c,v $
- *  Revision 1.1  2005-12-04 15:48:52  ambrmi09
+ *  Revision 1.2  2006-02-02 15:51:02  ambrmi09
+ *  A lot of thought has been invested into the new PTIME component. Had to
+ *  change things even in the systime parts (integrated in the SHEDUL
+ *  component) to make it more generic. Think this will be really nice when
+ *  it's ready, but has been a long road to get PTIME running (and I'm
+ *  still not there).
+ *
+ *  Revision 1.1  2005/12/04 15:48:52  ambrmi09
  *  API for ne pre-emptable timers in place. Implementing this will be a
  *  hard but fun "nut" to crack. ptime has the potential of comming
  *  very close to the high-res timers that POSIX 1003.1c define and is a

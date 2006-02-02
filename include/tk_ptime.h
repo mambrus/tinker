@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.1 $
+ *  Current $Revision: 1.2 $
  *
  *******************************************************************/
    
@@ -16,16 +16,55 @@
 #define TK_PTIMER_H
 
 /** include files **/
-#include <time.h>
+//#include <time.h>
+
+
+/** public definitions **/
+
+#define ET_TIMEOUT       0   /*!< Timeout event finished - timer all completed.
+                                  */
+#define ET_TIMEOUT_P     1   /*!< Timeout event part - timer partly completed.
+                                  HWclock_ needs reloading */
+#define ET_RELOAD_NEW    2   /*!< Current timer was disrupted by a new timer that
+                                  expires earlier than the pending one. 
+                                  THWP_RTIME will contain the remaining bullets */
+#define ET_CANCELLED     3   /*!< Current timer was cancelled.                                  
+                                  THWP_RTIME will contain the remaining bullets */
+
+
+
+
+
+/*! This index enumeration determines that each index in the array passed from 
+    the HW ISR to the driver means. */
+typedef enum{
+   THWP_EVENT_ID, /*!< Reason why the service thread is awaken (see the ET_XXX
+                       macros*/
+   THWP_TIMER_ID, /*!< The event relates to this timer number (used for sanity 
+                       checks for cases where interrupts happen during charging 
+                       of the HWclock_) */
+   THWP_RTIME,    /*!< Time that remains. Bullets remaing in HWclock_ - This field 
+                       is very important and will always contain a valid value 
+                       (remaining in shift register) no matter the event 
+                       reason. The value is used by the service thread to use 
+                       to update it's own internal record of time. The value 
+                       tells the service how much time was left until the next 
+                       <b>expected</b> event. 0 is a special case meaning that 
+                       the event has arrived as expected in time. */
+   THWP_LATCY,    /*!< Extra field that can be used for compensating latency 
+                       (for targets where ISR can measure it) */
+   THWP_PROT_SZ   /*!< Internal - Use to determine needed sizes for array using 
+                       these indexes can be determined by name */
+}e_timerHW_protIdx;
 
 /** local definitions **/
 
 /** Error codes **/
-#define ERR_OK             0x00 /* No error */
-#define ERR_UNDEF_PTIMER   0x02 /* No such or invalid ptimer */
-#define ERR_TIME_NEG       0x03 /* */
-#define ERR_TIMER_DELETED  0x04 /* */
-#define ERR_NO_MORE_TIMERS 0x06 /* */
+#define ERR_OK             	0x00 /*!< No error */
+#define ERR_UNDEF_PTIMER   	0x02 /*!< No such or invalid ptimer */
+#define ERR_TIME_NEG       	0x03 /*!< Trying to set event for time that's passed */
+#define ERR_TIMER_DELETED  	0x04 /*!< The timer (i.e. the requested event) has been deleted */
+#define ERR_NO_MORE_TIMERS 	0x06 /*!< You try to exeed the maximum number of pending timers */
 
 
 /*!
@@ -33,67 +72,22 @@ TinKers ptimer_t structure. This structure contains all
 information the kernel needs to know about pre-emptable timers (ptimers).
 */
 typedef struct ptimer_s{
-   char           	name[4];    //!< Name of the timer
-   unsigned int   	tid;        //!< Identity of this timer
-   struct ptimer_s *prev;       //!< Previous in list
-   unsigned int   	active;     //!< If this timer is active or not @note: <b>internal use only </b>
-   unsigned int   	numBlocked; //!< Number of blocked threads on this timer
-   time_t         	expTime;    //!< Expire time
-   unsigned int   	neededCnts; //!< Number of iterations needed to complete
-   unsigned int   	count;      //!< Completed this number of iterations
-   struct ptimer_s *next;       //!< Next in list
+   char              name[4];    //!< Name of the timer
+   unsigned int      tid;        //!< Identity of this timer
+   struct ptimer_s  *prev;       //!< Previous in list
+   unsigned int      active;     //!< If this timer is active or not @note: <b>internal use only </b>
+   unsigned int      numBlocked; //!< Number of blocked threads on this timer
+   time_t            expTime;    //!< Expire time
+   unsigned int      neededCnts; //!< Number of iterations needed to complete
+   unsigned int      count;      //!< Completed this number of iterations
+   struct ptimer_s  *next;       //!< Next in list
 }ptimer_t;
 
-/*!
-Stats of the Timer "gun" that the lower layer is supporting/providing.
-*/
-
-typedef struct{
-   clock_t        ticksPerNs; /*!< Number of ticks per each nano-second. Will 
-                                   be at least a few until HW is running with 
-                                   GHz timers */
-   clock_t        tickFrac;   /*!< Fraction of the above. Needed for 
-                                   and accurancy/rounding errors. */
-   unsigned int   maxTicks;   /*!< Number of ticks the gun can handle. Any 
-                                   timeout event requireing longer than this 
-                                   time needs to have it's time chopped up in 
-                                   fractions of this amount of time.*/
-                                   
-}
-pgunstats_t;
 
 
 /** default settings **/
 
 /** external functions **/
-
-
-/*!
-Get the quality of the gun. Will assume this never changes after system 
-startup. (lower level must assure this to be true).
-
-@note This function must be provided by lower level BSP
-*/
-extern void askGunQuality   (pgunstats_t *gunstats);
-
-/*!
-Arms the gun to trigger at a certain "time" from now. Time is expressed in 
-"ticks" and are normalized to have correspond to the actual time 
-required (this is handled in this component based on the gun quality provided).
-
-@note This function must be provided by lower level BSP
-*/
-extern void armGun          (clock_t ticks);
-
-/*!
-Dissarms any pending fireing of the gun. Function will return if it was 
-succesfull or not. Unsucessfull will most likelly mean that the fireing 
-allready happened.
-
-@note This function must be provided by lower level BSP
-*/
-extern int disarmGun       ();
-
 
 /** external data **/
 
@@ -127,7 +121,14 @@ unsigned long  tk_ptimer_remove( unsigned int  tid );
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_ptime.h,v $
- *  Revision 1.1  2005-12-04 15:48:52  ambrmi09
+ *  Revision 1.2  2006-02-02 15:51:02  ambrmi09
+ *  A lot of thought has been invested into the new PTIME component. Had to
+ *  change things even in the systime parts (integrated in the SHEDUL
+ *  component) to make it more generic. Think this will be really nice when
+ *  it's ready, but has been a long road to get PTIME running (and I'm
+ *  still not there).
+ *
+ *  Revision 1.1  2005/12/04 15:48:52  ambrmi09
  *  API for ne pre-emptable timers in place. Implementing this will be a
  *  hard but fun "nut" to crack. ptime has the potential of comming
  *  very close to the high-res timers that POSIX 1003.1c define and is a

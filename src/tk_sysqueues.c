@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.2 $
+ *  Current $Revision: 1.3 $
  *******************************************************************/
   
 
@@ -21,7 +21,9 @@
 
 /* default settings */
 
-#define SYSQ_LENGT 10   //!< Lengt of each Q. Small number, but should be OK
+#define SYSQ_LENGT 10   /*!< Lengt of each Q (i.e. the number of 
+elements in each queue) Small number, but should be OK since these 
+Q's are ment to be used by threads that run on highest prio. */
 
 /** external functions **/
 
@@ -55,7 +57,14 @@ unsigned long _tk_create_system_queues( ){
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_sysqueues.c,v $
- *  Revision 1.2  2005-12-03 14:04:31  ambrmi09
+ *  Revision 1.3  2006-02-02 15:51:02  ambrmi09
+ *  A lot of thought has been invested into the new PTIME component. Had to
+ *  change things even in the systime parts (integrated in the SHEDUL
+ *  component) to make it more generic. Think this will be really nice when
+ *  it's ready, but has been a long road to get PTIME running (and I'm
+ *  still not there).
+ *
+ *  Revision 1.2  2005/12/03 14:04:31  ambrmi09
  *  A crude documentation structure added. Sorce files modified a little, but
  *  only in comments (for Doxygens sake).
  *

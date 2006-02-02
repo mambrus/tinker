@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.25 $
+ *  Current $Revision: 1.26 $
  *
  *******************************************************************/
   
@@ -71,7 +71,7 @@ static unsigned int active_thread;        //!< Deliberatlly left uninitialized t
 static unsigned int thread_to_run   = 0;
 static unsigned int procs_in_use    = 0;
 static unsigned int proc_idx;             //!< Points at the last tk_tcb_t created
-static unsigned int idle_Thid;             //!< Idle_Thid must be known, therefor public in this module (file)
+static unsigned int idle_Thid;            //!< Idle_Thid must be known, therefor public in this module (file)
 
 unsigned int _tk_idle( void *foo ){       //!< idle loop (non public)
    while (TRUE){
@@ -258,9 +258,10 @@ int tk_delete_thread(
 
 
 /*
-Storage variable - to be used in macros (can't be on local stack since
-we are manipulateing that)
+Storage variable - to be used in macros manipulating stacks. These can't be on 
+the local stack since we are manipulateing that.
 */
+
 static char *ct_oldTOS;    //!< will contain old top of stack adress
 static char *ct_newSP;     //!< new stack-pointer. Is a return value storage from macro
 static char *ct_temp1;     //!< fony temporary stackpointer used in the process of setting TOS
@@ -277,11 +278,17 @@ version).
 
 */
 unsigned int tk_create_thread(      
-   char          *name,          //!< Name 
-   unsigned int   prio,          //!< Priority 
-   funk_p         f,             //!< Start function
-   void          *inpar,         //!< Any variable or value to start of with
-   size_t         stack_size     //!< Stack size
+   char          *name,     /*!< Name of the thread. This name can later be 
+                                 used to identify or look up a tread by name.*/
+   unsigned int   prio,     /*!< Priority. A low value means higher priority. 
+                                 The value must be between 0 and 
+                                 TK_MAX_PRIO_LEVELS. 0 is reserverd by 
+                                 convention for system deamons (and the root 
+                                 thread). <b>Avoid using priority level 0 for 
+                                 normal application threads. </b> */
+   funk_p         f,        //!< Start function, i.e. the treads entry point.
+   void          *inpar,    //!< Any variable or value to start of with
+   size_t         stack_size//!< Stack size
 ){
    //where in theScheduler to put thread id
    unsigned int   slot_idx = scheduleIdxs[prio].procs_at_prio;
@@ -295,7 +302,7 @@ unsigned int tk_create_thread(
    //Error handling needs improvment (don't forget taking special care of
    //proc_idx)
    if (procs_in_use >= TK_MAX_THREADS){
-      printf("tk: Error - Total amount of processer exceeds limit\n");
+      printf("tk: Error - Total amount of threads would exceed limit\n");
       tk_exit(1);
    }
    //Check if chosen prio is within limits
@@ -305,7 +312,7 @@ unsigned int tk_create_thread(
    }
    //Check if there will be enough room at that prio
    if (TK_MAX_THREADS_AT_PRIO <= ( scheduleIdxs[prio].procs_at_prio ) ){
-      printf("tk: Error - To many processes at prio\n");
+      printf("tk: Error - To many threads at this prio\n");
       tk_exit(1);
    }
    //Find next empty slot - which is also the CREATED Thid
@@ -331,7 +338,7 @@ unsigned int tk_create_thread(
    
    proc_stat[proc_idx].isInit       = TRUE;
    proc_stat[proc_idx].state        = READY;
-   proc_stat[proc_idx].Thid          = proc_idx;    //for future compability with lage Thid:s
+   proc_stat[proc_idx].Thid         = proc_idx;    //for future compability with lage Thid:s
    proc_stat[proc_idx].Gid          = active_thread; //Owned by..
    proc_stat[proc_idx].noChilds     = 0;
    proc_stat[proc_idx].stack_size   = stack_size;
@@ -407,8 +414,8 @@ or  aprox <b>max 65 S </b>.<br>
 
 The timeout resolution is the same as for the in-argument, i.e. best
 kernel supported timeout <b>resolution is 1mS</b>. Note however that the
-precision is dependant of the sys_tick advancement resolution (i.e.
-interrupt frequency). On a low performance target one sys_tick might be
+precision is dependant of the sys_mickey advancement resolution (i.e.
+interrupt frequency). On a low performance target one sys_mickey might be
 advanced less often than 1kHz (i.e. each mS). That means that the actual
 precision is less than the resolution in this function. To help the
 application to handle those cases, this function will return the latency
@@ -673,8 +680,8 @@ printf to see run-time errors
 */
 void _tk_main( void ){
    tk_create_kernel();
-   #ifdef IPC
-      createIPC();
+   #ifdef ITC
+      createITC();
       if (_tk_create_system_queues( ) != 0)
          tk_exit(1);
       #ifdef PTIMER
@@ -684,8 +691,8 @@ void _tk_main( void ){
     
    root();
 
-   #ifdef IPC
-      deleteIPC();
+   #ifdef ITC
+      deleteITC();
       #ifdef PTIMER
          tk_delete_ptime();
       #endif
@@ -720,7 +727,14 @@ void Test_scheduler( void ){
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.25  2005-12-04 15:48:52  ambrmi09
+ *  Revision 1.26  2006-02-02 15:51:02  ambrmi09
+ *  A lot of thought has been invested into the new PTIME component. Had to
+ *  change things even in the systime parts (integrated in the SHEDUL
+ *  component) to make it more generic. Think this will be really nice when
+ *  it's ready, but has been a long road to get PTIME running (and I'm
+ *  still not there).
+ *
+ *  Revision 1.25  2005/12/04 15:48:52  ambrmi09
  *  API for ne pre-emptable timers in place. Implementing this will be a
  *  hard but fun "nut" to crack. ptime has the potential of comming
  *  very close to the high-res timers that POSIX 1003.1c define and is a
@@ -882,7 +896,7 @@ void Test_scheduler( void ){
  *
  *  Revision 1.5  1998/02/14 10:35:42  mickey
  *  tk_exit added
- *  Handling av wakeup event. Needed for IPC to be able why a IPC object was
+ *  Handling av wakeup event. Needed for ITC to be able why a ITC object was
  *  released.
  *
  *  Revision 1.4  1998/02/01 20:03:29  mickey

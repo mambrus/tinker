@@ -1,12 +1,13 @@
 /*******************************************************************
  *
- *  DESCRIPTION: tk_sysqueues.h System queues
+ *  DESCRIPTION: tk_sysqueues.h System queues. To be used between
+ *  drivers and HW ISR. 
  *
  *  AUTHOR: Michael Ambrus
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.2 $
+ *  Current $Revision: 1.3 $
  *
  *******************************************************************/
    
@@ -33,6 +34,9 @@
 
 /** public declarations **/
 typedef enum {
+   Q_HW_TIMER_EVENT,  /*!< This special Q is to be used by HW clock to notify 
+                      the ptime component that some sort of event has happened 
+                      (i.e. a timeout mostly). */
    Q_SERIAL_0_I,
    Q_SERIAL_0_O,
    Q_SERIAL_1_I,
@@ -61,7 +65,14 @@ unsigned long _tk_create_system_queues();
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_sysqueues.h,v $
- *  Revision 1.2  2005-12-03 14:04:30  ambrmi09
+ *  Revision 1.3  2006-02-02 15:51:02  ambrmi09
+ *  A lot of thought has been invested into the new PTIME component. Had to
+ *  change things even in the systime parts (integrated in the SHEDUL
+ *  component) to make it more generic. Think this will be really nice when
+ *  it's ready, but has been a long road to get PTIME running (and I'm
+ *  still not there).
+ *
+ *  Revision 1.2  2005/12/03 14:04:30  ambrmi09
  *  A crude documentation structure added. Sorce files modified a little, but
  *  only in comments (for Doxygens sake).
  *

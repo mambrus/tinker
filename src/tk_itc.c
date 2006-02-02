@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.9 $
+ *  Current $Revision: 1.10 $
  *******************************************************************/
    
 
@@ -20,7 +20,7 @@
 #include <tk_hwsys.h>
 #include <tk_ipc.h>
 
-#ifdef IPC /* Should not test at sharp (libfile) version */
+#ifdef ITC /* Should not test at sharp (libfile) version */
 /** local definitions **/
 
 #ifdef NDEBUG
@@ -55,7 +55,7 @@ static unsigned long uintDiff(
 
 /** private data **/
 static t_ipc *ipc_array[MAX_NUM_Q];	/* contains pointers to queue structs 			*/
-static ipc_idx;						/* points to the most resently created IPC object*/
+static ipc_idx;						/* points to the most resently created ITC object*/
 
 /** private functions **/
 /*******************************************************************************
@@ -162,7 +162,7 @@ unsigned long uintDiff(
  *
  *  PARAMETERS:
  *
- *  DESCRIPTION: Helperfunction. In case IPC blocked function is released by 
+ *  DESCRIPTION: Helperfunction. In case ITC blocked function is released by 
  *               it needs to bee removed so that the blocked list doesen't
  *               get full.
  *
@@ -308,7 +308,7 @@ static unsigned long lock_stage(
 						ipc_array[qid]->blocked_procs[mark_idx]->wakeupEvent == E_TIMER
 					) {
 						/*Tag it, preventing succesiv removal*/
-						ipc_array[qid]->blocked_procs[mark_idx]->wakeupEvent = E_IPC2;
+						ipc_array[qid]->blocked_procs[mark_idx]->wakeupEvent = E_ITC2;
 						/*Remove it from blocked list */
 						removeBlocked(ipc_array[qid],mark_idx);	
 					}
@@ -320,7 +320,7 @@ static unsigned long lock_stage(
 				p_bQ(40,21,qid);
 				return(ERR_TIMEOUT);
 				
-			}else if (MySelf->wakeupEvent == E_IPC2)
+			}else if (MySelf->wakeupEvent == E_ITC2)
 				return(ERR_TIMEOUT);
 			return(ERR_OK);
 		}
@@ -331,7 +331,7 @@ static unsigned long lock_stage(
  *  FUNCTION NAME: unlock_stage
  *
  *  PARAMETERS:
- *		IPC object identity.
+ *		ITC object identity.
  *
  *  DESCRIPTION:
  *		If processes is waiting, release the one chosen by certain criteria
@@ -395,7 +395,7 @@ static unsigned long unlock_stage(
 			p_bQ(40,21,qid);
 			assert(t_prio != (TK_MAX_PRIO_LEVELS + 2)); /*Could not find anyone to release*/
 			ipc_array[qid]->blocked_procs[t_idx]->state &= ~_____QST; 
-			ipc_array[qid]->blocked_procs[t_idx]->wakeupEvent = E_IPC;
+			ipc_array[qid]->blocked_procs[t_idx]->wakeupEvent = E_ITC;
 			//ipc_array[qid]->token++;
 			removeBlocked(ipc_array[qid],t_idx);	
 			tk_yield(); 
@@ -412,7 +412,7 @@ static unsigned long unlock_stage(
 			 /*to remove from this list)*/								   
 			 /*Should be obsolite now, but is not*/
 			Him->state = ( (Him->state) & ~_____QST); /* In case of timeout active release that to */
-			Him->wakeupEvent = E_IPC;
+			Him->wakeupEvent = E_ITC;
 			tk_yield(); /*In case the one you've just released has higher prio, run it*/	
 		}
 	}else 				  
@@ -502,7 +502,7 @@ static unsigned long _lock_stage_ny(
                   ipc_array[qid]->blocked_procs[mark_idx]->wakeupEvent == E_TIMER
                ) {
                   /*Tag it, preventing succesiv removal*/
-                  ipc_array[qid]->blocked_procs[mark_idx]->wakeupEvent = E_IPC2;
+                  ipc_array[qid]->blocked_procs[mark_idx]->wakeupEvent = E_ITC2;
                   /*Remove it from blocked list */
                   removeBlocked(ipc_array[qid],mark_idx);  
                }
@@ -514,7 +514,7 @@ static unsigned long _lock_stage_ny(
             p_bQ(40,21,qid);
             return(ERR_TIMEOUT);
             
-         }else if (MySelf->wakeupEvent == E_IPC2)
+         }else if (MySelf->wakeupEvent == E_ITC2)
             return(ERR_TIMEOUT);
          return(ERR_OK);
       }
@@ -525,7 +525,7 @@ static unsigned long _lock_stage_ny(
  *  FUNCTION NAME: _unlock_stage_ny
  *
  *  PARAMETERS:
- *    IPC object identity.
+ *    ITC object identity.
  *
  *  DESCRIPTION:
  *    If processes is waiting, release the one chosen by certain criteria
@@ -589,7 +589,7 @@ static unsigned long _unlock_stage_ny(
          p_bQ(40,21,qid);
          assert(t_prio != (TK_MAX_PRIO_LEVELS + 2)); /*Could not find anyone to release*/
          ipc_array[qid]->blocked_procs[t_idx]->state &= ~_____QST; 
-         ipc_array[qid]->blocked_procs[t_idx]->wakeupEvent = E_IPC;
+         ipc_array[qid]->blocked_procs[t_idx]->wakeupEvent = E_ITC;
          //ipc_array[qid]->token++;
          removeBlocked(ipc_array[qid],t_idx);  
          //tk_yield(); 
@@ -606,7 +606,7 @@ static unsigned long _unlock_stage_ny(
           /*to remove from this list)*/                           
           /*Should be obsolite now, but is not*/
          Him->state = ( (Him->state) & ~_____QST); /* In case of timeout active release that to */
-         Him->wakeupEvent = E_IPC;
+         Him->wakeupEvent = E_ITC;
          //tk_yield(); /*In case the one you've just released has higher prio, run it*/   
       }
    }else               
@@ -617,7 +617,7 @@ static unsigned long _unlock_stage_ny(
 /*************************************************************************************************************
  * Public functions
  ************************************************************************************************************ */
-void createIPC( void ){
+void createITC( void ){
     
     unsigned int i;
 	
@@ -629,7 +629,7 @@ void createIPC( void ){
     	
 }
 
-void deleteIPC( void ){
+void deleteITC( void ){
 	unsigned long i,j; 
 	
 	/* If for any reason any queue is left unallocated, try to free its */
@@ -908,7 +908,7 @@ unsigned long sm_delete(
 	unsigned long qid       /* id */
 ) {
 	unsigned int i;																		  
-	/* Check if IPC exists */
+	/* Check if ITC exists */
 	/* Check if anyone is blocked (those are not freed but zombified)*/
 	free(ipc_array[qid]->blocked_procs);
 	free(ipc_array[qid]);
@@ -1222,7 +1222,7 @@ unsigned long sm_delete_ny(
    unsigned long qid       /* id */
 ) {
    unsigned int i;                                                        
-   /* Check if IPC exists */
+   /* Check if ITC exists */
    /* Check if anyone is blocked (those are not freed but zombified)*/
    free(ipc_array[qid]->blocked_procs);
    free(ipc_array[qid]);
@@ -1277,7 +1277,14 @@ unsigned long sm_v_ny(  /* sm_send or sm_put */
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.9  2005-12-03 14:04:30  ambrmi09
+ *  Revision 1.10  2006-02-02 15:51:02  ambrmi09
+ *  A lot of thought has been invested into the new PTIME component. Had to
+ *  change things even in the systime parts (integrated in the SHEDUL
+ *  component) to make it more generic. Think this will be really nice when
+ *  it's ready, but has been a long road to get PTIME running (and I'm
+ *  still not there).
+ *
+ *  Revision 1.9  2005/12/03 14:04:30  ambrmi09
  *  A crude documentation structure added. Sorce files modified a little, but
  *  only in comments (for Doxygens sake).
  *

@@ -7,6 +7,8 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#Simple%20Calendar%20
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#Elapsed%20Time
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#Sleeping
 
+"the epoch" = 00:00:00 on January 1, 1970, Coordinated Universal Time. 
+
 */
 
 #ifndef time_h
@@ -65,6 +67,60 @@ interpreted).
 */ 
 
 #define time_t unsigned long
+
+/*!
+The struct timeval structure represents an elapsed time. It is declared in sys/time.h 
+
+Honestly speaking, I don't understand why yhis struct is needed since the struct timespec does the same job AND is of much higher presition. However, it's used in the POSIX standard API gettimeofday so I suppose we'll have to stick with it.
+
+@see timespec
+*/
+struct timeval{
+   long int tv_sec;  //!< This represents the number of whole seconds of elapsed time. 
+   long int tv_usec  //!< This is the rest of the elapsed time (a fraction of a second), represented as the number of <b>microseconds</b>. It is always less than one million.  
+}
+
+/*!
+The struct timespec structure represents an elapsed time. It is declared in time.h
+
+this stuct is essential for the pthreads timing API that TinKer supports (pthread_mutex_timedlock, pthread_cond_timedwait to name a few). But also to the nanosleep function 
+
+A 32 bit signed storage for tv_sec will guarantee a time value that lasts for <b>4085 years!</b>.
+A 32 bit signed storage for tv_nsec is enough to store a fraction of a secons in nanoseconds. Actually it's more tha twice as big as nessesary since it can carry 2.147 seconds before overflowing.
+
+*/
+struct timespec{
+   long int tv_sec;  //!< This represents the number of whole seconds of elapsed time. 
+   long int tv_nsec  //!< This is the rest of the elapsed time (a fraction of a second), represented as the number of <b>nanoseconds</b>. It is always less than one billion
+}
+
+
+/*!
+This function is not supported on all targets properlly yet.
+
+@tbd implement this
+*/
+
+int nanosleep (const struct timespec *requested_time, struct timespec *remaining); 
+
+/*!
+Works like the POSIX spec says, excepth that timezone is alway ignored.
+
+@note This function will on some supported targes give the time in accurate uS resolution ecen if systetem tick is updated with a frequency lower than 1uS. This is achcheived by a cobination of reading the system timer and the HW clock dricing the system timer. 
+
+@tbd investigate the timezone thingy and if there is an equivlent API wit nS resoution
+*/
+int gettimeofday (struct timeval *tp, struct timezone *tzp);
+
+
+/*!
+Works like the POSIX spec says, excepth that timezone is alway ignored.
+
+@tbd investigate the timezone thingy and if there is an equivlent API wit nS resoution
+*/
+int settimeofday (const struct timeval *tp, const struct timezone *tzp);
+
+
 
 
 /*! 

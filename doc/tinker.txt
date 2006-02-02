@@ -5,7 +5,21 @@
 
    @section INTRODUCTION INTRODUCTION
 
-      Intro bla bla
+      Intro bla bla. The kernel is devided into "components" that each add 
+      some ability to the kernel. You can compile the cernel with or withouta 
+      component simply by modifying each components main macro. 
+      Some of them depend on others, so you need to know the dependency for each.
+      You select/deselect each component by a YES or NO in the section 
+      <b>//Include components</b> in tk.h.
+       
+      SCHED          - Always selected, you cant select or deselect this one. This contains 
+                       the inner most part of the kernel.
+      ITC            - Native Inter thread communication/syncromisation (pSos API)
+      PTIMER         - Preemptive timers. Not all targets support this so you might need 
+                       to disable this component.
+      PTHREAD_SCHED  - pThreads API regarding the threads
+      PTHREAD_XXX    - pThreads API... and so on (TBD) maybe SEM, TIME or just one big one?
+
 
 
    @section GENERAL_DESCRIPTION General description
