@@ -94,7 +94,6 @@ struct timespec{
    long int tv_nsec; //!< This is the rest of the elapsed time (a fraction of a second), represented as the number of <b>nanoseconds</b>. It is always less than one billion
 };
 
-
 /*!
 This function is not supported on all targets properlly yet.
 

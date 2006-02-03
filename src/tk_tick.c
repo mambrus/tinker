@@ -7,7 +7,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.4 $
+ *  Current $Revision: 1.5 $
  *******************************************************************/
    
 
@@ -26,6 +26,16 @@
 #if defined(HW_CLOCKED)
    #include "tk_hwclock.h"
 #endif
+
+/*
+We need a constant that is 0x100000000 / 1000 (note the different bases).
+Not even preprocessor can calculate this on many compilors so we did that
+"off compile-time"
+This equals to the real value 4294967,296. Defines below are it's integer and fract part
+*/
+
+#define FACTOR    0x418937
+#define FFRACT    0x128
 
 /*!
 @brief returns time since startup of the target expressed in seconds and
@@ -84,8 +94,10 @@ TinKer we use most of these words, but with the following beaning:<p>
 int getuptime (
    struct timespec *tp            //!< The returned uptime
 ){
-   unsigned long        MSS,MSmS; // 32-bit <b>H</b>igh part of seconds, millisecons
+   unsigned long    /*MSS,*/MSmS; // 32-bit <b>H</b>igh part of seconds, millisecons
    unsigned long        LSS,LSmS; // 32-bit <b>L</b>ow part of seconds, millisecons
+   unsigned long        MSfrac;   // whole seconds left from MSmS part
+   unsigned long        MSrest;   // The rest after converting to seconds (to propagate down to nS)
    unsigned long        pebbles;  // Remainig value in HWclock register
    unsigned long        nS;       // Time passed since last update of tick expressed in nS. Lets hope we dont need a 64 bit value for this.
    unsigned long        TnS;      // Temp of the above
@@ -132,25 +144,32 @@ int getuptime (
    TnS = (TnS * 1000000L )/ HWclock_stats.freq_khz;
    
    //convert tick to <i>struct timespec</i>
-   LSS = LSmS / 1000L + MSmS % 1000L;
-   MSS = MSmS / 1000L;
+   MSfrac = (MSmS % 1000L)*FACTOR +((MSmS % 1000L)*FFRACT)/1000L;
+   MSrest = ((MSmS % 1000L)*FFRACT)%1000L;
+   LSS    = (LSmS / 1000L) + MSfrac;
    
-   nS  = ( LSmS % 1000L ) * 1000000L;
+   //MSS = MSmS / 1000L;  //<-not used
+   
+   nS  = ( ( LSmS % 1000L )      +               MSrest                    )    * 1000000L;
+   //            ^^^                              ^^^
+   //    fraction of milli sec from LS       fraction of millisec from MS        in namosecs
    
    //Add the fraction originally expressed in pebbles and compensate seconds if needed
    nS  = nS + TnS;
-   LSS = LSS + nS/1000000000L;  // should increase with 1 at the most (if more, then we're buggd)
+   LSS = LSS + nS/1000000000L;  // All the "rests" added togeather might result in more than one second. 
    nS  = nS%1000000000L;        // take away the amount that got into seconds
 
    //MSS is not compensated - bug will not be seen unless running system for 60 years, and only if nS 
-   //frac caouses overflow that ripples though both nS and S. Compensating for this will cause 
+   //frac causes overflow that ripples though both nS and S. Compensating for this will cause 
    //extra code to run on every invocation and that will most certanlly never do anything (waste 
-   //of time). Besides MSS is not used outside this function (double waste).
+   //of time). Besides MSS is never used outside this function (double waste). This note kept for
+   //future reference.
    
 //Finally we should have the information requested. Copy to caller
    tp->tv_sec  = LSS;
    tp->tv_nsec = nS;
 
+   return 0;
 }
 
   
@@ -158,7 +177,11 @@ int getuptime (
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.c,v $
- *  Revision 1.4  2006-02-02 17:44:40  ambrmi09
+ *  Revision 1.5  2006-02-03 19:04:19  ambrmi09
+ *  Hopefully got the calculus right for converting from internal time to
+ *  "struct timespec" in function getuptime.
+ *
+ *  Revision 1.4  2006/02/02 17:44:40  ambrmi09
  *  Workaround for Keil include header bug (again)
  *
  *  Revision 1.3  2006/02/02 16:25:02  ambrmi09
