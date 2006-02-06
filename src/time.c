@@ -62,4 +62,28 @@ int settimeofday (const struct timeval *tp, const struct timezone *tzp){
 }
 
 
+/*!
+@brief Converts time from <i>struct timespec</i> to formatted time
+
+Converts time from the compact struct timespec representation for
+the more user friendly struct fmttime. No information is lost in
+the conversion, but remember that struct fmttime is not practically
+usable for any time calculations. Only use struct fmttime to ease
+interpretation back and forth to the user (or as debugging info).
+
+*/
+void timespec2fmttime( 
+   struct fmttime *totime, //!< Converted time returned
+   struct timespec fromtime//!< Original representation
+){
+   totime->days     =   fromtime.tv_sec / 86400;
+   totime->hrs      =  (fromtime.tv_sec % 86400) / 3600;
+   totime->mins     = ((fromtime.tv_sec % 86400) % 3600) / 60;
+   totime->secs     = ((fromtime.tv_sec % 86400) % 3600) % 60;
+
+   totime->nanos    = fromtime.tv_nsec;
+}
+
+
+
 

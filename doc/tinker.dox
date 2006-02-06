@@ -87,7 +87,8 @@ INPUT                  = ./ \
                          ../bsp/XC167_Keil/ \
                          ../bsp/XC167_Keil/startup/ \
                          ../bsp/XC167_Keil/stdlib/ \
-                         ./blogs/
+                         ./blogs/ \
+                         ../../dave
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \

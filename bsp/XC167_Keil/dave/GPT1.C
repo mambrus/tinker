@@ -12,7 +12,7 @@
 // @Description   This file contains functions that use the GPT1 module.
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-01 13:04:43
+// @Date          2006-02-04 13:07:12
 //
 //****************************************************************************
 
@@ -37,7 +37,90 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 #include "MAIN.H"
 
 // USER CODE BEGIN (GPT1_General,2)
+
+
 #include <../bsp/XC167_Keil/tk_hwtypes_keilC166.h> //Note: This is a shaky thingy. This header must not in turn include any Keil regs.h
+
+/*!
+
+@name TIMECONSTANTS
+
+@section intro Introduction
+
+To make CLK1 run as accurate and precise as possible you have to carfully
+adjust a couple of constants. The contants themselves can be cathegoriced as follows:
+
+- Pre-determined constants    Comes from some physical fact (like the clock 
+                              frequency driving the CPU and CLK(s)). 
+- Compensation constants      These you are supposed to meassure and adjust.
+- Derived constants           Defines based on the above. Used for compile time
+                              checking and avoidance of complex and 
+                              timeconsuming run-time calculations.
+
+@section constants Constants
+- REGVAL      Theoretical value supposed to go into the clock register
+- RELOADVAL   Compensated value after ISR and flck inaccurancy is compensated
+- ISRTIME     Latency time from interrupt to action expressed in nano seconds - 
+              offset value <b>this one you meassure and set</b>
+- ISRPEB      Same as above, but expressed in the current pepple unit
+- FCLK        Frequency driving the CPU
+- PRES        Prescalor selected <b>this one you set</b>
+- PERT        Interrupt period time, expressed in mS <b>this one you set</b>
+
+@section formulas Formulas explained
+1) <p>
+
+ \f[
+    |I_2|=\left| \int_{0}^T \psi(t) 
+             \left\{ 
+                u(a,t)-
+                \int_{\gamma(t)}^a 
+                \frac{d\theta}{k(\theta,t)}
+                \int_{a}^\theta c(\xi)u_t(\xi,t)\,d\xi
+             \right\} dt
+          \right|
+  \f]
+
+
+\f[
+   \frak{REGVALr + 1} {FCLK / PRES} = 
+   \frak 1000 PERT 
+\f]
+
+\f[
+   REGVAL = (PERT * FLCLK)/(1000 * PRES) -1
+\f]
+                                                         
+
+
+*/
+
+//@{
+#define PERT            6                 //!<@ref constants
+#define FCLK            40000000UL
+#define PRES            8
+//#define ISRTIME         3000           //3.000 uS latency
+//#define ISRPEB          0x0F   //works for 13ms
+#define ISRPEB          0x0D      //works for 6ms
+//#define ISRPEB          0x09     //works for 1ms
+
+#define REGVAL          ((FCLK*PERT)/(1000*PRES) -1)
+#define RELOADVAL       (REGVAL - ISRPEB)
+//@}
+
+
+#define _REGVALUE       0x1387 //1mS
+#define _REGVAL          0xFDE7   //13mS
+#define _ISRPEB          0x0F     //Meassured offset correction
+#define _RELOADVAL       (REGVAL - ISRPEB)
+
+
+
+#if ( REGVAL > 0xFFFF )
+#error "HW clock counter exceeds limits. You choosed either a \
+        too long CLK1 ISR period time or a to high presision"
+#endif
+
 // USER CODE END
 
 
@@ -119,7 +202,7 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-01
+// @Date          2006-02-04
 //
 //****************************************************************************
 
@@ -164,7 +247,7 @@ void GPT1_vInit(void)
   ///  - timer 2 run bit is reset
 
   GPT12E_T2CON   =  0x0080;      // load timer 2 control register
-  GPT12E_T2      =  0x1387;      // load timer 2 register
+  GPT12E_T2      =  0xFDE7;      // load timer 2 register
 
   ///  -----------------------------------------------------------------------
   ///  Configuration of the GPT1 Auxiliary Timer 4:
@@ -213,7 +296,7 @@ void GPT1_vInit(void)
      tmp1 = ((GPT1_ControlRegAux_t*)&GPT12E_T2CON)->TaI;
      tmp2 = tmp1;
      ((GPT1_ControlRegAux_t*)&GPT12E_T2CON)->TaI = tmp2;
-	 /* testing the bit fields */
+    /* testing the bit fields */
 
 
   // USER CODE END
@@ -242,7 +325,7 @@ void GPT1_vInit(void)
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-01
+// @Date          2006-02-04
 //
 //****************************************************************************
 
@@ -258,8 +341,9 @@ void GPT1_viTmr2(void) interrupt T2INT
 {
   // USER CODE BEGIN (Tmr2,2)
 
-  GPT1_vLoadTmr(GPT1_TIMER_2,0x1387);
-  _tk_tick_1mS();
+  GPT1_vLoadTmr(GPT1_TIMER_2,RELOADVAL);
+  //_tk_tick_1mS();
+  _tk_tick_advance_mS(PERT);
 
 /*
   sys_mickey++;
@@ -283,12 +367,74 @@ void GPT1_viTmr2(void) interrupt T2INT
 // USER CODE BEGIN (GPT1_General,10)
 
 void tk_getHWclock_Quality_CLK1(HWclock_stats_t *HWclock_stats){
-   HWclock_stats->freq_khz     = 40000 / 8; /*40MHz, could this be determined using PLLCON?*/
+   HWclock_stats->freq_khz     = (FCLK / 1000) / PRES; /*40MHz, could this be determined using PLLCON?*/
    HWclock_stats->res          = 16;
-   HWclock_stats->perPebbles   = 0x1387;     /*Trim this to hold the desired timeout interval time*/
+   HWclock_stats->perPebbles   = RELOADVAL;  /*Trim this to hold the desired timeout interval time*/
    HWclock_stats->maxPebbles   = 1234;       /*dummy value. Fix this*/
 
 }
 
 // USER CODE END
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+1)
+
+   REGVAL + 1        1000                                
+  ------------  =   ------   =>                          
+   FCLK / PRES       PERT                                
+                                                         
+                                                         
+                     PERT * FLCLK                        
+   REGVAL       =  --------------  - 1                   
+                      1000 * PRES                        
+                                                         
+
+                                                         
+2)                                                       
+
+                                               \         
+  RELOADVAL     =  REGVAL - ISRPEB             |         
+                                               |         
+                                                >        
+                   ISRTIME * FLCLK/PRES        |         
+  ISRPEB        =  --------------------        |         
+                       10000000000             /         
+                                                         
+  RELOADVAL = REGVAL - ISRTIME * FLCLK/PRES * 1000       
+                                                         
+
+
+\f[
+   (REGVAL + 1) / (FCLK / PRES) = 1000/PERT 
+\f]
+
+\f[
+   REGVAL = (PERT * FLCLK)/(1000 * PRES) -1
+\f]
+
+
+*/

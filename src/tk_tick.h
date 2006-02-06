@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.5 $
+ *  Current $Revision: 1.6 $
  *
  *******************************************************************/
   
@@ -37,6 +37,46 @@
    extern unsigned long MEMTYPE sys_mickey;
    extern unsigned long MEMTYPE sys_mackey;
 #endif   
+
+
+/*!
+@brief Advance system tick.
+
+Call this from your timer ISR.
+
+Usable for any interrupt frequency in multiples of 1mS. 
+
+<b>Notice that operations are done on a running timer</b>
+
+This implies some precautions since the "tick" are evaluated 
+while operated on: 
+
+- These operations must not be used anywhere but in the tick ISR
+- They must complete before the next tick (don't choose too high frequencies)
+- Other ISR must not keep running for longer than one "tick" time
+- In preemptive configuration, the priority of the tick ISR must be higher than
+  any of the events (for the same reason as mentioned in point above). This is 
+  because if that event ISR preempts this operation, it will actually dispatch
+  another thread to run, and the tick ISR will not be able to finish until that 
+  thread goes off runable state. Threads preempting ISR's is usually not a 
+  problem you follow the design rules (mentioned else where), but for the tick 
+  ISR it is.
+
+@note 
+- Be cartful to match the advance value with the true interrupt frequency
+- Use as slow frequencies as possible (large pebble values) to minimize drift
+- But not to large. Don't exceed the maximum value the HW can candle
+- <b>IMPORTANT:</b> Make sure the period time ( 1/frequency) is in even multiples 
+  of 1 mS.
+
+*/
+#define _tk_tick_advance_mS( advance )       \
+   if (sys_mickey+advance < sys_mickey){     \
+      sys_mickey+=advance;                   \
+      sys_mackey++;                          \
+   }else{                                    \
+      sys_mickey+=advance;                   \      
+   }
 
 
 /*!
@@ -139,7 +179,6 @@ Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC syste
   }
 
 
-
 #endif
 
   
@@ -147,7 +186,10 @@ Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC syste
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.5  2006-02-02 15:51:02  ambrmi09
+ *  Revision 1.6  2006-02-06 22:04:15  ambrmi09
+ *  Trimming CLK1 - got 3 nice trims at 1,6 and 13 mS period times
+ *
+ *  Revision 1.5  2006/02/02 15:51:02  ambrmi09
  *  A lot of thought has been invested into the new PTIME component. Had to
  *  change things even in the systime parts (integrated in the SHEDUL
  *  component) to make it more generic. Think this will be really nice when

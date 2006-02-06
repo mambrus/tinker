@@ -154,8 +154,36 @@ representation size equal to that of unsigned long
 #define difftime(t1, t2) \
    t1 <= t2 ? t2 - t1 : t2 + (ULONG_MAX - t1);
 
+/*!
+@brief Struct holds time in formatted form for easier readability.
 
+This is not a POSIX struct, hence it's not in time.h. However, I think there
+should be one at least similar (but that I haven't discovered yet). Therefore
+this struct is designed in a form that resembles the way POSIX would had done
+it.
+
+@note The types are signed for the following reasons:
+- They are big enough to keep the values they should represent
+- Signed integers are safer to use in arithmetic in-between calculus. 
+  Especially subtractions are easy to mess up when the values are big.
+- Signed integers can be compared between each other. This is the same 
+  issue as with the above point regarding subtractions. Problem accrues
+  when the values are big.
+*/
+struct fmttime{
+   long int days; /*!The remaining seconds goes into "days". This can in
+                     theory become a very large value, hence a type as 
+                     large as the types converted from */
+   int      hrs;  /*!Hours, this value is between 0-24 */
+   int      mins; /*!Minutes, this value is between 0-60 */
+   int      secs; /*!Seconds, this value is between 0-60 */
+   long int nanos;/*!Nano-seconds, this value is between 0 - 999 999 999 */
+};
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+void timespec2fmttime( struct fmttime *totime, struct timespec fromtime);
 clock_t clock();
+//------1---------2---------3---------4---------5---------6---------7---------8
 
 #endif /*time_h*/
 
