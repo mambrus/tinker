@@ -7,7 +7,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.6 $
+ *  Current $Revision: 1.7 $
  *******************************************************************/
    
 
@@ -69,26 +69,35 @@ pthreads component. This is however an expression in (signed)
 32-bit value seconds and (signed) 32-bit valued nS fractions. This
 boils down to mean that the precision and resolution is the same as the
 internal time representation, but the maximum time is about 10 miljon times
-shorter (i.e. 2^32/2 S = 68.1 years) - which should still be good in
+shorter (i.e.  \f$ \frac{2^32}{2} S = 68.1 \f$ years) - which should still be good in
 most cases though.
 
 @note Be carful when you calculate differences between values of struct
 timespec. It's easy to limit the maximum time in between to, both 1/2 and
 1/4 of it's maximum of 68 years.
 
-@note It is said that <i>"A beloved child has many names"</i>. We call
+@note It is said that <em>"A beloved child has many names"</em>. We call
 the internal timer value a "tick". Other names that occure in "kernal
 lingo" are "mickeys", "mackeys", "jiffies" and "pebbles". They all mean
 more or less the same thing: time since a certain time (often startup),
 fractioned in some sort of unit (often interrupt period time). In
 TinKer we use most of these words, but with the following beaning:<p>
 - tick    - is the internal time. This is represented in mS
+
 - mickey  - mickeys are the LS part of a tick (32 bit value)
+
 - mackey  - mackeys are the MS part of a tick (32 bit value)
+
 - pebble  - is the register value in the HW clock. One pebbe's 
             meaning in actual time depends on the preqiency driving 
             the HWclock.
 
+@note The way TnS is calculated is very critical. We either loose 
+resolution (keeping determinator high) or add error (determinator 
+is pre-devided, but truncation occures). We might need to consider 
+inventing 64-bit operations.
+
+@todo see the second note in getuptime
 */
 
 int getuptime (
@@ -130,7 +139,7 @@ int getuptime (
    #if defined(HW_CLOCKED)
    tk_armHWclock(         CLK1 );
 
-   if ((HWclock_stats.res > 16) && (HWclock_stats.freq_khz < 1000000)) {
+   if ((HWclock_stats.res > 16) && (HWclock_stats.freq_hz < 1000000)) {
       printf("tk: to high resolution HW clock. TinKer can't handle this ATM \n");
       tk_exit(1);
    }
@@ -141,7 +150,7 @@ int getuptime (
 
    // Calculate the nuber of nS since last update of tick
    TnS = HWclock_stats.maxPebbles - pebbles;
-   TnS = (TnS * 1000000L )/ HWclock_stats.freq_khz;
+   TnS = (TnS * (1000000000L / (HWclock_stats.freq_hz/100)))/100;
    
    //convert tick to <i>struct timespec</i>
    MSfrac = (MSmS % 1000L)*FACTOR +((MSmS % 1000L)*FFRACT)/1000L;
@@ -177,7 +186,18 @@ int getuptime (
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.c,v $
- *  Revision 1.6  2006-02-08 13:57:58  ambrmi09
+ *  Revision 1.7  2006-02-08 18:39:49  ambrmi09
+ *  Improved precision by providing the actual frequency instead of the
+ *  theoretical in tk_getHWclock_Quality_CLK1 .
+ *
+ *  Also found and corrected a serious truncation error in getuptime (in
+ *  calculating calculating TnS).
+ *
+ *  The second error might explain some of the time errors that could not be
+ *  explained before (for \f$ T_i=6mS \f$ there was a 300nS unexplainable
+ *  drift error for each update of tick).
+ *
+ *  Revision 1.6  2006/02/08 13:57:58  ambrmi09
  *  CLK1 mechanism refined. Compensation tried to be made undependant of timer
  *  ISR frequency. The important thing is not the indepencandy itself, but to
  *  understand where the errors come in.

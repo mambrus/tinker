@@ -519,15 +519,7 @@ void GPT1_viTmr2(void) interrupt T2INT
   //_tk_tick_1mS();
   _tk_tick_advance_mS(PERT);
 
-/*
-  sys_mickey++;
-
-  if (!sys_mickey){ //Will occure every 4294967,295 seconds (1193 hrs and aprox 3 minuts)
-    sys_mackey++;
-  }
-*/
   // USER CODE END
-
 
   // USER CODE BEGIN (Tmr2,5)
 
@@ -540,12 +532,13 @@ void GPT1_viTmr2(void) interrupt T2INT
 
 // USER CODE BEGIN (GPT1_General,10)
 
+#define CLKOFS ((FCLK * X_CLK)/1000000) //!< Helper constant used locally in tk_getHWclock_Quality_CLK1
+
 void tk_getHWclock_Quality_CLK1(HWclock_stats_t *HWclock_stats){
-   HWclock_stats->freq_khz     = (FCLK / 1000) / PRES; /*40MHz, could this be determined using PLLCON?*/
+   HWclock_stats->freq_hz      = ((FCLK - CLKOFS) / PRES); 
    HWclock_stats->res          = 16;
    HWclock_stats->perPebbles   = RELOADVAL;  /*The actual period time in pebbles time-unit*/
    HWclock_stats->maxPebbles   = REGVAL;     /*The theoretical period time in pebbles time-unit*/
-
 }
 
 // USER CODE END

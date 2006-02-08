@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.2 $
+ *  Current $Revision: 1.3 $
  *
  *******************************************************************/
    
@@ -30,21 +30,35 @@ different targets depending on HW timers resolution and frequency.
 #define HWtick_t unsigned long
 
 /*!
-Stats of the Timer "HWclock_" that the HW layer of this service is 
-supporting/providing. Note that the upper part (i.e. this file) is 
-generic and is supposed to be transparent over many different targets.
+Stats (i.e. quality) of the Timer "HWclock_" that the HW layer of this
+service is supporting/providing. Note that the upper part (i.e. this
+file) is generic and is supposed to be transparent over many different
+targets.
 */
 typedef struct{
-   unsigned int   freq_khz;   /*!< The frequency driving the HWclock expressed in Kilo Hertz. I.e. frequency <b>after</b> any prescaler or chain of prescalers. */
-   unsigned char  res;        /*!< Number of bits this HWClock_ handles */
-   HWtick_t       perPebbles; /*!< Variable holds the vaule supposed to reload the clock with in case ofperiodical operations (i.e. CLK1 operation) */
-   HWtick_t       maxPebbles; /*!< Number of HW-ticks the HWclock_ can handle without fraction. Any 
-                                   timeout event requireing longer than this 
-                                   time needs to have it's time chopped up in 
-                                   multiples of this amount of time.
-                                   This value is interesting for CLK2 operations
-                                   @note Make sure type holding this value is at least 32 bits long.
-                                   */
+   unsigned long   freq_hz;   /*!<  The frequency driving the HWclock
+                                    expressed in Hertz. I.e.
+                                    frequency <b>after</b> any prescaler
+                                    or chain of prescalers. This is
+                                    the actual <b>drift compensated</b>
+                                    frequency (not the theoretical
+                                    one found printed on the physical
+                                    oscillator circuit) */
+   unsigned char  res;        /*!<  Number of bits this HWClock_ handles
+                                    */
+   HWtick_t       perPebbles; /*!<  Variable holds the vaule supposed to
+                                    reload the clock with in case
+                                    ofperiodical operations (i.e. CLK1
+                                    operation) */
+   HWtick_t       maxPebbles; /*!<  Number of HW-ticks the HWclock_ can
+                                    handle without fraction. Any timeout
+                                    event requireing longer than
+                                    this time needs to have it's time
+                                    chopped up in multiples of this
+                                    amount of time. This value is
+                                    interesting for CLK2 operations
+                                    @note Make sure type holding this
+                                    value is at least 32 bits long. */
 }HWclock_stats_t;
 
 
@@ -169,7 +183,18 @@ allready happened.
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_hwclock.h,v $
- *  Revision 1.2  2006-02-02 17:44:40  ambrmi09
+ *  Revision 1.3  2006-02-08 18:39:49  ambrmi09
+ *  Improved precision by providing the actual frequency instead of the
+ *  theoretical in tk_getHWclock_Quality_CLK1 .
+ *
+ *  Also found and corrected a serious truncation error in getuptime (in
+ *  calculating calculating TnS).
+ *
+ *  The second error might explain some of the time errors that could not be
+ *  explained before (for \f$ T_i=6mS \f$ there was a 300nS unexplainable
+ *  drift error for each update of tick).
+ *
+ *  Revision 1.2  2006/02/02 17:44:40  ambrmi09
  *  Workaround for Keil include header bug (again)
  *
  *  Revision 1.1  2006/02/02 15:40:26  ambrmi09
