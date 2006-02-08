@@ -45,74 +45,248 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 
 @name TIMECONSTANTS
 
-@section intro Introduction
+<h2>Introduction</h2>
+To make CLK1 run as accurate and precise as possible you have to
+carefully
+adjust a couple of constants. The constants themselves can be
+categorized as follows:
 
-To make CLK1 run as accurate and precise as possible you have to carfully
-adjust a couple of constants. The contants themselves can be cathegoriced as follows:
-
-- Pre-determined constants    Comes from some physical fact (like the clock 
-                              frequency driving the CPU and CLK(s)). 
-- Compensation constants      These you are supposed to meassure and adjust.
-- Derived constants           Defines based on the above. Used for compile time
+- Pre-determined constants -  Physical facts (like the clock 
+                              frequency driving the CPU and CLK(s)).
+                               
+- Compensation constants   -  These you are supposed to measure and
+                              adjust.
+                              
+- Derived constants        -  Defines based on the above. Used for compile time
                               checking and avoidance of complex and 
-                              timeconsuming run-time calculations.
+                              time consuming run-time calculations. The
+                              really nice thing about expressimg
+                              complex relations with these macros, is
+                              that they are calculated at compile time and
+                              replaces with a numerical constant value.
+                              I.e. the CPU is not spending time doing
+                              this in run-time, but most importantly,
+                              the <n>time for using such a value</b> is also
+                              constant, whereas calculating it first and
+                              then using it can differ depending on the
+                              values themselves.
 
-@section constants Constants
-- REGVAL      Theoretical value supposed to go into the clock register
-- RELOADVAL   Compensated value after ISR and flck inaccurancy is compensated
-- ISRTIME     Latency time from interrupt to action expressed in nano seconds - 
-              offset value <b>this one you meassure and set</b>
-- ISRPEB      Same as above, but expressed in the current pepple unit
-- FCLK        Frequency driving the CPU
-- PRES        Prescalor selected <b>this one you set</b>
-- PERT        Interrupt period time, expressed in mS <b>this one you set</b>
+<h2>The constants</h2>
+- REGVAL \f$\bf R\f$           - Theoretical value supposed to go into the 
+                                 clock register
 
-@section formulas Formulas explained
-1) <p>
+- RELOADVAL \f$\bf R_L\f$      - Compensated value after ISR and flck 
+                                 inaccuracy is compensated
 
- \f[
-    |I_2|=\left| \int_{0}^T \psi(t) 
-             \left\{ 
-                u(a,t)-
-                \int_{\gamma(t)}^a 
-                \frac{d\theta}{k(\theta,t)}
-                \int_{a}^\theta c(\xi)u_t(\xi,t)\,d\xi
-             \right\} dt
-          \right|
-  \f]
+- ISRTIME \f$\bf T_{isr}\f$    - Latency time from interrupt to action 
+                                 expressed in nano seconds (i.e. offset
+                                 value). The entity is not used, it's
+                                 only mentioned for reference. The
+                                 reason is that it's much better to use
+                                 the unit "pebble time", since this is
+                                 directly proportional to the CPU clock
+                                 (CPU clock drives both HW clock and the
+                                 instruction pointer). \f$T_{isr}\f$ for
+                                 a XC167 running at 40MHz is however
+                                 \f$T_i * T_{pebble} = 8.5001 *
+                                 200nS \approx 1,7uS\f$ (based on
+                                 measurements
+                                 and formulas defined below).
+                                                 
+- ISRPEB \f$\bf T_i\f$         - Same as above, but expressed in the
+                                 current pebble unit (scaled X 1000000).
+                                 T_i is a constant and will depend
+                                 <b>only</b> on the CPU frequency. So in
+                                 case you don't change \f$\Phi_0\f$,
+                                 this value should remain untouched,
+                                 otherwise <em>this one you measure &
+                                 set</em>.
 
+- FCLK \f$\bf \Phi_0\f$        - Theoretical frequency driving the CPU
+
+- X_CLK \f$\bf x\f$            - Scaling factor that states the how much off 
+                                 the oscillator is. (scaled X 1000000).
+                                 <em>This one you measure & set</em>
+
+- CMPPEB  \f$\bf I_P\f$        - Derived compensation value expressed in pebble 
+                                 units
+
+- PRES \f$\bf \eta \f$         - Prescalor selected <em>this one you
+                                 set</em>
+
+- PERT \f$\bf \omega \f$       - Interrupt period time, expressed in mS
+                                 <em>this one you set</em>
+
+
+<h2>Formulas explained</h2>
+The <em>theoretical</em> reload value based on frequency and prescalor:
 
 \f[
-   \frak{REGVALr + 1} {FCLK / PRES} = 
-   \frak 1000 PERT 
+   \frac{R + 1} {\phi / \eta} =
+   \frac {1000}{\omega}
 \f]
 
 \f[
-   REGVAL = (PERT * FLCLK)/(1000 * PRES) -1
+   R = \frac {\phi / \eta*1000}{\omega} -1
 \f]
-                                                         
+
+
+
+The <em>actual</em> reload (i.e. compensated) value:
+
+\f[
+   \left .
+      \matrix{
+         R_L = R - I_P \cr
+         I_P = T_i + R_Lx \cr
+      }
+   \right \}
+   \Rightarrow 
+\f]
+
+
+\f[
+   R_L = R - \underbrace{( T_i + R_Lx)}
+\f]
+
+But since we have meassured values of \f$ I_P \f$ allready, we need only express an equation system of two meassurements:
+
+
+\f[
+   \left .
+      \matrix{
+         I_{P_1} = T_i + R_{L_1}x \cr
+         I_{P_2} = T_i + R_{L_2}x \cr
+      }
+   \right \}
+   \Rightarrow 
+\f]
+
+The two unknowns that we seek are \f$ T_i \f$ and \f$ x \f$, hence we can derive the following expressions:
+
+
+(1)
+
+\f[
+   R_{L_1} = I_{P_1} - T_i
+\f]
+
+\f[
+   x = \frac{ I_{P_1} - T_i }{  R_{L_1} }
+\f]
+
+
+(2)
+
+\f[
+   T_i = I_{P_2} - R_{L_2}x 
+\f]
+
+
+(2 in 1) \f$ \Rightarrow  \f$
+
+
+\f[
+   x = \frac{I_{P_1} - ( I_{P_2} - R_{L_2} ) }
+            { R_{L_1} }
+
+\f]
+
+\f[
+
+   x = \frac{I_{P_1} - I_{P_2}  }
+            { R_{L_1} }
+     +
+       \frac{R_{L_2}x }
+          { R_{L_1} }
+\f]
+
+
+\f[
+
+   x - \frac{R_{L_2}x }
+          { R_{L_1} } 
+   =
+   \frac{I_{P_1} - I_{P_2}  }
+            { R_{L_1} }
+
+\f]
+
+\f[
+   R_{L_1}x - R_{L_2}x = I_{P_1} - I_{P_2}
+\f]
+
+\f[
+   x(R_{L_1} - R_{L_2}) = I_{P_1} - I_{P_2}
+\f]
+
+\f[
+   x = \frac{ I_{P_1} - I_{P_2} }
+         { R_{L_1} - R_{L_2} }    
+\f]
+
+
+
+With actual numbers \f$ \Rightarrow  \f$
+
+
+
+\f[
+   x =  \frac{ 15 - 9 }
+        { 64999 - 4999 }
+
+\f]
+
+\f[
+   \bf {x = 1*10^{-4}}
+\f]
+
+
+and..
+
+
+\f[
+   T_i = 9 - 4999*10^{-4}
+\f]
+
+\f[
+   \bf {T_i = 8.5001}
+\f]
+
+
+
+<hr>
 
 
 */
 
 //@{
-#define PERT            6                 //!<@ref constants
-#define FCLK            40000000UL
+
+#define FCLK            40000000UL    
 #define PRES            8
-//#define ISRTIME         3000           //3.000 uS latency
-//#define ISRPEB          0x0F   //works for 13ms
-#define ISRPEB          0x0D      //works for 6ms
-//#define ISRPEB          0x09     //works for 1ms
+#define PERT            1            
 
 #define REGVAL          ((FCLK*PERT)/(1000*PRES) -1)
-#define RELOADVAL       (REGVAL - ISRPEB)
+
+#define X_CLK           100
+#define ISRPEB          8500100
+
+#define CMPPEB           ((ISRPEB + X_CLK * REGVAL)/1000000)
+
+//#define ISRTIME         3000           //3.000 uS latency
+//#define CMPPEB          0x0F   //!< Non derived value that worked best for 13ms
+//#define CMPPEB          0x0D   //!< Non derived value that worked best for 6ms
+//#define CMPPEB          0x09   //!< Non derived value that worked best for 1ms
+
+
+#define RELOADVAL       (REGVAL - CMPPEB)
 //@}
 
 
 #define _REGVALUE       0x1387 //1mS
 #define _REGVAL          0xFDE7   //13mS
-#define _ISRPEB          0x0F     //Meassured offset correction
-#define _RELOADVAL       (REGVAL - ISRPEB)
+#define _CMPPEB          0x0F     //Meassured offset correction
+#define _RELOADVAL       (REGVAL - CMPPEB)
 
 
 
@@ -369,72 +543,11 @@ void GPT1_viTmr2(void) interrupt T2INT
 void tk_getHWclock_Quality_CLK1(HWclock_stats_t *HWclock_stats){
    HWclock_stats->freq_khz     = (FCLK / 1000) / PRES; /*40MHz, could this be determined using PLLCON?*/
    HWclock_stats->res          = 16;
-   HWclock_stats->perPebbles   = RELOADVAL;  /*Trim this to hold the desired timeout interval time*/
-   HWclock_stats->maxPebbles   = 1234;       /*dummy value. Fix this*/
+   HWclock_stats->perPebbles   = RELOADVAL;  /*The actual period time in pebbles time-unit*/
+   HWclock_stats->maxPebbles   = REGVAL;     /*The theoretical period time in pebbles time-unit*/
 
 }
 
 // USER CODE END
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-1)
-
-   REGVAL + 1        1000                                
-  ------------  =   ------   =>                          
-   FCLK / PRES       PERT                                
-                                                         
-                                                         
-                     PERT * FLCLK                        
-   REGVAL       =  --------------  - 1                   
-                      1000 * PRES                        
-                                                         
-
-                                                         
-2)                                                       
-
-                                               \         
-  RELOADVAL     =  REGVAL - ISRPEB             |         
-                                               |         
-                                                >        
-                   ISRTIME * FLCLK/PRES        |         
-  ISRPEB        =  --------------------        |         
-                       10000000000             /         
-                                                         
-  RELOADVAL = REGVAL - ISRTIME * FLCLK/PRES * 1000       
-                                                         
-
-
-\f[
-   (REGVAL + 1) / (FCLK / PRES) = 1000/PERT 
-\f]
-
-\f[
-   REGVAL = (PERT * FLCLK)/(1000 * PRES) -1
-\f]
-
-
-*/

@@ -7,7 +7,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.5 $
+ *  Current $Revision: 1.6 $
  *******************************************************************/
    
 
@@ -140,7 +140,7 @@ int getuptime (
 // Now we should have all we need, and we can start converting.
 
    // Calculate the nuber of nS since last update of tick
-   TnS = HWclock_stats.perPebbles - pebbles;
+   TnS = HWclock_stats.maxPebbles - pebbles;
    TnS = (TnS * 1000000L )/ HWclock_stats.freq_khz;
    
    //convert tick to <i>struct timespec</i>
@@ -177,7 +177,12 @@ int getuptime (
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.c,v $
- *  Revision 1.5  2006-02-03 19:04:19  ambrmi09
+ *  Revision 1.6  2006-02-08 13:57:58  ambrmi09
+ *  CLK1 mechanism refined. Compensation tried to be made undependant of timer
+ *  ISR frequency. The important thing is not the indepencandy itself, but to
+ *  understand where the errors come in.
+ *
+ *  Revision 1.5  2006/02/03 19:04:19  ambrmi09
  *  Hopefully got the calculus right for converting from internal time to
  *  "struct timespec" in function getuptime.
  *
