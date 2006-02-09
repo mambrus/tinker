@@ -73,6 +73,8 @@ The struct timeval structure represents an elapsed time. It is declared in sys/t
 
 Honestly speaking, I don't understand why yhis struct is needed since the struct timespec does the same job AND is of much higher presition. However, it's used in the POSIX standard API gettimeofday so I suppose we'll have to stick with it.
 
+Further reference: http://www.gnu.org/software/libc/manual/html_mono/libc.html#Elapsed%20Time
+
 @see timespec
 */
 struct timeval{
@@ -88,6 +90,7 @@ this stuct is essential for the pthreads timing API that TinKer supports (pthrea
 A 32 bit signed storage for tv_sec will guarantee a time value that lasts for <b>4085 years!</b>.
 A 32 bit signed storage for tv_nsec is enough to store a fraction of a secons in nanoseconds. Actually it's more tha twice as big as nessesary since it can carry 2.147 seconds before overflowing.
 
+Further reference: http://www.gnu.org/software/libc/manual/html_mono/libc.html#Elapsed%20Time
 */
 struct timespec{
    long int tv_sec;  //!< This represents the number of whole seconds of elapsed time. 
@@ -99,7 +102,6 @@ This function is not supported on all targets properlly yet.
 
 @tbd implement this
 */
-
 int nanosleep (const struct timespec *requested_time, struct timespec *remaining); 
 
 /*!
@@ -181,7 +183,7 @@ struct fmttime{
 };
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-void timespec2fmttime( struct fmttime *totime, struct timespec fromtime);
+void timespec2fmttime_np( struct fmttime *totime, const struct timespec *fromtime);
 clock_t clock();
 //------1---------2---------3---------4---------5---------6---------7---------8
 

@@ -89,7 +89,6 @@
 
             More bla bla
 
-            */
         /** @defgroup kernel_internal_BSP Kernel-internal BSP stuff
             @ingroup CODEMOD
             @ref main

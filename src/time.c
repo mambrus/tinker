@@ -71,18 +71,54 @@ the conversion, but remember that struct fmttime is not practically
 usable for any time calculations. Only use struct fmttime to ease
 interpretation back and forth to the user (or as debugging info).
 
-*/
-void timespec2fmttime( 
-   struct fmttime *totime, //!< Converted time returned
-   struct timespec fromtime//!< Original representation
-){
-   totime->days     =   fromtime.tv_sec / 86400;
-   totime->hrs      =  (fromtime.tv_sec % 86400) / 3600;
-   totime->mins     = ((fromtime.tv_sec % 86400) % 3600) / 60;
-   totime->secs     = ((fromtime.tv_sec % 86400) % 3600) % 60;
+@note Even though this function is part of the time source module,
+it's not a POSIX standard function. Hence the _np suffix.
 
-   totime->nanos    = fromtime.tv_nsec;
+*/
+void timespec2fmttime_np( 
+   struct fmttime *totime,         //!< Converted time returned
+   const struct timespec *fromtime //!< Original representation
+){
+   totime->days     =   fromtime->tv_sec / 86400;
+   totime->hrs      =  (fromtime->tv_sec % 86400) / 3600;
+   totime->mins     = ((fromtime->tv_sec % 86400) % 3600) / 60;
+   totime->secs     = ((fromtime->tv_sec % 86400) % 3600) % 60;
+
+   totime->nanos    = fromtime->tv_nsec;
 }
+
+/*It is often necessary to subtract two values of type struct timeval or struct timespec. Here is the best way to do this. It works even on some peculiar operating systems where the tv_sec member has an unsigned type. */
+
+     /* Subtract the `struct timeval' values X and Y,
+        storing the result in RESULT.
+        Return 1 if the difference is negative, otherwise 0.  */
+     
+     int
+     timeval_subtract (result, x, y)
+          struct timeval *result, *x, *y;
+     {
+       /* Perform the carry for the later subtraction by updating y. */
+       if (x->tv_usec < y->tv_usec) {
+         int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
+         y->tv_usec -= 1000000 * nsec;
+         y->tv_sec += nsec;
+       }
+       if (x->tv_usec - y->tv_usec > 1000000) {
+         int nsec = (x->tv_usec - y->tv_usec) / 1000000;
+         y->tv_usec += 1000000 * nsec;
+         y->tv_sec -= nsec;
+       }
+     
+       /* Compute the time remaining to wait.
+          tv_usec is certainly positive. */
+       result->tv_sec = x->tv_sec - y->tv_sec;
+       result->tv_usec = x->tv_usec - y->tv_usec;
+     
+       /* Return 1 if result is negative. */
+       return x->tv_sec < y->tv_sec;
+     }
+     
+
 
 
 

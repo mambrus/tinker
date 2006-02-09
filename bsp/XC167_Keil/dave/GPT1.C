@@ -264,7 +264,7 @@ and..
 
 #define FCLK            40000000UL    
 #define PRES            8
-#define PERT            1            
+#define PERT            1
 
 #define REGVAL          ((FCLK*PERT)/(1000*PRES) -1)
 
@@ -278,16 +278,8 @@ and..
 //#define CMPPEB          0x0D   //!< Non derived value that worked best for 6ms
 //#define CMPPEB          0x09   //!< Non derived value that worked best for 1ms
 
-
 #define RELOADVAL       (REGVAL - CMPPEB)
 //@}
-
-
-#define _REGVALUE       0x1387 //1mS
-#define _REGVAL          0xFDE7   //13mS
-#define _CMPPEB          0x0F     //Meassured offset correction
-#define _RELOADVAL       (REGVAL - CMPPEB)
-
 
 
 #if ( REGVAL > 0xFFFF )
