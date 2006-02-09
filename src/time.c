@@ -1,3 +1,20 @@
+/*!
+@file
+@ingroup kernel_reimpl_ansi
+
+@brief ANSI time functions reimplemented
+
+The functions in this file are all reimplementations of ANSI functions
+concerning POSIX time, that TinKer relies on but that are commonly
+missing from many embedded toolchain suppliers.
+
+For in-depth discussions about re-implementing ANSI functions, see \ref
+kernel_reimpl_ansi
+
+@see kernel_reimpl_ansi
+
+*/
+
 #include <time.h>
 
 //! An internal scaling factor that needs to be matched against the timer 
@@ -87,36 +104,51 @@ void timespec2fmttime_np(
    totime->nanos    = fromtime->tv_nsec;
 }
 
-/*It is often necessary to subtract two values of type struct timeval or struct timespec. Here is the best way to do this. It works even on some peculiar operating systems where the tv_sec member has an unsigned type. */
+/*!
+It is often necessary to subtract two values of type struct timeval or struct timespec. Here is the best way to do this. It works even on some peculiar operating systems where the tv_sec member has an unsigned type.
 
-     /* Subtract the `struct timeval' values X and Y,
-        storing the result in RESULT.
-        Return 1 if the difference is negative, otherwise 0.  */
+Subtract the `struct timeval' values X and Y,
+storing the result in RESULT.
+
+@returns 1 if the difference is negative, otherwise 0.  
+*/
      
-     int
-     timeval_subtract (result, x, y)
-          struct timeval *result, *x, *y;
-     {
-       /* Perform the carry for the later subtraction by updating y. */
-       if (x->tv_usec < y->tv_usec) {
-         int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
-         y->tv_usec -= 1000000 * nsec;
-         y->tv_sec += nsec;
-       }
-       if (x->tv_usec - y->tv_usec > 1000000) {
-         int nsec = (x->tv_usec - y->tv_usec) / 1000000;
-         y->tv_usec += 1000000 * nsec;
-         y->tv_sec -= nsec;
-       }
+int
+   timeval_subtract (result, x, y)
+         struct timeval *result, *x, *y;
+   {
+      /* Perform the carry for the later subtraction by updating y. */
+      if (x->tv_usec < y->tv_usec) {
+      int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
+      y->tv_usec -= 1000000 * nsec;
+      y->tv_sec += nsec;
+      }
+      if (x->tv_usec - y->tv_usec > 1000000) {
+      int nsec = (x->tv_usec - y->tv_usec) / 1000000;
+      y->tv_usec += 1000000 * nsec;
+      y->tv_sec -= nsec;
+      }
      
-       /* Compute the time remaining to wait.
-          tv_usec is certainly positive. */
-       result->tv_sec = x->tv_sec - y->tv_sec;
-       result->tv_usec = x->tv_usec - y->tv_usec;
+   /* Compute the time remaining to wait.
+         tv_usec is certainly positive. */
+      result->tv_sec = x->tv_sec - y->tv_sec;
+      result->tv_usec = x->tv_usec - y->tv_usec;
      
-       /* Return 1 if result is negative. */
-       return x->tv_sec < y->tv_sec;
-     }
+   /* Return 1 if result is negative. */
+      return x->tv_sec < y->tv_sec;
+   }
+   
+   
+  
+/*! 
+ * @addtogroup CVSLOG CVSLOG
+ *  $Log: time.c,v $
+ *  Revision 1.7  2006-02-09 23:05:25  ambrmi09
+ *  Doxygen related fixes
+ *
+ *  
+ *******************************************************************/
+   
      
 
 

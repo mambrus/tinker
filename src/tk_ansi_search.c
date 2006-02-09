@@ -8,6 +8,11 @@ The functions in this file are all reimplementations of ANSI functions
 for searching and sorting, that TinKer relies on but that are commonly
 missing from many embedded toolchain suppliers.
 
+For in-depth discussions about re-implementing ANSI functions, see \ref
+kernel_reimpl_ansi
+
+@see kernel_reimpl_ansi
+
 */
 
 #include "tk_ansi.h"
@@ -101,7 +106,10 @@ void * bsearch (
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_ansi_search.c,v $
- *  Revision 1.1  2006-02-09 22:40:39  ambrmi09
+ *  Revision 1.2  2006-02-09 23:05:25  ambrmi09
+ *  Doxygen related fixes
+ *
+ *  Revision 1.1  2006/02/09 22:40:39  ambrmi09
  *  Initial creation of ANSI re-implementation module
  *
  *  

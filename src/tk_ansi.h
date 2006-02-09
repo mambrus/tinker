@@ -2,7 +2,7 @@
 @file
 @ingroup kernel_reimpl_ansi
 
-@brief ANSI search functions reimplemented
+@brief ANSI functions reimplemented
 
 This is the common headerfile for all ANSI re-implementations
 
@@ -91,9 +91,9 @@ The following ANSI Standard library routines are not included in the C166 librar
 abort
 asctime
 atexit
-bsearch
+\ref                       bsearch
 clearerr
-clock
+\ref                       clock
 ctime
 difftime
 div
@@ -192,7 +192,10 @@ determinism e.t.a.)
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_ansi.h,v $
- *  Revision 1.1  2006-02-09 22:40:39  ambrmi09
+ *  Revision 1.2  2006-02-09 23:05:25  ambrmi09
+ *  Doxygen related fixes
+ *
+ *  Revision 1.1  2006/02/09 22:40:39  ambrmi09
  *  Initial creation of ANSI re-implementation module
  *
  *  

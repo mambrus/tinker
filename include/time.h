@@ -1,13 +1,26 @@
-/*! 
-POSIX time API and definitions
+/*!
+@file
+@ingroup kernel_reimpl_ansi
 
-References:
+@brief ANSI time functions reimplemented
+
+The functions in this file are all reimplementations of ANSI functions
+concerning POSIX time, that TinKer relies on but that are commonly
+missing from many embedded toolchain suppliers.
+
+For in-depth discussions about re-implementing ANSI functions, see \ref
+kernel_reimpl_ansi
+
+@see kernel_reimpl_ansi
+
+POSIX time API and definitions references:
 
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#Simple%20Calendar%20Time
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#Elapsed%20Time
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#Sleeping
 
-"the epoch" = 00:00:00 on January 1, 1970, Coordinated Universal Time. 
+@note "the epoch" = 00:00:00 on January 1, 1970, Coordinated Universal Time. 
+
 
 */
 
@@ -188,6 +201,17 @@ clock_t clock();
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 #endif /*time_h*/
+
+  
+/*! 
+ * @addtogroup CVSLOG CVSLOG
+ *  $Log: time.h,v $
+ *  Revision 1.9  2006-02-09 23:05:24  ambrmi09
+ *  Doxygen related fixes
+ *
+ *  
+ *******************************************************************/
+
 
 
 
