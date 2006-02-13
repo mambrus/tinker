@@ -56,6 +56,18 @@ should be part of the TinKer binary or not.
 
 //@}
 
+#if defined(TK_NEEDS_QSORT)
+void qsort ( void *, size_t, size_t, comparison_fn_t );
+#endif
+
+#if defined(TK_NEEDS_BSEARCH)
+void * bsearch ( const void *, const void *, size_t, size_t, comparison_fn_t );
+#endif
+
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+
+
 /** @defgroup kernel_reimpl_ansi ANSI functions reimplemented 
 @ingroup CODEMOD 
 @brief Files containing re-emplemented ANSI functions
@@ -192,7 +204,10 @@ determinism e.t.a.)
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_ansi.h,v $
- *  Revision 1.2  2006-02-09 23:05:25  ambrmi09
+ *  Revision 1.3  2006-02-13 14:31:24  ambrmi09
+ *  Crude first version of ANSI qsort implemented.
+ *
+ *  Revision 1.2  2006/02/09 23:05:25  ambrmi09
  *  Doxygen related fixes
  *
  *  Revision 1.1  2006/02/09 22:40:39  ambrmi09
