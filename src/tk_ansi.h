@@ -18,6 +18,7 @@ kernel_reimpl_ansi
 
 //#include <stdio.h>
 #include <stdlib.h>
+
 #ifndef COMPARISON_FN_T 
 /*!
 A comparison funtion definition that ANSI search & sort funtions use.
@@ -56,12 +57,57 @@ should be part of the TinKer binary or not.
 
 //@}
 
-#if defined(TK_NEEDS_QSORT)
-void qsort ( void *, size_t, size_t, comparison_fn_t );
+#define APP_NEEDS_INTERNALS /*!< Define this conditional if you want access to the
+                                 internal functions this module has */
+
+
+
+
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+
+#if defined(__cplusplus)
+
+extern "C"
+{
 #endif
 
-#if defined(TK_NEEDS_BSEARCH)
-void * bsearch ( const void *, const void *, size_t, size_t, comparison_fn_t );
+
+   #if defined(TK_NEEDS_QSORT)
+      #define qsort tk_qsort
+      #if defined(_MSVC_) || defined(_WIN32)
+         void __cdecl qsort ( void *, size_t, size_t, comparison_fn_t );         
+      #else
+         void         qsort ( void *, size_t, size_t, comparison_fn_t );         
+      #endif
+   #endif
+
+
+   #if defined(TK_NEEDS_BSEARCH)
+      #define bsearch tk_bsearch
+      #if defined(_MSVC_) || defined(_WIN32)
+         void * __cdecl bsearch ( const void *, const void *, size_t, size_t, comparison_fn_t );
+      #else
+         void *         bsearch ( const void *, const void *, size_t, size_t, comparison_fn_t );
+      #endif
+   
+   #endif
+
+   #if defined(APP_NEEDS_INTERNALS)
+
+      #if defined(_MSVC_) || defined(_WIN32)
+            void __cdecl _tk_quicksort ( void *, int, int, int, comparison_fn_t );
+            int  __cdecl _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );
+
+      #else
+            void         _tk_quicksort ( void *, int, int, int, comparison_fn_t );
+            int          _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );      
+      #endif
+   #endif
+
+
+#if defined(__cplusplus)
+}
 #endif
 
 
@@ -204,7 +250,14 @@ determinism e.t.a.)
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_ansi.h,v $
- *  Revision 1.3  2006-02-13 14:31:24  ambrmi09
+ *  Revision 1.4  2006-02-14 16:14:06  ambrmi09
+ *  Bsearch implemented, a lot of doc regarding \ref qsort \ref bsearch
+ *  \ref _tk_qsort and \ref _tk_bsearch is added.
+ *
+ *  Also the qsort/bsearch example from GNU libc ref manual is copy &
+ *  pasted into the root thread.
+ *
+ *  Revision 1.3  2006/02/13 14:31:24  ambrmi09
  *  Crude first version of ANSI qsort implemented.
  *
  *  Revision 1.2  2006/02/09 23:05:25  ambrmi09

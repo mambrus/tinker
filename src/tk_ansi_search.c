@@ -14,11 +14,16 @@ kernel_reimpl_ansi
 @see kernel_reimpl_ansi
 
 */
-
 #include "tk_ansi.h"
 #include <string.h>
 #define MAX_SORT_ELEMENT_SIZE 255  //!< Limitation of each sorting elements size
 
+/*
+#if !defined(APP_NEEDS_INTERNALS)
+void _tk_quicksort ( void *, int, int, int, comparison_fn_t );
+int  _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );
+#endif
+*/
 
 /*!
 @brief Swap <em>l</em> and <em>r</em> in <em>a</em>
@@ -57,7 +62,7 @@ void _swap (
 unsigned int qsort_depth = 0;
 unsigned int curr_depth = 0;
 /*!
-@brief Quicksort algorithm (the back-end of qsort)
+@brief Quicksort algorithm (the back-end of ANSI reimpl. \ref qsort)
 
 This is a rather straight-forward implementation of the quick-sort
 algorithm. It's supposed to be used as a back-end to the 
@@ -160,6 +165,124 @@ void _tk_quicksort (
    curr_depth--;
 }
 
+/*!
+@brief Bsearch algorithm (the back-end of ANSI reimpl. \ref bsearch)
+
+Very straight-forward implementation without recursion. I doubt this one
+can be optimized much further.
+
+@note To use bsearch on <b>vector tables</b> and to use the same \ref
+comparison_fn_t as when you sorted the table in the first place,
+remember you have to pass a pointer to a pointer as the first argument.
+I.e. the argument you pass has to be of the same indirection level as
+the elements in the list are.
+
+The function will return the index number of the element to search for,
+or a negative value if the element is not found. However, the "right-most"
+element is also always returned and can deducted by taking the absolute
+value that is returned and subtract 1,
+
+If negative, the absolute value minus 1 tells which index is closest to
+the elements "right". I.e. for search key \f$ k \f$, return value \f$
+f(k) \f$ the the search index \f$ i \f$ and the right-most index \f$
+i_R \f$ follows the definitions below:<p>
+1)
+
+\f[   
+
+i =    
+
+   \cases{   
+   
+      f(k) & \mbox{if f(k) is positive  } \cr 
+      
+      invalid & \mbox{if f(k) is negative } \cr   
+      
+   }  
+   
+\f]
+
+2)
+
+\f[   i_R = abs(f(k)) - 1 \f]
+
+@attention The "feature" with also getting the right-most index if \f$ k \f$ is
+not found, is meant to be used by a special version of insertion sort.
+For normal search use, all you have to do is test against negative
+vaules, and then use the value as an index. 
+
+@returns index number <em>AND</em> "right-most" index 
+
+@note The reason \f$ i_R \f$ is passed instead of \f$ i_L \f$ is to
+avoid difficulties coding the value around index zero. By using \f$
+i_R \f$, the resulting value after transformation is always positive
+(note that 0 is defined as positive).
+
+<h3>Example: Determining "in-between" indexes.</h3>
+@code
+   int left_idx;
+   int right_idx;
+   
+   int idx = _tk_bsearch(&my_key,my_array,0,sz-1,sizeof(my_type),my_cmpf); 
+   if (idx < 0){
+      //Key not found, but would fit between left_idx & right_idx
+      left_idx  = -1*idx-2;
+      right_idx = -1*idx-1;
+   }
+@endcode
+
+@attention See \ref bsearch for another important example (pit-fall).
+
+     
+*/
+
+int _tk_bsearch (
+   void *v,              //!< Search for this key
+   void *a,              //!< The array to be seached   
+   int l,                //!< left index
+   int r,                //!< right index
+   int sz,               //!< Size of each element
+   comparison_fn_t cmp   //!< Comparison function 
+){
+   int   x;              // Current mid index
+   void *m;              // Mid element
+   int   rc;             // Last compare result
+   
+   while ( r >= l ){
+      x = (r+l)/2;
+
+      m = (void**)(((char*)a)+ (x*sz) );
+      
+      rc = cmp( v, m );
+      if ( rc == 0)
+         return x;
+
+      if ( rc < 0)
+         r = x - 1;
+      else
+         l = x + 1;
+   }
+   if ( rc < 0){
+      //Key should had been to the left of the last evaluated index.
+      /*
+      printf("<--- [%d]\n",x);
+      printf("[%d]..x..[%d]\n",x-1,x);
+      printf("------------------------\n");
+      printf("After transform, RL=%d\n\n",x);
+      */
+      return  ( -1*x -1);
+   }else{
+      //Key should had been to the right of the last evaluated index.
+      /*
+      printf("[%d] --->\n",x);
+      printf("[%d]..x..[%d]\n",x,x+1);
+      printf("------------------------\n");
+      printf("After transform, RL=%d\n\n",x+1);
+      */
+      return  ( -1*x -2);
+   }
+}
+
 #if defined(TK_NEEDS_QSORT)
 /*!
 @brief ANSI qsort 
@@ -237,24 +360,80 @@ This function derives its name from the fact that it is implemented
 using the binary search algorithm. 
 
 GNU reference: @see http://www.gnu.org/software/libc/manual/html_mono/libc.html#Array%20Search%20Function
-*/
 
-void * bsearch (
+<h3>Example: Pitfalls with character arrays</h3>
+(The following also applies to \ref _tk_bsearch)<p>
+This is correct:
+@code      
+      char *varray[] = {"One","Two,"Three""};
+      char key[] = "Two";
+      char *p1 = key;      
+      
+      bsearch(&p1,varray,3,sizeof(char*),my_strvcmp);            
+@endcode            
+
+This doesn't do what you think, (<tt>key</tt> and <tt>&key</tt> gives the
+same value to \ref bsearch) 
+
+@code            
+     :
+     rv = bsearch(&key,varray,3,sizeof(char*),my_strvcmp);
+@endcode      
+
+This is illegal (compile error).
+@code            
+     :
+     rv = bsearch(&(char*)key,varray,3,sizeof(char*),my_strvcmp);
+@endcode
+
+This pitfall is easy to fall into while working with character arrays
+that are supposed to be interpreted as strings (you can't assign other
+data-types the same way or as easily as with strings).
+ 
+One way to avoid the above scenario is to let <tt>key</tt> be a pointer
+to begin with. The following is perfectly legal and works like a charm,
+though not very practical (who needs a key that's constant?).:
+
+@code             
+   char *varray[] = {"One","Two,"Three""}; 
+   char *key2 = "Two";
+   bsearch(&key2,varray,3,sizeof(char*),my_strvcmp); 
+@endcode
+
+Or you can use malloc, then assign and then use - but I find using
+char[] + one extra variable more convenient.
+      
+
+*/
+void *bsearch (
    const void *key,         //!< Serch for this key
    const void *array,       //!< Sorted array to search for key
    size_t count,            //!< Number of elements in the array
    size_t size,             //!< Size of each element
    comparison_fn_t compare  //!< Comparison function 
 ){
+   int i;
+
+   i = _tk_bsearch((void*)key,(void*)array,0,count-1,size,compare);
+   if (i>=0)
+      return (void**)(((char*)array)+ (i*size) );
+   else
+      return NULL;
 }
 #endif
-
 
   
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_ansi_search.c,v $
- *  Revision 1.3  2006-02-13 14:31:24  ambrmi09
+ *  Revision 1.4  2006-02-14 16:14:06  ambrmi09
+ *  Bsearch implemented, a lot of doc regarding \ref qsort \ref bsearch
+ *  \ref _tk_qsort and \ref _tk_bsearch is added.
+ *
+ *  Also the qsort/bsearch example from GNU libc ref manual is copy &
+ *  pasted into the root thread.
+ *
+ *  Revision 1.3  2006/02/13 14:31:24  ambrmi09
  *  Crude first version of ANSI qsort implemented.
  *
  *  Revision 1.2  2006/02/09 23:05:25  ambrmi09

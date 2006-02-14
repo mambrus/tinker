@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.26 $
+ *  Current $Revision: 1.27 $
  *
  *******************************************************************/
   
@@ -680,20 +680,20 @@ printf to see run-time errors
 */
 void _tk_main( void ){
    tk_create_kernel();
-   #ifdef ITC
+   #if defined(ITC) && ITC
       createITC();
       if (_tk_create_system_queues( ) != 0)
          tk_exit(1);
-      #ifdef PTIMER
+      #if defined(PTIMER) && PTIMER
          tk_create_ptime();
       #endif
    #endif
     
    root();
 
-   #ifdef ITC
+   #if defined(ITC) && ITC
       deleteITC();
-      #ifdef PTIMER
+      #if defined(PTIMER) && PTIMER
          tk_delete_ptime();
       #endif
    #endif 
@@ -727,7 +727,14 @@ void Test_scheduler( void ){
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.26  2006-02-02 15:51:02  ambrmi09
+ *  Revision 1.27  2006-02-14 16:14:06  ambrmi09
+ *  Bsearch implemented, a lot of doc regarding \ref qsort \ref bsearch
+ *  \ref _tk_qsort and \ref _tk_bsearch is added.
+ *
+ *  Also the qsort/bsearch example from GNU libc ref manual is copy &
+ *  pasted into the root thread.
+ *
+ *  Revision 1.26  2006/02/02 15:51:02  ambrmi09
  *  A lot of thought has been invested into the new PTIME component. Had to
  *  change things even in the systime parts (integrated in the SHEDUL
  *  component) to make it more generic. Think this will be really nice when
