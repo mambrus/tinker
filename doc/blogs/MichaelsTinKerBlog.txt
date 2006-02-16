@@ -1,18 +1,20 @@
 /** 
 @defgroup BlogMichael Michaels TinKer Blog 
 @ingroup BLOGS
-@brief A place my thoughts call home ;)
-    @subpage INTRODUCTION INTRODUCTION
+@brief A place my thoughts call home...
+
+@subpage MIKEBLOGINTRO "Introduction"
+
 */
 
 /** 
-@page INTRODUCTION
+@page MIKEBLOGINTRO Introduction - Michael's TinKer blog
 Here I'll enter all sort of stuff regarding the development of tinker.
 Expect:
 
 - Lots of humor :)
-- Foul language ;)
-- Maybe some wisdom
+- Foul language ]-)
+- Maybe some wisdom ;)
 
 */
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -21,9 +23,9 @@ Expect:
 /** 
 @defgroup Blog051125 051125
 @ingroup BlogMichael
-@ref main
-@brief Birthday - Man, what a birthday present! TinKer is finally proving it can take the heat!
 
+@brief Birthday - Man, what a birthday present! TinKer is finally proving it can take the heat!
+<HR>
 
 
 I just got the stumbling first steps of TinKer running with interrupts
@@ -92,22 +94,15 @@ zzZZzz (snoars) d.s.s
 
 */
 
-
-
-
-
-
-
-
-
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 
   
 /** 
 @defgroup Blog051202_1 051202 (1)
 @ingroup BlogMichael
-@ref main
+
 @brief Preemptive at last
+<HR>
 
 TinKer is now also working in  full  pre-emptive mode *very happy smile*
 :D I'm very soon about to re-establish the port back to x86 (where
@@ -154,24 +149,19 @@ figure out a good name for the next nevel b.t.w.? TinKerOS maybe or TUX
 or why not YARTOS ;)
 
 /Michael
+
+Go back to: @ref main
 */
 
-
-
-
-
-
-
-
-
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 
   
 /** 
 @defgroup Blog051202_2 051202 (2)
 @ingroup BlogMichael
-@ref main
+
 @brief The difference - a code example
+<HR>
 
  
 What's pre-emptability anyways?
@@ -269,16 +259,19 @@ Have fun!
 
 /Michael
 
+Go back to: @ref main
+
 */
 
+//------1---------2---------3---------4---------5---------6---------7---------8
 
 /** 
 @defgroup Blog060216 060216
 @ingroup BlogMichael
-@ref main
-@brief Damned! My \link COMPONENTS component \ref ITC is not
-following standard!
 
+@brief Damned! My \ref COMPONENTS "component" \ref ITC is not
+following standard!
+<HR>
 I implemented ITC a long time ago and I forgot what standard API
 it followed. I thought checked it to follow POSIX 1003.1b but that
 turned out to be completely wrong. Instead it's pSos API.
@@ -298,7 +291,7 @@ http://www.opengroup.org/onlinepubs/007908799/xsh/sem_open.html
 http://www.opengroup.org/onlinepubs/007908799/xsh/mq_open.html
 
 They do look very similar, and I'm certain of that providing a new
-implementation shoild not be a problem. But it's annoying!
+implementation should not be a problem. But it's annoying!
 
 This all begun after I started questioning if the error codes I've
 defined was really correct. It turned out that there is not a single
@@ -310,4 +303,8 @@ in errno.h (which b.t.w. is not part of an embedded tool-chain either).
 
 Dang!
 
+Go back to: @ref main
+
 */
+
+//------1---------2---------3---------4---------5---------6---------7---------8

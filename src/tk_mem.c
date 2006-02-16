@@ -18,9 +18,9 @@ KMEM
 
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-/*! @brief Constructor of \link component COMPONENTS KMEM
+/*! @brief Constructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM
 
-Constructor of \link component COMPONENTS KMEM
+Constructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM 
 
 @note that we don't pass any size for the memory to handle. This is
 because only various constructors are supposed to create new heaps, and
@@ -34,9 +34,9 @@ unsigned long  tk_mem         ( void ){
    return ERR_OK; 
 }
 
-/*! @brief Destructor of \link component COMPONENTS KMEM
+/*! @brief Destructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM
 
-Destructor of \link component COMPONENTS KMEM
+Destructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM
 
 @see COMPONENTS 
 @see KMEM
@@ -52,16 +52,75 @@ XXX
 
 @see KMEM
 */
-unsigned long  tk_create_heap ( heapid_t *heapid ){}
+unsigned long  tk_create_heap ( 
+   heapid_t* heapid, 
+   int size, 
+   int num
+){
+   int i;
+   int esz;
+   void *ptr;
+   
+   esz = sizeof(int) + size;
+   
+   /* Allocate a heap "header" to act as a supervisory entity */
+   *heapid = malloc(sizeof(heap_t));
+   if (*heapid == NULL)
+      return ENOMEM;
+      
+   /* Allocate the actual heap. Note that one extra byte per element is alocated also*/
+   (*heapid)->heap = malloc( num*size );
+
+   if ((*heapid)->heap == NULL){
+      free (*heapid);
+      *heapid = NULL;
+      return ENOMEM;
+   }
+   
+   /*Fill in initial stuff in header*/
+   
+   (*heapid)->self   = *heapid;
+   (*heapid)->size   =  size;
+   (*heapid)->num    =  num;
+   (*heapid)->blocks =  0;     
+   (*heapid)->indx   =  0;
+   
+   /*Blank the heap (or at least each first byte telling wheter each block is free or not)*/
+   //*(int*)((char*)ptr + i*esz) = 0;
+
+   ptr = (*heapid)->heap;
+   for (i=0; i<num; i++){      
+      *(int*)ptr = 0;
+	  ptr = (char*)ptr + esz;
+   }
+      
+   return ERR_OK;   
+}
 
 /*! @brief Destroys a heap
 
-XXX
+This function is typically invoced on system shutdown only.
 
 @see KMEM
-*/
-unsigned long  tk_destroy_heap( heapid_t  heapid){}
 
+@todo This function has not meen tested. Please test it.
+
+*/
+unsigned long  tk_destroy_heap( 
+   heapid_t  heapid
+){
+   if (heapid->self == NULL)
+      return ERR_UNDEF_HEAPID;
+   if (heapid->self != (void*)heapid)
+      return ERR_UNDEF_HEAPID;
+   if (heapid->blocks != 0)
+      return EBUSY;
+      
+   free (heapid->heap);
+   free (heapid);
+      
+   return ERR_OK;
+}
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
@@ -71,7 +130,48 @@ XXX
 
 @see KMEM
 */
-void *         tk_mem_malloct ( heapid_t heapid, size_t size ){}
+void *tk_mem_malloct ( 
+   heapid_t heapid, 
+   size_t size 
+){
+   int i;
+   int esz;
+   void *ptr;
+   
+   if (heapid->self == NULL){
+      //errno = ERR_UNDEF_HEAPID;
+	  return NULL;
+   }
+   if (heapid->self != (void*)heapid){
+      //errno = ERR_UNDEF_HEAPID;
+      return NULL;      
+   }
+   if (heapid->blocks >= heapid->num) {
+      //errno = ENOMEM;
+      return NULL;
+   }
+
+   /* Find next free block */
+   esz = sizeof(int) + heapid->size;
+   ptr = (char*)(heapid->heap) + esz*heapid->indx;
+
+   for (i=heapid->indx; *(int*)ptr; ){
+	   i++;
+      i%=heapid->num;
+      ptr = (char*)(heapid->heap) + esz*i;
+   }
+   i++;
+   i%=heapid->num;
+   heapid->indx=i;
+   heapid->blocks++;
+
+   /* Mark it as occupied */
+   *(int*)ptr = 1;
+
+   ptr = (char*)ptr + sizeof(int);      
+
+   return ptr;
+}
 
 /*! @brief free (on specified heap)
 
@@ -79,13 +179,37 @@ XXX
 
 @see KMEM
 */
-void           tk_mem_free    ( heapid_t heapid, void* ptr){}
+void tk_mem_free( 
+   heapid_t heapid, 
+   void* ptr
+){
+   if (heapid->self == NULL){
+      //errno = ERR_UNDEF_HEAPID;
+	  return;
+   }
+   if (heapid->self != (void*)heapid){
+      //errno = ERR_UNDEF_HEAPID;	  
+	  return;
+   }
+   if (heapid->blocks >= heapid->num){
+      //errno = ENOMEM;
+	  return;
+   }
+
+   ptr = (char*)ptr - sizeof(int);      
+   heapid->blocks--;
+   *(int*)ptr = 0;
+}
+
 
   
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_mem.c,v $
- *  Revision 1.1  2006-02-16 15:11:00  ambrmi09
+ *  Revision 1.2  2006-02-16 23:42:59  ambrmi09
+ *  First working version of \ref KMEM
+ *
+ *  Revision 1.1  2006/02/16 15:11:00  ambrmi09
  *  Introduced a new component for better and safer useage of the heap.
  *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
  *  far).

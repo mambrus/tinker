@@ -2,8 +2,12 @@
 @file
 @ingroup kernel_reimpl_ansi
 
-@brief ANSI errno.h file
+@brief ANSI errno.h file <b>IMPORTANT:</b> See the note in the detailed section!
 
+@note <b>Make sure NEVER to use this file in a build-chain where an
+"official" errno.h exist. Libraries might be using a completely
+different set of codes, and you error handling will get totally
+screwed!</b>
 
 For in-depth discussions about re-implementing ANSI functions, see \ref
 kernel_reimpl_ansi.
