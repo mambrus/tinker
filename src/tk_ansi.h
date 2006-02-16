@@ -111,11 +111,13 @@ extern "C"
 #endif
 
 
+#endif //TK_ANSI_H
+
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 
 /** @defgroup kernel_reimpl_ansi ANSI functions reimplemented 
-@ingroup CODEMOD 
+@ingroup PACKAGES 
 @brief Files containing re-emplemented ANSI functions
 
 The files in this Doxygen "module" are involved one way or the other
@@ -243,14 +245,30 @@ determinism e.t.a.)
 
 - And many other reasons that I cant remember right now...
 
+
+@attention <b>Warning:</b> notice we're playing around with void
+pointers... All sorts of strange shit happens around void pointers, be
+cartful!
 */
 
-#endif
+
 
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_ansi.h,v $
- *  Revision 1.4  2006-02-14 16:14:06  ambrmi09
+ *  Revision 1.5  2006-02-16 15:11:00  ambrmi09
+ *  Introduced a new component for better and safer useage of the heap.
+ *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
+ *  far).
+ *
+ *  Started to take care of the long needed issue with error codes and
+ *  better error handling. Introduced errno.h to begin with, whitch is part
+ *  of the package \ref kernel_reimpl_ansi. Its not a good solution yet,
+ *  since both kernel and ANSI codes are in the same file we have to invent
+ *  a way to omit the ANSI defines when a tool-chain that has errno.h is
+ *  used.
+ *
+ *  Revision 1.4  2006/02/14 16:14:06  ambrmi09
  *  Bsearch implemented, a lot of doc regarding \ref qsort \ref bsearch
  *  \ref _tk_qsort and \ref _tk_bsearch is added.
  *

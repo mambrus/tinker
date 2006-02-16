@@ -113,7 +113,7 @@ struct timespec{
 /*!
 This function is not supported on all targets properlly yet.
 
-@tbd implement this
+@todo implement this
 */
 int nanosleep (const struct timespec *requested_time, struct timespec *remaining); 
 
@@ -122,9 +122,9 @@ Works like the POSIX spec says, excepth that timezone is alway ignored.
 
 @note This function will on some supported targes give the time in accurate uS resolution ecen if systetem tick is updated with a frequency lower than 1uS. This is achcheived by a cobination of reading the system timer and the HW clock dricing the system timer. 
 
-@tbd investigate the timezone thingy and if there is an equivlent API wit nS resoution
+@todo investigate the timezone thingy and if there is an equivlent API wit nS resoution
 
-@tbd implement this
+@todo implement this
 */
 int gettimeofday (struct timeval *tp, struct timezone *tzp);
 
@@ -132,9 +132,9 @@ int gettimeofday (struct timeval *tp, struct timezone *tzp);
 /*!
 Works like the POSIX spec says, excepth that timezone is alway ignored.
 
-@tbd investigate the timezone thingy and if there is an equivlent API wit nS resoution
+@todo investigate the timezone thingy and if there is an equivlent API wit nS resoution
 
-@tbd implement this
+@todo implement this
 */
 int settimeofday (const struct timeval *tp, const struct timezone *tzp);
 
@@ -206,7 +206,19 @@ clock_t clock();
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.9  2006-02-09 23:05:24  ambrmi09
+ *  Revision 1.10  2006-02-16 15:10:59  ambrmi09
+ *  Introduced a new component for better and safer useage of the heap.
+ *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
+ *  far).
+ *
+ *  Started to take care of the long needed issue with error codes and
+ *  better error handling. Introduced errno.h to begin with, whitch is part
+ *  of the package \ref kernel_reimpl_ansi. Its not a good solution yet,
+ *  since both kernel and ANSI codes are in the same file we have to invent
+ *  a way to omit the ANSI defines when a tool-chain that has errno.h is
+ *  used.
+ *
+ *  Revision 1.9  2006/02/09 23:05:24  ambrmi09
  *  Doxygen related fixes
  *
  *  

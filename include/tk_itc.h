@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.7 $
+ *  Current $Revision: 1.8 $
  *
  *******************************************************************/
    
@@ -23,22 +23,24 @@
 #define MAX_NUM_Q           50  /*Max num of semaphores OR queues*/
 
 /** Error codes **/
-#define ERR_OK              0x00 /* No error */
-#define ERR_TIMEOUT         0x01 /* ITC has timedout */
-#define ERR_OBJDEL          0x05 /* ITC has been deleted */
-#define ERR_OBJID           0x06 /* ITC id incorrect ?? */
-#define ERR_OBJTYPE         0x07 /* ITC type doesn'e mach object id */
-#define ERR_OBJFULL         0x08 /* Nodes objecttable is full */
-#define ERR_BUFSIZ          0x32 /* The allocated buffer is smaller than a message could be */
-#define ERR_NOQCB           0x33 /* Exceeds max numer of queues */
-#define ERR_FULL            0x35 /* The message buffer is full */
-#define ERR_NOSCB           0x41 /* Exceeds max numer of semaphores */
-#define ERR_NOSEM           0x42 /* Only if NOWAIT was selected */
-#define ERR_TATSDEL         0x44 /* There were threads waiting */
 
-#define ERR_NOMEM           0x100/* No more memory */
-#define ERR_BLOCKLIMIT      0x101/* Can't block more procs on queue or semaphore */
+/*
+#define ERR_OK              0x00 //!< No error
+#define ERR_TIMEOUT         0x01 //!< ITC has timedout
+#define ERR_OBJDEL          0x05 //!< ITC has been deleted
+#define ERR_OBJID           0x06 //!< ITC id incorrect ??
+#define ERR_OBJTYPE         0x07 //!< ITC type doesn'e mach object id
+#define ERR_OBJFULL         0x08 //!< Nodes objecttable is full
+#define ERR_BUFSIZ          0x32 //!< The allocated buffer is smaller than a message could be
+#define ERR_NOQCB           0x33 //!< Exceeds max numer of queues
+#define ERR_FULL            0x35 //!< The message buffer is full
+#define ERR_NOSCB           0x41 //!< Exceeds max numer of semaphores
+#define ERR_NOSEM           0x42 //!< Only if NOWAIT was selected
+#define ERR_TATSDEL         0x44 //!< There were threads waiting 
 
+#define ERR_NOMEM           0x100//!<  No more memory
+#define ERR_BLOCKLIMIT      0x101//!<  Can't block more procs on queue or semaphore
+*/
 typedef enum {
     WAIT            =0x00,
     LIMIT           =0x00,
@@ -95,8 +97,19 @@ typedef struct {
 /** public functions **/
 
 /** private functions **/
-void createITC( void );
-void deleteITC( void );
+
+/*!
+@name Creation and destruction of this component
+
+Use these functions only at boot, and shut-down.
+
+@see COMPONENTS
+*/
+//@{
+unsigned long  tk_itc( void );
+unsigned long  tk_itc_destruct( void );
+//@}
+
 
 /*
 #if defined (PREEMPTABLE)
@@ -285,7 +298,19 @@ unsigned long sm_v_ny(         /*!< sm_send or sm_put                          *
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.7  2006-02-02 15:51:02  ambrmi09
+ *  Revision 1.8  2006-02-16 15:11:00  ambrmi09
+ *  Introduced a new component for better and safer useage of the heap.
+ *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
+ *  far).
+ *
+ *  Started to take care of the long needed issue with error codes and
+ *  better error handling. Introduced errno.h to begin with, whitch is part
+ *  of the package \ref kernel_reimpl_ansi. Its not a good solution yet,
+ *  since both kernel and ANSI codes are in the same file we have to invent
+ *  a way to omit the ANSI defines when a tool-chain that has errno.h is
+ *  used.
+ *
+ *  Revision 1.7  2006/02/02 15:51:02  ambrmi09
  *  A lot of thought has been invested into the new PTIME component. Had to
  *  change things even in the systime parts (integrated in the SHEDUL
  *  component) to make it more generic. Think this will be really nice when

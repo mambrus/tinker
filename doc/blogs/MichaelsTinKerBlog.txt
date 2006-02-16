@@ -2,44 +2,22 @@
 @defgroup BlogMichael Michaels TinKer Blog 
 @ingroup BLOGS
 @brief A place my thoughts call home ;)
-
-    Ka-bla ka-bla
-
-    @section INTRODUCTION INTRODUCTION
-
-
-    @section GENERAL_DESCRIPTION General description
-
-    A 
-
-    @see PUMPMOD_vCheckBrkChTimeout
-
-	@link #PUMPMOD_vCheckBrkChTimeout PUMPMOD_vCheckBrkChTimeout@endlink
-	 - Check Break Channel Timeouts <br>
-	@link #PUMPMOD_vCheckBrkChTimeout PUMPMOD_vCheckBrkChTimeout@endlink
-	 - Check Break Channel Timeouts <br>
-
-
- @section OTHER Other info - move this to higher abstaction *TBD*
-    
-    Evrery messagae is send periodically, except adjustments. The fact
-	taht a message is missing it's time frame is valuavble information.
-   
-
-    @todo What is the name of the other pump FW device
-
+    @subpage INTRODUCTION INTRODUCTION
 */
 
+/** 
+@page INTRODUCTION
+Here I'll enter all sort of stuff regarding the development of tinker.
+Expect:
 
+- Lots of humor :)
+- Foul language ;)
+- Maybe some wisdom
 
-
-
-
-
-
-
-
+*/
+//------1---------2---------3---------4---------5---------6---------7---------8
   
+
 /** 
 @defgroup Blog051125 051125
 @ingroup BlogMichael
@@ -293,3 +271,43 @@ Have fun!
 
 */
 
+
+/** 
+@defgroup Blog060216 060216
+@ingroup BlogMichael
+@ref main
+@brief Damned! My \link COMPONENTS component \ref ITC is not
+following standard!
+
+I implemented ITC a long time ago and I forgot what standard API
+it followed. I thought checked it to follow POSIX 1003.1b but that
+turned out to be completely wrong. Instead it's pSos API.
+
+It's still a very good API, but it doesn't fit with the TinKer
+philosophy. So we need to either redo it, or save it until the pthreads
+component is finished (and use the phreads <b>based</B> version of
+queues and semaphores.
+
+Here comes a reference to pSos API:
+
+http://dr-linux.net/newbase/reference/psosCD/data/html/5070_002/psc_appb.htm
+
+Here comes a reference to POSIX 1003.1b queues and semaphore API:
+
+http://www.opengroup.org/onlinepubs/007908799/xsh/sem_open.html
+http://www.opengroup.org/onlinepubs/007908799/xsh/mq_open.html
+
+They do look very similar, and I'm certain of that providing a new
+implementation shoild not be a problem. But it's annoying!
+
+This all begun after I started questioning if the error codes I've
+defined was really correct. It turned out that there is not a single
+error code in POSIX that starts with ERR_
+
+Since I plan to follow standard on the phreads component I really do not
+have a choice put to use the codes defined by ANSI and that are defined
+in errno.h (which b.t.w. is not part of an embedded tool-chain either).
+
+Dang!
+
+*/

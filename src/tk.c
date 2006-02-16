@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.27 $
+ *  Current $Revision: 1.28 $
  *
  *******************************************************************/
   
@@ -15,10 +15,38 @@
 #include <stdio.h>                                                      
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include <tk.h>
+
+/*!
+@name \COMPONENTS headerfiles
+
+Included conditionally to avoid complication if work is in progress in
+any of them.   errno.h
+
+@see COMPONENTS
+*/
+//@{
+#if defined(KMEM) && KMEM
+#include <tk_mem.h>
+#endif
+
+#if defined(ITC) && ITC
+#include <tk_ipc.h>
+#endif
+
+#if defined(PTIME) && PTIMER
+#include <tk_ptimer.h>
+#endif
+//@}
+
+//The sysqueues should maybe be a component?
 #include <tk_sysqueues.h>
+
 #include "tk_hwsys.h"
+
+
 
 
 /** local definitions **/
@@ -535,7 +563,7 @@ unsigned int _tk_next_runable_thread(){
 Makes a context switch. Will prior to that also try to detect stack 
 out-of-bounds errors.
 
-@tbd Besides out of bounds check, a check for stack consistency would be
+@todo Besides out of bounds check, a check for stack consistency would be
 nice. Suggestion: Before each block, calculate CRC of the 0x10 bytes
 from top and bottom of stack(s) and store in TCB. On each waking up, redo
 the calculation and check against stored values. This should catch more
@@ -680,22 +708,30 @@ printf to see run-time errors
 */
 void _tk_main( void ){
    tk_create_kernel();
+   #if defined(KMEM) && KMEM
+      assert( tk_mem() == ERR_OK );
+   #endif
+   
    #if defined(ITC) && ITC
-      createITC();
+      assert( tk_itc() == ERR_OK );
       if (_tk_create_system_queues( ) != 0)
          tk_exit(1);
       #if defined(PTIMER) && PTIMER
-         tk_create_ptime();
+         assert( tk_ptime() == ERR_OK );
       #endif
    #endif
     
    root();
 
    #if defined(ITC) && ITC
-      deleteITC();
+      assert( tk_itc_destruct() == ERR_OK );
       #if defined(PTIMER) && PTIMER
-         tk_delete_ptime();
+         assert( tk_ptime_destruct() == ERR_OK );
       #endif
+   #endif
+   
+   #if defined(KMEM) && KMEM
+      assert( tk_mem_destruct() == ERR_OK );
    #endif 
    tk_delete_kernel();
 }
@@ -727,7 +763,19 @@ void Test_scheduler( void ){
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.27  2006-02-14 16:14:06  ambrmi09
+ *  Revision 1.28  2006-02-16 15:11:00  ambrmi09
+ *  Introduced a new component for better and safer useage of the heap.
+ *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
+ *  far).
+ *
+ *  Started to take care of the long needed issue with error codes and
+ *  better error handling. Introduced errno.h to begin with, whitch is part
+ *  of the package \ref kernel_reimpl_ansi. Its not a good solution yet,
+ *  since both kernel and ANSI codes are in the same file we have to invent
+ *  a way to omit the ANSI defines when a tool-chain that has errno.h is
+ *  used.
+ *
+ *  Revision 1.27  2006/02/14 16:14:06  ambrmi09
  *  Bsearch implemented, a lot of doc regarding \ref qsort \ref bsearch
  *  \ref _tk_qsort and \ref _tk_bsearch is added.
  *

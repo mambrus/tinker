@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.20 $
+ *  Current $Revision: 1.21 $
  *
  *******************************************************************/
    
@@ -27,14 +27,17 @@
 #define TK_THREAD_NAME_LEN      0x08
 
 //Some defines for the logic
+/*
 #define TK_OK              0
 #define TK_ERROR           1
+*/
 #define YES                1
 #define NO                 0
 
 //Include components 
 #define  ITC               YES
 #define  PTIMER            YES
+#define  KMEM              YES
 
 //Kernel termination codes (bit adressable) - Note, per kernel and not per thread codes
 
@@ -172,7 +175,19 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.20  2006-02-02 15:51:02  ambrmi09
+ *  Revision 1.21  2006-02-16 15:11:00  ambrmi09
+ *  Introduced a new component for better and safer useage of the heap.
+ *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
+ *  far).
+ *
+ *  Started to take care of the long needed issue with error codes and
+ *  better error handling. Introduced errno.h to begin with, whitch is part
+ *  of the package \ref kernel_reimpl_ansi. Its not a good solution yet,
+ *  since both kernel and ANSI codes are in the same file we have to invent
+ *  a way to omit the ANSI defines when a tool-chain that has errno.h is
+ *  used.
+ *
+ *  Revision 1.20  2006/02/02 15:51:02  ambrmi09
  *  A lot of thought has been invested into the new PTIME component. Had to
  *  change things even in the systime parts (integrated in the SHEDUL
  *  component) to make it more generic. Think this will be really nice when

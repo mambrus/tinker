@@ -5,9 +5,39 @@
 
    @section INTRODUCTION INTRODUCTION
 
-      Intro bla bla. The kernel is devided into "components" that each add 
-      some ability to the kernel. You can compile the cernel with or withouta 
-      component simply by modifying each components main macro. 
+      The kernel is devided into \ref COMPONENTS that each add 
+      some ability to the kernel, and \ref PACKAGES.
+
+
+
+   @section GENERAL_DESCRIPTION General description
+
+      General description *TBD*
+
+      @see aFuntuinNameOrOtherIdentifyer
+
+	   @link #aFuntuinNameOrOtherIdentifyer aFuntuinNameOrOtherIdentifyer @endlink
+	   - A test link <br>
+
+
+   @section OTHER Other info - *TBD*
+    
+      *TBD*
+   
+
+   @todo todo bla bla
+
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+
+
+/** @defgroup COMPONENTS TinKer components
+@ingroup TinKer
+@brief This Doxygen "module" define TinKer "components"
+@ref main
+
+      You can compile the cernel with or withouta 
+      component by modifying each components main macro. 
       Some of them depend on others, so you need to know the dependency for each.
       You select/deselect each component by a YES or NO in the section 
       <b>//Include components</b> in tk.h.
@@ -22,22 +52,8 @@
 
 
 
-   @section GENERAL_DESCRIPTION General description
-
-      General description bla bla 
-
-      @see aFuntuinNameOrOtherIdentifyer
-
-	   @link #aFuntuinNameOrOtherIdentifyer aFuntuinNameOrOtherIdentifyer @endlink
-	   - A test link <br>
-
-
-   @section OTHER Other info - Bla bla *TBD*
-    
-      More bla bla-ha
-   
-
-   @todo todo bla bla
+*/
+//------1---------2---------3---------4---------5---------6---------7---------8
 
 
 
@@ -58,7 +74,7 @@
 
 
 */
-    /** @defgroup CODEMOD Code
+    /** @defgroup PACKAGES Code
         @ingroup TinKer
         @ref main
         @brief Pieces of code cross-file that constiture some sort of module
@@ -67,7 +83,7 @@
 
         */
         /** @defgroup kernel Kernel 
-            @ingroup CODEMOD
+            @ingroup PACKAGES
             @ref main
             @brief Bla bla
 
@@ -75,7 +91,7 @@
 
             */
         /** @defgroup kernel_internal Kernel internals
-            @ingroup CODEMOD
+            @ingroup PACKAGES
             @ref main
             @brief Bla bla
 
@@ -83,14 +99,14 @@
 
             */
         /** @defgroup kernel_glue Kernel "glue"
-            @ingroup CODEMOD
+            @ingroup PACKAGES
             @ref main
             @brief Bla bla
 
             More bla bla
 
         /** @defgroup kernel_internal_BSP Kernel-internal BSP stuff
-            @ingroup CODEMOD
+            @ingroup PACKAGES
             @ref main
             @brief Bla bla
 

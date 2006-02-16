@@ -59,8 +59,8 @@ void _swap (
    memcpy(&((char*)a)[r*sz],  t,                   sz);
 }
 
-unsigned int qsort_depth = 0;
-unsigned int curr_depth = 0;
+unsigned int qsort_depth = 0; //!< @brief Recursion debug variable @internal
+unsigned int curr_depth = 0;  //!< @brief Recursion debug variable @internal
 /*!
 @brief Quicksort algorithm (the back-end of ANSI reimpl. \ref qsort)
 
@@ -365,7 +365,7 @@ GNU reference: @see http://www.gnu.org/software/libc/manual/html_mono/libc.html#
 (The following also applies to \ref _tk_bsearch)<p>
 This is correct:
 @code      
-      char *varray[] = {"One","Two,"Three""};
+      char *varray[] = {"One","Two,"Three"};
       char key[] = "Two";
       char *p1 = key;      
       
@@ -395,7 +395,7 @@ to begin with. The following is perfectly legal and works like a charm,
 though not very practical (who needs a key that's constant?).:
 
 @code             
-   char *varray[] = {"One","Two,"Three""}; 
+   char *varray[] = {"One","Two,"Three"}; 
    char *key2 = "Two";
    bsearch(&key2,varray,3,sizeof(char*),my_strvcmp); 
 @endcode
@@ -426,7 +426,19 @@ void *bsearch (
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_ansi_search.c,v $
- *  Revision 1.4  2006-02-14 16:14:06  ambrmi09
+ *  Revision 1.5  2006-02-16 15:11:00  ambrmi09
+ *  Introduced a new component for better and safer useage of the heap.
+ *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
+ *  far).
+ *
+ *  Started to take care of the long needed issue with error codes and
+ *  better error handling. Introduced errno.h to begin with, whitch is part
+ *  of the package \ref kernel_reimpl_ansi. Its not a good solution yet,
+ *  since both kernel and ANSI codes are in the same file we have to invent
+ *  a way to omit the ANSI defines when a tool-chain that has errno.h is
+ *  used.
+ *
+ *  Revision 1.4  2006/02/14 16:14:06  ambrmi09
  *  Bsearch implemented, a lot of doc regarding \ref qsort \ref bsearch
  *  \ref _tk_qsort and \ref _tk_bsearch is added.
  *

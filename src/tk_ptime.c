@@ -6,10 +6,26 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.3 $
+ *  Current $Revision: 1.4 $
  *
  *******************************************************************/
   
+ 
+/*!
+@file
+@ingroup PTIMER
+
+@brief XXX
+
+This is XXX
+
+For in-depth discussions XXX \ref
+PTIMER
+
+@see PTIMER
+
+*/
+ 
 
 /** include files **/
 #include <tk.h>
@@ -19,6 +35,7 @@
 #include <kernel/src/tk_hwclock.h>
 #include <tk_hwsys.h>
 #include <string.h>
+#include <errno.h>
 
 
 
@@ -50,12 +67,17 @@ unsigned int timerdeamon(void *inpar );
 
 /** private data **/
 
+/*
 ptimer_t timer_pool[TK_MAX_PTIMERS]; //!< Memory pool to avoid usage of malloc
+
 unsigned int currentIdx;             //!< Index to next empty slot
+*/
+
 ptimer_t *pendingTimers;             /*!< Sorted linked list to pending times. 
                                           The first one is also pending 
                                           awaitinng triggering from 
                                           timerEvent */
+
 HWclock_stats_t HWclock_stats;        /*!< The quality statistics of the fireing 
                                           mechanism the lower level provides. 
                                           This value must be asked for and
@@ -69,12 +91,13 @@ Creates and initializes the ptime component
 */
 //#define tk_setHWclock_pCLK1(ticks) ( GPT1_vLoadTmr(GPT1_TIMER_3, ticks) )
 
-void tk_create_ptime( void ){
+unsigned long tk_ptime( void ){
    int i;
    HWtick_t hw_ticks;
 
    pendingTimers = NULL;   
    
+   /*
    for (i=0;i<TK_MAX_PTIMERS; i++){
       strncpy(&timer_pool[i].name,"ZOMB",4);
       timer_pool[i].tid         = i;
@@ -86,6 +109,7 @@ void tk_create_ptime( void ){
       timer_pool[i].count       = 0;
       timer_pool[i].next        = NULL;
    }
+   */
    tk_getHWclock_Quality(	CLK2, &HWclock_stats );
    tk_disarmHWclock(        CLK2 );
    tk_getHWclock(           CLK2, &hw_ticks );
@@ -94,6 +118,7 @@ void tk_create_ptime( void ){
    tk_armHWclock(           CLK2 );
 
    tk_create_thread("TIME",0,timerdeamon,1,0x600);
+   return ERR_OK;
 }
 
 /*!
@@ -104,13 +129,14 @@ Destroys the ptime component. Any pending threads are released.
 @todo: Define timeout codes. timeout_exp, timer_deleted e.t.a.
 
 */
-void tk_delete_ptime( void ){
+unsigned long  tk_ptime_destruct( void ){
    int i;
 
    /*
    todo's here
    */
    
+   /*
    for (i=0;i<TK_MAX_PTIMERS; i++){
       strncpy(&timer_pool[i].name,"ZOMB",4);
       timer_pool[i].tid         = i;
@@ -122,6 +148,8 @@ void tk_delete_ptime( void ){
       timer_pool[i].count       = 0;
       timer_pool[i].next        = NULL;
    }
+   */
+   return ERR_OK;
 }
 
 /*!
@@ -139,7 +167,9 @@ unsigned long tk_ptimeevent_at(
                                    struture. @note This is also be the sorting 
                                    criteria/key for the list of pending timers 
                                    */
-){                            /*!  Reurns ptime return code */
+){
+   /*!  Reurns ptime return code */
+   /*
    TK_CLI();
    if (timer_pool[currentIdx].active){
       TK_STI();
@@ -150,6 +180,7 @@ unsigned long tk_ptimeevent_at(
   
   //Stuff finished - safe to reactivate event sources
   TK_STI();
+  */
 }
 
 /*!
@@ -169,7 +200,7 @@ unsigned long tk_ptimeevent_in(
 }
 
 /*!
-Deletes a pending timer including cancelling the event. In case any threads are
+Destroys a pending timer including cancelling the event. In case any threads are
 pending on the timer, those will be released but also given an reason different
 from the "normal" case.
 
@@ -183,9 +214,10 @@ that is succesfull interrupts will be disabled during the rest of the operation
 completes.
 */
 
-unsigned long tk_ptimer_remove( 
+unsigned long tk_ptimer_destroy( 
    unsigned int  tid          /*!< The identity of the timer.*/
 ){
+  /*
   TK_CLI();
   if (!timer_pool[tid].active){
      TK_STI();
@@ -195,6 +227,7 @@ unsigned long tk_ptimer_remove(
   //Continue with stuff
   //Stuff finished - safe to reactivate event sources
   TK_STI();
+  */
 }
 
 //glue API
@@ -213,7 +246,10 @@ a way for different layers of TinKer to interact.
 
 */
 ptimer_t *_tk_ptimer( unsigned int tid ){
+   /*
    return(&timer_pool[tid]);
+   */
+   return tid;
 }
 
 //module internal API
@@ -304,7 +340,19 @@ unsigned int timerdeamon(void *inpar ){
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_ptime.c,v $
- *  Revision 1.3  2006-02-02 16:25:02  ambrmi09
+ *  Revision 1.4  2006-02-16 15:11:00  ambrmi09
+ *  Introduced a new component for better and safer useage of the heap.
+ *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
+ *  far).
+ *
+ *  Started to take care of the long needed issue with error codes and
+ *  better error handling. Introduced errno.h to begin with, whitch is part
+ *  of the package \ref kernel_reimpl_ansi. Its not a good solution yet,
+ *  since both kernel and ANSI codes are in the same file we have to invent
+ *  a way to omit the ANSI defines when a tool-chain that has errno.h is
+ *  used.
+ *
+ *  Revision 1.3  2006/02/02 16:25:02  ambrmi09
  *  Minor syntax errors fixed
  *
  *  Revision 1.2  2006/02/02 15:51:02  ambrmi09

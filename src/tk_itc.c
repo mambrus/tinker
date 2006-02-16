@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.10 $
+ *  Current $Revision: 1.11 $
  *******************************************************************/
    
 
@@ -14,6 +14,7 @@
 #include <stdio.h>			    	          	       	   	      	   
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #define NDEBUG
 #include <tk.h>
@@ -617,7 +618,7 @@ static unsigned long _unlock_stage_ny(
 /*************************************************************************************************************
  * Public functions
  ************************************************************************************************************ */
-void createITC( void ){
+unsigned long tk_itc( void ){
     
     unsigned int i;
 	
@@ -626,10 +627,10 @@ void createITC( void ){
 	for (i=0; i<MAX_NUM_Q; i++) {
 		ipc_array[i] = NULL;
 	}
-    	
+   return ERR_OK;    	
 }
 
-void deleteITC( void ){
+unsigned long tk_itc_destruct( void ){
 	unsigned long i,j; 
 	
 	/* If for any reason any queue is left unallocated, try to free its */
@@ -647,6 +648,7 @@ void deleteITC( void ){
 			free( ipc_array[i] );
 		}
 	} 
+   return ERR_OK;
 }
 
 unsigned long q_vcreate(
@@ -1277,7 +1279,19 @@ unsigned long sm_v_ny(  /* sm_send or sm_put */
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.10  2006-02-02 15:51:02  ambrmi09
+ *  Revision 1.11  2006-02-16 15:11:00  ambrmi09
+ *  Introduced a new component for better and safer useage of the heap.
+ *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
+ *  far).
+ *
+ *  Started to take care of the long needed issue with error codes and
+ *  better error handling. Introduced errno.h to begin with, whitch is part
+ *  of the package \ref kernel_reimpl_ansi. Its not a good solution yet,
+ *  since both kernel and ANSI codes are in the same file we have to invent
+ *  a way to omit the ANSI defines when a tool-chain that has errno.h is
+ *  used.
+ *
+ *  Revision 1.10  2006/02/02 15:51:02  ambrmi09
  *  A lot of thought has been invested into the new PTIME component. Had to
  *  change things even in the systime parts (integrated in the SHEDUL
  *  component) to make it more generic. Think this will be really nice when
