@@ -638,3 +638,15 @@ The ones not commeted out is implemented by TinKer
 
 
 #endif   /* pthread.h */
+
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+/** @defgroup PTHREAD PTHREAD: Posix 1003.1c API
+@ingroup COMPONENTS
+@brief Posix 1003.1c API
+
+<em>*Documentation and implementation in progress*</em>
+
+*/
+
+

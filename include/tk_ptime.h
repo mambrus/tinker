@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.3 $
+ *  Current $Revision: 1.4 $
  *
  *******************************************************************/
   
@@ -183,7 +183,7 @@ unsigned long  tk_ptimer_sleep  ( unsigned int  tid, time_t *relTime );
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 
-/** @defgroup PTIMER Pre-emptive timers for TinKer.
+/** @defgroup PTIMER PTIMER: Pre-emptive timers for TinKer.
 @ingroup COMPONENTS 
 @brief This package support pre-emptive timer events for TinKer
 
@@ -282,7 +282,10 @@ digraph ptime_main {
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_ptime.h,v $
- *  Revision 1.3  2006-02-16 15:11:00  ambrmi09
+ *  Revision 1.4  2006-02-17 21:17:26  ambrmi09
+ *  More doc structure - this time for the new PTHREAD's components
+ *
+ *  Revision 1.3  2006/02/16 15:11:00  ambrmi09
  *  Introduced a new component for better and safer useage of the heap.
  *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
  *  far).

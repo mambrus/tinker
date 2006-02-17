@@ -121,7 +121,7 @@ void           tk_mem_free    ( heapid_t, void* );
 //@}
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-/** @defgroup KMEM A better malloc
+/** @defgroup KMEM KMEM: A better malloc
 @ingroup COMPONENTS
 @brief A better malloc
 
@@ -257,7 +257,10 @@ both of these functions.
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_mem.h,v $
- *  Revision 1.3  2006-02-17 20:26:56  ambrmi09
+ *  Revision 1.4  2006-02-17 21:17:26  ambrmi09
+ *  More doc structure - this time for the new PTHREAD's components
+ *
+ *  Revision 1.3  2006/02/17 20:26:56  ambrmi09
  *  Corrected some documentation structure so that Doxygen will build
  *  properly.
  *

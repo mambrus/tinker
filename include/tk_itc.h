@@ -6,10 +6,26 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.8 $
+ *  Current $Revision: 1.9 $
  *
  *******************************************************************/
    
+  
+/*!
+@file
+@ingroup ITC
+
+@brief Native Inter-thread Communication
+
+TBD
+
+For in-depth discussions about this component, see \ref
+ITC
+
+@see ITC
+@see COMPONENTS
+*/
+  
 
 #ifndef tk_ipc_h
 #define tk_ipc_h
@@ -298,7 +314,10 @@ unsigned long sm_v_ny(         /*!< sm_send or sm_put                          *
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.8  2006-02-16 15:11:00  ambrmi09
+ *  Revision 1.9  2006-02-17 21:17:26  ambrmi09
+ *  More doc structure - this time for the new PTHREAD's components
+ *
+ *  Revision 1.8  2006/02/16 15:11:00  ambrmi09
  *  Introduced a new component for better and safer useage of the heap.
  *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
  *  far).
