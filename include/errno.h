@@ -153,7 +153,7 @@ ERR_TIMER_DELETED          ,//!< @brief The timer (i.e. the requested event) has
 ERR_NO_MORE_TIMERS         ,//!< @brief You try to exeed the maximum number of pending timers
 
 /*COMPONENT KMEM*/                   
-ERR_UNDEF_HEAPID           ,/*!< @brief No such or invalid \link "heap" heap_t*/
+ERR_UNDEF_HEAPID           ,/*!< @brief No such or invalid \ref heap_t "heap" */
 
 
 /*ANSI codes*/                                      

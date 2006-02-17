@@ -1,4 +1,5 @@
 /*!
+@file
 @ingroup KMEM
 
 @brief A better malloc
@@ -53,9 +54,11 @@ XXX
 @see KMEM
 */
 unsigned long  tk_create_heap ( 
-   heapid_t* heapid, 
-   int size, 
-   int num
+   heapid_t*   heapid,  //!< Returned heap ID
+   int         size,    //!< Size each element will have
+   int         num,     //!< Requested maximum number of elements
+   lock_f      lock,    //!< Function for un-locking acces when operation on the heap. NULL if no locking is needed.
+   unlock_f    unlock   //!< Function for locking acces when operation on the heap. NULL if no locking is needed.
 ){
    int i;
    int esz;
@@ -78,12 +81,15 @@ unsigned long  tk_create_heap (
    }
    
    /*Fill in initial stuff in header*/
+   (*heapid)->lock   =  lock;
+   (*heapid)->unlock =  unlock;
    
    (*heapid)->self   = *heapid;
    (*heapid)->size   =  size;
-   (*heapid)->num    =  num;
+   (*heapid)->num    =  num;  
    (*heapid)->blocks =  0;     
    (*heapid)->indx   =  0;
+   
    
    /*Blank the heap (or at least each first byte telling wheter each block is free or not)*/
    //*(int*)((char*)ptr + i*esz) = 0;
@@ -103,7 +109,9 @@ This function is typically invoced on system shutdown only.
 
 @see KMEM
 
-@todo This function has not meen tested. Please test it.
+@note Lacks locking
+
+@todo This function has not meen tested. Please test it. 
 
 */
 unsigned long  tk_destroy_heap( 
@@ -150,7 +158,10 @@ void *tk_mem_malloct (
       //errno = ENOMEM;
       return NULL;
    }
-
+   
+   if (heapid->lock)
+      heapid->lock();
+   
    /* Find next free block */
    esz = sizeof(int) + heapid->size;
    ptr = (char*)(heapid->heap) + esz*heapid->indx;
@@ -169,6 +180,9 @@ void *tk_mem_malloct (
    *(int*)ptr = 1;
 
    ptr = (char*)ptr + sizeof(int);      
+
+   if (heapid->unlock)
+      heapid->unlock();
 
    return ptr;
 }
@@ -195,10 +209,15 @@ void tk_mem_free(
       //errno = ENOMEM;
 	  return;
    }
+   if (heapid->lock)
+      heapid->lock();
 
    ptr = (char*)ptr - sizeof(int);      
    heapid->blocks--;
    *(int*)ptr = 0;
+   
+   if (heapid->unlock)
+      heapid->unlock();
 }
 
 
@@ -206,7 +225,11 @@ void tk_mem_free(
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_mem.c,v $
- *  Revision 1.2  2006-02-16 23:42:59  ambrmi09
+ *  Revision 1.3  2006-02-17 20:26:56  ambrmi09
+ *  Corrected some documentation structure so that Doxygen will build
+ *  properly.
+ *
+ *  Revision 1.2  2006/02/16 23:42:59  ambrmi09
  *  First working version of \ref KMEM
  *
  *  Revision 1.1  2006/02/16 15:11:00  ambrmi09
