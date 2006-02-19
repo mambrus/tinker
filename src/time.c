@@ -13,6 +13,8 @@ kernel_reimpl_ansi
 
 @see kernel_reimpl_ansi
 
+@todo Function \ref time is quick and dirty. Certanly quick at least. Temporary solution just to pass compilation. <b>This really needs fixing.</b>
+
 */
 
 #include <time.h>
@@ -68,6 +70,10 @@ use that module instead.
 
 clock_t clock(){
    return TICK_PER_CLK * sys_mickey;
+}
+
+time_t time (time_t *result){
+   return (time_t)clock();
 }
 
 
@@ -143,7 +149,11 @@ int
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: time.c,v $
- *  Revision 1.7  2006-02-09 23:05:25  ambrmi09
+ *  Revision 1.8  2006-02-19 22:00:38  ambrmi09
+ *  Major brake-through!!! First working attempt with crude pThreads and
+ *  POSIX RT queues works. (jihaa) :=D. Wow
+ *
+ *  Revision 1.7  2006/02/09 23:05:25  ambrmi09
  *  Doxygen related fixes
  *
  *  

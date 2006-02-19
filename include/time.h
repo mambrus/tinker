@@ -84,7 +84,7 @@ interpreted).
 /*!
 The struct timeval structure represents an elapsed time. It is declared in sys/time.h 
 
-Honestly speaking, I don't understand why yhis struct is needed since the struct timespec does the same job AND is of much higher presition. However, it's used in the POSIX standard API gettimeofday so I suppose we'll have to stick with it.
+Honestly speaking, I don't understand why this struct is needed since the struct timespec does the same job AND is of much higher presition. However, it's used in the POSIX standard API gettimeofday so I suppose we'll have to stick with it.
 
 Further reference: http://www.gnu.org/software/libc/manual/html_mono/libc.html#Elapsed%20Time
 
@@ -136,7 +136,19 @@ Works like the POSIX spec says, excepth that timezone is alway ignored.
 
 @todo implement this
 */
+
 int settimeofday (const struct timeval *tp, const struct timezone *tzp);
+
+/*!
+The time function returns the current calendar time as a value of type
+time_t. If the argument result is not a null pointer, the calendar time
+value is also stored in *result. If the current calendar time is not
+available, the value (time_t)(-1) is returned.
+
+@see http://www.gnu.org/software/libc/manual/html_mono/libc.html#Simple%20Calendar%20Time
+*/
+time_t time (time_t *result);
+
 
 
 
@@ -206,7 +218,11 @@ clock_t clock();
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.10  2006-02-16 15:10:59  ambrmi09
+ *  Revision 1.11  2006-02-19 22:00:38  ambrmi09
+ *  Major brake-through!!! First working attempt with crude pThreads and
+ *  POSIX RT queues works. (jihaa) :=D. Wow
+ *
+ *  Revision 1.10  2006/02/16 15:10:59  ambrmi09
  *  Introduced a new component for better and safer useage of the heap.
  *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
  *  far).

@@ -9,10 +9,14 @@
  * Notes:      Todo: Prioritize messages with qsort ( timestamp+prio = orderby)
  *
  * Modifications:
- * Current $Revision: 1.2 $
+ * Current $Revision: 1.3 $
  *
  * $Log: mqueue.c,v $
- * Revision 1.2  2006-02-19 12:44:33  ambrmi09
+ * Revision 1.3  2006-02-19 22:00:38  ambrmi09
+ * Major brake-through!!! First working attempt with crude pThreads and
+ * POSIX RT queues works. (jihaa) :=D. Wow
+ *
+ * Revision 1.2  2006/02/19 12:44:33  ambrmi09
  * - Documented ITC
  * - Started to build up the structure for the \ref PTHREAD component
  *
@@ -44,18 +48,23 @@ POSIX_RT
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
-#include <assert.h>
+//#include <assert.h>
 #include <pthread.h>
 #include <mqueue.h>
 #include <semaphore.h>
 
 #ifdef _MSVC_
-#include <errno.h>
-#include <search.h>
-#define  PATH_MAX    255
-#else
-#include <sys/errno.h>
+   #include <errno.h>
+   #include <search.h>
+   #define  PATH_MAX    255
+#elif defined(__CYGWIN32__) || defined(__CYGWIN__)
+   #include <sys/errno.h>
+#else   //Embedded TinKer config
+   #include <errno.h>
+   #include <kernel/src/tk_ansi.h>         //Normally qsort is part of stdlib. But on embedded tool-chains this is often missing.   
+   #define  PATH_MAX    24   
 #endif
+
 
 
 /*****************************************************************************
@@ -131,16 +140,14 @@ static int compMess( const void *elem1, const void *elem2 );
 /*****************************************************************************
  * public function implementations
  *****************************************************************************/
-/*****************************************************************************
- * FUNCTION NAME:
- *  
- *
- * DESCRIPTION:
- *
- *  
- * NOTES:
- *  
- *****************************************************************************/
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_open.html
+*/
+/*!
+@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_close.html
+*/
 int mq_close(
    mqd_t                 mq
 ){
@@ -151,16 +158,10 @@ int mq_close(
 }
 
 
-/*****************************************************************************
- * FUNCTION NAME:
- *  
- *
- * DESCRIPTION:
- *
- *  
- * NOTES:
- *  
- *****************************************************************************/
+//------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_getattr.html
+*/
 int mq_getattr(
    mqd_t                mq,
    struct mq_attr      *attrbuf
@@ -172,20 +173,14 @@ int mq_getattr(
    assert(sem_post(&poolAccessSem) == 0);
 }
 
-/*****************************************************************************
- * FUNCTION NAME:
- *  
- *
- * DESCRIPTION:
- *
- *  
- * NOTES:
- *  
- *****************************************************************************/
+//------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_open.html
+*/
 mqd_t mq_open(
    const char           *mq_name,
    int                   oflags,
-   mode_t                mode,   /* Used for permissions. Is ignored at this stage */
+   mode_t                mode,   /* Used for permissions. Is ignored ATM */
    struct mq_attr       *mq_attr
 ){
    int                   i,j;
@@ -256,7 +251,13 @@ mqd_t mq_open(
          /* Create default attributes (TBD) */
          /*
          Todo: ... queuePool[qId].mode->xx = xx 
+
+         Mean-while, assure it exists!
          */
+         if (mq_attr == NULL){
+            errno = EINVAL;
+            return(-1);
+         }
          
          /*Todo: doesn't work.. why?*/
          /*memcpy( &queuePool[qId].mq_attr, mq_attr, sizeof(struct mq_attr)); strange...*/
@@ -348,16 +349,10 @@ mqd_t mq_open(
    return(dId);  
 }
 
-/*****************************************************************************
- * FUNCTION NAME:
- *  
- *
- * DESCRIPTION:
- *
- *  
- * NOTES:
- *  
- *****************************************************************************/
+//------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_receive.html
+*/
 size_t mq_receive(
    mqd_t                 mq,
    char                 *msg_buffer,
@@ -432,16 +427,10 @@ size_t mq_receive(
    return(msgSize);
 }
 
-/*****************************************************************************
- * FUNCTION NAME:
- *  
- *
- * DESCRIPTION:
- *
- *  
- * NOTES:
- *  
- *****************************************************************************/
+//------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_setattr.html
+*/
 int mq_setattr(
    mqd_t                 mqdes,
    const struct mq_attr *new_attrs,
@@ -454,16 +443,10 @@ int mq_setattr(
 }
 
 
-/*****************************************************************************
- * FUNCTION NAME:
- *  
- *
- * DESCRIPTION:
- *
- *  
- * NOTES:
- *  
- *****************************************************************************/
+//------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_send.html
+*/
 int mq_send(
    mqd_t             mq,
    const char       *msg,
@@ -613,17 +596,7 @@ static int compMess(
    return(0); /*Should never happen*/
 }
 
-/*****************************************************************************
- * FUNCTION NAME: sortByPrio
- *  
- *
- * DESCRIPTION: Sorts the queue per POSIX standard
- *
- *  
- * NOTES: Relies on locking made by calling function. NOT THREADSAFE without
- *        locking.
- *  
- *****************************************************************************/
+//------1---------2---------3---------4---------5---------6---------7---------8
 static void sortByPrio( QueueD *Q ){
    int szMess = NUMB_MESS(Q);
    int i,j,k,l;

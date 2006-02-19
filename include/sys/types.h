@@ -17,7 +17,20 @@ kernel_reimpl_ansi.
 <HR>
 */
 
-typedef struct pthread_t_ *pthread_t;
+#ifndef SYS_TYPES_H
+#define SYS_TYPES_H
+
+
+/*!
+This is an integer data type used to represent file modes. In the GNU
+system, this is equivalent to unsigned int.
+*/
+typedef unsigned int mode_t;
+
+
+
+//typedef struct pthread_t_ *pthread_t; //No way I'm going to return a pointer to anything for this!
+typedef unsigned int pthread_t;
 typedef struct pthread_attr_t_ *pthread_attr_t;
 typedef struct pthread_once_t_ pthread_once_t;
 typedef struct pthread_key_t_ *pthread_key_t;
@@ -26,3 +39,4 @@ typedef struct pthread_mutexattr_t_ *pthread_mutexattr_t;
 typedef struct pthread_cond_t_ *pthread_cond_t;
 typedef struct pthread_condattr_t_ *pthread_condattr_t;
 
+#endif //SYS_TYPES_H

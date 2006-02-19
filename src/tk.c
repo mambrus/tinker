@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.29 $
+ *  Current $Revision: 1.30 $
  *
  *******************************************************************/
   
@@ -28,17 +28,42 @@ any of them.   errno.h
 @see COMPONENTS
 */
 //@{
-#if defined(KMEM) && KMEM
-#include <tk_mem.h>
+#if defined(TK_COMP_KMEM) && TK_COMP_KMEM
+   #include <tk_mem.h>
 #endif
 
-#if defined(ITC) && ITC
-#include <tk_ipc.h>
+#if defined(TK_COMP_ITC) && TK_COMP_ITC
+   #include <tk_ipc.h>
 #endif
 
-#if defined(PTIME) && PTIMER
-#include <tk_ptimer.h>
+#if defined(TK_COMP_PTIME) && TK_COMP_PTIMER
+   #ifndef TK_COMP_PTHREAD
+      #error Component PTIMER is dependant of PTHREAD
+   #endif
+   #ifndef TK_COMP_POSIX_RT
+      #error Component PTIMER is dependant of POSIX_RT
+   #endif
+   #include <tk_ptimer.h>
 #endif
+
+#if defined(TK_COMP_PTHREAD) && TK_COMP_PTHREAD
+   #ifndef TK_COMP_ITC
+      #error Component POSIX_RT is dependant of ITC
+   #endif
+   #include <pthread.h>
+#endif
+
+#if defined(TK_COMP_POSIX_RT) && TK_COMP_POSIX_RT
+   #ifndef TK_COMP_PTHREAD
+      #error Component POSIX_RT is dependant of PTHREAD
+   #endif
+   #ifndef TK_COMP_ITC
+      #error Component POSIX_RT is dependant of ITC
+   #endif
+   #include <semaphore.h>
+   #include <mqueue.h>
+#endif
+
 //@}
 
 //The sysqueues should maybe be a component?
@@ -64,6 +89,14 @@ unsigned int _tk_destructor( void *foo );
 unsigned int _tk_idle( void *foo );
 
 /*- public data **/
+
+/*! 
+Temporary solution for errno handling. Storage supplied for all (thread UNSAFE)
+
+@see errno
+*/
+int _tk_daft_errno;  
+
 
 /*- private data **/
 
@@ -137,7 +170,7 @@ tk_tcb_t *_tk_current_tcb( void ){
 Same as tk_current_tcb but gets info for a specific thread
 */
 
-tk_tcb_t *_tk_get_tcb( unsigned int id ){
+tk_tcb_t *_tk_specific_tcb( unsigned int id ){
    return(&proc_stat[id]);
 }
 
@@ -714,29 +747,43 @@ printf to see run-time errors
 */
 void _tk_main( void ){
    tk_create_kernel();
-   #if defined(KMEM) && KMEM
+   #if defined(TK_COMP_KMEM) && TK_COMP_KMEM
       assert( tk_mem() == ERR_OK );
    #endif
    
-   #if defined(ITC) && ITC
+   #if defined(TK_COMP_ITC) && TK_COMP_ITC
       assert( tk_itc() == ERR_OK );
       if (_tk_create_system_queues( ) != 0)
          tk_exit(1);
-      #if defined(PTIMER) && PTIMER
+      #if defined(TK_COMP_PTIMER) && TK_COMP_PTIMER
          assert( tk_ptime() == ERR_OK );
+      #endif
+      #if defined(TK_COMP_PTHREAD) && TK_COMP_PTHREAD
+         assert( tk_pthread_sched() == ERR_OK );
+         assert( tk_pthread_sync()  == ERR_OK );
+         #if defined(TK_COMP_POSIX_RT) && TK_COMP_POSIX_RT
+            //TBD
+         #endif
       #endif
    #endif
     
    root();
 
-   #if defined(ITC) && ITC
+   #if defined(TK_COMP_ITC) && TK_COMP_ITC
+      #if defined(TK_COMP_PTHREAD) && TK_COMP_PTHREAD
+         #if defined(TK_COMP_POSIX_RT) && TK_COMP_POSIX_RT
+            //TBD
+         #endif
+         assert( tk_pthread_sched_destruct() == ERR_OK );
+         assert( tk_pthread_sync_destruct()  == ERR_OK );
+      #endif
       assert( tk_itc_destruct() == ERR_OK );
-      #if defined(PTIMER) && PTIMER
+      #if defined(TK_COMP_PTIMER) && TK_COMP_PTIMER
          assert( tk_ptime_destruct() == ERR_OK );
       #endif
    #endif
    
-   #if defined(KMEM) && KMEM
+   #if defined(TK_COMP_KMEM) && TK_COMP_KMEM
       assert( tk_mem_destruct() == ERR_OK );
    #endif 
    tk_delete_kernel();
@@ -769,7 +816,11 @@ void Test_scheduler( void ){
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.29  2006-02-19 12:44:33  ambrmi09
+ *  Revision 1.30  2006-02-19 22:00:38  ambrmi09
+ *  Major brake-through!!! First working attempt with crude pThreads and
+ *  POSIX RT queues works. (jihaa) :=D. Wow
+ *
+ *  Revision 1.29  2006/02/19 12:44:33  ambrmi09
  *  - Documented ITC
  *  - Started to build up the structure for the \ref PTHREAD component
  *

@@ -108,6 +108,14 @@ on other systems.
 #ifndef ERRNO_H
 #define ERRNO_H
 
+/*! Map this name to an internal variable. This needs more working.
+Macro should expand to something that is thread unique */
+#define errno _tk_daft_errno
+
+/*! Tell everyone that somewhere there exists this variable (translates
+to \ref errno)*/
+extern int _tk_daft_errno;
+
 
 /*!
 To make life easier and not to have to trim every tiny errorcode, all

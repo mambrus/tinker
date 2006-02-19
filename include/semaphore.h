@@ -16,15 +16,15 @@ POSIX_RT
 #if !defined( SEMAPHORE_H )
 #define SEMAPHORE_H
 
-#include <process.h>
-#include <errno.h>
+//#include <process.h>
+
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif                          
 
-typedef HANDLE sem_t;
+typedef unsigned long sem_t;
 
 int sem_init (sem_t * sem,
 	      int pshared,

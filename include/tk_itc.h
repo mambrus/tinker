@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.10 $
+ *  Current $Revision: 1.11 $
  *
  *******************************************************************/
    
@@ -33,8 +33,9 @@ ITC
 #include <tk.h>
 
 /*- local definitions **/
-#define MAX_BLOCKED_ON_Q    20  /*!< Max num of proces blocked on queue or sem*/
-#define MAX_NUM_Q           50  /*!< Max num of semaphores OR queues (i.e. primitives) in total*/
+#define MAX_BLOCKED_ON_Q    20   /*!< Max num of proces blocked on queue or sem*/
+#define MAX_NUM_Q           50   /*!< Max num of semaphores OR queues (i.e. primitives) in total*/
+#define FOREVER             ((-1ul)/2 + -1) /*!< Default value, use to block "forever" (~596 hrs) on resource */
 
 /*- Error codes **/
 
@@ -366,7 +367,11 @@ unsigned long sm_v_ny(
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.10  2006-02-19 12:44:33  ambrmi09
+ *  Revision 1.11  2006-02-19 22:00:38  ambrmi09
+ *  Major brake-through!!! First working attempt with crude pThreads and
+ *  POSIX RT queues works. (jihaa) :=D. Wow
+ *
+ *  Revision 1.10  2006/02/19 12:44:33  ambrmi09
  *  - Documented ITC
  *  - Started to build up the structure for the \ref PTHREAD component
  *

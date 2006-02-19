@@ -44,9 +44,12 @@ PTHREAD
 
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_t.html
 */
+
+/*
 struct pthread_t_ {
    unsigned int thid;  //!< Thinker thread identity
 };
+*/
 
 /*!
 Describes the thread attributes. It should be considered an opaque
@@ -64,13 +67,6 @@ struct pthread_attr_t_ {
 };
 
 
-/*!
-TBD
- 
-@see 
-*/
-struct pthread_once_t_ {
-};
 
 /*!
 TBD
@@ -78,6 +74,7 @@ TBD
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_key_t.html
 */
 struct pthread_key_t_ {
+   int TBD_THIS_STRUCT;
 };
 
 /*!
@@ -86,6 +83,7 @@ TBD
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutex_t.html
 */
 struct pthread_mutex_t_ {
+   int TBD_THIS_STRUCT;
 };
 
 /*!
@@ -94,6 +92,7 @@ TBD
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutexattr_t.html
 */
 struct pthread_mutexattr_t_ {
+   int TBD_THIS_STRUCT;
 };
 
 /*!
@@ -102,6 +101,7 @@ TBD
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_cond_t.html
 */
 struct pthread_cond_t_ {
+   int TBD_THIS_STRUCT;
 };
 
 /*!
@@ -110,6 +110,7 @@ TBD
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_condattr_t.html
 */
 struct pthread_condattr_t_ {
+   int TBD_THIS_STRUCT;
 };
 
 

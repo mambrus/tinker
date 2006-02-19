@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.22 $
+ *  Current $Revision: 1.23 $
  *
  *******************************************************************/
    
@@ -36,9 +36,11 @@
 #define NO                 0
 
 //Include components 
-#define  ITC               YES
-#define  PTIMER            YES
-#define  KMEM              YES
+#define  TK_COMP_ITC       YES
+#define  TK_COMP_PTIMER    YES
+#define  TK_COMP_KMEM      YES
+#define  TK_COMP_PTHREAD   YES
+#define  TK_COMP_POSIX_RT  YES
 
 //Kernel termination codes (bit adressable) - Note, per kernel and not per thread codes
 
@@ -181,7 +183,11 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.22  2006-02-19 12:44:32  ambrmi09
+ *  Revision 1.23  2006-02-19 22:00:38  ambrmi09
+ *  Major brake-through!!! First working attempt with crude pThreads and
+ *  POSIX RT queues works. (jihaa) :=D. Wow
+ *
+ *  Revision 1.22  2006/02/19 12:44:32  ambrmi09
  *  - Documented ITC
  *  - Started to build up the structure for the \ref PTHREAD component
  *

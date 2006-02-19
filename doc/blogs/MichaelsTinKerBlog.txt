@@ -281,14 +281,17 @@ philosophy. So we need to either redo it, or save it until the pthreads
 component is finished (and use the phreads <b>based</B> version of
 queues and semaphores.
 
-Here comes a reference to pSos API:
-
-http://dr-linux.net/newbase/reference/psosCD/data/html/5070_002/psc_appb.htm
+Here comes a reference to pSos API and error codes:
+@see http://dr-linux.net/newbase/reference/psosCD/data/html/5070_002/psc_ch01.htm#583402
+@see http://dr-linux.net/newbase/reference/psosCD/data/html/5070_002/psc_appb.htm
 
 Here comes a reference to POSIX 1003.1b queues and semaphore API:
 
-http://www.opengroup.org/onlinepubs/007908799/xsh/sem_open.html
-http://www.opengroup.org/onlinepubs/007908799/xsh/mq_open.html
+@see http://www.opengroup.org/onlinepubs/007908799/xsh/sem_open.html
+@see http://www.opengroup.org/onlinepubs/007908799/xsh/mq_open.html
+
+Good info about types in UNIX (Pascal syntax, but structs are the same):
+@see http://www.freepascal.org/docs-html/rtl/unixtype/index-3.html
 
 They do look very similar, and I'm certain of that providing a new
 implementation should not be a problem. But it's annoying!

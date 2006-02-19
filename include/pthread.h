@@ -19,6 +19,8 @@ PTHREAD
 
 //#include <sched.h>
 #include <time.h>
+#include <sys/types.h>
+#include <tk.h>
 
 /*! 
 @brief Once Key
@@ -40,9 +42,6 @@ struct pthread_once_t_ {
                                  to zero executes the user function */
 };
 
-
-
-
 int pthread_create (
    pthread_t               *thread,
    const pthread_attr_t    *attr,
@@ -50,7 +49,9 @@ int pthread_create (
    void                    *arg
 );
 
-pthread_t pthread_self (void); 
+pthread_t pthread_self (void);
+
+int pthread_equal(pthread_t t1, pthread_t t2); 
 
 int pthread_once (
    pthread_once_t          *once_control,
@@ -693,6 +694,24 @@ The ones not commeted out is implemented by TinKer
 //
 //extern void pthread_kill_other_threads_np (void);
 
+/*!
+@name Creation and destruction of this component
+
+Use these functions only at boot, and shut-down.
+
+@see COMPONENTS
+*/
+//@{
+
+unsigned long tk_pthread_sched( void );
+unsigned long tk_pthread_sched_destruct( void );
+unsigned long tk_pthread_sync( void );
+unsigned long tk_pthread_sync_destruct( void );
+
+//@}
+
+
+
 
 #endif   /* pthread.h */
 
@@ -703,6 +722,9 @@ The ones not commeted out is implemented by TinKer
 @brief POSIX 1003.1c API
 
 <em>*Documentation and implementation in progress*</em>
+
+A very good reference to the pThread API
+@see http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/pthread.3.html
 
 @note The following types shall be defined as described in <sys/types.h> :
 

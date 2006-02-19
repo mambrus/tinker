@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.13 $
+ *  Current $Revision: 1.14 $
  *******************************************************************/
    
   
@@ -35,7 +35,7 @@ ITC
 #include <tk_hwsys.h>
 #include <tk_ipc.h>
 
-#ifdef ITC /* Should not test at sharp (libfile) version */
+#ifdef TK_COMP_ITC /* Should not test at sharp (libfile) version */
 /*- local definitions **/
 
 #ifdef NDEBUG
@@ -942,6 +942,8 @@ unsigned long sm_delete(
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
+@brief Acquires a semaphore token (take the semaphore)
+
 Corresponds to POSIX 1003.1b sm_receive or sm_get              
 */
 unsigned long sm_p(				/* sm_receive or sm_get */
@@ -965,6 +967,8 @@ unsigned long sm_p(				/* sm_receive or sm_get */
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
+@brief Releases a semaphore token
+
 Corresponds to POSIX 1003.1b sm_send or sm_put                  
 */
 unsigned long sm_v(			   /* sm_send or sm_put */
@@ -1359,7 +1363,11 @@ pointer anyway).
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.13  2006-02-19 12:44:33  ambrmi09
+ *  Revision 1.14  2006-02-19 22:00:39  ambrmi09
+ *  Major brake-through!!! First working attempt with crude pThreads and
+ *  POSIX RT queues works. (jihaa) :=D. Wow
+ *
+ *  Revision 1.13  2006/02/19 12:44:33  ambrmi09
  *  - Documented ITC
  *  - Started to build up the structure for the \ref PTHREAD component
  *
