@@ -9,10 +9,14 @@
  * Notes:      Todo: Prioritize messages with qsort ( timestamp+prio = orderby)
  *
  * Modifications:
- * Current $Revision: 1.1 $
+ * Current $Revision: 1.2 $
  *
  * $Log: mqueue.c,v $
- * Revision 1.1  2006-02-17 21:14:54  ambrmi09
+ * Revision 1.2  2006-02-19 12:44:33  ambrmi09
+ * - Documented ITC
+ * - Started to build up the structure for the \ref PTHREAD component
+ *
+ * Revision 1.1  2006/02/17 21:14:54  ambrmi09
  * Initial commit: code donated by the Zoi project (author: Michael Ambrus)
  *
  * 
@@ -21,7 +25,7 @@
 @file
 @ingroup POSIX_RT
 
-@brief RT queues - Posix 1003.1b API
+@brief RT queues - POSIX 1003.1b API
 
 TBD
 
@@ -692,9 +696,9 @@ static void sortByPrio( QueueD *Q ){
 //      );
 
 
-/** @defgroup POSIX_RT POSIX_RT: Posix 1003.1b API
+/** @defgroup POSIX_RT POSIX_RT: POSIX 1003.1b API
 @ingroup PTHREAD
-@brief RT queues - Posix 1003.1b API
+@brief RT queues - POSIX 1003.1b API
 
 <em>*Documentation and implementation in progress*</em>
 

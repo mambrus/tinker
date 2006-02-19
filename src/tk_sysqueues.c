@@ -6,11 +6,11 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.4 $
+ *  Current $Revision: 1.5 $
  *******************************************************************/
   
 
-/** include files **/
+/*- include files **/
 
 #include <tk_ipc.h>
 #include <tk_sysqueues.h>
@@ -26,14 +26,14 @@
 elements in each queue) Small number, but should be OK since these 
 Q's are ment to be used by threads that run on highest prio. */
 
-/** external functions **/
+/*- external functions **/
 
-/** external data **/
+/*- external data **/
 
-/** public data **/
+/*- public data **/
 unsigned long tk_sys_queues[TK_NUMBER_OF_SYSQ];
 
-/** internal functions **/
+/*- internal functions **/
 unsigned long _tk_create_system_queues( ){
    int i;
    unsigned long rc = ERR_OK;
@@ -51,14 +51,18 @@ unsigned long _tk_create_system_queues( ){
    return rc;
 }
 
-/** private data **/
+/*- private data **/
 
    
 /*******************************************************************  
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_sysqueues.c,v $
- *  Revision 1.4  2006-02-16 15:11:01  ambrmi09
+ *  Revision 1.5  2006-02-19 12:44:33  ambrmi09
+ *  - Documented ITC
+ *  - Started to build up the structure for the \ref PTHREAD component
+ *
+ *  Revision 1.4  2006/02/16 15:11:01  ambrmi09
  *  Introduced a new component for better and safer useage of the heap.
  *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
  *  far).

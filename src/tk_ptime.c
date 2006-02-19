@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.4 $
+ *  Current $Revision: 1.5 $
  *
  *******************************************************************/
   
@@ -27,7 +27,7 @@ PTIMER
 */
  
 
-/** include files **/
+/*- include files **/
 #include <tk.h>
 #include <tk_ipc.h>
 #include <tk_sysqueues.h>
@@ -39,33 +39,33 @@ PTIMER
 
 
 
-/** local definitions **/
+/*- local definitions **/
 #define TK_MAX_PTIMERS TK_MAX_THREADS //!< Makes no sense to have more timer than threads
 
 #define HWClkID CLK1 //hmm, doesn't work as intended
 
 /* default settings */
 
-/** external functions **/
+/*- external functions **/
 
-/** external data **/
+/*- external data **/
 
-/** internal functions **/
+/*- internal functions **/
 
 /*void insertInPendingList(ptimer_t *timer);*/
 /*void deleteFromPendingList(ptimer_t *timer);*/
 unsigned int timerdeamon(void *inpar );
 
 
-/** public data **/
+/*- public data **/
 
-/** private data **/
+/*- private data **/
 
-/** public functions **/
+/*- public functions **/
 
-/** private functions **/
+/*- private functions **/
 
-/** private data **/
+/*- private data **/
 
 /*
 ptimer_t timer_pool[TK_MAX_PTIMERS]; //!< Memory pool to avoid usage of malloc
@@ -340,7 +340,11 @@ unsigned int timerdeamon(void *inpar ){
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_ptime.c,v $
- *  Revision 1.4  2006-02-16 15:11:00  ambrmi09
+ *  Revision 1.5  2006-02-19 12:44:33  ambrmi09
+ *  - Documented ITC
+ *  - Started to build up the structure for the \ref PTHREAD component
+ *
+ *  Revision 1.4  2006/02/16 15:11:00  ambrmi09
  *  Introduced a new component for better and safer useage of the heap.
  *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
  *  far).

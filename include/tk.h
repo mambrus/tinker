@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.21 $
+ *  Current $Revision: 1.22 $
  *
  *******************************************************************/
    
@@ -15,16 +15,17 @@
 #ifndef TK_H
 #define TK_H
 
-/** include files **/
+/*- include files **/
 #include <stddef.h>
 #include <time.h>
 #include <tk_hwtypes.h>   //should be OK now
 
-/** local definitions **/
+/*- local definitions **/
 #define TK_MAX_THREADS          10
 #define TK_MAX_PRIO_LEVELS      0x10  //fix this, Idle needs to bee last in last prio( needs one extra )
 #define TK_MAX_THREADS_AT_PRIO  0x8
 #define TK_THREAD_NAME_LEN      0x08
+#define TK_NORMAL_STACK_SIZE    0x600  //!< @note Whats normal or reasonable differs between architectures. 
 
 //Some defines for the logic
 /*
@@ -74,8 +75,11 @@
 
 
 typedef enum{FALSE,TRUE}BOOL;
-typedef unsigned int funk(void *);
-typedef funk *funk_p;
+typedef void *start_func_ft(void *);
+typedef start_func_ft   *start_func_f;
+
+typedef void init_func_ft(void *);
+typedef init_func_ft   *init_func_f;
 
 // The following 2 defines the process status and on what it is blocked.
 // __T = TERM  = Process is waiting for one or more children to terminate
@@ -112,17 +116,19 @@ typedef struct    tk_tcb_t_s{
    unsigned long  stack_crc;           //!< Control value of integrity check
    clock_t        wakeuptime;          //!< When to wake up if sleeping
    wakeE_t        wakeupEvent;         //!< Helper variable mainly for ITC
+   start_func_f   start_funct;         //!< Address of the threads entry function. Used ONLY for debugging purposes
+   init_func_f    init_funct;          //!< Support of the pThread <em>"once"</em> concept.
    void          *prmtRetAddr;         //!< Preempted return adress - used in preempted mode.
    unsigned int   Prio,Idx;            //!< Helpers, prevent need of lookup
 }tk_tcb_t;
 
-/** default settings **/
+/*- default settings **/
 
-/** external functions **/
+/*- external functions **/
 
-/** external data **/
+/*- external data **/
 
-/** internal functions **/
+/*- internal functions **/
 void           _tk_assertfail(    /* emulates __assertfail */
    char *assertstr, 
    char *filestr, 
@@ -135,12 +141,12 @@ void           _tk_context_switch_to_thread(unsigned int RID,unsigned int SID);
 void           _tk_main( void );
 
 
-/** public data **/
+/*- public data **/
 
-/** private data **/
+/*- private data **/
 extern int Tk_IntFlagCntr;
 
-/** public functions **/
+/*- public functions **/
 
 
 int            tk_delete_thread(unsigned int PID);
@@ -148,7 +154,7 @@ int            tk_delete_thread(unsigned int PID);
 unsigned int   tk_create_thread(
    char          *name,
    unsigned int   prio,
-   funk_p         start_func,
+   start_func_f   start_func,
    void          *inpar,
    size_t         stack_size
 );
@@ -163,7 +169,7 @@ unsigned int   tk_thread_id( void );
 
 extern void    root( void ); /*! supplied by YOU - constitutes the root thread function*/
 
-/** private functions **/
+/*- private functions **/
 
 
 
@@ -175,7 +181,11 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.21  2006-02-16 15:11:00  ambrmi09
+ *  Revision 1.22  2006-02-19 12:44:32  ambrmi09
+ *  - Documented ITC
+ *  - Started to build up the structure for the \ref PTHREAD component
+ *
+ *  Revision 1.21  2006/02/16 15:11:00  ambrmi09
  *  Introduced a new component for better and safer useage of the heap.
  *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
  *  far).

@@ -2,7 +2,7 @@
 @file
 @ingroup POSIX_RT
 
-@brief RT semaphores - Posix 1003.1b API
+@brief RT semaphores - POSIX 1003.1b API
 
 TBD
 

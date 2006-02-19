@@ -6,12 +6,12 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.28 $
+ *  Current $Revision: 1.29 $
  *
  *******************************************************************/
   
 
-/** include files **/
+/*- include files **/
 #include <stdio.h>                                                      
 #include <stdlib.h>
 #include <string.h>
@@ -49,29 +49,29 @@ any of them.   errno.h
 
 
 
-/** local definitions **/
+/*- local definitions **/
 
 /* default settings */
 
-/** external functions **/
+/*- external functions **/
 //Temporary - is not portable
 extern void _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
 
-/** external data **/
+/*- external data **/
 
-/** internal functions **/
+/*- internal functions **/
 unsigned int _tk_destructor( void *foo );
 unsigned int _tk_idle( void *foo );
 
-/** public data **/
+/*- public data **/
 
-/** private data **/
+/*- private data **/
 
 int Tk_IntFlagCntr;
 
-/** public functions **/
+/*- public functions **/
 
-/** private functions **/
+/*- private functions **/
 
 
 #define DEBUG
@@ -182,6 +182,9 @@ void tk_create_kernel( void ){
       proc_stat[i].stack_crc     = 0;
       proc_stat[i].prmtRetAddr   = NULL;
       proc_stat[i].wakeupEvent   = 0;
+      proc_stat[i].start_funct   = NULL;
+      proc_stat[i].init_funct    = NULL;
+
    }
    //The Root proc is already created but must be registred
    proc_stat[0].state = READY;
@@ -314,13 +317,13 @@ unsigned int tk_create_thread(
                                  convention for system deamons (and the root 
                                  thread). <b>Avoid using priority level 0 for 
                                  normal application threads. </b> */
-   funk_p         f,        //!< Start function, i.e. the treads entry point.
+   start_func_f   f,        //!< Start function, i.e. the treads entry point.
    void          *inpar,    //!< Any variable or value to start of with
    size_t         stack_size//!< Stack size
 ){
    //where in theScheduler to put thread id
    unsigned int   slot_idx = scheduleIdxs[prio].procs_at_prio;
-   funk_p        *f_p;
+   start_func_f    *f_p;
    void          *v_p;
    size_t         real_stack_size;
    #ifdef DEBUG
@@ -375,6 +378,9 @@ unsigned int tk_create_thread(
    proc_stat[proc_idx].stack_crc    = 0;
    proc_stat[proc_idx].prmtRetAddr  = NULL;
    proc_stat[proc_idx].wakeupEvent  = 0;
+   proc_stat[proc_idx].start_funct  = f;
+   proc_stat[proc_idx].init_funct   = NULL;
+
 
    proc_stat[active_thread].noChilds++;
    procs_in_use++;
@@ -398,10 +404,10 @@ unsigned int tk_create_thread(
    v_p = (void *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0x4];
    *(unsigned int*)v_p = (unsigned int)inpar;
 
-   f_p = (funk_p *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0x8];
+   f_p = (start_func_f *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0x8];
    *f_p = _tk_destructor;
 
-   f_p = (funk_p *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0xC];
+   f_p = (start_func_f *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0xC];
    *f_p = f;
 
    ct_oldTOS = &STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0xC];
@@ -763,7 +769,11 @@ void Test_scheduler( void ){
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.28  2006-02-16 15:11:00  ambrmi09
+ *  Revision 1.29  2006-02-19 12:44:33  ambrmi09
+ *  - Documented ITC
+ *  - Started to build up the structure for the \ref PTHREAD component
+ *
+ *  Revision 1.28  2006/02/16 15:11:00  ambrmi09
  *  Introduced a new component for better and safer useage of the heap.
  *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
  *  far).

@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.12 $
+ *  Current $Revision: 1.13 $
  *******************************************************************/
    
   
@@ -16,8 +16,6 @@
 
 @brief Native Inter-thread Communication
 
-TBD
-
 For in-depth discussions about this component, see \ref
 ITC
 
@@ -26,7 +24,7 @@ ITC
 */
   
 
-/** include files **/
+/*- include files **/
 #include <stdio.h>			    	          	       	   	      	   
 #include <stdlib.h>
 #include <string.h>
@@ -38,7 +36,7 @@ ITC
 #include <tk_ipc.h>
 
 #ifdef ITC /* Should not test at sharp (libfile) version */
-/** local definitions **/
+/*- local definitions **/
 
 #ifdef NDEBUG
 	#define p_bQ(P,Q,R)   ((void)0)
@@ -48,11 +46,11 @@ ITC
 #endif
 /* default settings */
 
-/** external functions **/
+/*- external functions **/
 
-/** external data **/
+/*- external data **/
 
-/** internal functions **/
+/*- internal functions **/
 static void removeBlocked(
 	t_ipc *queue_p, 
 	unsigned int idx);
@@ -68,17 +66,18 @@ static unsigned long uintDiff(
 	unsigned long x2, 
 	unsigned long max);	
 	
-/** public data **/
+/*- public data **/
 
-/** private data **/
+/*- private data **/
 static t_ipc *ipc_array[MAX_NUM_Q];	/* contains pointers to queue structs 			*/
 static ipc_idx;						/* points to the most resently created ITC object*/
 
-/** private functions **/
+/*- private functions **/
 /*******************************************************************************
  * Local debugging tools
  ******************************************************************************/
 
+//------1---------2---------3---------4---------5---------6---------7---------8
 int proveConcistency(unsigned int qid) {
 /* 	Se if you can find exactly as many blocked processes between out and in
 	as there are tokens. */
@@ -104,6 +103,7 @@ int proveConcistency(unsigned int qid) {
 }
 #ifndef NDEBUG			 
 
+//------1---------2---------3---------4---------5---------6---------7---------8
 int no_duplicateBlock(unsigned int qid, unsigned int mark) {
 	tk_tcb_t *checkProc,*refProc = ipc_array[qid]->blocked_procs[mark];
 	unsigned int in = ipc_array[qid]->in_idx;
@@ -118,6 +118,7 @@ int no_duplicateBlock(unsigned int qid, unsigned int mark) {
 	return(TRUE);
 }
 
+//------1---------2---------3---------4---------5---------6---------7---------8
 void p_bQf(int x,int y,unsigned int qid) {
 	
 	unsigned int mark_idx,count = 0;	
@@ -164,6 +165,7 @@ void p_bQf(int x,int y,unsigned int qid) {
  *  RETURNS:
  *		diff
  *****************************************************************************/
+//------1---------2---------3---------4---------5---------6---------7---------8 
 unsigned long uintDiff(
 	unsigned long x1, 
 	unsigned long x2, 
@@ -187,6 +189,7 @@ unsigned long uintDiff(
  *
  */
 
+//------1---------2---------3---------4---------5---------6---------7---------8
 static void removeBlocked(t_ipc *queue_p, unsigned int idx) {
 	unsigned int cp_idx;
 	unsigned int in_idx;
@@ -232,6 +235,7 @@ static void removeBlocked(t_ipc *queue_p, unsigned int idx) {
 	queue_p->token++;
 }
 
+//------1---------2---------3---------4---------5---------6---------7---------8
 static unsigned int findNextEmpySlot() {
 	unsigned int seekcounter = 0;
 	
@@ -253,7 +257,7 @@ static unsigned int findNextEmpySlot() {
  *  RETURNS:
  *
  *****************************************************************************/
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 static unsigned long lock_stage(
 	unsigned long qid, 
 	unsigned long timeout) 
@@ -267,7 +271,7 @@ static unsigned long lock_stage(
 	MySelf = _tk_current_tcb();
 	
 	if ( ipc_array[qid]->token > 0 ) {	/*  */
-		/* Wow, gone tru */
+		/* Wow, gone thru */
 		ipc_array[qid]->token --;
 		return(ERR_OK);
 	}else {
@@ -362,6 +366,7 @@ static unsigned long lock_stage(
  *		ERR_OK 
  *
  *****************************************************************************/
+//------1---------2---------3---------4---------5---------6---------7---------8 
 static unsigned long unlock_stage(
 	unsigned long qid) 
 {	
@@ -447,7 +452,7 @@ static unsigned long unlock_stage(
  *  RETURNS:
  *
  *****************************************************************************/
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 static unsigned long _lock_stage_ny(
    unsigned long qid, 
    unsigned long timeout) 
@@ -556,6 +561,7 @@ static unsigned long _lock_stage_ny(
  *    ERR_OK 
  *
  *****************************************************************************/
+//------1---------2---------3---------4---------5---------6---------7---------8 
 static unsigned long _unlock_stage_ny(
    unsigned long qid) 
 {  
@@ -634,6 +640,7 @@ static unsigned long _unlock_stage_ny(
 /*************************************************************************************************************
  * Public functions
  ************************************************************************************************************ */
+//------1---------2---------3---------4---------5---------6---------7---------8 
 unsigned long tk_itc( void ){
     
     unsigned int i;
@@ -645,7 +652,7 @@ unsigned long tk_itc( void ){
 	}
    return ERR_OK;    	
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long tk_itc_destruct( void ){
 	unsigned long i,j; 
 	
@@ -666,13 +673,13 @@ unsigned long tk_itc_destruct( void ){
 	} 
    return ERR_OK;
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_vcreate(
-   char name[4],         
-   unsigned long flags,  
-   unsigned long count,  
-   unsigned long mmlen,  
-   unsigned long *qid    
+   char name[4],            
+   unsigned long flags,     
+   unsigned long count,     
+   unsigned long mmlen,     
+   unsigned long *qid       
 ){
 	unsigned long rc;
 	
@@ -692,7 +699,7 @@ unsigned long q_vcreate(
 	ipc_array[ipc_idx]->mout_idx 		= 0;
 	return(ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_vdelete(
 	unsigned long qid       /* id */
 ) {
@@ -706,7 +713,7 @@ unsigned long q_vdelete(
 	rc = sm_delete(qid);
 	return (rc);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_vreceive(
 	unsigned long qid,      
 	unsigned long flags,    
@@ -751,7 +758,7 @@ unsigned long q_vreceive(
 	ipc_array[qid]->mout_idx %= ipc_array[qid]->sizeof_q;
 	return(ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_vsend(
 	unsigned long qid,      
 	void *msg_buf,
@@ -792,7 +799,7 @@ unsigned long q_vsend(
 		return(rc);
 	return(ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_create(
    char name[4],         
    unsigned long count,  
@@ -816,7 +823,7 @@ unsigned long q_create(
 	ipc_array[ipc_idx]->mout_idx = 0;
 	return(ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_delete(
 	unsigned long qid       /* id */
 ) {
@@ -826,7 +833,7 @@ unsigned long q_delete(
 	rc = sm_delete(qid);
 	return (rc);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_receive(
 	unsigned long qid,      
 	unsigned long flags,    
@@ -856,7 +863,7 @@ unsigned long q_receive(
 	ipc_array[qid]->mout_idx %= ipc_array[qid]->sizeof_q;
 	return(ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_send(
 	unsigned long qid,      
 	unsigned long msg_buf[4]
@@ -885,7 +892,7 @@ unsigned long q_send(
 		return(rc);
 	return(ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long sm_create(
 	char name[4],           
 	unsigned long count,    
@@ -921,7 +928,7 @@ unsigned long sm_create(
 	*qid = ipc_idx;
 	return (ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long sm_delete(
 	unsigned long qid       /* id */
 ) {
@@ -933,7 +940,10 @@ unsigned long sm_delete(
 	ipc_array[qid] = NULL;
 	return (ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Corresponds to POSIX 1003.1b sm_receive or sm_get              
+*/
 unsigned long sm_p(				/* sm_receive or sm_get */
 	unsigned long qid,      	/* id */
 	unsigned long flags,    	/* attrib */
@@ -953,9 +963,12 @@ unsigned long sm_p(				/* sm_receive or sm_get */
 	rc = lock_stage(qid, timeout);
 	return(rc);
 }
-
-unsigned long sm_v(			/* sm_send or sm_put */
-   unsigned long qid		/* id */
+//------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Corresponds to POSIX 1003.1b sm_send or sm_put                  
+*/
+unsigned long sm_v(			   /* sm_send or sm_put */
+   unsigned long qid		      /* id */
 ) {
 	unsigned long rc;
 		
@@ -979,6 +992,7 @@ unsigned long sm_v(			/* sm_send or sm_put */
   They will however test timeouts and set READY states and such.
    
  ******************************************************************************/
+//------1---------2---------3---------4---------5---------6---------7---------8 
 unsigned long q_vcreate_ny(
    char name[4],         
    unsigned long flags,  
@@ -1004,7 +1018,7 @@ unsigned long q_vcreate_ny(
    ipc_array[ipc_idx]->mout_idx     = 0;
    return(ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_vdelete_ny(
    unsigned long qid       /* id */
 ) {
@@ -1018,7 +1032,7 @@ unsigned long q_vdelete_ny(
    rc = sm_delete(qid);
    return (rc);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_vreceive_ny(
    unsigned long qid,      
    unsigned long flags,    
@@ -1063,7 +1077,7 @@ unsigned long q_vreceive_ny(
    ipc_array[qid]->mout_idx %= ipc_array[qid]->sizeof_q;
    return(ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_vsend_ny(
    unsigned long qid,      
    void *msg_buf,
@@ -1104,7 +1118,7 @@ unsigned long q_vsend_ny(
       return(rc);
    return(ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_create_ny(
    char name[4],         
    unsigned long count,  
@@ -1128,7 +1142,7 @@ unsigned long q_create_ny(
    ipc_array[ipc_idx]->mout_idx = 0;
    return(ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_delete_ny(
    unsigned long qid       /* id */
 ) {
@@ -1138,7 +1152,7 @@ unsigned long q_delete_ny(
    rc = sm_delete(qid);
    return (rc);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_receive_ny(
    unsigned long qid,      
    unsigned long flags,    
@@ -1168,7 +1182,7 @@ unsigned long q_receive_ny(
    ipc_array[qid]->mout_idx %= ipc_array[qid]->sizeof_q;
    return(ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long q_send_ny(
    unsigned long qid,      
    unsigned long msg_buf[4]
@@ -1199,7 +1213,7 @@ unsigned long q_send_ny(
    TK_STI();
    return(ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long sm_create_ny(	  
    char name[4],           
    unsigned long count,    
@@ -1235,7 +1249,7 @@ unsigned long sm_create_ny(
    *qid = ipc_idx;
    return (ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long sm_delete_ny(
    unsigned long qid       /* id */
 ) {
@@ -1247,7 +1261,7 @@ unsigned long sm_delete_ny(
    ipc_array[qid] = NULL;
    return (ERR_OK);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long sm_p_ny(        /* sm_receive or sm_get */
    unsigned long qid,         /* id */
    unsigned long flags,       /* attrib */
@@ -1267,7 +1281,7 @@ unsigned long sm_p_ny(        /* sm_receive or sm_get */
    rc = _lock_stage_ny(qid, timeout);
    return(rc);
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long sm_v_ny(  /* sm_send or sm_put */
    unsigned long qid    /* id */
 ) {
@@ -1284,15 +1298,57 @@ unsigned long sm_v_ny(  /* sm_send or sm_put */
      
    
 }
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 #endif
 
-//------1---------2---------3---------4---------5---------6---------7---------8
+
 /** @defgroup ITC ITC: Native Inter-thread Communication
 @ingroup COMPONENTS
-@brief Inter-thread Communication
+@brief Inter-thread Communication (native)
 
-<em>*Documentation in progress*</em>
+<p>
+The ITC component is TinKers native synchronization component. It
+consists of the normal primitives you would expect. I.e. semaphores and
+queues (but no mutexes). The package doesn't supply a mutex concept at
+the moment.
+</p>
+<p>
+Strictly speaking, all synchronization in any kernel is based around
+<b>one</b> base mechanism, from which all <em>other are derived</em>. In
+TinKer this base mechanism is a semaphore (i.e. a <em>"counting"</em> mutex).
+</p>
+<p>
+In future, We might even consider stripping this component to contain
+<em>only</em> this base mechanism, since all other needs can be handled
+by the \ref PTHREAD and \ref POSIX_RTQUEUES components.
+</p>
+
+@note Avoid using this API in your application, since you will create a
+dependancy towards TinKer. This API is mainly intended for internal
+purposes to be able to implement the \ref PTHREAD and \ref
+POSIX_RTQUEUES components.
+
+The public API in this package is mostly un-documented because it's
+based on a well known API (pSos).
+
+@see http://dr-linux.net/newbase/reference/psosCD/data/html/5070_002/psc_ch01.htm#583402
+
+The only exception are functions with the _ny suffix, which stands for a
+non-yield version of the corresponding function (i.e. the function in
+base-name).
+
+@note When you work with queues, note that no matter if you use variable
+data-length versions or fixed length versions. Data is always
+<b>copied</b>. Only way to screw up, is by using fixed data-length
+queues and then pass references. <b>Don't do that!</b>
+
+For POSIX 1003.1b equivalent functions, the following might serve as a good starting point:
+
+@see http://www.opengroup.org/onlinepubs/009695399/functions/sem_open.html
+
+@todo Fix-length queues need to avoid malloc. Unnecessary time-consuming
+operation. Replace data-field with an array instead (same size as a
+pointer anyway).
 
 */
 
@@ -1303,7 +1359,11 @@ unsigned long sm_v_ny(  /* sm_send or sm_put */
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.12  2006-02-17 21:17:27  ambrmi09
+ *  Revision 1.13  2006-02-19 12:44:33  ambrmi09
+ *  - Documented ITC
+ *  - Started to build up the structure for the \ref PTHREAD component
+ *
+ *  Revision 1.12  2006/02/17 21:17:27  ambrmi09
  *  More doc structure - this time for the new PTHREAD's components
  *
  *  Revision 1.11  2006/02/16 15:11:00  ambrmi09

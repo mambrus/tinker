@@ -1,8 +1,65 @@
+/*!
+@file
+@ingroup PTHREAD
+
+@brief Common headerfile for POSIX 1003.1c (pthreads)
+
+TBD
+
+For in-depth discussions about this component, see \ref
+PTHREAD
+
+@see PTHREAD
+@see COMPONENTS
+*/
+
+
 #ifndef _PTHREAD_H
 #define _PTHREAD_H
 
 //#include <sched.h>
 #include <time.h>
+
+/*! 
+@brief Once Key
+
+Once Key. Threads needing to run \ref pthread_once must pass a reference
+to a shared variable (\ref pthread_once_t_ *once_control) that will
+control weather init function shall be run or not.
+
+@note How you this way can have several init functions and/or execute
+one more than once if needed.
+
+*/
+#define PTHREAD_ONCE_INIT       { FALSE, -1 }  
+
+
+struct pthread_once_t_ {
+  int done;                 //!< indicates if user function executed 
+  long started;             /*!< First thread to increment this value
+                                 to zero executes the user function */
+};
+
+
+
+
+int pthread_create (
+   pthread_t               *thread,
+   const pthread_attr_t    *attr,
+   void *(*start_routine)  (void *),
+   void                    *arg
+);
+
+pthread_t pthread_self (void); 
+
+int pthread_once (
+   pthread_once_t          *once_control,
+   void (*init_routine)    (void)
+);
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+
+
 /*
 The ones not commeted out is implemented by TinKer
 */
@@ -641,11 +698,30 @@ The ones not commeted out is implemented by TinKer
 
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-/** @defgroup PTHREAD PTHREAD: Posix 1003.1c API
+/** @defgroup PTHREAD PTHREAD: POSIX 1003.1c API
 @ingroup COMPONENTS
-@brief Posix 1003.1c API
+@brief POSIX 1003.1c API
 
 <em>*Documentation and implementation in progress*</em>
+
+@note The following types shall be defined as described in <sys/types.h> :
+
+\code
+pthread_attr_t
+pthread_barrier_t
+pthread_barrierattr_t
+pthread_cond_t
+pthread_condattr_t
+pthread_key_t
+pthread_mutex_t
+pthread_mutexattr_t
+pthread_once_t
+pthread_rwlock_t
+pthread_rwlockattr_t
+pthread_spinlock_t
+pthread_t
+\endcode
+
 
 */
 

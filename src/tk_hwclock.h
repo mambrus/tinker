@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.3 $
+ *  Current $Revision: 1.4 $
  *
  *******************************************************************/
    
@@ -15,11 +15,11 @@
 #ifndef TK_HWCLOCK_H
 #define TK_HWCLOCK_H
 
-/** include files **/
+/*- include files **/
 //#include <time.h>
 
 
-/** public definitions **/
+/*- public definitions **/
 
 /*! 
 A 32 bit value (at least) representing the time in HW ticks in the HW clock.
@@ -146,19 +146,19 @@ allready happened.
 //extern int disarmHWclock_       ();
 
 
-/** external data **/
+/*- external data **/
 
-/** internal functions **/
+/*- internal functions **/
 
-/** public data **/
+/*- public data **/
 
-/** private data **/
+/*- private data **/
 
-/** public functions **/
+/*- public functions **/
 
-/** private functions **/
+/*- private functions **/
 
-/** include lower layer **/
+/*- include lower layer **/
 
 #if defined(WIN32) && defined(_MSVC_)
    #error "HW timers not implemented for this target yet"
@@ -183,7 +183,11 @@ allready happened.
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_hwclock.h,v $
- *  Revision 1.3  2006-02-08 18:39:49  ambrmi09
+ *  Revision 1.4  2006-02-19 12:44:33  ambrmi09
+ *  - Documented ITC
+ *  - Started to build up the structure for the \ref PTHREAD component
+ *
+ *  Revision 1.3  2006/02/08 18:39:49  ambrmi09
  *  Improved precision by providing the actual frequency instead of the
  *  theoretical in tk_getHWclock_Quality_CLK1 .
  *

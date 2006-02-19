@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.9 $
+ *  Current $Revision: 1.10 $
  *
  *******************************************************************/
    
@@ -16,8 +16,6 @@
 @ingroup ITC
 
 @brief Native Inter-thread Communication
-
-TBD
 
 For in-depth discussions about this component, see \ref
 ITC
@@ -30,15 +28,15 @@ ITC
 #ifndef tk_ipc_h
 #define tk_ipc_h
 
-/** include files **/
+/*- include files **/
 #include <time.h>
 #include <tk.h>
 
-/** local definitions **/
-#define MAX_BLOCKED_ON_Q    20  /*Max num of proces blocked on queue or sem*/
-#define MAX_NUM_Q           50  /*Max num of semaphores OR queues*/
+/*- local definitions **/
+#define MAX_BLOCKED_ON_Q    20  /*!< Max num of proces blocked on queue or sem*/
+#define MAX_NUM_Q           50  /*!< Max num of semaphores OR queues (i.e. primitives) in total*/
 
-/** Error codes **/
+/*- Error codes **/
 
 /*
 #define ERR_OK              0x00 //!< No error
@@ -57,69 +55,106 @@ ITC
 #define ERR_NOMEM           0x100//!<  No more memory
 #define ERR_BLOCKLIMIT      0x101//!<  Can't block more procs on queue or semaphore
 */
+
+/*!
+Bit flags (or-able), used where ever there is a flag argument. 
+
+@note not all flag combinations make sene for all function calls.
+*/
 typedef enum {
-    WAIT            =0x00,
-    LIMIT           =0x00,
-    FIFO            =0x00,
-    GLOBAL          =0x01,      /* 0 = LOCAL adressable*/
-    PRIOR           =0x02,      /* 0 = FIFO  order relesing of blocked pid:s*/
-    NOLIMIT         =0x04,      /* 0 = numer of messages or tokens ar unlimitted*/  
-    NOWAIT          =0x08       /* If no token or message avaiabe calls to sm_p or*/ 
-                                /* XX_receive will return with error (equals */
-                                /* testing the semaphore)*/
+    WAIT            =0x00,      /*!< Default "value" (=0). OR-ing with this renders in no difference of the flags. Name only defined to make intent of usage clearer to read. The "true" bit that \e will affect the flags is \ref NOWAIT*/
+    LIMIT           =0x00,      /*!< Default "value" (=0). OR-ing with this renders in no difference of the flags. Name only defined to make intent of usage clearer to read. The "true" bit that \e will affect the flags is \ref NOLIMIT*/
+    FIFO            =0x00,      /*!< Default "value" (=0). OR-ing with this renders in no difference of the flags. Name only defined to make intent of usage clearer to read. The "true" bit that \e will affect the flags is \ref PRIOR*/
+    LOCAL           =0x00,      /*!< Default "value" (=0). OR-ing with this renders in no difference of the flags. Name only defined to make intent of usage clearer to read. The "true" bit that \e will affect the flags is \ref GLOBAL*/
+    GLOBAL          =0x01,      /*!< Adressable by other nodes. The opposite, i.e. \ref LOCAL has the value 0. @note TinKer can't handle this ATM*/
+    PRIOR           =0x02,      /*!< Prioritized syncing. I.e. semaphore inherits priority by it's invoking thread. The opposite, \ref FIFO has value 0 and means "fifo"-order relesing of blocked pid:s*/
+    NOLIMIT         =0x04,      /*!< Numer of messages or tokens are unlimitted. The opposite, i.e. \ref LIMIT has the value 0. @note TinKer cant handle this ATM*/  
+    NOWAIT          =0x08       /*!< If no token or message avaiabe when calling to sm_p or
+                                     XX_receive, function will return with error (i.e. equals 
+                                     testing the semaphore)*/
 }ipc_flags_t;
 
 
+/*!
+@brief Type of synch-primitive
 
-typedef enum{SEM, S_QUEUE, V_QUEUE}t_ipctype;
+The synch mechanism is common for all types of synchronizations. But
+higher levels need to know what additional data is attached and how to
+handle them. This will define what kind of primitive is in question.
+*/
+typedef enum{
+   SEM,       //!< The primitive is a semaphore (i.e. a counting mutex)
+   S_QUEUE,   //!< The primitive is a normal queue (fix-length data)
+   V_QUEUE    //!< The primitive is a variable data-length queue (data is of variable length)
+}t_ipctype;
+
+/*!
+@brief Content of fixed-length queues. 
+
+Use fixed length queues to send scalars (i.e. integers, enums e.t.a.).
+@note that the size is limited and should be equal to the largest scalar
+your system will support. 
+*/
 typedef char q_t[4];
+
+/*
+@bried Block to to handle messages of vaiable length
+*/
 typedef struct{
-    void *mb;                   /* The variable length message */
-    unsigned long s;            /* The size of the message */
+    void *mb;                   /*!< @brief The variable length message, 
+                                     i.e. the actual data.*/
+    unsigned long s;            /*!< @brief The size of the message */
 }qv_t;
+
+/*
+@bried Control block for the primitive synchronization mechanism
+*/
 typedef struct {
-    char            name[4];            /* Queue name */
-    int token;                          /* Messages os tokens. 
-                                        /* If = 0, no blocked, no messages */
-                                        /* If > 0, token messages */
-                                        /* If < 0, [token] blocked */
-    unsigned long   flags;              /* Attributes */
-    unsigned long   sizeof_q;           /* Size in indexes */
-    /*unsigned long     sizeof_m;*/         /* Size of every message (qv) */
-    unsigned long   maxSizeof_m;        /* Max size of message (This is stupid ,pSos)*/ 
-    t_ipctype       b_type;
-    tk_tcb_t**        blocked_procs;      /* blocked_procs[MAX_BLOCKED_ON_Q];*/
-    unsigned long   in_idx;             /* Input index for the blocked proc fifo */
-    unsigned long   out_idx;            /* Output index for the blocked proc fifo */
-    unsigned long   min_idx;            /* Input index for the blocked message fifo */
-    unsigned long   mout_idx;           /* Output index for the blocked message fifo */
+    char            name[4];            /*!< @brief Queue name */
+    int token;                          /*!< @brief Messages os tokens. 
+                                             If = 0, no blocked, no messages   
+                                             If > 0, token messages   
+                                             If < 0, [token] blocked */
+    unsigned long   flags;              /*!< @brief Attributes */
+    unsigned long   sizeof_q;           /*!< @brief Size in indexes */
+    unsigned long   maxSizeof_m;        /*!< @brief Max size of message (This is stupid ,pSos)*/ 
+    t_ipctype       b_type;             /*!< @brief Determines what kind of primitive this block handles.*/ 
+    tk_tcb_t**      blocked_procs;      /*!< @brief List of blocked_procs[MAX_BLOCKED_ON_Q];*/
+    unsigned long   in_idx;             /*!< @brief Input index for the blocked proc fifo */
+    unsigned long   out_idx;            /*!< @brief Output index for the blocked proc fifo */
+    unsigned long   min_idx;            /*!< @brief Input index for the blocked message fifo */
+    unsigned long   mout_idx;           /*!< @brief Output index for the blocked message fifo */
+
+    /*!
+    Data of the sync primitive. @note Nothing needed for semaphore (i.e. NULL)
+    */
     union {
-       q_t *q;              /* Table with fixed messages  */
-       qv_t *qv;            /* Table with messages of variable length */
-    }m;                     /* Nothing needed for semaphore           */
+       q_t *q;              /*!< @brief Data with fixed-lengt messages  */
+       qv_t *qv;            /*!< @brief Data with fixed-lengt with messages of variable length */
+    }m;                     
 }t_ipc;
 /* default settings */
 
-/** external functions **/
+/*- external functions **/
 
-/** external data **/
+/*- external data **/
 
-/** internal functions **/
+/*- internal functions **/
 
-/** public data **/
+/*- public data **/
 
-/** private data **/
+/*- private data **/
 
-/** public functions **/
+/*- public functions **/
 
-/** private functions **/
+/*- private functions **/
 
 /*!
 @name Creation and destruction of this component
 
 Use these functions only at boot, and shut-down.
 
-@see COMPONENTS
+@see ITC
 */
 //@{
 unsigned long  tk_itc( void );
@@ -161,151 +196,168 @@ unsigned long  tk_itc_destruct( void );
 
 
 
+/*!
+@name Normal versions of the \ITC API
 
+Normal version of the \ref ITC API
+
+@see ITC
+*/
+//@{
 unsigned long q_vcreate(
-   char name[4],            /*!< name                                       */
-   unsigned long flags,     /*!< attrib                                     */
-   unsigned long count,     /*!< queue size                                 */
-   unsigned long mmlen,     /*!< max message length                         */
-   unsigned long *qid       /*!< id                                         */
+   char name[4],            /*!< <b> name                               </b> */
+   unsigned long flags,     /*!< <b> attrib                             </b> */
+   unsigned long count,     /*!< <b> queue size                         </b> */
+   unsigned long mmlen,     /*!< <b> max message length                 </b> */
+   unsigned long *qid       /*!< <b> id                                 </b> */
 );
 
 unsigned long q_vdelete(
-    unsigned long qid       /*!< id                                         */
+    unsigned long qid       /*!< <b> id                                 </b> */
 );
 
 unsigned long q_vreceive(
-   unsigned long qid,       /*!< id                                         */
-   unsigned long flags,     /*!< attrib                                     */
-   unsigned long timeout,   /*!< timeout in clock ticks !?vafan             */
-   void *msg_buf,           /*!< message buffer                             */
-   unsigned long buf_len,   /*!< The size of your allocated buffer          */
-   unsigned long *msg_len   /*!< The size of the message                    */
+   unsigned long qid,       /*!< <b> id                                 </b> */
+   unsigned long flags,     /*!< <b> attrib                             </b> */
+   unsigned long timeout,   /*!< <b> timeout in clock ticks !?vafan     </b> */
+   void *msg_buf,           /*!< <b> message buffer                     </b> */
+   unsigned long buf_len,   /*!< <b> The size of your allocated buffer  </b> */
+   unsigned long *msg_len   /*!< <b> The size of the message            </b> */
 );
 
 unsigned long q_vsend(
-   unsigned long qid,       /*!< id                                         */
-   void *msg_buf,           /*!< message buffer                             */
-   unsigned long msg_len    /*!< The length of this message                 */
+   unsigned long qid,       /*!< <b> id                                 </b> */
+   void *msg_buf,           /*!< <b> message buffer                     </b> */
+   unsigned long msg_len    /*!< <b> The length of this message         </b> */
 );
 
 unsigned long q_create(
-   char name[4],            /*!< name                                       */
-   unsigned long count,     /*!< queue size                                 */
-   unsigned long flags,     /*!< attrib                                     */
-   unsigned long *qid       /*!< id                                         */
+   char name[4],            /*!< <b> name                               </b> */
+   unsigned long count,     /*!< <b> queue size                         </b> */
+   unsigned long flags,     /*!< <b> attrib                             </b> */
+   unsigned long *qid       /*!< <b> id                                 </b> */
 );
 
 unsigned long q_delete(
-    unsigned long qid       /*!< id                                         */
+    unsigned long qid       /*!< <b> id                                 </b> */
 );
 
 unsigned long q_receive(
-   unsigned long qid,       /*!< id                                         */
-   unsigned long flags,     /*!< attrib                                     */
-   unsigned long timeout,   /*!< timeout in clock ticks !?vafan             */
-   unsigned long msg_buf[4] /*!< message buffer                             */
+   unsigned long qid,       /*!< <b> id                                 </b> */
+   unsigned long flags,     /*!< <b> attrib                             </b> */
+   unsigned long timeout,   /*!< <b> timeout in clock ticks !?vafan     </b> */
+   unsigned long msg_buf[4] /*!< <b> message buffer                     </b> */
 );
 
 unsigned long q_send(
-   unsigned long qid,       /*!< id                                         */
-   unsigned long msg_buf[4] /*!< message buffer                             */
+   unsigned long qid,       /*!< <b> id                                 </b> */
+   unsigned long msg_buf[4] /*!< <b> message buffer                     </b> */
 );
 
 unsigned long sm_create(
-   char name[4],            /*!< name                                       */
-   unsigned long count,     /*!< initial number of tokens                   */
-   unsigned long flags,     /*!< attrib                                     */
-   unsigned long *qid       /*!< id                                         */
+   char name[4],            /*!< <b> name                               </b> */
+   unsigned long count,     /*!< <b> initial number of tokens           </b> */
+   unsigned long flags,     /*!< <b> attrib                             </b> */
+   unsigned long *qid       /*!< <b> id                                 </b> */
 );
 
 unsigned long sm_delete(
-   unsigned long pid        /*!< id                                         */
+   unsigned long pid        /*!< <b> id                                 </b> */
 );
 
-unsigned long sm_p(         /*!< sm_receive or sm_get                       */
-   unsigned long qid,       /*!< id                                         */
-   unsigned long flags,     /*!< attrib                                     */
-   unsigned long timeout    /*!< timeout in clock ticks !?vafan             */
+unsigned long sm_p(         /*!< <b> sm_receive or sm_get               </b> */
+   unsigned long qid,       /*!< <b> id                                 </b> */
+   unsigned long flags,     /*!< <b> attrib                             </b> */
+   unsigned long timeout    /*!< <b> timeout in clock ticks !?vafan     </b> */
 );
 
-unsigned long sm_v(         /*!< sm_send or sm_put                          */
-   unsigned long qid        /*!< id                                         */
+unsigned long sm_v(         /*!< <b> sm_send or sm_put                  </b> */
+   unsigned long qid        /*!< <b> id                                 </b> */
 );
+//@}
 
-/* Non-yield versions of the same API - to be used by ISRs or in PREEPTABLE versions of kernel */
 
+
+/*!
+@name Non-yield versions of the \ITC API
+
+Non-yield versions of the same API - to be used by ISRs or in PREEPTABLE
+versions of kernel
+
+@see ITC
+*/
+//@{
 unsigned long q_vcreate_ny(
-   char name[4],            /*!< name                                       */
-   unsigned long flags,     /*!< attrib                                     */
-   unsigned long count,     /*!< queue size                                 */
-   unsigned long mmlen,     /*!< max message length                         */
-   unsigned long *qid       /*!< id                                         */
+   char name[4],            /*!< <b> name                               </b> */
+   unsigned long flags,     /*!< <b> attrib                             </b> */
+   unsigned long count,     /*!< <b> queue size                         </b> */
+   unsigned long mmlen,     /*!< <b> max message length                 </b> */
+   unsigned long *qid       /*!< <b> id                                 </b> */
 );
 
 unsigned long q_vdelete_ny(
-    unsigned long qid       /*!< id                                         */
+    unsigned long qid       /*!< <b> id                                 </b> */
 );
 
 unsigned long q_vreceive_ny(
-   unsigned long qid,       /*!< id                                         */
-   unsigned long flags,     /*!< attrib                                     */
-   unsigned long timeout,   /*!< timeout in clock ticks !?vafan             */
-   void *msg_buf,           /*!< message buffer                             */
-   unsigned long buf_len,   /*!< The size of your allocated buffer          */
-   unsigned long *msg_len   /*!< The size of the message                    */
+   unsigned long qid,       /*!< <b> id                                 </b> */
+   unsigned long flags,     /*!< <b> attrib                             </b> */
+   unsigned long timeout,   /*!< <b> timeout in clock ticks !?vafan     </b> */
+   void *msg_buf,           /*!< <b> message buffer                     </b> */
+   unsigned long buf_len,   /*!< <b> The size of your allocated buffer  </b> */
+   unsigned long *msg_len   /*!< <b> The size of the message            </b> */
 );
 
 unsigned long q_vsend_ny(
-   unsigned long qid,       /*!< id                                         */
-   void *msg_buf,           /*!< message buffer                             */
-   unsigned long msg_len    /*!< The length of this message                 */
+   unsigned long qid,       /*!< <b> id                                 </b> */
+   void *msg_buf,           /*!< <b> message buffer                     </b> */
+   unsigned long msg_len    /*!< <b> The length of this message         </b> */
 );
 
 unsigned long q_create_ny(
-   char name[4],            /*!< name                                       */
-   unsigned long count,     /*!< queue size                                 */
-   unsigned long flags,     /*!< attrib                                     */
-   unsigned long *qid       /*!< id                                         */
+   char name[4],            /*!< <b> name                               </b> */
+   unsigned long count,     /*!< <b> queue size                         </b> */
+   unsigned long flags,     /*!< <b> attrib                             </b> */
+   unsigned long *qid       /*!< <b> id                                 </b> */
 );
 
 unsigned long q_delete_ny(
-    unsigned long qid       /*!< id                                         */
+    unsigned long qid       /*!< <b> id                                 </b> */
 );
 
 unsigned long q_receive_ny(
-   unsigned long qid,       /*!< id                                         */
-   unsigned long flags,     /*!< attrib                                     */
-   unsigned long timeout,   /*!< timeout in clock ticks !?vafan             */
-   unsigned long msg_buf[4] /*!< message buffer                             */
+   unsigned long qid,       /*!< <b> id                                 </b> */
+   unsigned long flags,     /*!< <b> attrib                             </b> */
+   unsigned long timeout,   /*!< <b> timeout in clock ticks !?vafan     </b> */
+   unsigned long msg_buf[4] /*!< <b> message buffer                     </b> */
 );
 
 unsigned long q_send_ny(
-   unsigned long qid,       /*!< id                                         */
-   unsigned long msg_buf[4] /*!< message buffer                             */
+   unsigned long qid,       /*!< <b> id                                 </b> */
+   unsigned long msg_buf[4] /*!< <b> message buffer                     </b> */
 );
 
 unsigned long sm_create_ny(
-   char name[4],            /*!< name                                       */
-   unsigned long count,     /*!< initial number of tokens                   */
-   unsigned long flags,     /*!< attrib                                     */
-   unsigned long *qid       /*!< id                                         */
+   char name[4],            /*!< <b> name                               </b> */
+   unsigned long count,     /*!< <b> initial number of tokens           </b> */
+   unsigned long flags,     /*!< <b> attrib                             </b> */
+   unsigned long *qid       /*!< <b> id                                 </b> */
 );
 
 unsigned long sm_delete_ny(
-   unsigned long pid        /*!< id                                         */
+   unsigned long pid        /*!< <b> id                                 </b> */
 );
 
-unsigned long sm_p_ny(         /*!< sm_receive or sm_get                       */
-   unsigned long qid,       /*!< id                                         */
-   unsigned long flags,     /*!< attrib                                     */
-   unsigned long timeout    /*!< timeout in clock ticks !?vafan             */
+unsigned long sm_p_ny(         
+   unsigned long qid,       /*!< <b> id                                 </b> */
+   unsigned long flags,     /*!< <b> attrib                             </b> */
+   unsigned long timeout    /*!< <b> timeout in clock ticks !?vafan     </b> */
 );
 
-unsigned long sm_v_ny(         /*!< sm_send or sm_put                          */
-   unsigned long qid        /*!< id                                         */
+unsigned long sm_v_ny(         
+   unsigned long qid        /*!< <b> id                                 </b> */
 );
-
+//@}
 
 #endif
 
@@ -314,7 +366,11 @@ unsigned long sm_v_ny(         /*!< sm_send or sm_put                          *
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.9  2006-02-17 21:17:26  ambrmi09
+ *  Revision 1.10  2006-02-19 12:44:33  ambrmi09
+ *  - Documented ITC
+ *  - Started to build up the structure for the \ref PTHREAD component
+ *
+ *  Revision 1.9  2006/02/17 21:17:26  ambrmi09
  *  More doc structure - this time for the new PTHREAD's components
  *
  *  Revision 1.8  2006/02/16 15:11:00  ambrmi09

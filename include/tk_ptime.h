@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.4 $
+ *  Current $Revision: 1.5 $
  *
  *******************************************************************/
   
@@ -51,11 +51,11 @@ PTIMER
 #ifndef TK_PTIMER_H
 #define TK_PTIMER_H
 
-/** include files **/
+/*- include files **/
 //#include <time.h>
 
 
-/** public definitions **/
+/*- public definitions **/
 
 /*!
 @name Protocol macros
@@ -101,9 +101,9 @@ typedef enum{
                        these indexes can be determined by name */
 }e_timerHW_protIdx;
 
-/** local definitions **/
+/*- local definitions **/
 
-/** Error codes **/
+/*- Error codes **/
 
 //#define ERR_OK             	0x00 /*!< No error */
 //#define ERR_UNDEF_PTIMER   	0x02 /*!< No such or invalid ptimer */
@@ -130,19 +130,19 @@ typedef struct ptimer_s{
 
 
 
-/** default settings **/
+/*- default settings **/
 
-/** external functions **/
+/*- external functions **/
 
-/** external data **/
+/*- external data **/
 
-/** internal functions **/
+/*- internal functions **/
 
-/** public data **/
+/*- public data **/
 
-/** private data **/
+/*- private data **/
 
-/** public functions **/
+/*- public functions **/
 
 /*!
 @name Creation and destruction of this component
@@ -178,7 +178,7 @@ unsigned long  tk_ptimer_awake  ( unsigned int  tid );
 unsigned long  tk_ptimer_sleep  ( unsigned int  tid, time_t *relTime );
 //@}
 
-/** private functions **/
+/*- private functions **/
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
@@ -282,7 +282,11 @@ digraph ptime_main {
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_ptime.h,v $
- *  Revision 1.4  2006-02-17 21:17:26  ambrmi09
+ *  Revision 1.5  2006-02-19 12:44:33  ambrmi09
+ *  - Documented ITC
+ *  - Started to build up the structure for the \ref PTHREAD component
+ *
+ *  Revision 1.4  2006/02/17 21:17:26  ambrmi09
  *  More doc structure - this time for the new PTHREAD's components
  *
  *  Revision 1.3  2006/02/16 15:11:00  ambrmi09

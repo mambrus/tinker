@@ -2,7 +2,7 @@
 @file
 @ingroup POSIX_RT
 
-@brief RT semaphores - Posix 1003.1b API
+@brief RT semaphores - POSIX 1003.1b API
 
 TBD
 
@@ -15,9 +15,9 @@ POSIX_RT
 
 
 
-/** @defgroup POSIX_RT POSIX_RT: Posix 1003.1b API
+/** @defgroup POSIX_RT POSIX_RT: POSIX 1003.1b API
 @ingroup PTHREAD
-@brief RT semaphores - Posix 1003.1b API
+@brief RT semaphores - POSIX 1003.1b API
 
 <em>*Documentation and implementation in progress*</em>
 

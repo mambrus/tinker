@@ -18,7 +18,7 @@ KMEM
 
 #include <stddef.h>  //Needed for size_t
 
-/** Error codes **/
+/*- Error codes **/
 //#define ERR_UNDEF_HEAPID      0x02 /*!< No such or invalid \ref heap_t "heap" */
 //#define ERR_NOMEM             0x03 /*!< Can't allocate memory */
 
@@ -257,7 +257,11 @@ both of these functions.
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk_mem.h,v $
- *  Revision 1.4  2006-02-17 21:17:26  ambrmi09
+ *  Revision 1.5  2006-02-19 12:44:33  ambrmi09
+ *  - Documented ITC
+ *  - Started to build up the structure for the \ref PTHREAD component
+ *
+ *  Revision 1.4  2006/02/17 21:17:26  ambrmi09
  *  More doc structure - this time for the new PTHREAD's components
  *
  *  Revision 1.3  2006/02/17 20:26:56  ambrmi09

@@ -7,7 +7,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.3 $
+ *  Current $Revision: 1.4 $
  *
  *******************************************************************/
    
@@ -15,24 +15,24 @@
 #ifndef tk_sysqueues_h
 #define tk_sysqueues_h
 
-/** include files **/
+/*- include files **/
 
-/** local definitions **/
+/*- local definitions **/
 
-/** Error codes **/
+/*- Error codes **/
 
 /*  default settings */
 
-/** external functions **/
+/*- external functions **/
 
-/** external data **/
+/*- external data **/
 
-/** internal functions **/
+/*- internal functions **/
 
 
-/** private data **/
+/*- private data **/
 
-/** public declarations **/
+/*- public declarations **/
 typedef enum {
    Q_HW_TIMER_EVENT,  /*!< This special Q is to be used by HW clock to notify 
                       the ptime component that some sort of event has happened 
@@ -48,10 +48,10 @@ typedef enum {
    TK_NUMBER_OF_SYSQ             
 }sysq_name_t;
 
-/** public data **/
+/*- public data **/
 extern unsigned long tk_sys_queues[TK_NUMBER_OF_SYSQ];
 
-/** private functions **/
+/*- private functions **/
 unsigned long _tk_create_system_queues();
 
 
@@ -65,7 +65,11 @@ unsigned long _tk_create_system_queues();
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_sysqueues.h,v $
- *  Revision 1.3  2006-02-02 15:51:02  ambrmi09
+ *  Revision 1.4  2006-02-19 12:44:33  ambrmi09
+ *  - Documented ITC
+ *  - Started to build up the structure for the \ref PTHREAD component
+ *
+ *  Revision 1.3  2006/02/02 15:51:02  ambrmi09
  *  A lot of thought has been invested into the new PTIME component. Had to
  *  change things even in the systime parts (integrated in the SHEDUL
  *  component) to make it more generic. Think this will be really nice when
