@@ -186,11 +186,16 @@ int pthread_once (
 
 @todo The "once lock" is brutal. It will potentially lock on all accesses, even by threads involved with anuther once_control. Either replace with a rw_lock (TBD) or an array of once locks.
 
+<p><b>Go gack to</b> \ref COMPONENTS</p>
+
   
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: pthread_sched.c,v $
- *  Revision 1.1  2006-02-19 22:12:07  ambrmi09
+ *  Revision 1.2  2006-02-20 15:22:01  ambrmi09
+ *  Documentation stuff. No code changes.
+ *
+ *  Revision 1.1  2006/02/19 22:12:07  ambrmi09
  *  CO of missed files
  *
  *  

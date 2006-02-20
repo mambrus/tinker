@@ -9,10 +9,13 @@
  * Notes:      Todo: Prioritize messages with qsort ( timestamp+prio = orderby)
  *
  * Modifications:
- * Current $Revision: 1.3 $
+ * Current $Revision: 1.4 $
  *
  * $Log: mqueue.c,v $
- * Revision 1.3  2006-02-19 22:00:38  ambrmi09
+ * Revision 1.4  2006-02-20 15:22:00  ambrmi09
+ * Documentation stuff. No code changes.
+ *
+ * Revision 1.3  2006/02/19 22:00:38  ambrmi09
  * Major brake-through!!! First working attempt with crude pThreads and
  * POSIX RT queues works. (jihaa) :=D. Wow
  *
@@ -31,7 +34,12 @@
 
 @brief RT queues - POSIX 1003.1b API
 
-TBD
+\code
+This file was donated courtesy of the Zoi project (year 2000, 
+SIEMENS Elema). It was originally written as a wrapper for
+pThreads-win32, to give Windows threads the ability of POSIX RT queues.
+\endcode
+
 
 For in-depth discussions about this component, see \ref
 POSIX_RT
@@ -671,8 +679,14 @@ static void sortByPrio( QueueD *Q ){
 
 /** @defgroup POSIX_RT POSIX_RT: POSIX 1003.1b API
 @ingroup PTHREAD
-@brief RT queues - POSIX 1003.1b API
+@brief RT queues and semaphores - POSIX 1003.1b API
 
 <em>*Documentation and implementation in progress*</em>
+
+Good references about the API:
+@see http://www.opengroup.org/onlinepubs/009695399/idx/im.html (look for functions starting with mq_)
+@see http://www.opengroup.org/onlinepubs/009695399/idx/is.html (look for functions starting with sem_)
+
+<p><b>Go gack to</b> \ref COMPONENTS</p>
 
 */

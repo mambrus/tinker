@@ -6,10 +6,23 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.30 $
+ *  Current $Revision: 1.31 $
  *
  *******************************************************************/
   
+/*!
+@file
+@ingroup SCHED
+
+@brief Tinker inner-most \e"guts"
+
+This comonent is not selectable as the others normally are
+
+For in-depth discussions about this component, see \ref
+SCHED
+
+@see COMPONENTS
+*/
 
 /*- include files **/
 #include <stdio.h>                                                      
@@ -808,7 +821,15 @@ void Test_scheduler( void ){
 }
 */
 
+/** @defgroup SCHED SCHED: TinKer scheduler
+@ingroup COMPONENTS
 
+@brief TinKer scheduler - the \e"guts" & internals of the TinKer kernel
+
+*-* Documentation of this component is work in progress *-*
+
+<p><b>Go gack to</b> \ref COMPONENTS</p>
+*/
 
 
 
@@ -816,7 +837,10 @@ void Test_scheduler( void ){
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.30  2006-02-19 22:00:38  ambrmi09
+ *  Revision 1.31  2006-02-20 15:22:01  ambrmi09
+ *  Documentation stuff. No code changes.
+ *
+ *  Revision 1.30  2006/02/19 22:00:38  ambrmi09
  *  Major brake-through!!! First working attempt with crude pThreads and
  *  POSIX RT queues works. (jihaa) :=D. Wow
  *

@@ -1,11 +1,10 @@
 /*!
 @file
-@ingroup PTHREAD_SCHED
+@ingroup PTHREAD_SYNC
 
-@brief POSIX 1003.1c API - Scheduling and thread management
+@brief POSIX 1003.1c API - Thread synchronisation
 
-The content of this source-file implement thread management. I.e.
-starting/stopping, setting attributes of the threads themselves.
+The content of this source-file implement thread syncronisation. I.e. mutex, rw-lock e.t.a,
 
 For in-depth discussions about this component, see \ref
 PTHREAD_SYNC
@@ -41,12 +40,17 @@ Syncronisation between threads, i.e.
 - Event handling
 - Timout event handling - special case of the above
 
+<p><b>Go gack to</b> \ref COMPONENTS</p>
 
+*/
   
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: pthread_sync.c,v $
- *  Revision 1.1  2006-02-19 22:12:07  ambrmi09
+ *  Revision 1.2  2006-02-20 15:22:01  ambrmi09
+ *  Documentation stuff. No code changes.
+ *
+ *  Revision 1.1  2006/02/19 22:12:07  ambrmi09
  *  CO of missed files
  *
  *  

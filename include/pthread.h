@@ -723,8 +723,9 @@ unsigned long tk_pthread_sync_destruct( void );
 
 <em>*Documentation and implementation in progress*</em>
 
-A very good reference to the pThread API
+Very good references to the pThread API
 @see http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/pthread.3.html
+@see http://www.opengroup.org/onlinepubs/009695399/idx/threads.html
 
 @note The following types shall be defined as described in <sys/types.h> :
 
@@ -744,6 +745,7 @@ pthread_spinlock_t
 pthread_t
 \endcode
 
+<p><b>Go gack to</b> \ref COMPONENTS</p>
 
 */
 

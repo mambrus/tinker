@@ -4,7 +4,12 @@
 
 @brief RT semaphores - POSIX 1003.1b API
 
-TBD
+*-* Doc in progress *-*
+
+<p>
+A very hastily done wrapper done in 1hr. Probably needs a lot of more work.
+</p>
+
 
 For in-depth discussions about this component, see \ref
 POSIX_RT
@@ -91,16 +96,3 @@ int sem_post (sem_t * sem){
       return EINVAL;
 
 }
-
-
-/** @defgroup POSIX_RT POSIX_RT: POSIX 1003.1b API
-@ingroup PTHREAD
-@brief RT semaphores - POSIX 1003.1b API
-
-<em>*Documentation and implementation in progress*</em>
-
-<p>
-A very hastily done wrapper done in 1hr. Probably needs a lot of more work.
-</p>
-
-*/

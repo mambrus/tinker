@@ -311,3 +311,122 @@ Go back to: @ref main
 */
 
 //------1---------2---------3---------4---------5---------6---------7---------8
+
+/** 
+@defgroup Blog060220 060220
+@ingroup BlogMichael
+
+@brief Yay! The POSIX components are hooked in and working
+
+<HR>
+
+This was actually a sort of miss-hap. I didn't intend to implement this
+at this time since TinKer itself needs more maturity and proven
+stability. But I was rather annoyed about not being able to implement
+the \ref PTIMER component using POSIX API that I just had to see if it
+would be possible. So we have now the new component: \ref PTHREAD
+
+So I implemented only the necessary functions to be able to compile and
+run the code I mentioned before. This code is now part of yet another
+component: \ref POSIX_RT
+
+With this in place you can now write the beautiful code below, which is
+completely transparent between TinKer, Linux (kernel >= 2.6.8),
+Win32-pThreads (i.e. Windows) and several more OSes implementing the
+standards.
+
+The only thing you need to do is renaming function \b root to \b main 
+and it will compile and run under mentioned OSes.
+
+
+\code 
+#include <stdio.h> 
+#include <stdlib.h>
+#include <assert.h>  
+#include <pthread.h> 
+#include <mqueue.h> 
+
+#define QNAME "/My/POSIX/queue.name" 
+
+
+
+void *thread2(void *inpar ){ 
+   int         loop_cntr            = 0; 
+   int         loop_cntr2           = 0; 
+   mqd_t       q; 
+   int         rc; 
+   char        msg_buf[16]; 
+
+   q = mq_open( QNAME, O_WRONLY, 0 ,NULL); 
+   if (q==(mqd_t)-1){ 
+      assert("Queue opening for writing faliure" == NULL);      
+   } 
+   
+   while (TRUE) {               
+      sleep(1); 
+      loop_cntr++; 
+      if (loop_cntr==250){ 
+         loop_cntr2++; 
+         loop_cntr = 0; 
+         
+         msg_buf[0] = loop_cntr2; 
+         rc = mq_send(q, msg_buf, sizeof(msg_buf), 5); 
+         if (rc==(mqd_t)-1){ 
+            assert("Queue writing faliure" == NULL); 
+         } 
+      } 
+   } 
+   return 1; 
+} 
+
+void *thread3(void *inpar){ 
+   char        msg_buf[16]; 
+   mqd_t       q; 
+   int         rc; 
+
+   q = mq_open( QNAME, O_RDONLY, 0 ,NULL); 
+   if (q==(mqd_t)-1){ 
+      assert("Queue opening for reading faliure" == NULL); 
+   } 
+
+   while (TRUE) {               
+      rc = mq_receive(q, msg_buf, sizeof(msg_buf), NULL); 
+      if (rc==(mqd_t)-1){ 
+         assert("Queue reading faliure\n" == NULL); 
+      } 
+      printf("Received: %d of length %d\n",msg_buf[0],rc); 
+   } 
+   return 1; 
+} 
+
+void root(void){ 
+   pthread_t T2_Thid,T3_Thid; 
+   int i; 
+   mqd_t q;   
+   struct mq_attr qattr = {16,100}; 
+
+   printf("Hello world or TinKer targets\n"); 
+
+   q = mq_open( QNAME, O_CREAT, 0 , &qattr); 
+   if (q==(mqd_t)-1){ 
+      assert("Queue opening for creation faliure" == NULL); 
+   } 
+
+   assert (pthread_create(&T2_Thid, NULL, thread2, 0) == 0); 
+   assert (pthread_create(&T3_Thid, NULL, thread3, 0) == 0); 
+
+   printf("Root started\n"); 
+   while (TRUE) {      
+      sleep(3000); 
+   } 
+
+   mq_close(q);   
+} 
+
+\endcode
+
+Go back to: @ref main
+
+*/
+
+//------1---------2---------3---------4---------5---------6---------7---------8

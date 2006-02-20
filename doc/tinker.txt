@@ -1,7 +1,7 @@
 /** 
 @mainpage TinKer - A Tiny Kernel for small embedded targets
 
-   This is the main-page for TinKer - A Tiny Kernel for small embedded
+   This is the internal documentation for TinKer - A Tiny Kernel for small embedded
    targets
 
    @section INTRODUCTION INTRODUCTION
@@ -17,7 +17,7 @@
 
    @section OTHER Other info
     
-      - TinKers main page -> <A HREF="http://kato.homelinux.org/~tinker/index.html">Link</A>
+      - TinKers home-page -> <A HREF="http://kato.homelinux.org/~tinker/index.html">Link</A>
 
 */
 
@@ -35,18 +35,89 @@
       You select/deselect each component by a YES or NO in the section 
       <b>//Include components</b> in tk.h.
        
-      - SCHED          - Always selected, you cant select or deselect this one. This contains 
-                         the inner most part of the kernel.
+      - \ref SCHED          - Always selected, you cant select or deselect this one. This contains 
+                              the inner most part of the kernel.
 
-      - ITC            - Native Inter thread
-      communication/synchronization (pSos API)
+      - \ref KMEM           - A better malloc
 
-      - PTIMER         - Preemptive timers. Not all targets support this so you might need 
-                         to disable this component.
+      - \ref ITC            - Native Inter thread
+                              communication/synchronization (pSos API)
 
-      - PTHREAD_SCHED  - pThreads API regarding the threads
+      - \ref PTIMER         - Preemptive timers. Not all targets support this so you might need 
+                              to disable this component.
 
-      - PTHREAD_XXX    - pThreads API... and so on (TBD) maybe SEM, TIME or just one big one?
+      - \ref PTHREAD_SCHED  - pThreads API regarding the threads
+
+      - \ref PTHREAD_SYNC   - pThreads API... and so on (TBD) maybe SEM, TIME or just one big one?
+
+      - \ref POSIX_RT       - POSIX 1003.1b (RT extensions)
+
+<p>
+Below is a graph with the \e components implemented so far, and their place
+logical in the structure. 
+
+@note The blocks are \b click-able and will short-cut you to each
+components root-page.
+
+@dot
+digraph components {
+   node [
+      shape=record, 
+      style=filled, 
+      fillcolor=yellow, 
+      fontname=Helvetica, 
+      nojustify="true", 
+      fontsize=10.0 
+   ];
+
+   edge [
+      arrowhead=none, 
+      arrowtail=normal,
+      color=black, 
+      fontname=Helvetica,  
+      nojustify="true", 
+      fontsize=10.0 
+   ];
+   graph [
+      rankdir = "TB", 
+      fontname=Helvetica,  
+      nojustify="true", 
+      fontsize=10.0    
+   ];
+   
+   TinKer           [URL="\ref main"]
+   KMEM             [URL="\ref KMEM"]
+   SCHED            [URL="\ref SCHED"]
+   ITC              [URL="\ref ITC"]
+   PTIMER           [URL="\ref PTIMER"]
+   PTHREAD          [URL="\ref PTHREAD"]
+   PTHREAD_SCHED    [URL="\ref PTHREAD_SCHED"]
+   PTHREAD_SYNC     [URL="\ref PTHREAD_SYNC"]
+   POSIX_RT         [URL="\ref POSIX_RT"]
+
+   TinKer   -> SCHED;
+   TinKer   -> KMEM;
+   SCHED    -> ITC;
+   ITC      -> PTIMER;
+   SCHED    -> PTHREAD;
+   PTHREAD  -> PTHREAD_SCHED;
+   PTHREAD  -> PTHREAD_SYNC;
+   PTHREAD  -> <*>;
+   <*>      -> POSIX_RT;
+
+   edge [
+      arrowhead=normal, 
+      arrowtail=none,
+      style=dashed,
+      color=purple 
+   ];
+   /*
+   POSIX_RT -> ITC;
+   PTHREAD_SYNC -> ITC;
+   */
+        
+}
+@enddot
 
 
 

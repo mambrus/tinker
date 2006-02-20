@@ -6,18 +6,11 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.5 $
+ *  Current $Revision: 1.6 $
  *
  *******************************************************************/
   
   
-
-/*! class B */
-//class B {};
-
-/*! class C */
-//class C {};
-
 /*!
 @file
 @ingroup PTIMER
@@ -30,19 +23,6 @@ For in-depth discussions XXX \ref
 PTIMER
 
 @see PTIMER
-
-  Class relations expressed via an inline dot graph:
-  \dot
-  digraph example {
-      node [shape=record, fontname=Helvetica, fontsize=10];
-      b [ label="class B" URL="\ref B"];
-      c [ label="class C" URL="\ref C"];
-      b -> c [ arrowhead="open", style="dashed" ];
-  }
-  \enddot
-  Note that the classes in the above graph are clickable 
-  (in the HTML output).
-
 
 */
    
@@ -183,98 +163,6 @@ unsigned long  tk_ptimer_sleep  ( unsigned int  tid, time_t *relTime );
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 
-/** @defgroup PTIMER PTIMER: Pre-emptive timers for TinKer.
-@ingroup COMPONENTS 
-@brief This package support pre-emptive timer events for TinKer
-
-The main idea behind this component is... APA
-
-@dot
-digraph ptime_main {
-   node [
-      shape=record, 
-      style=filled, 
-      fillcolor=yellow, 
-      fontname=Helvetica, 
-      nojustify="true", 
-      fontsize=10.0 
-   ];
-   
-   edge [
-      dir=both, 
-      color="blue:red", 
-      fontname=Helvetica,  
-      nojustify="true", 
-      fontsize=10.0 
-   ];
-   
-   graph [
-      rankdir = "TB", 
-      fontname=Helvetica,  
-      nojustify="true", 
-      fontsize=10.0    
-   ]; 
-    
-   tmr_array [ orientation=73.0, label="{\
-      <a0> T#0 st | \
-      <a1> T#1 st | \
-      <a2> T#2 st | \
-      <a3> T#3 st | \
-      <a..> .. |\
-      <aN> T#N st }"];
-
-   tmr_ele0 [label="{<L> L |<tmr_ref> T#0 |<R> R}"]
-   tmr_ele1 [label="{<L> L |<tmr_ref> T#1 |<R> R}"]
-   tmr_ele2 [label="{<L> L |<tmr_ref> T#2 |<R> R}"]   
-   tmr_ele3 [label="{<L> L |<tmr_ref> T#3 |<R> R}"]
-
-
-   tmr_ele0:tmr_ref:w -> tmr_array:a0:w ;  
-   tmr_ele1:tmr_ref:w -> tmr_array:a1:w ;
-   tmr_ele2:tmr_ref:w -> tmr_array:a2:w ;
-   tmr_ele3:tmr_ref:w -> tmr_array:a3:w ;
-
-
-
-   head -> tmr_ele2:L:w;
-   tmr_ele2:R:e -> tmr_ele1:L:w;     
-   tmr_ele1:R:e -> tmr_ele3:L:w;
-   tmr_ele3:R:e -> tmr_ele0:L:w;
-   tmr_ele0:R:e -> tail;
-
-   //head [shape=box, orientation=7.0];
-   head [shape=box];
-   tail [hape=box];
-
-   HWtimer [
-      shape=circle, 
-      fillcolor=lightcoral, 
-      fontcolor=blue
-   ];
-   
-   head -> HWtimer [
-      label="Arm with\n pebbles", 
-      arrowtail=none, 
-      color=red, 
-      fontcolor=red, 
-      style="bold"
-   ]
-   
-   HWtimer -> head [
-      label="Timeout\n event", 
-      arrowtail=none, 
-      color=blue, 
-      fontcolor=blue, 
-      shape=vee, 
-      style=dashed
-   ]
-}
-@enddot
-
-*/
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-
 #endif
 
   
@@ -282,7 +170,10 @@ digraph ptime_main {
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_ptime.h,v $
- *  Revision 1.5  2006-02-19 12:44:33  ambrmi09
+ *  Revision 1.6  2006-02-20 15:22:00  ambrmi09
+ *  Documentation stuff. No code changes.
+ *
+ *  Revision 1.5  2006/02/19 12:44:33  ambrmi09
  *  - Documented ITC
  *  - Started to build up the structure for the \ref PTHREAD component
  *

@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.14 $
+ *  Current $Revision: 1.15 $
  *******************************************************************/
    
   
@@ -1354,6 +1354,8 @@ For POSIX 1003.1b equivalent functions, the following might serve as a good star
 operation. Replace data-field with an array instead (same size as a
 pointer anyway).
 
+<p><b>Go gack to</b> \ref COMPONENTS</p>
+
 */
 
 
@@ -1363,7 +1365,10 @@ pointer anyway).
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.14  2006-02-19 22:00:39  ambrmi09
+ *  Revision 1.15  2006-02-20 15:22:01  ambrmi09
+ *  Documentation stuff. No code changes.
+ *
+ *  Revision 1.14  2006/02/19 22:00:39  ambrmi09
  *  Major brake-through!!! First working attempt with crude pThreads and
  *  POSIX RT queues works. (jihaa) :=D. Wow
  *

@@ -9,14 +9,36 @@
  * Notes:      -
  *
  * Modifications:
- * Current $Revision: 1.1 $
+ * Current $Revision: 1.2 $
  *
  * $Log: mqueue.h,v $
- * Revision 1.1  2006-02-17 21:16:16  ambrmi09
+ * Revision 1.2  2006-02-20 15:22:00  ambrmi09
+ * Documentation stuff. No code changes.
+ *
+ * Revision 1.1  2006/02/17 21:16:16  ambrmi09
  * Initial commit: code donated by the Zoi project (author: Michael Ambrus)
  *
  * 
  *****************************************************************************/
+/*!
+@file
+@ingroup POSIX_RT
+
+@brief RT queues - POSIX 1003.1b API
+
+\code
+This file was donated courtesy of the Zoi project (year 2000,
+SIEMENS Elema). It was originally written as a wrapper for
+pThreads-win32, to give Windows threads the ability of POSIX RT queues.
+\endcode
+
+For in-depth discussions about this component, see \ref
+POSIX_RT
+
+@see POSIX_RT
+@see PTHREAD
+*/
+ 
 #ifndef _MQUEUE_H
 #define _MQUEUE_H
 /*****************************************************************************
