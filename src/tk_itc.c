@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.15 $
+ *  Current $Revision: 1.16 $
  *******************************************************************/
    
   
@@ -29,9 +29,11 @@ ITC
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
 
 #define NDEBUG
 #include <tk.h>
+#include "implement_tk.h"
 #include <tk_hwsys.h>
 #include <tk_ipc.h>
 
@@ -1365,7 +1367,15 @@ pointer anyway).
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.15  2006-02-20 15:22:01  ambrmi09
+ *  Revision 1.16  2006-02-20 19:17:15  ambrmi09
+ *  - Made the errno variable thread specific (each thread has it's own)
+ *  - Hid the details of using errno so that setting and reading it looks
+ *    like using a normal variable
+ *  - Extracted some stuff from tk.h that doesn't need to be public
+ *  - Implemented perros and strerror including a storage with all the error
+ *    strings (will go into NV ROM on a embedded system).
+ *
+ *  Revision 1.15  2006/02/20 15:22:01  ambrmi09
  *  Documentation stuff. No code changes.
  *
  *  Revision 1.14  2006/02/19 22:00:39  ambrmi09

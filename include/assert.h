@@ -1,10 +1,10 @@
 //assert macro
 
-#if defined(__CYGWIN32__)  || defined(__CYGWIN__)  || \
-	defined(__GNUC__)      || defined(__USE_GNU)   || \
-	defined(WIN32)         || defined(_BC50_)
+#if   defined(__CYGWIN32__)  || defined(__CYGWIN__)  || \
+      defined(__GNUC__)      || defined(__USE_GNU)   || \
+      defined(WIN32)         || defined(_BC50_)
 
-	#error "DONT USE TINKER'S ASSERT FOR THIS TOOL_CHAIN"
+   #error "DONT USE TINKER'S ASSERT FOR THIS TOOL_CHAIN"
 #endif
 
 //#ifdef NDEBUG

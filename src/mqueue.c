@@ -9,10 +9,18 @@
  * Notes:      Todo: Prioritize messages with qsort ( timestamp+prio = orderby)
  *
  * Modifications:
- * Current $Revision: 1.4 $
+ * Current $Revision: 1.5 $
  *
  * $Log: mqueue.c,v $
- * Revision 1.4  2006-02-20 15:22:00  ambrmi09
+ * Revision 1.5  2006-02-20 19:17:14  ambrmi09
+ * - Made the errno variable thread specific (each thread has it's own)
+ * - Hid the details of using errno so that setting and reading it looks
+ *   like using a normal variable
+ * - Extracted some stuff from tk.h that doesn't need to be public
+ * - Implemented perros and strerror including a storage with all the error
+ *   strings (will go into NV ROM on a embedded system).
+ *
+ * Revision 1.4  2006/02/20 15:22:00  ambrmi09
  * Documentation stuff. No code changes.
  *
  * Revision 1.3  2006/02/19 22:00:38  ambrmi09
@@ -56,7 +64,7 @@ POSIX_RT
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
-//#include <assert.h>
+#include <assert.h>
 #include <pthread.h>
 #include <mqueue.h>
 #include <semaphore.h>

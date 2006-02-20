@@ -15,11 +15,13 @@ PTHREAD_SCHED
 @see PTHREAD
 
 */
-
+#include <tk_ipc.h>
 #include <pthread.h>
 #include <errno.h>
+#include <assert.h>
 #include <tk_ipc.h>
-#include <kernel/src/implement_pthread.h>
+#include "implement_pthread.h"
+#include "implement_tk.h"
 
 unsigned long sem_once;
 
@@ -55,7 +57,7 @@ unsigned long tk_pthread_sched_destruct( void ){
    void *                  arg
 ){
    unsigned int thid;
-   tk_tcb_t     *tk_tcb;
+   struct tcb_t *tk_tcb;
    
    if (attr != NULL){           
       thid = tk_create_thread(
@@ -127,7 +129,7 @@ int pthread_once (
    pthread_once_t          *once_control,
    void (*init_routine) (void)
 ){
-   tk_tcb_t       *tcb;
+   struct tcb_t  *tcb;
    int            need2run = 0;
    unsigned long  rc = ERR_OK;
    
@@ -192,7 +194,15 @@ int pthread_once (
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: pthread_sched.c,v $
- *  Revision 1.2  2006-02-20 15:22:01  ambrmi09
+ *  Revision 1.3  2006-02-20 19:17:14  ambrmi09
+ *  - Made the errno variable thread specific (each thread has it's own)
+ *  - Hid the details of using errno so that setting and reading it looks
+ *    like using a normal variable
+ *  - Extracted some stuff from tk.h that doesn't need to be public
+ *  - Implemented perros and strerror including a storage with all the error
+ *    strings (will go into NV ROM on a embedded system).
+ *
+ *  Revision 1.2  2006/02/20 15:22:01  ambrmi09
  *  Documentation stuff. No code changes.
  *
  *  Revision 1.1  2006/02/19 22:12:07  ambrmi09

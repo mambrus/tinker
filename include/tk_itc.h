@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.11 $
+ *  Current $Revision: 1.12 $
  *
  *******************************************************************/
    
@@ -120,7 +120,7 @@ typedef struct {
     unsigned long   sizeof_q;           /*!< @brief Size in indexes */
     unsigned long   maxSizeof_m;        /*!< @brief Max size of message (This is stupid ,pSos)*/ 
     t_ipctype       b_type;             /*!< @brief Determines what kind of primitive this block handles.*/ 
-    tk_tcb_t**      blocked_procs;      /*!< @brief List of blocked_procs[MAX_BLOCKED_ON_Q];*/
+    struct tcb_t**  blocked_procs;      /*!< @brief List of blocked_procs[MAX_BLOCKED_ON_Q];*/
     unsigned long   in_idx;             /*!< @brief Input index for the blocked proc fifo */
     unsigned long   out_idx;            /*!< @brief Output index for the blocked proc fifo */
     unsigned long   min_idx;            /*!< @brief Input index for the blocked message fifo */
@@ -367,7 +367,15 @@ unsigned long sm_v_ny(
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.11  2006-02-19 22:00:38  ambrmi09
+ *  Revision 1.12  2006-02-20 19:17:14  ambrmi09
+ *  - Made the errno variable thread specific (each thread has it's own)
+ *  - Hid the details of using errno so that setting and reading it looks
+ *    like using a normal variable
+ *  - Extracted some stuff from tk.h that doesn't need to be public
+ *  - Implemented perros and strerror including a storage with all the error
+ *    strings (will go into NV ROM on a embedded system).
+ *
+ *  Revision 1.11  2006/02/19 22:00:38  ambrmi09
  *  Major brake-through!!! First working attempt with crude pThreads and
  *  POSIX RT queues works. (jihaa) :=D. Wow
  *

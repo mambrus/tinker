@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.24 $
+ *  Current $Revision: 1.25 $
  *
  *******************************************************************/
    
@@ -79,15 +79,6 @@ SCHED
 #define TK_ERR_15          0x4000
 #define TK_ERR_16          0x8000
 
-//assert macro
-#ifdef NDEBUG
-#  define assert(p)   ((void)0)
-#else
-#  
-#  define assert(p) ((p) ? (void)0 : (void) _tk_assertfail( \
-                    #p, __FILE__, __LINE__ ) )              
-#endif
-
 
 typedef enum{FALSE,TRUE}BOOL;
 typedef void *start_func_ft(void *);
@@ -96,46 +87,6 @@ typedef start_func_ft   *start_func_f;
 typedef void init_func_ft(void *);
 typedef init_func_ft   *init_func_f;
 
-// The following 2 defines the process status and on what it is blocked.
-// __T = TERM  = Process is waiting for one or more children to terminate
-// _S_ = SLEEP = Process is blocked on timer (sleeping)
-// Q__ = QUEUE = Process is blocked on queue or semafor
-typedef enum {
-   READY=0x0,     _______T=0x1,  ______S_=0x2,  ______ST=0x3,
-   _____Q__=0x4,  _____Q_T=0x5,  _____QS_=0x6,  _____QST=0x7,
-   ZOMBIE=0X80
-}PROCSTATE;
-
-typedef enum{TERM=1,SLEEP=2,QUEUE=4}STATEBITS;
-typedef enum{E_CHILDDEATH, E_TIMER, E_ITC, E_ITC2}wakeE_t;
-
-/*!
-Thread control block (TCB). This structure contains all
-information the kernel needs to know about a thread.
-
-@note the type for various stack pointers. This type is supplied by BSP
-adaptions to cover certain architectures special aspects of a "stack".
-In a 32bit "normal" CPU this is often a char*, but for some obscure MPU:s
-like the C166 family, this is a much more complex structure.
-*/
-
-typedef struct    tk_tcb_t_s{
-   unsigned int   Thid,Gid;             //!< Process ID and Parent ID (Gid)
-   unsigned int   noChilds;            //!< Numb of procs this has created
-   char           name[TK_THREAD_NAME_LEN]; //!< Name of the thread
-   BOOL           isInit;              //!< Memory for stack is allocated
-   PROCSTATE      state;               //!< State of the process
-   stack_t        stack_begin;         //!< First address of stack memory
-   stack_t        curr_sp;             //!< Current stackpointer of this thread
-   size_t         stack_size;          //!< Size of stack
-   unsigned long  stack_crc;           //!< Control value of integrity check
-   clock_t        wakeuptime;          //!< When to wake up if sleeping
-   wakeE_t        wakeupEvent;         //!< Helper variable mainly for ITC
-   start_func_f   start_funct;         //!< Address of the threads entry function. Used ONLY for debugging purposes
-   init_func_f    init_funct;          //!< Support of the pThread <em>"once"</em> concept.
-   void          *prmtRetAddr;         //!< Preempted return adress - used in preempted mode.
-   unsigned int   Prio,Idx;            //!< Helpers, prevent need of lookup
-}tk_tcb_t;
 
 /*- default settings **/
 
@@ -150,8 +101,9 @@ void           _tk_assertfail(    /* emulates __assertfail */
    int line
 );
 
-tk_tcb_t      *_tk_current_tcb( void );
-tk_tcb_t      *_tk_specific_tcb( unsigned int id );
+struct tcb_t  *_tk_current_tcb( void );
+struct tcb_t  *_tk_specific_tcb( unsigned int id );
+int           *_tk_errno();  
 void           _tk_context_switch_to_thread(unsigned int RID,unsigned int SID);
 void           _tk_main( void );
 
@@ -196,7 +148,15 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.24  2006-02-20 15:22:00  ambrmi09
+ *  Revision 1.25  2006-02-20 19:17:14  ambrmi09
+ *  - Made the errno variable thread specific (each thread has it's own)
+ *  - Hid the details of using errno so that setting and reading it looks
+ *    like using a normal variable
+ *  - Extracted some stuff from tk.h that doesn't need to be public
+ *  - Implemented perros and strerror including a storage with all the error
+ *    strings (will go into NV ROM on a embedded system).
+ *
+ *  Revision 1.24  2006/02/20 15:22:00  ambrmi09
  *  Documentation stuff. No code changes.
  *
  *  Revision 1.23  2006/02/19 22:00:38  ambrmi09

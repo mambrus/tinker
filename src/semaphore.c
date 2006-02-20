@@ -20,6 +20,7 @@ POSIX_RT
 
 #include <semaphore.h>
 #include <errno.h>
+#include <assert.h>
 #include <tk_ipc.h>
 
 

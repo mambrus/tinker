@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.31 $
+ *  Current $Revision: 1.32 $
  *
  *******************************************************************/
   
@@ -29,8 +29,10 @@ SCHED
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
 
 #include <tk.h>
+#include "implement_tk.h"
 
 /*!
 @name \COMPONENTS headerfiles
@@ -103,15 +105,7 @@ unsigned int _tk_idle( void *foo );
 
 /*- public data **/
 
-/*! 
-Temporary solution for errno handling. Storage supplied for all (thread UNSAFE)
-
-@see errno
-*/
-int _tk_daft_errno;  
-
-
-/*- private data **/
+ /*- private data **/
 
 int Tk_IntFlagCntr;
 
@@ -187,6 +181,17 @@ tk_tcb_t *_tk_specific_tcb( unsigned int id ){
    return(&proc_stat[id]);
 }
 
+/*! 
+@ingroup kernel_glue
+
+This function will give you access to a threads internal errno variable.
+
+@see errno
+*/
+int *_tk_errno(){
+   return &(proc_stat[active_thread]._errno_);
+} 
+
 /*!
 @ingroup kernel
 
@@ -222,6 +227,7 @@ void tk_create_kernel( void ){
       proc_stat[i].Gid           = 0;
       proc_stat[i].Thid           = 0;
       proc_stat[i].noChilds      = 0;
+      proc_stat[i]._errno_       = 0;
       proc_stat[i].stack_size    = 0;
       STACK_PTR(proc_stat[i].stack_begin)   = 0uL;
       STACK_PTR(proc_stat[i].curr_sp)       = 0uL;
@@ -416,8 +422,9 @@ unsigned int tk_create_thread(
    proc_stat[proc_idx].isInit       = TRUE;
    proc_stat[proc_idx].state        = READY;
    proc_stat[proc_idx].Thid         = proc_idx;    //for future compability with lage Thid:s
-   proc_stat[proc_idx].Gid          = active_thread; //Owned by..
+   proc_stat[proc_idx].Gid          = active_thread; //Owned by..   
    proc_stat[proc_idx].noChilds     = 0;
+   proc_stat[proc_idx]._errno_      = 0;
    proc_stat[proc_idx].stack_size   = stack_size;
    proc_stat[proc_idx].Prio         = prio;
    proc_stat[proc_idx].Idx          = slot_idx;
@@ -732,8 +739,8 @@ void tk_exit( int ec ) {
 @ingroup kernel_glue
 
 Works as the assert macro exept that you have to use the __file_ and __line_
-explicitlly. Typically the assert macro calls this function on targets that do
-not have assert implemented.
+explicitlly. Typically the assert macro will be defined to call this function 
+on targets that do not have assert implemented by TinKer.
 
 */
 void _tk_assertfail(
@@ -837,7 +844,15 @@ void Test_scheduler( void ){
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.31  2006-02-20 15:22:01  ambrmi09
+ *  Revision 1.32  2006-02-20 19:17:14  ambrmi09
+ *  - Made the errno variable thread specific (each thread has it's own)
+ *  - Hid the details of using errno so that setting and reading it looks
+ *    like using a normal variable
+ *  - Extracted some stuff from tk.h that doesn't need to be public
+ *  - Implemented perros and strerror including a storage with all the error
+ *    strings (will go into NV ROM on a embedded system).
+ *
+ *  Revision 1.31  2006/02/20 15:22:01  ambrmi09
  *  Documentation stuff. No code changes.
  *
  *  Revision 1.30  2006/02/19 22:00:38  ambrmi09

@@ -31,6 +31,8 @@
 #include <intrins.h>
 #include <stdio.h>
 #include <tk.h>
+#include <errno.h>
+#include <kernel/src/implement_tk.h>
 
 #define REGH( DEV ) \
    <DEV.h>
@@ -195,7 +197,11 @@ void safeprint(char *s){
 #define ASCII_A 65
 
 char i2shex_buff[7];
+/*!
+A very crude way to convert a integer value to human-readable form
 
+@note Remeber that we can't relay on any stdlib. Memory might be broken!
+*/
 char *i2shex(int i){
    unsigned int  mask;
    int ti;
@@ -231,7 +237,11 @@ char *i2shex(int i){
    
    return i2shex_buff;
 }
+/*!
+@brief A common info printing function for all TRAPS
 
+A common info printing function for all TRAPS
+*/
 void printtrap(
    const char *leadtext,
    char *lookuptable[],
@@ -242,7 +252,7 @@ void printtrap(
    unsigned char bitloop;
    unsigned int  mask;
    unsigned int  tid;
-   tk_tcb_t     *curr_tcb;
+   struct tcb_t *curr_tcb;
    bit oIEN;
   
    oIEN = IEN;
@@ -293,6 +303,16 @@ void printtrap(
    safeprint (", name: \"");
    safeprint (curr_tcb->name);
    safeprint ("\"\n");
+   
+   safeprint ("\n\nDetecting if errno was set...\n\n");   
+   if (errno !=0 ){
+     safeprint ("\n\nNote: errno [");   
+     safeprint (i2shex(errno));
+     safeprint ("] was set:\n");
+     perror(strerror(errno));
+   }
+  
+
    IEN = oIEN;
 }
   
@@ -396,8 +416,11 @@ void Class_B_trap (void) interrupt 0x0A  {
 }
 
 
+/*!
+@brief User trap. PC will end up here after call to\ref TRAP
+User trap. PC will end up here after call to\ref TRAP
+*/
 void user_trap (void) interrupt 0x0D  {
-
 #ifdef PRINT_TRAP
   unsigned int ip, csp;
   unsigned int _tfr;
@@ -408,8 +431,10 @@ void user_trap (void) interrupt 0x0D  {
   //_tfr = TFR;
 
   PRINT_6_LETTERS('T','K','_','T','R','P');
-  printtrap("\nTinKer Error Trap",kerneltraps,ip,csp,_tfr); 
+  printtrap("\nTinKer Error Trap",kerneltraps,ip,csp,_tfr);   
   safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
+
+
 
 #endif 
   /* add your code here */
