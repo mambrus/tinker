@@ -32,7 +32,13 @@
 #include <stdio.h>
 #include <tk.h>
 #include <errno.h>
+
 #include <kernel/src/implement_tk.h>
+
+extern unsigned int theSchedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
+extern struct tcb_t proc_stat[TK_MAX_THREADS];
+extern struct stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
+
 
 #define REGH( DEV ) \
    <DEV.h>
@@ -172,7 +178,7 @@ unsigned int busywait( unsigned int time_ms ){
             for (z=0;z<100;z++)
                rc = burntime(x,y,z);
 
-   return 0;			   
+   return 0;            
 }
 
 void safeprint(char *s){
@@ -252,7 +258,8 @@ void printtrap(
    unsigned char bitloop;
    unsigned int  mask;
    unsigned int  tid;
-   struct tcb_t *curr_tcb;
+   unsigned int  iprio,idx;
+   struct tcb_t *tcb;
    bit oIEN;
   
    oIEN = IEN;
@@ -295,22 +302,117 @@ void printtrap(
    
    IEN  = 0;
    tid = tk_thread_id();
-   curr_tcb = _tk_current_tcb();
+   tcb = _tk_current_tcb();
    
    IEN  = 1;
    safeprint ("Thread ID: ");
    safeprint (i2shex(tid));
    safeprint (", name: \"");
-   safeprint (curr_tcb->name);
+   safeprint (tcb->name);
    safeprint ("\"\n");
    
-   safeprint ("\n\nDetecting if errno was set...\n\n");   
+   safeprint ("Detecting if errno was set...\n");   
    if (errno !=0 ){
-     safeprint ("\n\nNote: errno [");   
-     safeprint (i2shex(errno));
-     safeprint ("] was set:\n");
-     perror(strerror(errno));
+      safeprint ("Note: errno [");   
+      safeprint (i2shex(errno));
+      safeprint ("] was set:\n");
+      perror(strerror(errno));
+   }else{
+      safeprint ("No errno set\n\n");   
    }
+   
+   safeprint ("\nDumping schedule...\n");
+   
+   for (iprio=0; iprio < TK_MAX_PRIO_LEVELS; iprio++){
+
+      if (scheduleIdxs[iprio].procs_at_prio > 0) {
+         
+         safeprint ("Prio [");
+         safeprint (i2shex(iprio));
+         safeprint ("]\n");
+         safeprint ("-idx-tid--gid--#cld-STAT-#err-STK_");
+         safeprint ("STRT--CURR_STK--SSIZ-PRIO-IDX--[ thread name ]\n");
+      
+
+         for (idx=0; idx < TK_MAX_THREADS_AT_PRIO; idx++){
+            tid = theSchedule[iprio][idx];
+            tcb = &proc_stat[tid];
+        
+            if ( 
+               (  (iprio || idx) && tid && (tcb->isInit == TRUE) ) ||
+               ( !(iprio || idx) && (tcb->isInit == TRUE) )
+            ){
+               safeprint(&i2shex(tid)[2]);             safeprint(" ");  //! Tid that schedule says it has
+               safeprint(&i2shex(tcb->Thid)[2]);       safeprint(" ");  //!< unsigned int / Process ID and Parent ID (Gid)
+               safeprint(&i2shex(tcb->Gid)[2]);        safeprint(" ");  //!< unsigned int / Process ID and Parent ID (Gid)
+               safeprint(&i2shex(tcb->noChilds)[2]);   safeprint(" ");  //!< unsigned int / Numb of procs this has created
+
+               //-v- PROCSTATE -v-
+               if (tcb->state == 0)
+                  safeprint("RDY ");
+               else if (tcb->state == ZOMBIE)
+                  safeprint("ZOMB"); 
+               else{
+                  safeprint("_");
+            
+                  if (tcb->state & _____Q__)
+                     safeprint("Q");
+                  else
+                     safeprint("_");
+               
+                  if (tcb->state & ______S_)
+                     safeprint("S");
+                  else
+                     safeprint("_");
+               
+                  if (tcb->state & _______T)
+                     safeprint("T");
+                  else
+                     safeprint("_");
+               }
+               //-^- PROCSTATE -^-
+               safeprint(" ");
+            
+           
+               safeprint(&i2shex(tcb->_errno_)[2]);    safeprint(" ");          
+           
+               safeprint(&i2shex( ( ((unsigned long)&(tcb->stack_begin)) & 0xFFFF0000ul) >> 16 )[2]);  
+               safeprint(":"); 
+               safeprint(&i2shex( (unsigned long)&(tcb->stack_begin) )[2]);  
+               safeprint(" ");
+            
+               safeprint(&i2shex( ( ((unsigned long)&(tcb->curr_sp)) & 0xFFFF0000ul) >> 16 )[2]);  
+               safeprint(":"); 
+               safeprint(&i2shex( (unsigned long)&(tcb->curr_sp) )[2]);  
+               safeprint(" ");
+       
+               safeprint(&i2shex(tcb->stack_size)[2]);   safeprint(" ");  
+            
+               /*
+               safeprint(&i2shex( ( ((unsigned long)(tcb->stack_crc)) & 0xFFFF0000ul) >> 16 )[2]);   
+               safeprint(&i2shex( (unsigned long)(tcb->stack_crc) )[2]);  
+               safeprint("  ");
+               */
+               /*
+               tcb->wakeuptime;          //!< clock_t / When to wake up if sleeping
+               tcb->wakeupEvent;         //!< wakeE_t / Helper variable mainly for ITC
+               tcb->start_funct;         //!< start_func_f / Address of the threads entry function. Used ONLY for debugging purposes
+               tcb->init_funct;          //!< init_func_f / Support of the pThread <em>"once"</em> concept.
+               tcb->*prmtRetAddr;        //!< void * / Preempted return adress - used in preempted mode.
+               */
+            
+               safeprint(&i2shex(tcb->Prio)[2]);   safeprint(" ");  
+               safeprint(&i2shex(tcb->Idx)[2]);   safeprint(" ");  
+               safeprint(tcb->name); 
+               safeprint("\n"); 
+            }
+         }
+         safeprint("\n"); 
+      }
+   }
+   safeprint ("----------------------------------------");
+   safeprint ("----------------------------------------\n");
+
   
 
    IEN = oIEN;

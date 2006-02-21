@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.25 $
+ *  Current $Revision: 1.26 $
  *
  *******************************************************************/
    
@@ -33,30 +33,63 @@ SCHED
 #include <time.h>
 #include <tk_hwtypes.h>   //should be OK now
 
-/*- local definitions **/
-#define TK_MAX_THREADS          10
-#define TK_MAX_PRIO_LEVELS      0x10  //fix this, Idle needs to bee last in last prio( needs one extra )
-#define TK_MAX_THREADS_AT_PRIO  0x8
-#define TK_THREAD_NAME_LEN      0x08
-#define TK_NORMAL_STACK_SIZE    0x600  //!< @note Whats normal or reasonable differs between architectures. 
+
+/*!
+@name Kernel trimming constants
+
+@note 
+- TK_MAX_THREADS_AT_PRIO should be at least as big as TK_MAX_THREADS
+- TK_MAX_THREADS is the big memory hog. It determines the pool size
+- More or less TK_MAX_PRIO_LEVELS doesn't make that much difference in
+  memory usage, but keep it low anyway. It's doubtful if it makes sense 
+  to have a lot of priority levels anyway.
+
+Modify these constants to get a kernel of desired size/speed ratio
+
+@note </b>Do not change these if using pre-built kernel as lib</b>
+*/
+//@{
+#define TK_MAX_THREADS           10    //!< Maximum number of threads kernel can handle
+#define TK_MAX_PRIO_LEVELS       0x10  //!< Maximum number of priority levels. @todo fix this, Idle needs to bee last in last prio( needs one extra )
+#define TK_MAX_THREADS_AT_PRIO   0x0A  //!< Maximum number of threads at a priority at any one time
+#define TK_THREAD_NAME_LEN       0x17  //!< Number of characters (at most) in the TCB identifying the thread. @note If this is zero, which is valid, no human readable info about the thread is stored @note A size of 4 bytes is what used to be standard in pSos
+//@}
+
 
 //Some defines for the logic
-/*
-#define TK_OK              0
-#define TK_ERROR           1
+#define YES                      1
+#define NO                       0
+#define TK_NORMAL_STACK_SIZE     0x600 //!< @note Whats normal or reasonable differs between architectures. 
+
+
+/*!
+@name Build including following components
+
+Modify these constants to include/exclude the following \ref COMPONENTS
+
+Use either YES or NO to either include or omit.
+
+@note </b>Do not change these if using pre-built kernel as lib</b>
 */
-#define YES                1
-#define NO                 0
+//@{
+#define  TK_COMP_ITC       YES         //!< @brief \ref ITC
+#define  TK_COMP_PTIMER    YES         //!< @brief \ref PTIMER
+#define  TK_COMP_KMEM      YES         //!< @brief \ref KMEM
+#define  TK_COMP_PTHREAD   YES         //!< @brief \ref PTHREAD
+#define  TK_COMP_POSIX_RT  YES         //!< @brief \ref POSIX_RT
+//@}
 
-//Include components 
-#define  TK_COMP_ITC       YES
-#define  TK_COMP_PTIMER    YES
-#define  TK_COMP_KMEM      YES
-#define  TK_COMP_PTHREAD   YES
-#define  TK_COMP_POSIX_RT  YES
+//Kernel termination codes (bit adressable) - 
 
-//Kernel termination codes (bit adressable) - Note, per kernel and not per thread codes
+/*!
+@name Kernel termination codes (bit addressable
 
+When TinKer itself dies (i.e. exits), it will do so using a exit code
+telling about the reason of the exit.
+
+@note Per \b kernel and \b not per \b thread codes
+*/
+//@{
 #define TK_NOERR           0x0000   //!< Termination without errors
 
 #define TK_ERR_1           0x0001
@@ -78,7 +111,7 @@ SCHED
 #define TK_ERR_14          0x2000
 #define TK_ERR_15          0x4000
 #define TK_ERR_16          0x8000
-
+//@}
 
 typedef enum{FALSE,TRUE}BOOL;
 typedef void *start_func_ft(void *);
@@ -148,7 +181,16 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.25  2006-02-20 19:17:14  ambrmi09
+ *  Revision 1.26  2006-02-21 22:10:32  ambrmi09
+ *  - Added wrapper macro for pthread_create so that posix threads get named in
+ *    TinKer (makes post-mortem easier). Very cool solution with a macro...
+ *  - Improved post-mortem, the schedule gets dumpt also now
+ *  - Wrapper macros for msleep and usleep (temporary)
+ *  - Minor stubbing and wrapping of mq_unlink and pthread_cancel
+ *  - Added a new test program (t est-posix.c ). This is verifyed to compile and
+ *    run on both Linux and TinKer unmodified!
+ *
+ *  Revision 1.25  2006/02/20 19:17:14  ambrmi09
  *  - Made the errno variable thread specific (each thread has it's own)
  *  - Hid the details of using errno so that setting and reading it looks
  *    like using a normal variable

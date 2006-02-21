@@ -51,9 +51,10 @@ Bus arbitration enabled
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-//#include <tk.h>             //Some stupid include bug forces us to this
-extern void _tk_main( void );  
+#include <tk.h>            
+#include <errno.h>
 #include <time.h>
+#include <assert.h>
 
 
 #pragma code
@@ -475,8 +476,8 @@ __asm  {
 	  //rc = inpar;
 
       _tk_main();
-      //chunk = (char *) malloc(1024);
-      printf("Hello world\n");
+      tk_exit(TK_OK);
+      assert("You should never rech this line" == NULL);
 
    // USER CODE END
 

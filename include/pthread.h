@@ -42,12 +42,28 @@ struct pthread_once_t_ {
                                  to zero executes the user function */
 };
 
-int pthread_create (
+int pthread_create_named_np (
    pthread_t               *thread,
    const pthread_attr_t    *attr,
    void *(*start_routine)  (void *),
-   void                    *arg
+   void *                  arg,
+   char                    *threadName
 );
+/*
+Implemented as a macro to be able to provide TinKer with a thread-name.
+
+Otherwise it behaves exactlly identical to the function standard specification.
+
+@see http://www.opengroup.org/onlinepubs/009695399/functions/pthread_create.html
+*/
+#define pthread_create(      \
+   thread,                   \
+   attr,                     \
+   start_routine,            \
+   arg                       \
+) (                          \
+   (pthread_create_named_np( thread, attr, start_routine, arg,"*" #start_routine ))   \
+)
 
 pthread_t pthread_self (void);
 
@@ -57,6 +73,9 @@ int pthread_once (
    pthread_once_t          *once_control,
    void (*init_routine)    (void)
 );
+
+
+int pthread_cancel (pthread_t __thread);
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
@@ -154,7 +173,7 @@ The ones not commeted out is implemented by TinKer
 // int pthread_once (pthread_once_t *__once_control,
 // int pthread_setcancelstate (int __state, int *__oldstate);
 // int pthread_setcanceltype (int __type, int *__oldtype);
-// int pthread_cancel (pthread_t __thread);
+//>>>int pthread_cancel (pthread_t __thread);
 // void pthread_testcancel (void);
 // void _pthread_cleanup_push (struct _pthread_cleanup_buffer *__buffer,
 // void _pthread_cleanup_pop (struct _pthread_cleanup_buffer *__buffer,

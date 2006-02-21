@@ -9,10 +9,19 @@
  * Notes:      -
  *
  * Modifications:
- * Current $Revision: 1.2 $
+ * Current $Revision: 1.3 $
  *
  * $Log: mqueue.h,v $
- * Revision 1.2  2006-02-20 15:22:00  ambrmi09
+ * Revision 1.3  2006-02-21 22:10:31  ambrmi09
+ * - Added wrapper macro for pthread_create so that posix threads get named in
+ *   TinKer (makes post-mortem easier). Very cool solution with a macro...
+ * - Improved post-mortem, the schedule gets dumpt also now
+ * - Wrapper macros for msleep and usleep (temporary)
+ * - Minor stubbing and wrapping of mq_unlink and pthread_cancel
+ * - Added a new test program (t est-posix.c ). This is verifyed to compile and
+ *   run on both Linux and TinKer unmodified!
+ *
+ * Revision 1.2  2006/02/20 15:22:00  ambrmi09
  * Documentation stuff. No code changes.
  *
  * Revision 1.1  2006/02/17 21:16:16  ambrmi09
@@ -150,6 +159,10 @@ int mq_send(
    const char           *msg,
    size_t                msglen,
    unsigned int          msgprio
+);
+
+int mq_unlink(
+   const char           *mq_name
 );
 
 

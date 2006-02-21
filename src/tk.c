@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.32 $
+ *  Current $Revision: 1.33 $
  *
  *******************************************************************/
   
@@ -119,26 +119,43 @@ int Tk_IntFlagCntr;
 #define static
 #endif
 
+/*!
+@brief The main storage of all TCB
 
-tk_tcb_t proc_stat[TK_MAX_THREADS];
-//This is not perfect. PiD will be reused when more than TK_MAX_THREADS has
-//been used. I wold have wanted a Thid range that is much bigger and a lookup-
-//table (gives greater uniquety - specially usefull i case of RPC) but that
-//is costly (I think)
-//coord_t lookUpTable[TK_MAX_THREADS];
+@note The index in this array \b is the thread ID.
 
-typedef struct{
-   unsigned short procs_at_prio;    //Used for optimizing sheduler.
-   unsigned short curr_idx;
-}prio_stat_t;
+This is not perfect. PiD will be reused when more than TK_MAX_THREADS has
+been used. I would have wanted a Thid range that is much bigger and a lookup-
+table (gives greater uniqueness - specially useful for \ref ITC) but that
+is costly (I think)...
 
+@note that this is only the pool of TCB's, the schedule itself is \ref theSchedule 
+
+coord_t lookUpTable[TK_MAX_THREADS];
+
+*/
+struct tcb_t proc_stat[TK_MAX_THREADS];
+
+
+/*!
+@brief The two dimensional dispatch-schedule
+
+This two dimensional matrix constitute a schedule (imagine a real life
+daily schedule if you like) that determines how exactly each thread is
+to be handled by the dispatcher on each iteration.
+
+Matrix layout
+- First index (X) is the priority
+- Second index (Y) is a list of treads at that priority (in various states, i.e. both "running", "blocked" and whatnot). 
+
+*/
 static unsigned int theSchedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
-static prio_stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
+static struct stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
 
 static unsigned int active_thread;        //!< Deliberatlly left uninitialized to support post mortem analysis
 static unsigned int thread_to_run   = 0;
 static unsigned int procs_in_use    = 0;
-static unsigned int proc_idx;             //!< Points at the last tk_tcb_t created
+static unsigned int proc_idx;             //!< Points at the last TCB created in the \ref proc_stat pool
 static unsigned int idle_Thid;            //!< Idle_Thid must be known, therefor public in this module (file)
 
 unsigned int _tk_idle( void *foo ){       //!< idle loop (non public)
@@ -184,7 +201,8 @@ tk_tcb_t *_tk_specific_tcb( unsigned int id ){
 /*! 
 @ingroup kernel_glue
 
-This function will give you access to a threads internal errno variable.
+This function will give you access to the current threads internal errno 
+variable.
 
 @see errno
 */
@@ -220,22 +238,22 @@ void tk_create_kernel( void ){
    }
 
    for (i=0; i<TK_MAX_THREADS; i++){
-      proc_stat[i].state         = ZOMBIE;
-      proc_stat[i].wakeuptime    = 0;
-      proc_stat[i].isInit        = FALSE;
-      //proc_stat[i].name        ="";
-      proc_stat[i].Gid           = 0;
-      proc_stat[i].Thid           = 0;
-      proc_stat[i].noChilds      = 0;
-      proc_stat[i]._errno_       = 0;
-      proc_stat[i].stack_size    = 0;
-      STACK_PTR(proc_stat[i].stack_begin)   = 0uL;
-      STACK_PTR(proc_stat[i].curr_sp)       = 0uL;
-      proc_stat[i].stack_crc     = 0;
-      proc_stat[i].prmtRetAddr   = NULL;
-      proc_stat[i].wakeupEvent   = 0;
-      proc_stat[i].start_funct   = NULL;
-      proc_stat[i].init_funct    = NULL;
+      proc_stat[i].state                        = ZOMBIE;
+      proc_stat[i].wakeuptime                   = 0;
+      proc_stat[i].isInit                       = FALSE;
+      proc_stat[i].name[TK_THREAD_NAME_LEN]     = 0;
+      proc_stat[i].Gid                          = 0;
+      proc_stat[i].Thid                         = 0;
+      proc_stat[i].noChilds                     = 0;
+      proc_stat[i]._errno_                      = 0;
+      proc_stat[i].stack_size                   = 0;
+      STACK_PTR(proc_stat[i].stack_begin)       = 0uL;
+      STACK_PTR(proc_stat[i].curr_sp)           = 0uL;
+      proc_stat[i].stack_crc                    = 0;
+      proc_stat[i].prmtRetAddr                  = NULL;
+      proc_stat[i].wakeupEvent                  = 0;
+      proc_stat[i].start_funct                  = NULL;
+      proc_stat[i].init_funct                   = NULL;
 
    }
    //The Root proc is already created but must be registred
@@ -403,15 +421,20 @@ unsigned int tk_create_thread(
       proc_idx++;
       proc_idx %= TK_MAX_THREADS;
    }while (proc_stat[proc_idx].isInit == TRUE);
-   //Test if the assigned name fits
-   if (strlen(name)<TK_THREAD_NAME_LEN)
-      strncpy(proc_stat[proc_idx].name,name,TK_THREAD_NAME_LEN);
-   else{
-      printf("tk: Error - Thread-name to long\n");
-      tk_exit(1);
-   }
-   //Try to allocate memory for stack
 
+   //Test if the assigned name fits   
+   //In case highly optimized kernel, no names stored at all and no timly string copy
+   #if TK_THREAD_NAME_LEN
+      if (strlen(name)<TK_THREAD_NAME_LEN)
+         strncpy(proc_stat[proc_idx].name,name,TK_THREAD_NAME_LEN);
+      else{
+         printf("tk: Error - Thread-name to long\n");
+         tk_exit(1);
+      }
+   #endif
+   proc_stat[proc_idx].name[TK_THREAD_NAME_LEN] = 0; //Terminate string just in case it's needed. Note, there is one extra byte so indexing like this is OK.
+   
+   //Try to allocate memory for stack
    if (( STACK_PTR(proc_stat[proc_idx].stack_begin) = (char *) malloc(stack_size)) == NULL){
        printf("tk: Error - Can't create process (can't allocate memory for stack)\n");
        tk_exit(1);  // terminate program if out of memory
@@ -659,33 +682,37 @@ void _tk_context_switch_to_thread(
 /*!
 Dispatch or yield to another thread that has more "right" to run.
 
-I.e. <b>sealch</b> for another potential thread that is now in runable
-state
-and that has higher priority. In non-preemptive mode, create simulated
+I.e. <b>search</b> for another potential thread that is now in \e "runable"
+state and that has higher priority. 
+
+Also: In non-preemptive mode (and as a secondary duty), it creates simulated
 timeout-events on all threads currently sleeping, but who's timeout has
-expired
-(i.e. search for timeouts and change state to READY).
+expired (i.e. search for expired timeouts and change state to READY if needed).
 
-The concept of passively sleeping threads, actively woken up by the
-kernel constantly searching for who's ready to run in a thread of its
-own (the idle thread or lowest prio thread) concept is a key-concept in
-non-preemptable mode.
+@note In TinKer lingo we use the words
+- \e sleeping for blocked on timeout
+- \e blocked for thread blocked for any other reason
 
-@note This is the function to put here and there in you application if you run
-a non-preemptable version of TinKer. Any execution will not be context
-switched
-until you either execute this function or run any other kernel function. <b>Any
-other TinKer kernel function is also a context switching point.<b>. If
-you don't
-want that behaviour you have to use the non-yielded version of that
-function
-(i.e. with suffix -ny)
+The concept of passively sleeping threads but actively awaken by the
+kernel (in idle thread or any dispatck point) is a key-concept in
+non-preemptable mode. In this mode the kernel is constantly searching
+for who's ready to run. This is normaly done in a specially
+dedicated - the \ref _tk_idle "idle thread" (i.e. the lowest priority
+thread).
 
-@note to use this function in preemptable mode </b> you must make sure that
-there is no prefix-postfix stuff happening on the stack, neither before
-the first PUSHALL nor after the last POPALL.
+@note This is the function to put here and there in you application if
+you run a non-preemptable version of TinKer. Any execution will not
+be context switched until you either execute this function or run any
+other kernel function. <b>Any other TinKer kernel function is also a
+context switching point.</b>. If you don't want that behaviour you have
+to use the non-yielded version of that function (i.e. with suffix -ny)
+<p>
+
+@note to use this function in <b>preemptable mode</b> you must make sure
+that there is no prefix-postfix stuff happening on the stack, neither
+before the first PUSHALL nor after the last POPALL.
+
 */
-
 void tk_yield( void ){
    PUSHALL();
    _tk_wakeup_timedout_threads();
@@ -695,8 +722,7 @@ void tk_yield( void ){
 }
 
 /*!
-
-Dispatch or yield to another thread that has more "right" to run.
+Dispatch or \e yield to another thread that has more "right" to run.
 
 This is basically identical with tk_yield(), but it doesn't try to
 search for threads to wake up that are sleeping on non-preempting
@@ -844,7 +870,16 @@ void Test_scheduler( void ){
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.32  2006-02-20 19:17:14  ambrmi09
+ *  Revision 1.33  2006-02-21 22:10:32  ambrmi09
+ *  - Added wrapper macro for pthread_create so that posix threads get named in
+ *    TinKer (makes post-mortem easier). Very cool solution with a macro...
+ *  - Improved post-mortem, the schedule gets dumpt also now
+ *  - Wrapper macros for msleep and usleep (temporary)
+ *  - Minor stubbing and wrapping of mq_unlink and pthread_cancel
+ *  - Added a new test program (t est-posix.c ). This is verifyed to compile and
+ *    run on both Linux and TinKer unmodified!
+ *
+ *  Revision 1.32  2006/02/20 19:17:14  ambrmi09
  *  - Made the errno variable thread specific (each thread has it's own)
  *  - Hid the details of using errno so that setting and reading it looks
  *    like using a normal variable

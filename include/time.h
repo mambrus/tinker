@@ -40,6 +40,16 @@ resolution.
 //! Obsolete macro for historical reasons (because POSIX says so)
 #define CLK_TCK CLOCKS_PER_SEC
 
+/*! 
+Wrapper macro until \ref PTIMER is ready
+*/
+#define sleep(t) ( tk_msleep( t * 1000 ) )
+
+/*! 
+Wrapper macro until \ref PTIMER is ready
+*/
+#define usleep(t) ( tk_msleep( t / 1000 ) )
+
 
 /*! 
 A clock entity is supposed to mean some sort of system ticks (i.e. 
@@ -218,7 +228,16 @@ clock_t clock();
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.11  2006-02-19 22:00:38  ambrmi09
+ *  Revision 1.12  2006-02-21 22:10:31  ambrmi09
+ *  - Added wrapper macro for pthread_create so that posix threads get named in
+ *    TinKer (makes post-mortem easier). Very cool solution with a macro...
+ *  - Improved post-mortem, the schedule gets dumpt also now
+ *  - Wrapper macros for msleep and usleep (temporary)
+ *  - Minor stubbing and wrapping of mq_unlink and pthread_cancel
+ *  - Added a new test program (t est-posix.c ). This is verifyed to compile and
+ *    run on both Linux and TinKer unmodified!
+ *
+ *  Revision 1.11  2006/02/19 22:00:38  ambrmi09
  *  Major brake-through!!! First working attempt with crude pThreads and
  *  POSIX RT queues works. (jihaa) :=D. Wow
  *

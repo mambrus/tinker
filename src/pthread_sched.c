@@ -46,22 +46,27 @@ unsigned long tk_pthread_sched_destruct( void ){
 /*!
 \returns 0 or a error code
 
+Works exactlly as \ref pthread_create except that it provides TinKer with a name of the thread as well
+
+@note This is not portable. Use the \ref pthread_create instead
+
 @see http://www.opengroup.org/onlinepubs/009695399/functions/pthread_create.html
 
 @todo Chech if the stack concpets fit. Unscertain...
 */
- int pthread_create (
+int pthread_create_named_np (
    pthread_t               *thread,
    const pthread_attr_t    *attr,
    void *(*start_routine)  (void *),
-   void *                  arg
+   void *                  arg,
+   char                    *threadName
 ){
    unsigned int thid;
    struct tcb_t *tk_tcb;
    
    if (attr != NULL){           
       thid = tk_create_thread(
-         "",
+         threadName,
          (*attr)->priority,
          start_routine,
          arg,
@@ -73,7 +78,7 @@ unsigned long tk_pthread_sched_destruct( void ){
       
    }else{
       thid = tk_create_thread(
-         "",
+         threadName,
          TK_MAX_PRIO_LEVELS/2,
          start_routine,
          0,
@@ -178,6 +183,10 @@ int pthread_once (
    return 0;
 }
 
+int pthread_cancel (pthread_t thread){
+   assert ( tk_delete_thread((unsigned int)thread) == TK_OK );
+}
+
 
 
 /** @defgroup PTHREAD_SCHED PTHREAD_SCHED: POSIX 1003.1c API - scheduling
@@ -194,7 +203,16 @@ int pthread_once (
 /*! 
  * @addtogroup CVSLOG CVSLOG
  *  $Log: pthread_sched.c,v $
- *  Revision 1.3  2006-02-20 19:17:14  ambrmi09
+ *  Revision 1.4  2006-02-21 22:10:32  ambrmi09
+ *  - Added wrapper macro for pthread_create so that posix threads get named in
+ *    TinKer (makes post-mortem easier). Very cool solution with a macro...
+ *  - Improved post-mortem, the schedule gets dumpt also now
+ *  - Wrapper macros for msleep and usleep (temporary)
+ *  - Minor stubbing and wrapping of mq_unlink and pthread_cancel
+ *  - Added a new test program (t est-posix.c ). This is verifyed to compile and
+ *    run on both Linux and TinKer unmodified!
+ *
+ *  Revision 1.3  2006/02/20 19:17:14  ambrmi09
  *  - Made the errno variable thread specific (each thread has it's own)
  *  - Hid the details of using errno so that setting and reading it looks
  *    like using a normal variable

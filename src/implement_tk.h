@@ -18,18 +18,26 @@ SCHED
 #define _IMPLEMENT_TK_H
 
 /*!
-@brief Defines the threads status 
-Defines the threads status 
+@brief Defines the threads status (bit addressable)
+Defines the threads status (bit addressable)
 	- __T = TERM  = Process is waiting for one or more children to terminate
 	- _S_ = SLEEP = Process is blocked on timer (sleeping)
-	- Q__ = QUEUE = Process is blocked on queue or semafor
+	- Q__ = QUEUE = Process is blocked on queue or semaphore
    
-@note the continuant naming. Very practical when debugging the dispatcher.   
+@note the convenient naming. This is very practical when debugging the
+dispatcher since symbolic names will easily be translated to
+corresponding bits.
 */
 typedef enum {
-   READY=0x0,     _______T=0x1,  ______S_=0x2,  ______ST=0x3,
-   _____Q__=0x4,  _____Q_T=0x5,  _____QS_=0x6,  _____QST=0x7,
-   ZOMBIE=0X80
+   READY    =0x0,     
+   _______T =0x1,  
+   ______S_ =0x2,  
+   ______ST =0x3,
+   _____Q__ =0x4,  
+   _____Q_T =0x5,  
+   _____QS_ =0x6,  
+   _____QST =0x7,
+   ZOMBIE   =0X80
 }PROCSTATE;
 
 /*!
@@ -57,7 +65,7 @@ like the C166 family, this is a much more complex structure.
 typedef struct tcb_t{
    unsigned int   Thid,Gid;             //!< Process ID and Parent ID (Gid)
    unsigned int   noChilds;            //!< Numb of procs this has created
-   char           name[TK_THREAD_NAME_LEN]; //!< Name of the thread
+   char           name[TK_THREAD_NAME_LEN+1]; //!< Name of the thread (+ 1 extra for byte terminating zero)
    BOOL           isInit;              //!< Memory for stack is allocated
    PROCSTATE      state;               //!< State of the process
    int            _errno_;               //!< Support of per thread errno
@@ -72,6 +80,12 @@ typedef struct tcb_t{
    void          *prmtRetAddr;         //!< Preempted return adress - used in preempted mode.
    unsigned int   Prio,Idx;            //!< Helpers, prevent need of lookup
 }tk_tcb_t;
+
+
+typedef struct stat_t{
+   unsigned short procs_at_prio;    //Used for optimizing sheduler.
+   unsigned short curr_idx;
+}prio_stat_t;
 
 
 

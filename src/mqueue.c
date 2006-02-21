@@ -9,10 +9,19 @@
  * Notes:      Todo: Prioritize messages with qsort ( timestamp+prio = orderby)
  *
  * Modifications:
- * Current $Revision: 1.5 $
+ * Current $Revision: 1.6 $
  *
  * $Log: mqueue.c,v $
- * Revision 1.5  2006-02-20 19:17:14  ambrmi09
+ * Revision 1.6  2006-02-21 22:10:32  ambrmi09
+ * - Added wrapper macro for pthread_create so that posix threads get named in
+ *   TinKer (makes post-mortem easier). Very cool solution with a macro...
+ * - Improved post-mortem, the schedule gets dumpt also now
+ * - Wrapper macros for msleep and usleep (temporary)
+ * - Minor stubbing and wrapping of mq_unlink and pthread_cancel
+ * - Added a new test program (t est-posix.c ). This is verifyed to compile and
+ *   run on both Linux and TinKer unmodified!
+ *
+ * Revision 1.5  2006/02/20 19:17:14  ambrmi09
  * - Made the errno variable thread specific (each thread has it's own)
  * - Hid the details of using errno so that setting and reading it looks
  *   like using a normal variable
@@ -659,6 +668,15 @@ static void sortByPrio( QueueD *Q ){
       free(tempT);
    }
 
+}
+
+/*!
+Just a stub to get test-code through compiler. Should be easy enoygh to implement though
+*/
+int mq_unlink(
+   const char *mq_name
+){
+   return 0;
 }
 
 

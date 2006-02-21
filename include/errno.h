@@ -110,8 +110,12 @@ on other systems.
 
 #include <tk.h>
 
-/*! Map this name to an internal variable. This needs more working.
-Macro should expand to something that is thread unique */
+/*! 
+@brief Access thread-internal errno variable
+
+Map to an internal variable unique to the current threads. You use this
+exactly as if it would be a variable, but it's not.
+*/
 #define errno (*_tk_errno())
 
 /*! Tell everyone that somewhere there exists this variable (translates
