@@ -1,12 +1,12 @@
 /*******************************************************************
  *
- *  DESCRIPTION: TinKerOS.
+ *  DESCRIPTION: TinKer tick entry functions or macros.
  *
  *  AUTHOR: Michael Ambrus
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.10 $
+ *  Current $Revision: 1.11 $
  *
  *******************************************************************/
   
@@ -186,7 +186,10 @@ Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC syste
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.10  2006-02-22 09:31:58  ambrmi09
+ *  Revision 1.11  2006-02-22 09:42:19  ambrmi09
+ *  Added some informative description test
+ *
+ *  Revision 1.10  2006/02/22 09:31:58  ambrmi09
  *  cvs test
  *
  *  Revision 1.9  2006/02/22 09:27:14  ambrmi09
