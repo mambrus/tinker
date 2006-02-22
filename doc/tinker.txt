@@ -170,10 +170,10 @@ digraph components {
 
             */
 
-    /** @defgroup DOCS Doc stuff
+    /** @defgroup DOCS Other doc stuff
         @ingroup TinKer
         @ref main
-        @brief Check-in CVS log
+        @brief Other documentation
 
         Various other doc stuff...
 
@@ -182,9 +182,9 @@ digraph components {
     /** @defgroup LOGS LOGS
         @ingroup DOCS
         @ref main
-        @brief Check-in CVS log
+        @brief Various types of generated logs
 
-        Here you'll find all the CVS log entries
+        Various types of generated logs
 
         */
 
@@ -193,7 +193,17 @@ digraph components {
         @ref main
         @brief Check-in CVS log
 
-        Here you'll find all the CVS log entries
+        Here you'll find all the CVS log entries (per file-by-file basis)
+
+        */
+
+    /** @defgroup CVSLOGX CVSLOG cross reference
+        @ingroup LOGS
+        @ref main
+        @brief Check-in CVS log cross reference
+
+        Here you'll find a cross reference orderer by check-in occasion.
+        Notice that the file names are clickable, and will take you to each corresponding files documentation page.
 
         */
 

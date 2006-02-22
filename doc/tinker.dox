@@ -90,7 +90,8 @@ INPUT                  = ./ \
                          ../bsp/XC167_Keil/startup/ \
                          ../bsp/XC167_Keil/stdlib/ \
                          ./blogs/ \
-                         ../../dave/GPT1.C
+                         ../../dave/GPT1.C \
+                         ../../../cvslog.txt
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \
