@@ -7,10 +7,13 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.7 $
+ *  Current $Revision: 1.8 $
  *******************************************************************/
    
 
+/*
+Touching two files
+*/
 #define TICK_OWNER
 #include "tk_tick.h"
 #include <tk.h>
@@ -186,7 +189,10 @@ int getuptime (
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.c,v $
- *  Revision 1.7  2006-02-08 18:39:49  ambrmi09
+ *  Revision 1.8  2006-02-22 09:50:56  ambrmi09
+ *  Added some more informative description test
+ *
+ *  Revision 1.7  2006/02/08 18:39:49  ambrmi09
  *  Improved precision by providing the actual frequency instead of the
  *  theoretical in tk_getHWclock_Quality_CLK1 .
  *
