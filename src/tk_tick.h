@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.7 $
+ *  Current $Revision: 1.8 $
  *
  *******************************************************************/
   
@@ -172,7 +172,7 @@ Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC syste
 @see _tk_tick_10mS()
 */
 #define _tk_tick_PC()                 \
-  sys_mickey+=10;                        \
+  sys_mickey+=10;                     \
                                        \
   if (!sys_mickey){                      \
     sys_mackey++;                      \
@@ -186,7 +186,10 @@ Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC syste
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.7  2006-02-22 09:24:37  ambrmi09
+ *  Revision 1.8  2006-02-22 09:25:42  ambrmi09
+ *  cvs test
+ *
+ *  Revision 1.7  2006/02/22 09:24:37  ambrmi09
  *  Minor format fixing.
  *
  *  Revision 1.6  2006/02/06 22:04:15  ambrmi09
