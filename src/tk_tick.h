@@ -6,14 +6,13 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.14 $
+ *  Current $Revision: 1.15 $
  *
  *******************************************************************/
 /*
-Note, versin 1.7 - X are bogus. Just for testing the CVS notify
+Note, versin 1.7 - 1.15 are bogus. Just for testing the CVS notify
 utility.
 
-t ouching two files
 
 */
   
@@ -193,7 +192,10 @@ Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC syste
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.14  2006-02-22 09:56:26  ambrmi09
+ *  Revision 1.15  2006-02-22 10:20:53  ambrmi09
+ *  Cleaning up after CVS testing
+ *
+ *  Revision 1.14  2006/02/22 09:56:26  ambrmi09
  *  Added some more informative description test
  *
  *  Revision 1.13  2006/02/22 09:50:56  ambrmi09

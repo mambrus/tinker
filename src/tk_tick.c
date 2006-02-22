@@ -7,13 +7,10 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.9 $
+ *  Current $Revision: 1.10 $
  *******************************************************************/
    
 
-/*
-To uching two files
-*/
 #define TICK_OWNER
 #include "tk_tick.h"
 #include <tk.h>
@@ -189,7 +186,10 @@ int getuptime (
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.c,v $
- *  Revision 1.9  2006-02-22 09:56:26  ambrmi09
+ *  Revision 1.10  2006-02-22 10:20:53  ambrmi09
+ *  Cleaning up after CVS testing
+ *
+ *  Revision 1.9  2006/02/22 09:56:26  ambrmi09
  *  Added some more informative description test
  *
  *  Revision 1.8  2006/02/22 09:50:56  ambrmi09
