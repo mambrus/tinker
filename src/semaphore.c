@@ -97,3 +97,13 @@ int sem_post (sem_t * sem){
       return EINVAL;
 
 }
+
+/*!
+ * @defgroup CVSLOG_semaphore_c semaphore_c
+ * @ingroup CVSLOG
+ *  $Log: semaphore.c,v $
+ *  Revision 1.6  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  
+ */

@@ -7,7 +7,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.10 $
+ *  Current $Revision: 1.11 $
  *******************************************************************/
    
 
@@ -183,10 +183,14 @@ int getuptime (
 
   
 /*!
- * @addtogroup CVSLOG CVSLOG
+ * @defgroup CVSLOG_tk_tick_c tk_tick_c 
+ * @ingroup CVSLOG
  *
  *  $Log: tk_tick.c,v $
- *  Revision 1.10  2006-02-22 10:20:53  ambrmi09
+ *  Revision 1.11  2006-02-22 13:05:47  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.10  2006/02/22 10:20:53  ambrmi09
  *  Cleaning up after CVS testing
  *
  *  Revision 1.9  2006/02/22 09:56:26  ambrmi09

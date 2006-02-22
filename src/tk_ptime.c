@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.6 $
+ *  Current $Revision: 1.7 $
  *
  *******************************************************************/
   
@@ -428,9 +428,13 @@ digraph ptime_main {
 
   
 /*! 
- * @addtogroup CVSLOG CVSLOG
+ * @defgroup CVSLOG_tk_ptime_c tk_ptime_c
+ * @ingroup CVSLOG
  *  $Log: tk_ptime.c,v $
- *  Revision 1.6  2006-02-20 15:22:01  ambrmi09
+ *  Revision 1.7  2006-02-22 13:05:47  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.6  2006/02/20 15:22:01  ambrmi09
  *  Documentation stuff. No code changes.
  *
  *  Revision 1.5  2006/02/19 12:44:33  ambrmi09

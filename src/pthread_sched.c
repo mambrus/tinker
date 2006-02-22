@@ -198,12 +198,16 @@ int pthread_cancel (pthread_t thread){
 @todo The "once lock" is brutal. It will potentially lock on all accesses, even by threads involved with anuther once_control. Either replace with a rw_lock (TBD) or an array of once locks.
 
 <p><b>Go gack to</b> \ref COMPONENTS</p>
+*/
 
   
 /*! 
- * @addtogroup CVSLOG CVSLOG
+ * @ingroup CVSLOG 
  *  $Log: pthread_sched.c,v $
- *  Revision 1.4  2006-02-21 22:10:32  ambrmi09
+ *  Revision 1.5  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.4  2006/02/21 22:10:32  ambrmi09
  *  - Added wrapper macro for pthread_create so that posix threads get named in
  *    TinKer (makes post-mortem easier). Very cool solution with a macro...
  *  - Improved post-mortem, the schedule gets dumpt also now

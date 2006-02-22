@@ -125,9 +125,13 @@ void           tk_mem_free    ( heapid_t, void* );
 
   
 /*! 
- * @addtogroup CVSLOG CVSLOG
+ * @defgroup CVSLOG_tk_mem_h tk_mem_h
+ * @ingroup CVSLOG
  *  $Log: tk_mem.h,v $
- *  Revision 1.6  2006-02-20 15:22:00  ambrmi09
+ *  Revision 1.7  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.6  2006/02/20 15:22:00  ambrmi09
  *  Documentation stuff. No code changes.
  *
  *  Revision 1.5  2006/02/19 12:44:33  ambrmi09

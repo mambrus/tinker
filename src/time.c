@@ -147,9 +147,12 @@ int
    
   
 /*! 
- * @addtogroup CVSLOG CVSLOG
+ * @ingroup CVSLOG CVSLOG
  *  $Log: time.c,v $
- *  Revision 1.8  2006-02-19 22:00:38  ambrmi09
+ *  Revision 1.9  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.8  2006/02/19 22:00:38  ambrmi09
  *  Major brake-through!!! First working attempt with crude pThreads and
  *  POSIX RT queues works. (jihaa) :=D. Wow
  *

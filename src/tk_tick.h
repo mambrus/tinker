@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.15 $
+ *  Current $Revision: 1.16 $
  *
  *******************************************************************/
 /*
@@ -188,11 +188,16 @@ Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC syste
 #endif
 
   
+  
 /*!
- * @addtogroup CVSLOG CVSLOG
+ * @defgroup CVSLOG_tk_tick_h tk_tick_h
+ * @ingroup CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.15  2006-02-22 10:20:53  ambrmi09
+ *  Revision 1.16  2006-02-22 13:05:47  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.15  2006/02/22 10:20:53  ambrmi09
  *  Cleaning up after CVS testing
  *
  *  Revision 1.14  2006/02/22 09:56:26  ambrmi09

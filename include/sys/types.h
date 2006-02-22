@@ -40,3 +40,15 @@ typedef struct pthread_cond_t_ *pthread_cond_t;
 typedef struct pthread_condattr_t_ *pthread_condattr_t;
 
 #endif //SYS_TYPES_H
+
+
+/*!
+ * @defgroup CVSLOG_types_h types_h
+ * @ingroup CVSLOG
+ *  $Log: types.h,v $
+ *  Revision 1.3  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  
+ */
+

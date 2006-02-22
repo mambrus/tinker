@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.5 $
+ *  Current $Revision: 1.6 $
  *******************************************************************/
   
 
@@ -54,11 +54,15 @@ unsigned long _tk_create_system_queues( ){
 /*- private data **/
 
    
-/*******************************************************************  
- * @addtogroup CVSLOG CVSLOG
+/*!
+ * @defgroup CVSLOG_tk_sysqueues_c tk_sysqueues_c
+ * @ingroup CVSLOG
  *
  *  $Log: tk_sysqueues.c,v $
- *  Revision 1.5  2006-02-19 12:44:33  ambrmi09
+ *  Revision 1.6  2006-02-22 13:05:47  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.5  2006/02/19 12:44:33  ambrmi09
  *  - Documented ITC
  *  - Started to build up the structure for the \ref PTHREAD component
  *

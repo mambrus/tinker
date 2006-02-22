@@ -454,3 +454,15 @@ struct pthread_condattr_t_ {
 //#define _endthreadex ExitThread
 //
 //#endif /* __CYGWIN32__ || __CYGWIN__ */
+
+
+
+/*!
+ * @defgroup CVSLOG_implement_pthread_h implement_pthread_h
+ * @ingroup CVSLOG
+ *  $Log: implement_pthread.h,v $
+ *  Revision 1.3  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  
+ */

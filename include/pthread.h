@@ -768,4 +768,15 @@ pthread_t
 
 */
 
+/*!
+ * @defgroup CVSLOG_pthread_h pthread_h
+ * @ingroup CVSLOG
+ *  $Log: pthread.h,v $
+ *  Revision 1.7  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  
+ */
+
+
 

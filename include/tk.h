@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.26 $
+ *  Current $Revision: 1.27 $
  *
  *******************************************************************/
    
@@ -178,10 +178,14 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
 
   
 /*! 
- * @addtogroup CVSLOG CVSLOG
+ * @defgroup CVSLOG_tk_h tk_h
+ * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.26  2006-02-21 22:10:32  ambrmi09
+ *  Revision 1.27  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.26  2006/02/21 22:10:32  ambrmi09
  *  - Added wrapper macro for pthread_create so that posix threads get named in
  *    TinKer (makes post-mortem easier). Very cool solution with a macro...
  *  - Improved post-mortem, the schedule gets dumpt also now

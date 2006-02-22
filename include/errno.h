@@ -995,3 +995,14 @@ TBD
 
 #endif //ERRNO_H
 
+/*!
+ * @defgroup CVSLOG_errno_h errno_h
+ * @ingroup CVSLOG
+ *  $Log: errno.h,v $
+ *  Revision 1.7  2006-02-22 13:05:45  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  
+ */
+
+

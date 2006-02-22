@@ -207,9 +207,13 @@ char * strerror (int errnum){
 
   
 /*! 
- * @addtogroup CVSLOG CVSLOG
+ *  @defgroup CVSLOG_errno_c errno_c
+ *  @ingroup CVSLOG
  *  $Log: errno.c,v $
- *  Revision 1.1  2006-02-20 19:12:25  ambrmi09
+ *  Revision 1.2  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.1  2006/02/20 19:12:25  ambrmi09
  *  initial revision
  *
  *  

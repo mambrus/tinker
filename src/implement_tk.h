@@ -91,3 +91,15 @@ typedef struct stat_t{
 
 
 #endif /* _IMPLEMENT_PTHREAD_H */
+
+
+/*!
+ * @defgroup CVSLOG_implement_tk_h implement_tk_h
+ * @ingroup CVSLOG
+ *  $Log: implement_tk.h,v $
+ *  Revision 1.3  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  
+ */
+

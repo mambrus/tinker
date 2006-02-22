@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.12 $
+ *  Current $Revision: 1.13 $
  *
  *******************************************************************/
    
@@ -364,10 +364,14 @@ unsigned long sm_v_ny(
 
   
 /*!
- * @addtogroup CVSLOG CVSLOG
+ * @defgroup CVSLOG_tk_ipc_h tk_ipc_h
+ * @ingroup CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.12  2006-02-20 19:17:14  ambrmi09
+ *  Revision 1.13  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.12  2006/02/20 19:17:14  ambrmi09
  *  - Made the errno variable thread specific (each thread has it's own)
  *  - Hid the details of using errno so that setting and reading it looks
  *    like using a normal variable

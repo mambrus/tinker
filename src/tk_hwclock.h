@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.4 $
+ *  Current $Revision: 1.5 $
  *
  *******************************************************************/
    
@@ -180,10 +180,14 @@ allready happened.
 
   
 /*! 
- * @addtogroup CVSLOG CVSLOG
+ * @defgroup CVSLOG_tk_hwclock_h tk_hwclock_h
+ * @ingroup CVSLOG
  *
  *  $Log: tk_hwclock.h,v $
- *  Revision 1.4  2006-02-19 12:44:33  ambrmi09
+ *  Revision 1.5  2006-02-22 13:05:47  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.4  2006/02/19 12:44:33  ambrmi09
  *  - Documented ITC
  *  - Started to build up the structure for the \ref PTHREAD component
  *

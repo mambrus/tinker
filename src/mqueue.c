@@ -9,10 +9,13 @@
  * Notes:      Todo: Prioritize messages with qsort ( timestamp+prio = orderby)
  *
  * Modifications:
- * Current $Revision: 1.6 $
+ * Current $Revision: 1.7 $
  *
  * $Log: mqueue.c,v $
- * Revision 1.6  2006-02-21 22:10:32  ambrmi09
+ * Revision 1.7  2006-02-22 13:05:46  ambrmi09
+ * Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ * Revision 1.6  2006/02/21 22:10:32  ambrmi09
  * - Added wrapper macro for pthread_create so that posix threads get named in
  *   TinKer (makes post-mortem easier). Very cool solution with a macro...
  * - Improved post-mortem, the schedule gets dumpt also now
@@ -716,3 +719,14 @@ Good references about the API:
 <p><b>Go gack to</b> \ref COMPONENTS</p>
 
 */
+
+
+/*!
+ * @defgroup CVSLOG_mqueue_c mqueue_c
+ * @ingroup CVSLOG
+ *  $Log: mqueue.c,v $
+ *  Revision 1.7  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  
+ */

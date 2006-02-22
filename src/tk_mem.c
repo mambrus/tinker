@@ -354,9 +354,13 @@ both of these functions.
 
   
 /*! 
- * @addtogroup CVSLOG CVSLOG
+ * @defgroup CVSLOG_tk_mem_c tk_mem_c
+ * @ingroup CVSLOG
  *  $Log: tk_mem.c,v $
- *  Revision 1.4  2006-02-20 15:22:01  ambrmi09
+ *  Revision 1.5  2006-02-22 13:05:47  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.4  2006/02/20 15:22:01  ambrmi09
  *  Documentation stuff. No code changes.
  *
  *  Revision 1.3  2006/02/17 20:26:56  ambrmi09

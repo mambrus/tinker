@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.14 $
+ *  Current $Revision: 1.15 $
  *
  *******************************************************************/
   
@@ -370,10 +370,14 @@ TBD
 
   
 /*!
- * @addtogroup CVSLOG CVSLOG
+ * @defgroup CVSLOG_tk_hwsys_keilC166_h tk_hwsys_keilC166_h
+ * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.h,v $
- *  Revision 1.14  2005-12-04 15:48:52  ambrmi09
+ *  Revision 1.15  2006-02-22 13:05:45  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.14  2005/12/04 15:48:52  ambrmi09
  *  API for ne pre-emptable timers in place. Implementing this will be a
  *  hard but fun "nut" to crack. ptime has the potential of comming
  *  very close to the high-res timers that POSIX 1003.1c define and is a

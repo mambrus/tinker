@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.10 $
+ *  Current $Revision: 1.11 $
  *
  *******************************************************************/
   
@@ -327,10 +327,13 @@ cases might want to replace this with a NOP.
 
   
 /*! 
- * @addtogroup CVSLOG CVSLOG
- *
+ * @defgroup CVSLOG_tk_hwsys_h tk_hwsys_h
+ * @ingroup CVSLOG
  *  $Log: tk_hwsys.h,v $
- *  Revision 1.10  2005-12-03 14:04:30  ambrmi09
+ *  Revision 1.11  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.10  2005/12/03 14:04:30  ambrmi09
  *  A crude documentation structure added. Sorce files modified a little, but
  *  only in comments (for Doxygens sake).
  *

@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.4 $
+ *  Current $Revision: 1.5 $
  *
  *******************************************************************/
   
@@ -222,10 +222,14 @@ typedef struct {
 
   
 /*!
- * @addtogroup CVSLOG CVSLOG
+ * @defgroup CVSLOG_tk_hwtypes_keilC166_h tk_hwtypes_keilC166_h
+ * @ingroup CVSLOG
  *
  *  $Log: tk_hwtypes_keilC166.h,v $
- *  Revision 1.4  2006-02-02 15:51:02  ambrmi09
+ *  Revision 1.5  2006-02-22 13:05:45  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.4  2006/02/02 15:51:02  ambrmi09
  *  A lot of thought has been invested into the new PTIME component. Had to
  *  change things even in the systime parts (integrated in the SHEDUL
  *  component) to make it more generic. Think this will be really nice when

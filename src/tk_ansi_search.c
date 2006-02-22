@@ -424,9 +424,13 @@ void *bsearch (
 
   
 /*! 
- * @addtogroup CVSLOG CVSLOG
+ * @defgroup CVSLOG_tk_search_c tk_search_c
+ * @ingroup CVSLOG
  *  $Log: tk_ansi_search.c,v $
- *  Revision 1.5  2006-02-16 15:11:00  ambrmi09
+ *  Revision 1.6  2006-02-22 13:05:47  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.5  2006/02/16 15:11:00  ambrmi09
  *  Introduced a new component for better and safer useage of the heap.
  *  Package is called \red KMEM and the files are tk_mem.c and tk_mem.h (so
  *  far).

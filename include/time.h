@@ -226,9 +226,13 @@ clock_t clock();
 
   
 /*! 
- * @addtogroup CVSLOG CVSLOG
+ *  @defgroup CVSLOG_time_h time_h
+ *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.12  2006-02-21 22:10:31  ambrmi09
+ *  Revision 1.13  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  Revision 1.12  2006/02/21 22:10:31  ambrmi09
  *  - Added wrapper macro for pthread_create so that posix threads get named in
  *    TinKer (makes post-mortem easier). Very cool solution with a macro...
  *  - Improved post-mortem, the schedule gets dumpt also now

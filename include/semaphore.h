@@ -48,3 +48,14 @@ int sem_post (sem_t * sem
 #endif                          
 
 #endif                          
+
+/*!
+ * @defgroup CVSLOG_semaphore_h semaphore_h
+ * @ingroup CVSLOG
+ *  $Log: semaphore.h,v $
+ *  Revision 1.4  2006-02-22 13:05:46  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  
+ */
+

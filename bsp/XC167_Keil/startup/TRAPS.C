@@ -542,3 +542,14 @@ void user_trap (void) interrupt 0x0D  {
   /* add your code here */
   while (1);                 /* end-less loop */
 }
+
+/*!
+ * @defgroup CVSLOG_TRAPS_C TRAPS_C
+ * @ingroup CVSLOG
+ *  $Log: TRAPS.C,v $
+ *  Revision 1.12  2006-02-22 13:05:45  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  
+ */
+

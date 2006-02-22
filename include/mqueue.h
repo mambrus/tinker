@@ -9,10 +9,13 @@
  * Notes:      -
  *
  * Modifications:
- * Current $Revision: 1.3 $
+ * Current $Revision: 1.4 $
  *
  * $Log: mqueue.h,v $
- * Revision 1.3  2006-02-21 22:10:31  ambrmi09
+ * Revision 1.4  2006-02-22 13:05:45  ambrmi09
+ * Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ * Revision 1.3  2006/02/21 22:10:31  ambrmi09
  * - Added wrapper macro for pthread_create so that posix threads get named in
  *   TinKer (makes post-mortem easier). Very cool solution with a macro...
  * - Improved post-mortem, the schedule gets dumpt also now
@@ -167,3 +170,14 @@ int mq_unlink(
 
 
 #endif
+
+/*!
+ * @defgroup CVSLOG_mqueue_h mqueue_h
+ * @ingroup CVSLOG
+ *  $Log: mqueue.h,v $
+ *  Revision 1.4  2006-02-22 13:05:45  ambrmi09
+ *  Major doxygen structure modification. No chancge in actual sourcecode.
+ *
+ *  
+ */
+
