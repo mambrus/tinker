@@ -194,6 +194,7 @@ digraph components {
         @brief Check-in CVS log
 
         Here you'll find all the CVS log entries (per file-by-file basis)
+        <HR><HR>
 
         */
 
@@ -204,6 +205,7 @@ digraph components {
 
         Here you'll find a cross reference orderer by check-in occasion.
         Notice that the file names are clickable, and will take you to each corresponding files documentation page.
+        <HR><HR>
 
         */
 
