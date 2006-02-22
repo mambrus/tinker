@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.6 $
+ *  Current $Revision: 1.7 $
  *
  *******************************************************************/
   
@@ -90,10 +90,10 @@ Usable for systems where <b>100kHz</b> interrupt frequency is suitable
 @see _tk_tick_1mS()
 */
 #define _tk_tick_10uS()               \
-  sys_mickey+=10;                        \
-                                       \
-  if (!sys_mickey){                      \
-    sys_mackey++;                      \
+  sys_mickey+=10;                     \
+                                      \
+  if (!sys_mickey){                   \
+    sys_mackey++;                     \
   }
 
 
@@ -112,10 +112,10 @@ highest possible relulution for tinker since 1 sys_mickey is equal to 100uS.
 @see _tk_tick_PC()
 */
 #define _tk_tick_100us()              \
-  sys_mickey++;                          \
-                                       \
-  if (!sys_mickey){                      \
-    sys_mackey++;                      \
+  sys_mickey++;                       \
+                                      \
+  if (!sys_mickey){                   \
+    sys_mackey++;                     \
   }
 
 
@@ -132,10 +132,10 @@ Usable for systems where <b>1KHz</b> interrupt frequency is suitable
 @see _tk_tick_PC()
 */
 #define _tk_tick_1mS()                \
-  sys_mickey++;                          \
-                                       \
-  if (!sys_mickey){                      \
-    sys_mackey++;                      \
+  sys_mickey++;                       \
+                                      \
+  if (!sys_mickey){                   \
+    sys_mackey++;                     \
   }
 
 
@@ -152,10 +152,10 @@ Usable for systems where <b>100Hz</b> interrupt frequency is suitable (slow syst
 @see _tk_tick_PC()
 */
 #define _tk_tick_10mS()               \
-  sys_mickey+=10;                        \
-                                       \
-  if (!sys_mickey){                      \
-    sys_mackey++;                      \
+  sys_mickey+=10;                     \
+                                      \
+  if (!sys_mickey){                   \
+    sys_mackey++;                     \
   }
 
 
@@ -186,7 +186,10 @@ Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC syste
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.6  2006-02-06 22:04:15  ambrmi09
+ *  Revision 1.7  2006-02-22 09:24:37  ambrmi09
+ *  Minor format fixing.
+ *
+ *  Revision 1.6  2006/02/06 22:04:15  ambrmi09
  *  Trimming CLK1 - got 3 nice trims at 1,6 and 13 mS period times
  *
  *  Revision 1.5  2006/02/02 15:51:02  ambrmi09
