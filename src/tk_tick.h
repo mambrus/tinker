@@ -6,9 +6,13 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.11 $
+ *  Current $Revision: 1.12 $
  *
  *******************************************************************/
+/*
+Note, versin 1.7 - X are bogus. Just for testing the CVS notify
+utility.
+*/
   
 
 #ifndef TK_TICK_H
@@ -186,7 +190,10 @@ Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC syste
  * @addtogroup CVSLOG CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.11  2006-02-22 09:42:19  ambrmi09
+ *  Revision 1.12  2006-02-22 09:47:43  ambrmi09
+ *  Added some more informative description test
+ *
+ *  Revision 1.11  2006/02/22 09:42:19  ambrmi09
  *  Added some informative description test
  *
  *  Revision 1.10  2006/02/22 09:31:58  ambrmi09
