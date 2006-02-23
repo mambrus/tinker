@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.13 $
+ *  Current $Revision: 1.14 $
  *
  *******************************************************************/
    
@@ -35,13 +35,25 @@ ITC
 /*- local definitions **/
 #define MAX_BLOCKED_ON_Q    20   /*!< Max num of proces blocked on queue or sem*/
 #define MAX_NUM_Q           50   /*!< Max num of semaphores OR queues (i.e. primitives) in total*/
-#define FOREVER             ((-1ul)/2 + -1) /*!< Default value, use to block "forever" (~596 hrs) on resource */
+
+/*!<
+@brief Never timeout blocking. I.e. block \e "for-ever"
+
+We can use the value as a special case, because timeout of zero is not
+sane in the context of clocking with timeout. That would mean never to
+block implicitly, which makes you rises the question of why the call is
+invoked in the first place. The benefits of 0 are many, among others, we
+avoid nasty truncation errors that would be the result of a very big
+value (making the timeout appear as if it had already happened when
+actual time us added)
+
+*/ 
+#define FOREVER             0
 
 /*- Error codes **/
 
-/*
-#define ERR_OK              0x00 //!< No error
-#define ERR_TIMEOUT         0x01 //!< ITC has timedout
+/* #define ERR_OK              0x00 //!< No error #define ERR_TIMEOUT
+0x01 //!< ITC has timedout
 #define ERR_OBJDEL          0x05 //!< ITC has been deleted
 #define ERR_OBJID           0x06 //!< ITC id incorrect ??
 #define ERR_OBJTYPE         0x07 //!< ITC type doesn'e mach object id
@@ -368,7 +380,10 @@ unsigned long sm_v_ny(
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.13  2006-02-22 13:05:46  ambrmi09
+ *  Revision 1.14  2006-02-23 15:33:33  ambrmi09
+ *  Found a nasty "bug", that was not a read bug after all. At least not in the kernel as a feared. It turned out that I forgot some of the details about how timeouts were to be handled (especially in \ref ITC ). A timeout of value \b zero is equal of never to timeout (read more about it in define \ref FOREVER). However two important lesson learned: Even simple add operations get "funny" when adding large numbers (see line 303 in tk_ipc.c - in the \ref lock_stage function). Anyway. FOREVER should equal zero. (This issue makes me wonder sometimes how sane it really was to resurrect a project that has been dormant for nearly 10 years.) The CodeWright project ruler should be positioned on the actual line btw. This check-in will be accompanied  by a <tt>cvs tag</tt> for this reason, and for yet another nasty bug that seems to be a real dispatcher bug. The current source-set-up will show the bug within one mint (which is good since it makes it a little bit less of a search for the <I>"needle in the haystack</i>").
+ *
+ *  Revision 1.13  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.12  2006/02/20 19:17:14  ambrmi09

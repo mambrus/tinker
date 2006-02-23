@@ -261,9 +261,9 @@ and..
 
 //@{
 
-#define FCLK            40000000UL    
+#define FCLK            40000000ul
 #define PRES            8
-#define PERT            1
+#define PERT            1ul
 
 #define REGVAL          ((FCLK*PERT)/(1000*PRES) -1)
 

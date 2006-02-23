@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.17 $
+ *  Current $Revision: 1.18 $
  *******************************************************************/
    
   
@@ -31,7 +31,8 @@ ITC
 #include <errno.h>
 #include <assert.h>
 
-#define NDEBUG
+#define NOTDEBUG_WITH_CURSES  //!< Visual "debugging" for queue operations if disabled
+
 #include <tk.h>
 #include "implement_tk.h"
 #include <tk_hwsys.h>
@@ -40,7 +41,7 @@ ITC
 #ifdef TK_COMP_ITC /* Should not test at sharp (libfile) version */
 /*- local definitions **/
 
-#ifdef NDEBUG
+#ifdef NOTDEBUG_WITH_CURSES
 	#define p_bQ(P,Q,R)   ((void)0)
 #else
 	#include <conio.h>
@@ -103,8 +104,8 @@ int proveConcistency(unsigned int qid) {
 		return(FALSE);
 	return(TRUE);	
 }
-#ifndef NDEBUG			 
 
+#ifndef NOTDEBUG_WITH_CURSES
 //------1---------2---------3---------4---------5---------6---------7---------8
 int no_duplicateBlock(unsigned int qid, unsigned int mark) {
 	tk_tcb_t *checkProc,*refProc = ipc_array[qid]->blocked_procs[mark];
@@ -148,7 +149,7 @@ void p_bQf(int x,int y,unsigned int qid) {
 	assert(rc);
 		
 }
-#endif
+#endif //NOTDEBUG_WITH_CURSES
 /*******************************************************************************
  * Local helper functions
  ******************************************************************************/
@@ -1368,7 +1369,10 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.17  2006-02-22 13:05:47  ambrmi09
+ *  Revision 1.18  2006-02-23 15:33:33  ambrmi09
+ *  Found a nasty "bug", that was not a read bug after all. At least not in the kernel as a feared. It turned out that I forgot some of the details about how timeouts were to be handled (especially in \ref ITC ). A timeout of value \b zero is equal of never to timeout (read more about it in define \ref FOREVER). However two important lesson learned: Even simple add operations get "funny" when adding large numbers (see line 303 in tk_ipc.c - in the \ref lock_stage function). Anyway. FOREVER should equal zero. (This issue makes me wonder sometimes how sane it really was to resurrect a project that has been dormant for nearly 10 years.) The CodeWright project ruler should be positioned on the actual line btw. This check-in will be accompanied  by a <tt>cvs tag</tt> for this reason, and for yet another nasty bug that seems to be a real dispatcher bug. The current source-set-up will show the bug within one mint (which is good since it makes it a little bit less of a search for the <I>"needle in the haystack</i>").
+ *
+ *  Revision 1.17  2006/02/22 13:05:47  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.16  2006/02/20 19:17:15  ambrmi09

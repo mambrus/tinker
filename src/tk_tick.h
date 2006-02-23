@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.16 $
+ *  Current $Revision: 1.17 $
  *
  *******************************************************************/
 /*
@@ -24,6 +24,27 @@ utility.
    #define MEMTYPE idata
 #else
    #define MEMTYPE
+#endif
+
+/*!
+Use SPEEDUP larger than 1 to make kernel advance faster. 
+
+@note <b>This is used for debugging kernel internals only</b>
+*/
+//#define SPEEDUP 1ul
+#define SPEEDUP 100ul
+
+
+#if (SPEEDUP > 1)
+   #define ADV( PERT ) (   \
+      ( PERT * SPEEDUP )   \
+   )
+#elif (SPEEDUP == 1)
+   #define ADV( PERT ) (   \
+      ( PERT )             \
+   )
+#else
+   #error Faulty SPEEDUP factor (use this for debugging dispatcher only)
 #endif
 
 /* 18 014 398 509 481 983 nS*/
@@ -76,14 +97,14 @@ while operated on:
   of 1 mS.
 
 */
+
 #define _tk_tick_advance_mS( advance )       \
    if (sys_mickey+advance < sys_mickey){     \
-      sys_mickey+=advance;                   \
+      sys_mickey+=ADV(advance);              \
       sys_mackey++;                          \
    }else{                                    \
-      sys_mickey+=advance;                   \      
+      sys_mickey+=ADV(advance);              \      
    }
-
 
 /*!
 Update sytem tick.
@@ -194,7 +215,10 @@ Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC syste
  * @ingroup CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.16  2006-02-22 13:05:47  ambrmi09
+ *  Revision 1.17  2006-02-23 15:33:33  ambrmi09
+ *  Found a nasty "bug", that was not a read bug after all. At least not in the kernel as a feared. It turned out that I forgot some of the details about how timeouts were to be handled (especially in \ref ITC ). A timeout of value \b zero is equal of never to timeout (read more about it in define \ref FOREVER). However two important lesson learned: Even simple add operations get "funny" when adding large numbers (see line 303 in tk_ipc.c - in the \ref lock_stage function). Anyway. FOREVER should equal zero. (This issue makes me wonder sometimes how sane it really was to resurrect a project that has been dormant for nearly 10 years.) The CodeWright project ruler should be positioned on the actual line btw. This check-in will be accompanied  by a <tt>cvs tag</tt> for this reason, and for yet another nasty bug that seems to be a real dispatcher bug. The current source-set-up will show the bug within one mint (which is good since it makes it a little bit less of a search for the <I>"needle in the haystack</i>").
+ *
+ *  Revision 1.16  2006/02/22 13:05:47  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.15  2006/02/22 10:20:53  ambrmi09
