@@ -12,7 +12,7 @@
 // @Description   This file contains the project initialization function.
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-04 13:07:09
+// @Date          2006-02-22 19:58:23
 //
 //****************************************************************************
 
@@ -138,7 +138,7 @@ Bus arbitration enabled
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-04
+// @Date          2006-02-22
 //
 //****************************************************************************
 
@@ -316,6 +316,9 @@ void MAIN_vInit(void)
   //   initializes the Asynchronous/Synchronous Serial Interface (ASC0)
   ASC0_vInit();
 
+  //   initializes the Asynchronous/Synchronous Serial Interface (ASC1)
+  ASC1_vInit();
+
   //   initializes the High-Speed Synchronous Serial Interface 0 (SSC0)
   SSC0_vInit();
 
@@ -357,7 +360,7 @@ void MAIN_vInit(void)
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-04
+// @Date          2006-02-22
 //
 //****************************************************************************
 
@@ -411,7 +414,7 @@ void MAIN_vUnlockProtecReg(void)
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-04
+// @Date          2006-02-22
 //
 //****************************************************************************
 
