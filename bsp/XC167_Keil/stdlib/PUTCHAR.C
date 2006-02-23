@@ -40,6 +40,7 @@ The interrupt control register us used to determine if tx has been sent.
 
 #define FIFO_ENABLED           dev()##_TXFCON_TXFEN
 #define FIFO_TRANSPARENT_MODE  dev()##_TXFCON_TXTMEN  
+#define SEND_BYTE              dev()##_vSendData  
 
 typedef unsigned int fsleep( unsigned int time );
 typedef fsleep *fsleep_p;
@@ -60,23 +61,23 @@ signed char putchar (signed char c)  {
       LAST_TX_SENT = 0;
 
       if ( c == '\n' || c == '\r' || c == 0 ){
-         ASC0_vSendData(0x0D);
+         SEND_BYTE(0x0D);
 		 if (!LAST_TX_SENT) sleepf(1);
 		 LAST_TX_SENT = 0;
-         ASC0_vSendData(0x0A);
+         SEND_BYTE(0x0A);
       }else{
-         ASC0_vSendData(c);
+         SEND_BYTE(c);
       }
    } else {
       if ( c == '\n' || c == '\r' || c == 0 ){
-         ASC0_vSendData(0x0D);
+         SEND_BYTE(0x0D);
          if (!LAST_TX_SENT) sleepf(1);
          LAST_TX_SENT = 0;
-         ASC0_vSendData(0x0A);
+         SEND_BYTE(0x0A);
          if (!LAST_TX_SENT) sleepf(1);
          LAST_TX_SENT = 0;
       }else{
-         ASC0_vSendData(c);
+         SEND_BYTE(c);
          if (!LAST_TX_SENT) sleepf(1);
          LAST_TX_SENT = 0;
       }

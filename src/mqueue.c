@@ -9,46 +9,10 @@
  * Notes:      Todo: Prioritize messages with qsort ( timestamp+prio = orderby)
  *
  * Modifications:
- * Current $Revision: 1.7 $
+ * Current $Revision: 1.8 $
  *
- * $Log: mqueue.c,v $
- * Revision 1.7  2006-02-22 13:05:46  ambrmi09
- * Major doxygen structure modification. No chancge in actual sourcecode.
- *
- * Revision 1.6  2006/02/21 22:10:32  ambrmi09
- * - Added wrapper macro for pthread_create so that posix threads get named in
- *   TinKer (makes post-mortem easier). Very cool solution with a macro...
- * - Improved post-mortem, the schedule gets dumpt also now
- * - Wrapper macros for msleep and usleep (temporary)
- * - Minor stubbing and wrapping of mq_unlink and pthread_cancel
- * - Added a new test program (t est-posix.c ). This is verifyed to compile and
- *   run on both Linux and TinKer unmodified!
- *
- * Revision 1.5  2006/02/20 19:17:14  ambrmi09
- * - Made the errno variable thread specific (each thread has it's own)
- * - Hid the details of using errno so that setting and reading it looks
- *   like using a normal variable
- * - Extracted some stuff from tk.h that doesn't need to be public
- * - Implemented perros and strerror including a storage with all the error
- *   strings (will go into NV ROM on a embedded system).
- *
- * Revision 1.4  2006/02/20 15:22:00  ambrmi09
- * Documentation stuff. No code changes.
- *
- * Revision 1.3  2006/02/19 22:00:38  ambrmi09
- * Major brake-through!!! First working attempt with crude pThreads and
- * POSIX RT queues works. (jihaa) :=D. Wow
- *
- * Revision 1.2  2006/02/19 12:44:33  ambrmi09
- * - Documented ITC
- * - Started to build up the structure for the \ref PTHREAD component
- *
- * Revision 1.1  2006/02/17 21:14:54  ambrmi09
- * Initial commit: code donated by the Zoi project (author: Michael Ambrus)
- *
- * 
  *****************************************************************************/
- /*!
+/*!
 @file
 @ingroup POSIX_RT
 
@@ -725,8 +689,49 @@ Good references about the API:
  * @defgroup CVSLOG_mqueue_c mqueue_c
  * @ingroup CVSLOG
  *  $Log: mqueue.c,v $
- *  Revision 1.7  2006-02-22 13:05:46  ambrmi09
+ *  Revision 1.8  2006-02-23 11:34:59  ambrmi09
+ *  - Improved post mortem
+ *   - Fixed bug in i2hex2.
+ *   - Added uptime output
+ *   - mark running among RDY threads in schedule dump
+ *
+ *  - \ref putchar now supports easy switching between serial0 and serial1
+ *
+ *  mqueue.h and mqueue.c should be untouched. But trying to identify if
+ *  qsort is the reason for TinKer sometimes to hang (recent possible bug).
+ *
+ *  Revision 1.7  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
- *  
+ * Revision 1.6  2006/02/21 22:10:32  ambrmi09
+ * - Added wrapper macro for pthread_create so that posix threads get named in
+ *   TinKer (makes post-mortem easier). Very cool solution with a macro...
+ * - Improved post-mortem, the schedule gets dumpt also now
+ * - Wrapper macros for msleep and usleep (temporary)
+ * - Minor stubbing and wrapping of mq_unlink and pthread_cancel
+ * - Added a new test program (t est-posix.c ). This is verifyed to compile and
+ *   run on both Linux and TinKer unmodified!
+ *
+ * Revision 1.5  2006/02/20 19:17:14  ambrmi09
+ * - Made the errno variable thread specific (each thread has it's own)
+ * - Hid the details of using errno so that setting and reading it looks
+ *   like using a normal variable
+ * - Extracted some stuff from tk.h that doesn't need to be public
+ * - Implemented perros and strerror including a storage with all the error
+ *   strings (will go into NV ROM on a embedded system).
+ *
+ * Revision 1.4  2006/02/20 15:22:00  ambrmi09
+ * Documentation stuff. No code changes.
+ *
+ * Revision 1.3  2006/02/19 22:00:38  ambrmi09
+ * Major brake-through!!! First working attempt with crude pThreads and
+ * POSIX RT queues works. (jihaa) :=D. Wow
+ *
+ * Revision 1.2  2006/02/19 12:44:33  ambrmi09
+ * - Documented ITC
+ * - Started to build up the structure for the \ref PTHREAD component
+ *
+ * Revision 1.1  2006/02/17 21:14:54  ambrmi09
+ * Initial commit: code donated by the Zoi project (author: Michael Ambrus)
+ *
  */

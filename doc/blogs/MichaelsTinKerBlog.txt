@@ -429,4 +429,70 @@ Go back to: @ref main
 
 */
 
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+
+/** 
+@defgroup Blog060221 060220
+@ingroup BlogMichael
+
+@brief CVS log entries
+
+Added a nice feature to the Cygwing generated docs on the net. You are now able
+to "browse" based on check-in events. I've been wanting this feature for a long
+time, but was to busy and set-up a full-blown view CVS web front-end.
+
+@see CVSLOGX
+
+Besides, as an extra bonus (one that View CVS doesn't have), any identifiers used 
+in the code will be automatically referenced by Doxygen.
+
+Go back to: @ref main
+
+*/
+
+
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+
+/** 
+@defgroup Blog060223 060223
+@ingroup BlogMichael
+
+@brief Chasing ghost bugs
+
+I was deeply scared yesterday when I chased something that seemed like a
+very nasty bug. The kernel (and test-appl) would run, but hang after a
+randomly long time ;(
+
+It turned out to be neither: 
+
+- Preemption ( I checked by turning preemptive features completely off)
+
+- Memory leaks
+
+It turned out to be the Hyper Terminal program in the PC! For some
+reason it was configured to use HW handshake and that gave VERY strange
+effects:
+
+- The debugger (!) got \e "sluggish" and non responsive when characters
+was incoming. This one gave me gray hairs. Without a good HW close
+debugger, TinKer is hopeless to develop.
+
+- Sending out from the target worked, but it didn't receive.
+
+After finally straighten that out (gah! *swears loudly*), I decided to
+throw HT out for a while and try something else. HT is too lousy and
+"flexible" AND it doesn't even enable me to scroll back properly (a very
+important for post-mortem analysis when something breakes in the code).
+
+Someone gave me a tip about <em>Tera Term pro</em>. It seems simple and
+does just what I need, and nothing else:
+
+http://hp.vector.co.jp/authors/VA002416/teraterm.html
+
+Go back to: @ref main
+
+*/
+
 //------1---------2---------3---------4---------5---------6---------7---------8

@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <tk.h>
 #include <errno.h>
+#include <time.h>
 
 #include <kernel/src/implement_tk.h>
 
@@ -195,7 +196,6 @@ void safeprint(char *s){
          ASC0_vSendData(s[i]);
          busywait(10);
       }
-
    }
 }
 
@@ -206,11 +206,16 @@ char i2shex_buff[7];
 /*!
 A very crude way to convert a integer value to human-readable form
 
-@note Remeber that we can't relay on any stdlib. Memory might be broken!
+@note Hexadecimal notation. Be careful how you interpret negative numbers.
+This function will always treat them as positive.
+
+In case you wonder why this seemingly stupid function exists:
+
+@note Remember that we can't relay on any stdlib. Memory might be broken!
 */
-char *i2shex(int i){
+char *i2shex(unsigned int i){
    unsigned int  mask;
-   int ti;
+   unsigned int ti;
    
    i2shex_buff[0] = '0';
    i2shex_buff[1] = 'x';
@@ -218,25 +223,25 @@ char *i2shex(int i){
    mask = 0xF000;
    ti = i & mask;
    ti = ti >> 12;
-   ti < 9 ? ti += ASCII_0 : ti += (ASCII_A - 10);
+   ti <= 9 ? ti += ASCII_0 : ti += (ASCII_A - 10);
    i2shex_buff[2]=ti;
    
    mask = 0x0F00;
    ti = i & mask;
    ti = ti >> 8;
-   ti < 9 ? ti += ASCII_0 : ti += (ASCII_A - 10);
+   ti <= 9 ? ti += ASCII_0 : ti += (ASCII_A - 10);
    i2shex_buff[3]=ti;
    
    mask = 0x00F0;
    ti = i & mask;
    ti = ti >> 4;
-   ti < 9 ? ti += ASCII_0 : ti += (ASCII_A - 10);
+   ti <= 9 ? ti += ASCII_0 : ti += (ASCII_A - 10);
    i2shex_buff[4]=ti;
    
    mask = 0x000F;
    ti = i & mask;
    //ti = ti >> 0;
-   ti < 9 ? ti += ASCII_0 : ti += (ASCII_A - 10);
+   ti <= 9 ? ti += ASCII_0 : ti += (ASCII_A - 10);
    i2shex_buff[5]=ti;
    
    i2shex_buff[6]=0;
@@ -261,6 +266,11 @@ void printtrap(
    unsigned int  iprio,idx;
    struct tcb_t *tcb;
    bit oIEN;
+   struct timespec uptime;
+   int rc;
+   
+   //The following row is risky - might breake if memory broken
+   rc=getuptime(&uptime);
   
    oIEN = IEN;
    if ((leadtext == 0uL) || (leadtext[0] > 'z') ){
@@ -274,15 +284,19 @@ void printtrap(
    };      
    IEN  = 0;  
    safeprint ("\n"); 
+   safeprint ("****************************************");
+   safeprint ("****************************************\n");
    safeprint (leadtext); 
-   IEN  = 1;
    safeprint (" at PC="); 
    safeprint (i2shex(csp));
    safeprint (":");
    safeprint (i2shex(ip));  
    safeprint (" TFR="); 
    safeprint (i2shex(tfr));
-   safeprint ("\nTFR meaning explained as follows:\n"); 
+   safeprint ("\n****************************************");
+   safeprint ("****************************************\n");
+   IEN  = 1;
+   safeprint ("TFR meaning explained as follows:\n"); 
   
    //tfr = 0xFFFF;  //set to test lookup table only
 
@@ -313,7 +327,7 @@ void printtrap(
    
    safeprint ("Detecting if errno was set...\n");   
    if (errno !=0 ){
-      safeprint ("Note: errno [");   
+      safeprint ("Yes, errno [");   
       safeprint (i2shex(errno));
       safeprint ("] was set:\n");
       perror(strerror(errno));
@@ -322,6 +336,8 @@ void printtrap(
    }
    
    safeprint ("\nDumping schedule...\n");
+   safeprint ("----------------------------------------");
+   safeprint ("----------------------------------------\n");
    
    for (iprio=0; iprio < TK_MAX_PRIO_LEVELS; iprio++){
 
@@ -348,9 +364,12 @@ void printtrap(
                safeprint(&i2shex(tcb->noChilds)[2]);   safeprint(" ");  //!< unsigned int / Numb of procs this has created
 
                //-v- PROCSTATE -v-
-               if (tcb->state == 0)
-                  safeprint("RDY ");
-               else if (tcb->state == ZOMBIE)
+               if (tcb->state == 0){
+                  if (tk_thread_id() == tid)
+                     safeprint(">RDY");
+                  else
+                     safeprint(" RDY");
+               }else if (tcb->state == ZOMBIE)
                   safeprint("ZOMB"); 
                else{
                   safeprint("_");
@@ -412,6 +431,17 @@ void printtrap(
    }
    safeprint ("----------------------------------------");
    safeprint ("----------------------------------------\n");
+   safeprint("Tinker uptime (S.nS): "); 
+   
+   //rc=getuptime(&uptime);
+   safeprint(&i2shex((uptime.tv_sec&0xFFFF0000) >>16 )[2]);
+   safeprint(&i2shex(uptime.tv_sec)[2]);
+   safeprint(".");
+   safeprint(&i2shex((uptime.tv_nsec&0xFFFF0000) >>16 )[2]);
+   safeprint(&i2shex(uptime.tv_nsec)[2]);
+
+   //safeprint("(\nNote: HEX notation.Subtract time for printout.\n)");
+   safeprint("(\nNote: HEX notation.\n)");
 
   
 
@@ -547,7 +577,18 @@ void user_trap (void) interrupt 0x0D  {
  * @defgroup CVSLOG_TRAPS_C TRAPS_C
  * @ingroup CVSLOG
  *  $Log: TRAPS.C,v $
- *  Revision 1.12  2006-02-22 13:05:45  ambrmi09
+ *  Revision 1.13  2006-02-23 11:34:58  ambrmi09
+ *  - Improved post mortem
+ *   - Fixed bug in i2hex2.
+ *   - Added uptime output
+ *   - mark running among RDY threads in schedule dump
+ *
+ *  - \ref putchar now supports easy switching between serial0 and serial1
+ *
+ *  mqueue.h and mqueue.c should be untouched. But trying to identify if
+ *  qsort is the reason for TinKer sometimes to hang (recent possible bug).
+ *
+ *  Revision 1.12  2006/02/22 13:05:45  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  
