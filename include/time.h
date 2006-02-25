@@ -14,6 +14,9 @@ kernel_reimpl_ansi
 @see kernel_reimpl_ansi
 
 POSIX time API and definitions references:
+http://www.opengroup.org/onlinepubs/007908799/xsh/time.h.html
+
+GNU clib refs:
 
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#Simple%20Calendar%20Time
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#Elapsed%20Time
@@ -165,31 +168,68 @@ time_t time (time_t *result);
 
 /*! 
 This macro calculates the time between two times (or expressed
-differentlly: the relative time between to points in time).
+differently: the relative time between to points in time).
 
-It hadless wraparound, but <b>t1</b> is required to represent the
-time that occures <b>first</b>. The time values can be
-represented in any type, but preferably by time_t. A requirement is
-however that they are represented by the same type. I.e. either both
-signed or bot unsigend, either both floats or non floats e.t.a.
+@note Always use difftime to calculate tme-differences in for best
+portability in your application. See \ref clock_t and \ref time_t for
+more information about TinKer's internal system time representation.
 
-Wrapping is handled properly only by scalar types with representation
-size equal to that of <i>unsigned long<i> (i.e. 32 bit on most systems).
+The order of the operands have the same order as the sutraction operator. I.e.:
+
+\code
+C = difftime(A,B);
+\endcode
+
+...means the same as:
+
+\code
+C = A-B;
+\endcode
+
+This macro handles wraparound, but <b>t0</b> is required to represent
+the time that occur <b>first</b>. The time values can in TinKer be
+represented in any type of same size as unsigned long, but for best
+portability you should use time_t. ( A requirement however is that they
+are represented by the same <em>"signed form"<em> of a type. I.e. either
+both shold be signed or both should be unsigned
+
+@warning Wrapping is handled properly only by scaler integer types with
+representation size equal to that of <i>unsigned long<i> (i.e. 32 bit on
+most systems).
 
 time_t is always OK to use even for applications that might run on other
-kernels. The difftime "function" is a POSIX standard and will in that
-case be implemented to calculate the time difference according to
-whatever representation time_h has on that system (including complex
-struct representations). clock_t will work where portability is not an
-issue (i.e. drivers, HAL e.t.a. that are target specific anyway and
-written to suit both HW and kernel, and in the kernal itself).
+kernels. The difftime function (or macro) is a POSIX standard and will
+in that case be implemented to calculate the time difference according
+to whatever representation time_h has on that system (including complex
+structure representations). 
 
-@note wrapping is handled properly only by scalar types with
-representation size equal to that of unsigned long
+@see
+http://www.gnu.org/software/libc/manual/html_mono/libc.html#Time%20Basics
+
+Using \ref clock_t will work where ever
+portability is not an issue (drivers, HAL e.t.a. I.e. anywhere target
+specific and where you are in full control/awareness of how you handle
+system time and it's representation.)
+
+@note difftime in TinKer can only accuratly calculate time differences
+according to the following:
+ 
+ - If you <b>know</b> which time comes firs, the resulting diff may lay
+ in the range 0 - \ref ULONG_MAX.
+ 
+ - If you don't know or, if you want to detect which time comes first,
+ then you need a result that is signed. Either user signed arguments or
+ cast the result to signed (explicit casting may not be needed on your
+ system, but it's best to do to avoid dependance on if your compiler
+ works on value or type preservation).
+ 
+I.e. depending on which of the above cases apply, the relative time
+difference may not exceed either ULONG_MAX or (ULONG_MAX/2 -1).
+
 */ 
 
-#define difftime(t1, t2) \
-   t1 <= t2 ? t2 - t1 : t2 + (ULONG_MAX - t1);
+#define difftime(t1, t0) \
+   (t0 <= t1 ? t1 - t0 : t1 + (ULONG_MAX - t0) + 1 )
 
 /*!
 @brief Struct holds time in formatted form for easier readability.
@@ -220,6 +260,25 @@ struct fmttime{
 //------1---------2---------3---------4---------5---------6---------7---------8
 void timespec2fmttime_np( struct fmttime *totime, const struct timespec *fromtime);
 clock_t clock();
+
+/*
+Confusion regarding this...
+
+...and what is 
+#define TIMER_ABSTIME	1
+?
+
+*/
+typedef enum{
+   CLOCK_REALTIME = 0,          /*!< Use HW clock to deliver time? Or actual time since epoch? */
+   CLOCK_MONOTONIC = 1          /*!< Use sys clock (i.e updated \e "monotonic")*/
+} clockid_t; 
+
+int nanosleep (const struct timespec *rqtp, struct timespec *rmtp);
+int clock_getres (clockid_t clock_id, struct timespec *res);
+int clock_gettime (clockid_t clock_id, struct timespec *tp);
+int clock_settime (clockid_t clock_id, const struct timespec *tp);
+
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 #endif /*time_h*/
@@ -229,7 +288,23 @@ clock_t clock();
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.13  2006-02-22 13:05:46  ambrmi09
+ *  Revision 1.14  2006-02-25 14:44:30  ambrmi09
+ *  Found the nasty \ref BUG_000_001. Solution is robust but potentially degrades
+ *  tinkers timing presition.
+ *
+ *  Found another bug caused by wraparound, that occures once every 71.6 minuts
+ *  but selcom shows itself.
+ *
+ *  @note  that systimer (sys_mickey) wraps once every 49.7 days but
+ *  kernel native time-keeping wraps 1000 times more often (71.6
+ *  minutes). This is due to that current precision on sys_time is in
+ *  mS, but kernel precision is in uS as a preparation to that the
+ *  \ref clock will be replaced by a higher precision time function
+ *  (\uptime or something similar).
+ *
+ *  prepared for better presision clock (true uS presision).
+ *
+ *  Revision 1.13  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.12  2006/02/21 22:10:31  ambrmi09

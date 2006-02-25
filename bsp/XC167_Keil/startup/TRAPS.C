@@ -270,7 +270,7 @@ void printtrap(
    int rc;
    
    //The following row is risky - might breake if memory broken
-   rc=getuptime(&uptime);
+   rc=getnanouptime(&uptime);
   
    oIEN = IEN;
    if ((leadtext == 0uL) || (leadtext[0] > 'z') ){
@@ -433,7 +433,7 @@ void printtrap(
    safeprint ("----------------------------------------\n");
    safeprint("Tinker uptime (S.nS): "); 
    
-   //rc=getuptime(&uptime);
+   //rc=getnanouptime(&uptime);
    safeprint(&i2shex((uptime.tv_sec&0xFFFF0000) >>16 )[2]);
    safeprint(&i2shex(uptime.tv_sec)[2]);
    safeprint(".");
@@ -577,7 +577,23 @@ void user_trap (void) interrupt 0x0D  {
  * @defgroup CVSLOG_TRAPS_C TRAPS_C
  * @ingroup CVSLOG
  *  $Log: TRAPS.C,v $
- *  Revision 1.14  2006-02-23 15:33:33  ambrmi09
+ *  Revision 1.15  2006-02-25 14:44:29  ambrmi09
+ *  Found the nasty \ref BUG_000_001. Solution is robust but potentially degrades
+ *  tinkers timing presition.
+ *
+ *  Found another bug caused by wraparound, that occures once every 71.6 minuts
+ *  but selcom shows itself.
+ *
+ *  @note  that systimer (sys_mickey) wraps once every 49.7 days but
+ *  kernel native time-keeping wraps 1000 times more often (71.6
+ *  minutes). This is due to that current precision on sys_time is in
+ *  mS, but kernel precision is in uS as a preparation to that the
+ *  \ref clock will be replaced by a higher precision time function
+ *  (\uptime or something similar).
+ *
+ *  prepared for better presision clock (true uS presision).
+ *
+ *  Revision 1.14  2006/02/23 15:33:33  ambrmi09
  *  Found a nasty "bug", that was not a read bug after all. At least not in the kernel as a feared. It turned out that I forgot some of the details about how timeouts were to be handled (especially in \ref ITC ). A timeout of value \b zero is equal of never to timeout (read more about it in define \ref FOREVER). However two important lesson learned: Even simple add operations get "funny" when adding large numbers (see line 303 in tk_ipc.c - in the \ref lock_stage function). Anyway. FOREVER should equal zero. (This issue makes me wonder sometimes how sane it really was to resurrect a project that has been dormant for nearly 10 years.) The CodeWright project ruler should be positioned on the actual line btw. This check-in will be accompanied  by a <tt>cvs tag</tt> for this reason, and for yet another nasty bug that seems to be a real dispatcher bug. The current source-set-up will show the bug within one mint (which is good since it makes it a little bit less of a search for the <I>"needle in the haystack</i>").
  *
  *  Revision 1.13  2006/02/23 11:34:58  ambrmi09

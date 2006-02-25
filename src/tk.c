@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.34 $
+ *  Current $Revision: 1.35 $
  *
  *******************************************************************/
   
@@ -577,7 +577,7 @@ unsigned int tk_msleep( unsigned int time_ms ){
    tk_yield();
    act_time_us    = clock();
 /* returns diff in clocks, i.e. uS  */
-   latency_us = difftime(proc_stat[active_thread].wakeuptime,act_time_us);
+   latency_us = difftime(act_time_us, proc_stat[active_thread].wakeuptime);
    return latency_us;
 }
 
@@ -590,8 +590,9 @@ void _tk_wakeup_timedout_threads( void ){
    //is solved.
    for(i=0;i<TK_MAX_THREADS;i++){
       if (proc_stat[i].state & SLEEP){
-         if (proc_stat[i].isInit){           //dubble check
-            if ( act_time >= proc_stat[i].wakeuptime ){
+         if (proc_stat[i].isInit){           //dubble check (done 060225, note kept for ref.)
+            //if ( act_time >= proc_stat[i].wakeuptime ){
+            if ( (signed long)(act_time - proc_stat[i].wakeuptime) >= 0 ){
                proc_stat[i].state &= ~_____QST; /*Release ques also*/
                proc_stat[i].wakeupEvent = E_TIMER;
             }
@@ -664,8 +665,8 @@ void _tk_context_switch_to_thread(
    unsigned int SID                 /*!< Thread ID to switch from. I.e. 
                                          current thread ID to put away in TCB*/
 ){
-   TRY_CATCH_STACK_ERROR( proc_stat[SID].stack_begin, cswTEMP2 );
-   INTEGRITY_CERTIFY_STACK( proc_stat[SID], cswTEMP2 ); //Certify the stack we're leaving from
+   //TRY_CATCH_STACK_ERROR( proc_stat[SID].stack_begin, cswTEMP2 );
+   //INTEGRITY_CERTIFY_STACK( proc_stat[SID], cswTEMP2 ); //Certify the stack we're leaving from
 
    
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );   
@@ -714,11 +715,13 @@ before the first PUSHALL nor after the last POPALL.
 
 */
 void tk_yield( void ){
+   __asm{ BCLR PSW_IEN };
    PUSHALL();
    _tk_wakeup_timedout_threads();
    thread_to_run = _tk_next_runable_thread();
    _tk_context_switch_to_thread(thread_to_run,active_thread);   
    POPALL();
+   __asm{ BSET PSW_IEN }
 }
 
 /*!
@@ -734,10 +737,12 @@ and to be called from an event source (i.e. ISR).
 */
 
 void tk_yield_event( void ){
+   __asm{ BCLR PSW_IEN }
    PUSHALL();
    thread_to_run = _tk_next_runable_thread();
    _tk_context_switch_to_thread(thread_to_run,active_thread);   
    POPALL();
+   __asm{ BSET PSW_IEN }
 }
 
 /*!
@@ -871,7 +876,23 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.34  2006-02-22 13:05:46  ambrmi09
+ *  Revision 1.35  2006-02-25 14:44:30  ambrmi09
+ *  Found the nasty \ref BUG_000_001. Solution is robust but potentially degrades
+ *  tinkers timing presition.
+ *
+ *  Found another bug caused by wraparound, that occures once every 71.6 minuts
+ *  but selcom shows itself.
+ *
+ *  @note  that systimer (sys_mickey) wraps once every 49.7 days but
+ *  kernel native time-keeping wraps 1000 times more often (71.6
+ *  minutes). This is due to that current precision on sys_time is in
+ *  mS, but kernel precision is in uS as a preparation to that the
+ *  \ref clock will be replaced by a higher precision time function
+ *  (\uptime or something similar).
+ *
+ *  prepared for better presision clock (true uS presision).
+ *
+ *  Revision 1.34  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.33  2006/02/21 22:10:32  ambrmi09

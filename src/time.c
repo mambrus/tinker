@@ -18,6 +18,10 @@ kernel_reimpl_ansi
 */
 
 #include <time.h>
+#include <kernel/src/tk_tick.h>
+#include <errno.h>
+#include <assert.h>
+
 
 //! An internal scaling factor that needs to be matched against the timer 
 //  resolution so that the POSIX requirements for CLOCKS_PER_SEC is fullfilled.
@@ -73,7 +77,8 @@ clock_t clock(){
 }
 
 time_t time (time_t *result){
-   return (time_t)clock();
+   *result = (time_t)clock();
+   return *result;
 }
 
 
@@ -84,10 +89,38 @@ int gettimeofday (struct timeval *tp, struct timezone *tzp){
 int settimeofday (const struct timeval *tp, const struct timezone *tzp){
 }
 
+/*!
+
+http://lists.freebsd.org/pipermail/freebsd-threads/2005-June/003123.html
+
+*/
+
+int clock_gettime (
+   clockid_t clock_id, 
+   struct timespec *tp
+){
+    switch (clock_id) {
+      case CLOCK_REALTIME:
+         assert("CLOCK_REALTIME is not implemented yet" == 0);
+         //nanotime(tp);
+         break;
+   
+      case CLOCK_MONOTONIC:
+         getnanouptime(tp);
+         break;
+   
+      default:
+         return EINVAL;
+   }
+
+   return ERR_OK;
+}
+
+
 
 /*!
 @brief Converts time from <i>struct timespec</i> to formatted time
-
+<
 Converts time from the compact struct timespec representation for
 the more user friendly struct fmttime. No information is lost in
 the conversion, but remember that struct fmttime is not practically
@@ -149,7 +182,23 @@ int
 /*! 
  * @ingroup CVSLOG CVSLOG
  *  $Log: time.c,v $
- *  Revision 1.10  2006-02-23 15:33:33  ambrmi09
+ *  Revision 1.11  2006-02-25 14:44:30  ambrmi09
+ *  Found the nasty \ref BUG_000_001. Solution is robust but potentially degrades
+ *  tinkers timing presition.
+ *
+ *  Found another bug caused by wraparound, that occures once every 71.6 minuts
+ *  but selcom shows itself.
+ *
+ *  @note  that systimer (sys_mickey) wraps once every 49.7 days but
+ *  kernel native time-keeping wraps 1000 times more often (71.6
+ *  minutes). This is due to that current precision on sys_time is in
+ *  mS, but kernel precision is in uS as a preparation to that the
+ *  \ref clock will be replaced by a higher precision time function
+ *  (\uptime or something similar).
+ *
+ *  prepared for better presision clock (true uS presision).
+ *
+ *  Revision 1.10  2006/02/23 15:33:33  ambrmi09
  *  Found a nasty "bug", that was not a read bug after all. At least not in the kernel as a feared. It turned out that I forgot some of the details about how timeouts were to be handled (especially in \ref ITC ). A timeout of value \b zero is equal of never to timeout (read more about it in define \ref FOREVER). However two important lesson learned: Even simple add operations get "funny" when adding large numbers (see line 303 in tk_ipc.c - in the \ref lock_stage function). Anyway. FOREVER should equal zero. (This issue makes me wonder sometimes how sane it really was to resurrect a project that has been dormant for nearly 10 years.) The CodeWright project ruler should be positioned on the actual line btw. This check-in will be accompanied  by a <tt>cvs tag</tt> for this reason, and for yet another nasty bug that seems to be a real dispatcher bug. The current source-set-up will show the bug within one mint (which is good since it makes it a little bit less of a search for the <I>"needle in the haystack</i>").
  *
  *  Revision 1.9  2006/02/22 13:05:46  ambrmi09

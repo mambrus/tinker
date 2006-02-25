@@ -7,7 +7,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.11 $
+ *  Current $Revision: 1.12 $
  *******************************************************************/
    
 
@@ -40,6 +40,9 @@ This equals to the real value 4294967,296. Defines below are it's integer and fr
 /*!
 @brief returns time since startup of the target expressed in seconds and
 fractions in nS. Precision limited only by HW (if supported).
+
+Similar implementation is found in BSD: 
+http://nixdoc.net/man-pages/FreeBSD/man9/getnanouptime.9.html
 
 Internal running time is in mS and is kept in two 32-bit variables. The
 LS of these (called "tick") contains number of uS since startup, and the
@@ -100,8 +103,8 @@ inventing 64-bit operations.
 @todo see the second note in getuptime
 */
 
-int getuptime (
-   struct timespec *tp            //!< The returned uptime
+void getnanouptime (
+   struct timespec *tp            //!< The returned uptime in nS presision
 ){
    unsigned long    /*MSS,*/MSmS; // 32-bit <b>H</b>igh part of seconds, millisecons
    unsigned long        LSS,LSmS; // 32-bit <b>L</b>ow part of seconds, millisecons
@@ -178,7 +181,6 @@ int getuptime (
    tp->tv_sec  = LSS;
    tp->tv_nsec = nS;
 
-   return 0;
 }
 
   
@@ -187,7 +189,23 @@ int getuptime (
  * @ingroup CVSLOG
  *
  *  $Log: tk_tick.c,v $
- *  Revision 1.11  2006-02-22 13:05:47  ambrmi09
+ *  Revision 1.12  2006-02-25 14:44:30  ambrmi09
+ *  Found the nasty \ref BUG_000_001. Solution is robust but potentially degrades
+ *  tinkers timing presition.
+ *
+ *  Found another bug caused by wraparound, that occures once every 71.6 minuts
+ *  but selcom shows itself.
+ *
+ *  @note  that systimer (sys_mickey) wraps once every 49.7 days but
+ *  kernel native time-keeping wraps 1000 times more often (71.6
+ *  minutes). This is due to that current precision on sys_time is in
+ *  mS, but kernel precision is in uS as a preparation to that the
+ *  \ref clock will be replaced by a higher precision time function
+ *  (\uptime or something similar).
+ *
+ *  prepared for better presision clock (true uS presision).
+ *
+ *  Revision 1.11  2006/02/22 13:05:47  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.10  2006/02/22 10:20:53  ambrmi09

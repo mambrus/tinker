@@ -17,6 +17,9 @@
 //****************************************************************************
 
 // USER CODE BEGIN (MAIN_General,1)
+
+#include <kernel/src/tk_tick.h>
+
 //unsigned char xhuge malloc_mempool [0x1000];
 unsigned char far malloc_mempool [0x4000];
 //works not -> unsigned char xhuge malloc_mempool [0x4000];
@@ -436,13 +439,11 @@ void SetWdt1()
 void main(void)
 {
   // USER CODE BEGIN (Main,2)  
-      //unsigned int *myTCONCS1=&TCONCS1;
-	  int inpar;
-
-      init_mempool (&malloc_mempool, sizeof(malloc_mempool));
+  
+   init_mempool (&malloc_mempool, sizeof(malloc_mempool));
 
 
-      //Below not needed anymore, better workaround made (including *.asm in start.a66 and using another symbol for PHE1 that was generated correctlly)
+      //Below is not needed anymore, better workaround made (including *.asm in start.a66 and using another symbol for PHE1 that was generated correctlly)
       //TCONCS1  =  0x2868;  //<-- This is in the wrong order, but should work since no acces is done yet
       //*((uword volatile *) 0xEE18) = 0x2868;
 
@@ -451,36 +452,24 @@ void main(void)
   MAIN_vInit();
 
   // USER CODE BEGIN (Main,4)
-/*
-__asm  {
-    PUSH  DPP2               ; save DPP2
-    POP   DPP2               ; restore DPP2
-}
-*/
-/*
-__asm  {
-    
-    POP   DPP2
-}
-*/
-__asm  {
-    PUSH  R0               ; save R0
-    POP   R0               ; restore R0
-}
-
-
-
       GPT1_vLoadTmr(GPT1_TIMER_2,4999);
       GPT1_vCountDown(GPT1_TIMER_2);
       GPT1_vStartTmr(GPT1_TIMER_2);
 
-      inpar = 7;
-	  //rc = testf((void*)(&inpar));
-	  //rc = inpar;
+      //Wraparound testing that occures once every 71.6 minuts 
+      
+      /* Note that systimer (sys_mickey) wraps once every 49.7 days but
+      kernel native time-keeping wraps 1000 times more often (71.6
+      minutes). This is due to that current precision on sys_time is in
+      mS, but kernel precision is in uS as a preparation to that the
+      \ref clock will be replaced by a higher precision time function
+      (\uptime or something similar). */
+	   
+      //sys_mickey = 0xFFFFE666;
 
       _tk_main();
       tk_exit(TK_OK);
-      assert("You should never rech this line" == NULL);
+      assert("You should never reach this line" == NULL);
 
    // USER CODE END
 
