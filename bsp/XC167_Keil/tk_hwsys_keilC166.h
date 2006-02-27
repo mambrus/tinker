@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.15 $
+ *  Current $Revision: 1.16 $
  *
  *******************************************************************/
   
@@ -139,6 +139,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ push  MDC                    }                                                                      \
    __asm{ push  STKOV                  }                                                                      \
    __asm{ push  STKUN                  }                                                                      \
+
    
       
 #define POPALL()                                                                                              \
@@ -277,16 +278,24 @@ void _tk_initialize_system_ques( );
 #define TRAP( NUM )                                                           \
    _do_trap( NUM )
 
+//#define TK_CLI()                                                              \
+//   __asm{ BCLR PSW_IEN }                                                      \
+//   Tk_IntFlagCntr++;                                                          \   
+//
+//
+//#define TK_STI()	                                                           \
+//   Tk_IntFlagCntr--;  /*Is ok since CLI is active no one can interfere*/      \
+//   if (Tk_IntFlagCntr == 0)                                                   \
+//      __asm{ BSET PSW_IEN }
+
 #define TK_CLI()                                                              \
-   __asm{ BCLR PSW_IEN }                                                      \
-   Tk_IntFlagCntr++;                                                          \   
+   __asm{ BCLR PSW_IEN }                                                      
+
 
 
 #define TK_STI()	                                                            \
-   Tk_IntFlagCntr--;  /*Is ok since CLI is active no one can interfere*/      \
-   if (Tk_IntFlagCntr == 0)                                                   \
-      __asm{ BSET PSW_IEN }
-      
+   __asm{ BSET PSW_IEN }
+         
 
 #define STK_CRC_CALC( TEMP )                                               \
    __asm { mov TEMP, R0 }                                                  \
@@ -374,7 +383,17 @@ TBD
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.h,v $
- *  Revision 1.15  2006-02-22 13:05:45  ambrmi09
+ *  Revision 1.16  2006-02-27 13:30:03  ambrmi09
+ *  <b>Please read the in depth comments</b> about this check-in at \ref
+ *  Blog051125
+ *
+ *  The test program (test.c) in this check-in is also particularly nasty
+ *  since it gives really long latencies on each task switch (up to and
+ *  above 500mS!). Test against this if you make any changes in either
+ *  timing or dispatching. Even considering this hard case, the drift was
+ *  very minor. The timing constants need re-trimming though.
+ *
+ *  Revision 1.15  2006/02/22 13:05:45  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.14  2005/12/04 15:48:52  ambrmi09

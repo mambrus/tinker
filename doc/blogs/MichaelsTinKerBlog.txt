@@ -496,3 +496,69 @@ Go back to: @ref main
 */
 
 //------1---------2---------3---------4---------5---------6---------7---------8
+
+/** 
+@defgroup Blog060227 060227 
+@ingroup BlogMichael
+
+@brief In depth check-in note
+
+
+Finally tuned the implementation of context switching  (\ref tk_yield
+)with the system timer update (\ref GPT1_viTmr2).
+
+I'm not particularly happy about the solution, since it involves turning
+off interrupts, when disabling preemptability \b should be enough. This
+is due to the "strange" way C166 is behaving during interrupts in
+combination with the tool-chain. An interrupt is \b NOT restoring all
+what it's done as any normal CPU would do. Instead you're either forced
+to do this manually (no way a driver developer will remember this at all
+times), or your tool-chain will have to be set-up in a way where extra
+code is inserted (what happens if that is forgotten?). In both these
+cases, there is a high probability that something goes wrong and neither
+is done which will render in an \b occasional bad restoration of a
+context. This is both very hard to catch \b AND it breaks my debugger so
+that I cant either stop or inspect what goes wrong.
+
+The solution where the context switching takes care of such
+eventualities is safer, but more complex than I would have whished for.
+Any solution depending on turning interrupts on and off is in my
+experience \b very sensitive. It might come to that we'll have a special
+implementation for \ref tk_yield exclusively for the C166 community. See
+forther references for this \e "strange" behaviour:
+
+@see http://www.keil.com/support/docs/691.htm
+@see http://www.keil.com/support/docs/1695.htm
+@see http://www.keil.com/support/man/docs/c166/c166_le_extreguse.htm
+
+Note that the last one speaks about R0. I haven't investigate this
+further but it might be relevant too, since RO is being used.
+
+Other changes:
+
+- \ref clock will now be able to give its value with as high resolution
+as the hardware supports. Implemented as conditional compilation to aid
+porting processes. It is furthermore not very likely that this will
+improve timekeeping anywhere user specific. However, as a side effect it
+avoids a critical time-frame around the last syst-timer period around
+each wrapping (i.e. depending on \ref PERT, the last 3-13 mS each 17.2
+minuts). Any time-keeping during that time-frame will get accuracy
+decimated by up to 2*PERT. Note that this is not the same as the
+resolution granularity that happens up to then, since then you at least
+know what the precision is. The time-frame in question will give a
+"random" precision. This effect has to do with that division between
+ULONG_MAX and PERT will leave a fraction for most PERT values above 2
+(note that 1 and two doesn't give this effect).
+
+- The test program (test.c) in this check-in is also particularly nasty
+since it gives really long latencies on each task switch (up to and
+above 500mS!). Test against this if you make any changes in either
+timing or dispatching. Even considering this hard case, the drift was as
+good as best achieved before (i.e. theoretically possible, 1-2 seconds
+per day).
+
+Go back to: @ref main
+
+*/
+
+//------1---------2---------3---------4---------5---------6---------7---------8

@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.35 $
+ *  Current $Revision: 1.36 $
  *
  *******************************************************************/
   
@@ -32,6 +32,7 @@ SCHED
 #include <assert.h>
 
 #include <tk.h>
+//#include <tk_hwsys.h>
 #include "implement_tk.h"
 
 /*!
@@ -555,32 +556,60 @@ close to zero. This is due to that the code in the kernal itself takes
 some time to reach the point where a dispatch is actuated.
 
 
-@todo Wraparound problem when actual time (int) added to relatine
-timeout is greater than the size of an integer. This needs to be solved.
-   
-@return latency in 1/10 of the timeout resolution, i.e. in 1/10 of a mS.
-   
-   
+@warning most of the above text is obsolete         
+
+@todo correct the text above
+
+@note (060227). Detected problems using variables after the yield. Problem is believed to be C166 related due to the way it handles local variables (stack, register or other memory)
+
 */
 
-unsigned int tk_msleep( unsigned int time_ms ){
+void tk_msleep( unsigned int time_ms ){
 /* It's our kernal so we "know" that a clock equals 1uS */
    clock_t act_time_us; 
    clock_t wkp_time_us;
-   clock_t latency_us;  //Temporary var only to aid debugging
    
    act_time_us    = clock();
    wkp_time_us    = act_time_us + (time_ms * 1000uL);
-   //need a function t_diff that handles wraparound
+
+   //need a function t_diff that handles wraparound (done 060225, note kept for ref.)
    proc_stat[active_thread].wakeuptime = wkp_time_us;
    proc_stat[active_thread].state |= SLEEP;
    tk_yield();
-   act_time_us    = clock();
-/* returns diff in clocks, i.e. uS  */
-   latency_us = difftime(act_time_us, proc_stat[active_thread].wakeuptime);
-   return latency_us;
 }
 
+/*!
+@brief create a "virtual" timeout event (whenever possible).
+
+Iterates though the whole schedule, trying to find sleeping threads
+who's timeout time has expired and flag them as \ref READY. 
+
+@see PROCSTATE
+
+In non-preemptive mode there is no way to wake up a sleeping thread any
+other way. Therefore \b detection thereof must be done.
+
+This is done mainly by the idle thread (it has nothing else to do
+anyway) and in all the context-swappable points (i.e. in principle in
+most of the public functions belonging to \ref SCHED ).
+
+There those points are is easiest to find out by tracing the \ref
+tk_yield function.
+
+This concept is a heritage from the non-preemptive concept, but waking
+up sleeping threads this way is still done. This will also be kept in in
+the \ref idle thread even when \ref PTIMER package is finished.
+
+When \ref PTIMER package is finished, the \ref tk_yield might change
+behaviour, but the \ref idle will still not (to keep compatibility
+towards the old \ref ITC). Note that timeout handling for \ref PTHREAD
+is planned to be handled by \ref PTIMER.
+
+Timing using this concept was (and still is) mainly intended for simple
+blocking timeouts in \ref ITC and was never intended for high-precision
+time keeping (even though that works quite well also).
+
+ */
 void _tk_wakeup_timedout_threads( void ){
    int i;
    clock_t act_time;
@@ -715,13 +744,21 @@ before the first PUSHALL nor after the last POPALL.
 
 */
 void tk_yield( void ){
-   __asm{ BCLR PSW_IEN };
-   PUSHALL();
+   TK_CLI();   
+   PUSHALL();   
+   TK_STI();
+   
    _tk_wakeup_timedout_threads();
+   
+   TK_CLI();
+   
+   //Do not premit interrupts between the following two. Proc statuses 
+   //(i.e. thread statuses) frozen in time.
    thread_to_run = _tk_next_runable_thread();
    _tk_context_switch_to_thread(thread_to_run,active_thread);   
+   
    POPALL();
-   __asm{ BSET PSW_IEN }
+   TK_STI();
 }
 
 /*!
@@ -735,14 +772,13 @@ and to be called from an event source (i.e. ISR).
 @see void tk_yield( void )
 
 */
-
 void tk_yield_event( void ){
-   __asm{ BCLR PSW_IEN }
+   TK_CLI();
    PUSHALL();
    thread_to_run = _tk_next_runable_thread();
    _tk_context_switch_to_thread(thread_to_run,active_thread);   
    POPALL();
-   __asm{ BSET PSW_IEN }
+   TK_STI();
 }
 
 /*!
@@ -876,7 +912,17 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.35  2006-02-25 14:44:30  ambrmi09
+ *  Revision 1.36  2006-02-27 13:30:04  ambrmi09
+ *  <b>Please read the in depth comments</b> about this check-in at \ref
+ *  Blog051125
+ *
+ *  The test program (test.c) in this check-in is also particularly nasty
+ *  since it gives really long latencies on each task switch (up to and
+ *  above 500mS!). Test against this if you make any changes in either
+ *  timing or dispatching. Even considering this hard case, the drift was
+ *  very minor. The timing constants need re-trimming though.
+ *
+ *  Revision 1.35  2006/02/25 14:44:30  ambrmi09
  *  Found the nasty \ref BUG_000_001. Solution is robust but potentially degrades
  *  tinkers timing presition.
  *

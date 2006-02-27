@@ -7,7 +7,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.12 $
+ *  Current $Revision: 1.13 $
  *******************************************************************/
    
 
@@ -18,10 +18,6 @@
 #include <time.h>
 #include <tk_hwsys.h> //Should really be moved into tk_hwclock.h, but we cant since Keil prepocessor is buggd. 
 
-
-#define HW_CLOCKED   /*!< If HWclock operations are supported or not. 
-                          @note Only temporary in this file, needs to 
-                          find another home. */
 
 #if defined(HW_CLOCKED)
    #include "tk_hwclock.h"
@@ -189,7 +185,17 @@ void getnanouptime (
  * @ingroup CVSLOG
  *
  *  $Log: tk_tick.c,v $
- *  Revision 1.12  2006-02-25 14:44:30  ambrmi09
+ *  Revision 1.13  2006-02-27 13:30:04  ambrmi09
+ *  <b>Please read the in depth comments</b> about this check-in at \ref
+ *  Blog051125
+ *
+ *  The test program (test.c) in this check-in is also particularly nasty
+ *  since it gives really long latencies on each task switch (up to and
+ *  above 500mS!). Test against this if you make any changes in either
+ *  timing or dispatching. Even considering this hard case, the drift was
+ *  very minor. The timing constants need re-trimming though.
+ *
+ *  Revision 1.12  2006/02/25 14:44:30  ambrmi09
  *  Found the nasty \ref BUG_000_001. Solution is robust but potentially degrades
  *  tinkers timing presition.
  *

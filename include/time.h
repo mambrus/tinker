@@ -228,8 +228,12 @@ difference may not exceed either ULONG_MAX or (ULONG_MAX/2 -1).
 
 */ 
 
+/*
 #define difftime(t1, t0) \
    (t0 <= t1 ? t1 - t0 : t1 + (ULONG_MAX - t0) + 1 )
+*/   
+#define difftime(t1, t0) \
+   (t1 - t0)
 
 /*!
 @brief Struct holds time in formatted form for easier readability.
@@ -288,7 +292,17 @@ int clock_settime (clockid_t clock_id, const struct timespec *tp);
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.14  2006-02-25 14:44:30  ambrmi09
+ *  Revision 1.15  2006-02-27 13:30:03  ambrmi09
+ *  <b>Please read the in depth comments</b> about this check-in at \ref
+ *  Blog051125
+ *
+ *  The test program (test.c) in this check-in is also particularly nasty
+ *  since it gives really long latencies on each task switch (up to and
+ *  above 500mS!). Test against this if you make any changes in either
+ *  timing or dispatching. Even considering this hard case, the drift was
+ *  very minor. The timing constants need re-trimming though.
+ *
+ *  Revision 1.14  2006/02/25 14:44:30  ambrmi09
  *  Found the nasty \ref BUG_000_001. Solution is robust but potentially degrades
  *  tinkers timing presition.
  *

@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.27 $
+ *  Current $Revision: 1.28 $
  *
  *******************************************************************/
    
@@ -164,7 +164,7 @@ void           tk_create_kernel( void );
 void           tk_delete_kernel( void );
 void           tk_yield( void );
 void           tk_exit( int ec );
-unsigned int   tk_msleep( unsigned int time_ms );
+void           tk_msleep( unsigned int time_ms );
 unsigned int   tk_thread_id( void );            
 
 extern void    root( void ); /*! supplied by YOU - constitutes the root thread function*/
@@ -182,7 +182,17 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.27  2006-02-22 13:05:46  ambrmi09
+ *  Revision 1.28  2006-02-27 13:30:03  ambrmi09
+ *  <b>Please read the in depth comments</b> about this check-in at \ref
+ *  Blog051125
+ *
+ *  The test program (test.c) in this check-in is also particularly nasty
+ *  since it gives really long latencies on each task switch (up to and
+ *  above 500mS!). Test against this if you make any changes in either
+ *  timing or dispatching. Even considering this hard case, the drift was
+ *  very minor. The timing constants need re-trimming though.
+ *
+ *  Revision 1.27  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.26  2006/02/21 22:10:32  ambrmi09

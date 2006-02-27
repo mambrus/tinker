@@ -18,7 +18,9 @@ kernel_reimpl_ansi
 */
 
 #include <time.h>
-#include <kernel/src/tk_tick.h>
+#include "tk_tick.h"
+#include "tk_hwclock.h"
+#include <tk_hwsys.h> //< Try to remove this one
 #include <errno.h>
 #include <assert.h>
 
@@ -33,7 +35,10 @@ kernel_reimpl_ansi
 //each interrupt
 
 
-#include "tk_tick.h"  //internal macros for tick handliing
+#include "tk_tick.h"      //internal macros for tick handliing
+#if defined (HW_CLOCKED)
+#define USE_HW_CLOCK      //!< Undef this to see the "error" in tk_msleep that happens each 17.2 minuts (see \Blog060227 for indepth discussion)
+#endif
 
 //return (clock_t)(-1);
 
@@ -68,12 +73,68 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#CPU%20Time
 
 @note Not all targets need this module. If supported by your compiler
 use that module instead.
+
+Implementation in principle the same as \ref getnanouptime
    
    
 */
+clock_t clock(){   
+   #if !defined (USE_HW_CLOCK)
+   return (TICK_PER_CLK * sys_mickey);
+   #else
+   signed int        	pebbles,p2;  // Remainig value in HWclock register
+   unsigned long        uS;       // Time passed since last update of tick expressed in uS.
+   unsigned long        TuS;      // Temp of the above
+   HWclock_stats_t      HWclock_stats;
+   int                  ecnt = 0;
+   int                  zerocrossed = 0;
+      
 
-clock_t clock(){
-   return TICK_PER_CLK * sys_mickey;
+   pebbles = 0;   
+   tk_getHWclock_Quality( CLK1, &HWclock_stats );
+   
+   TK_CLI();
+   tk_getHWclock(         CLK1, &pebbles);   
+   uS = sys_mickey; 
+   TK_STI();
+      
+
+   uS *= 1000uL;
+
+   if ((HWclock_stats.res > 16) && (HWclock_stats.freq_hz < 1000000)) {
+      assert("tk: to high resolution HW clock. TinKer can't handle this ATM" == NULL);
+   }
+   
+   if (pebbles <0){
+      pebbles *= -1;
+      uS++;
+      zerocrossed=1;
+   }   
+
+   /*
+   for ( ecnt =0; (unsigned long)pebbles >= HWclock_stats.perPebbles; ecnt++ ){
+      if (!zerocrossed)
+         assert("How the fuck...!"==NULL);
+      pebbles -= HWclock_stats.perPebbles;
+      uS++;      
+   }
+   */
+
+   assert(HWclock_stats.perPebbles > (unsigned long)pebbles);
+   //assert( ecnt < 3 );
+   
+
+   // Calculate the nuber of uS since last update of tick
+   TuS = HWclock_stats.maxPebbles - pebbles;
+   TuS = (TuS * (1000000L / (HWclock_stats.freq_hz/100)))/100;
+   
+   if (TuS > 8000){
+      assert("Hepp"==NULL);
+   }
+   
+   return (uS + TuS);
+
+   #endif
 }
 
 time_t time (time_t *result){
@@ -182,7 +243,17 @@ int
 /*! 
  * @ingroup CVSLOG CVSLOG
  *  $Log: time.c,v $
- *  Revision 1.11  2006-02-25 14:44:30  ambrmi09
+ *  Revision 1.12  2006-02-27 13:30:04  ambrmi09
+ *  <b>Please read the in depth comments</b> about this check-in at \ref
+ *  Blog051125
+ *
+ *  The test program (test.c) in this check-in is also particularly nasty
+ *  since it gives really long latencies on each task switch (up to and
+ *  above 500mS!). Test against this if you make any changes in either
+ *  timing or dispatching. Even considering this hard case, the drift was
+ *  very minor. The timing constants need re-trimming though.
+ *
+ *  Revision 1.11  2006/02/25 14:44:30  ambrmi09
  *  Found the nasty \ref BUG_000_001. Solution is robust but potentially degrades
  *  tinkers timing presition.
  *

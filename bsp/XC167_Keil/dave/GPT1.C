@@ -38,7 +38,7 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 
 // USER CODE BEGIN (GPT1_General,2)
 
-
+#include <kernel/include/assert.h>
 #include <../bsp/XC167_Keil/tk_hwtypes_keilC166.h> //Note: This is a shaky thingy. This header must not in turn include any Keil regs.h
 
 /*!
@@ -268,7 +268,8 @@ and..
 #define REGVAL          ((FCLK*PERT)/(1000*PRES) -1)
 
 #define X_CLK           100
-#define ISRPEB          8500100
+//#define ISRPEB          8500100 
+#define ISRPEB          8490100   //Possibly not needed anymore, since self adjusting timer ISR introduced
 
 #define CMPPEB           ((ISRPEB + X_CLK * REGVAL)/1000000)
 
@@ -505,9 +506,18 @@ void GPT1_vInit(void)
 void GPT1_viTmr2(void) interrupt T2INT
 {
   // USER CODE BEGIN (Tmr2,2)
+  signed int pebbRest;
 
-  GPT1_vLoadTmr(GPT1_TIMER_2,RELOADVAL);
-  //_tk_tick_1mS();
+  pebbRest = GPT1_uwReadTmr(GPT1_TIMER_2);
+  pebbRest *= -1;
+
+  assert(RELOADVAL > pebbRest );                    //<- Interrupt flag has been turned off for too long. Missed one whole event (at least).
+
+  //The following row CAN actually occure. But the test should work at 
+  //least for several minuts. Renable to thest your config.
+  //assert( 0 < pebbRest );                           //<- Timer not counting past the event, i.e. latency correction not possible. Wrong config, correct your timer setup plz...
+  
+  GPT1_vLoadTmr(GPT1_TIMER_2,RELOADVAL+GPT1_uwReadTmr(GPT1_TIMER_2));  //<- Correct with the actual value. Notice the sign (+), this is intentional.
   _tk_tick_advance_mS(PERT);
 
   // USER CODE END

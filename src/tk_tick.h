@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.18 $
+ *  Current $Revision: 1.19 $
  *
  *******************************************************************/
 /*
@@ -25,6 +25,9 @@ utility.
 #else
    #define MEMTYPE
 #endif
+
+/*! If HWclock operations are supported or not. */
+#define HW_CLOCKED   
 
 /*!
 Use SPEEDUP larger than 1 to make kernel advance faster. 
@@ -221,7 +224,17 @@ void getnanouptime (
  * @ingroup CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.18  2006-02-25 14:44:30  ambrmi09
+ *  Revision 1.19  2006-02-27 13:30:04  ambrmi09
+ *  <b>Please read the in depth comments</b> about this check-in at \ref
+ *  Blog051125
+ *
+ *  The test program (test.c) in this check-in is also particularly nasty
+ *  since it gives really long latencies on each task switch (up to and
+ *  above 500mS!). Test against this if you make any changes in either
+ *  timing or dispatching. Even considering this hard case, the drift was
+ *  very minor. The timing constants need re-trimming though.
+ *
+ *  Revision 1.18  2006/02/25 14:44:30  ambrmi09
  *  Found the nasty \ref BUG_000_001. Solution is robust but potentially degrades
  *  tinkers timing presition.
  *
