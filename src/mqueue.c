@@ -9,7 +9,7 @@
  * Notes:      Todo: Prioritize messages with qsort ( timestamp+prio = orderby)
  *
  * Modifications:
- * Current $Revision: 1.8 $
+ * Current $Revision: 1.9 $
  *
  *****************************************************************************/
 /*!
@@ -30,6 +30,8 @@ POSIX_RT
 
 @see POSIX_RT
 @see PTHREAD
+
+@todo Consider replacing qsort with insert sort (or at least a non-reqursive version)
 */
 
 
@@ -409,8 +411,10 @@ size_t mq_receive(
       msg_buffer, 
       Q->mBox.messArray[Q->mBox.mIdxOut].buffer, 
       Q->mBox.messArray[Q->mBox.mIdxOut].msgSz
-   );
-   *msgprio = Q->mBox.messArray[Q->mBox.mIdxIn].order.prio;
+   );   
+   if (msgprio)  //Special case if atribute is NULL. Check what standard says about that
+      *msgprio = Q->mBox.messArray[Q->mBox.mIdxIn].order.prio;
+
    msgSize = Q->mBox.messArray[Q->mBox.mIdxOut].msgSz; 
 
    Q->mBox.mIdxOut++;
@@ -689,7 +693,12 @@ Good references about the API:
  * @defgroup CVSLOG_mqueue_c mqueue_c
  * @ingroup CVSLOG
  *  $Log: mqueue.c,v $
- *  Revision 1.8  2006-02-23 11:34:59  ambrmi09
+ *  Revision 1.9  2006-02-28 18:16:55  ambrmi09
+ *  - Mainly a ci for the new Workspace structure
+ *  - Houwever, found and corrected a bug in mqueue.c (a NULL pointer
+ *    assignement)
+ *
+ *  Revision 1.8  2006/02/23 11:34:59  ambrmi09
  *  - Improved post mortem
  *   - Fixed bug in i2hex2.
  *   - Added uptime output

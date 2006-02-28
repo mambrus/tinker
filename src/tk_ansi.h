@@ -111,6 +111,8 @@ extern "C"
 }
 #endif
 
+/*
+
 //------1---------2---------3---------4---------5---------6---------7---------8
 #if defined(_WIN32) &&  defined(_MSC_VER)
    #define CHAINPATH C:\Program Files\Microsoft Visual Studio\VC98\Include
@@ -142,6 +144,10 @@ extern "C"
    
 #define BUILDCHAIN( file ) \
    FNAME( CHAINPATH, ##file ) \
+
+*/
+
+
 
 #endif //TK_ANSI_H
 
@@ -294,7 +300,12 @@ cartful!
  * @defgroup CVSLOG_tk_ansi_h tk_ansi_h
  * @ingroup CVSLOG
  *  $Log: tk_ansi.h,v $
- *  Revision 1.8  2006-02-28 13:18:20  ambrmi09
+ *  Revision 1.9  2006-02-28 18:16:55  ambrmi09
+ *  - Mainly a ci for the new Workspace structure
+ *  - Houwever, found and corrected a bug in mqueue.c (a NULL pointer
+ *    assignement)
+ *
+ *  Revision 1.8  2006/02/28 13:18:20  ambrmi09
  *  Got MSVC target back-on track also.
  *
  *  Seems both MSVC and BCC have the same "error" regarding \ref CLK_TICK

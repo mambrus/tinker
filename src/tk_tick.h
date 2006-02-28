@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.19 $
+ *  Current $Revision: 1.20 $
  *
  *******************************************************************/
 /*
@@ -106,7 +106,7 @@ while operated on:
       sys_mickey+=ADV(advance);              \
       sys_mackey++;                          \
    }else{                                    \
-      sys_mickey+=ADV(advance);              \      
+      sys_mickey+=ADV(advance);              \
    }
 
 /*!
@@ -224,7 +224,12 @@ void getnanouptime (
  * @ingroup CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.19  2006-02-27 13:30:04  ambrmi09
+ *  Revision 1.20  2006-02-28 18:16:55  ambrmi09
+ *  - Mainly a ci for the new Workspace structure
+ *  - Houwever, found and corrected a bug in mqueue.c (a NULL pointer
+ *    assignement)
+ *
+ *  Revision 1.19  2006/02/27 13:30:04  ambrmi09
  *  <b>Please read the in depth comments</b> about this check-in at \ref
  *  Blog051125
  *

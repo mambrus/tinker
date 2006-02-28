@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.29 $
+ *  Current $Revision: 1.30 $
  *
  *******************************************************************/
    
@@ -59,7 +59,16 @@ Modify these constants to get a kernel of desired size/speed ratio
 //Some defines for the logic
 #define YES                      1
 #define NO                       0
-#define TK_NORMAL_STACK_SIZE     0x600 //!< @note Whats normal or reasonable differs between architectures. 
+
+#if      defined(__CYGWIN32__)  || defined(__CYGWIN__)  || \
+         defined(__GNUC__)      || defined(__USE_GNU)   || \
+         defined(_WIN32)        || defined(__BORLANDC__) || defined(__BCPLUSPLUS__) 
+
+   #define TK_NORMAL_STACK_SIZE     0x1200 //!< @note Whats normal or reasonable differs between architectures. 
+
+#else
+   #define TK_NORMAL_STACK_SIZE     0x600 //!< @note Whats normal or reasonable differs between architectures.    
+#endif
 
 
 /*!
@@ -70,20 +79,31 @@ Modify these constants to include/exclude the following \ref COMPONENTS
 Use either YES or NO to either include or omit.
 
 @note </b>Do not change these if using pre-built kernel as lib</b>
+
+You can set the options from command line also:
+-DTK_COMP_ITC=1,-DTK_COMP_PTIMER=1,-DTK_COMP_KMEM=1,-DTK_COMP_PTHREAD=1,-DTK_COMP_POSIX_RT=1
+
+MSVC "preprocessor directive" would be:
+TK_COMP_ITC=1,TK_COMP_PTIMER=1,TK_COMP_KMEM=1,TK_COMP_PTHREAD=1,TK_COMP_POSIX_RT=1
+
+@note Settings from command line will over-rule the ones in this file
 */
 //@{
-/*
+#ifndef  TK_COMP_ITC
 #define  TK_COMP_ITC       YES         //!< @brief \ref ITC
-#define  TK_COMP_PTIMER    YES         //!< @brief \ref PTIMER
-#define  TK_COMP_KMEM      YES         //!< @brief \ref KMEM
-#define  TK_COMP_PTHREAD   YES         //!< @brief \ref PTHREAD
-#define  TK_COMP_POSIX_RT  YES         //!< @brief \ref POSIX_RT
-*/
-#define  TK_COMP_ITC       YES         //!< @brief \ref ITC
+#endif
+#ifndef  TK_COMP_PTIMER
 #define  TK_COMP_PTIMER    NO          //!< @brief \ref PTIMER
+#endif
+#ifndef  TK_COMP_KMEM
 #define  TK_COMP_KMEM      NO          //!< @brief \ref KMEM
+#endif
+#ifndef  TK_COMP_PTHREAD
 #define  TK_COMP_PTHREAD   NO          //!< @brief \ref PTHREAD
+#endif
+#ifndef  TK_COMP_POSIX_RT
 #define  TK_COMP_POSIX_RT  NO          //!< @brief \ref POSIX_RT
+#endif
 
 //@}
 
@@ -190,7 +210,12 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.29  2006-02-28 13:18:19  ambrmi09
+ *  Revision 1.30  2006-02-28 18:16:54  ambrmi09
+ *  - Mainly a ci for the new Workspace structure
+ *  - Houwever, found and corrected a bug in mqueue.c (a NULL pointer
+ *    assignement)
+ *
+ *  Revision 1.29  2006/02/28 13:18:19  ambrmi09
  *  Got MSVC target back-on track also.
  *
  *  Seems both MSVC and BCC have the same "error" regarding \ref CLK_TICK

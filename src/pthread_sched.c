@@ -156,7 +156,7 @@ int pthread_once (
    }else{
       //Proper way      
       //--- Detect ---
-      rc = sm_p(sem_once,WAIT,1000);
+      rc = sm_p(sem_once,WAIT,/*FOREVER*/1000);
       assert(rc==ERR_OK);
       if (once_control->started < 0){
          need2run = 1;
@@ -171,7 +171,7 @@ int pthread_once (
          init_routine();
 
          //--- Mark as finished ---            
-         rc = sm_p(sem_once,WAIT,1000);
+         rc = sm_p(sem_once,WAIT,/*FOREVER*/1000);
          assert(rc==ERR_OK);
 
          once_control->done = 1;         
@@ -204,7 +204,12 @@ int pthread_cancel (pthread_t thread){
 /*! 
  * @ingroup CVSLOG 
  *  $Log: pthread_sched.c,v $
- *  Revision 1.5  2006-02-22 13:05:46  ambrmi09
+ *  Revision 1.6  2006-02-28 18:16:55  ambrmi09
+ *  - Mainly a ci for the new Workspace structure
+ *  - Houwever, found and corrected a bug in mqueue.c (a NULL pointer
+ *    assignement)
+ *
+ *  Revision 1.5  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.4  2006/02/21 22:10:32  ambrmi09

@@ -12,7 +12,7 @@
 // @Description   This file contains functions that use the GPT1 module.
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-04 13:07:12
+// @Date          2006-02-28 18:52:23
 //
 //****************************************************************************
 
@@ -275,8 +275,10 @@ and..
 #define ISRPEB          8490100   //4 secs per 60s too fast               +66700 ppm
 #define ISRPEB          6000000   //15 sec 279s too fast
 #define ISRPEB          1000000   //5  sec on 14:14:43 (51 283s) to slow  -97.5 ppm
-*/
+
 #define ISRPEB          1011971   
+*/
+#define ISRPEB          1510000
 
 #define CMPPEB           ((ISRPEB + X_CLK * REGVAL)/1000000)
 
@@ -375,7 +377,7 @@ and..
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-04
+// @Date          2006-02-28
 //
 //****************************************************************************
 
@@ -498,7 +500,7 @@ void GPT1_vInit(void)
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-04
+// @Date          2006-02-28
 //
 //****************************************************************************
 
@@ -529,6 +531,7 @@ void GPT1_viTmr2(void) interrupt T2INT
 
   // USER CODE END
 
+
   // USER CODE BEGIN (Tmr2,5)
 
   // USER CODE END
@@ -550,5 +553,4 @@ void tk_getHWclock_Quality_CLK1(HWclock_stats_t *HWclock_stats){
 }
 
 // USER CODE END
-
 
