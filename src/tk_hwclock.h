@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.6 $
+ *  Current $Revision: 1.7 $
  *
  *******************************************************************/
    
@@ -160,7 +160,7 @@ allready happened.
 
 /*- include lower layer **/
 
-#if defined(WIN32) && defined(_MSVC_)
+#if defined(_WIN32) &&  defined(_MSC_VER)
    #error "HW timers not implemented for this target yet"
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
    #error "HW timers not implemented for this target yet"
@@ -184,7 +184,14 @@ allready happened.
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwclock.h,v $
- *  Revision 1.6  2006-02-28 11:50:08  ambrmi09
+ *  Revision 1.7  2006-02-28 13:18:20  ambrmi09
+ *  Got MSVC target back-on track also.
+ *
+ *  Seems both MSVC and BCC have the same "error" regarding \ref CLK_TICK
+ *  and/or \ref clock(). Could it be that it's TinKer's interpretation that
+ *  is in fact wrong?
+ *
+ *  Revision 1.6  2006/02/28 11:50:08  ambrmi09
  *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
  *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
  *  - Started experimenting with a indlude filename macro, that has the

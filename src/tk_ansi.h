@@ -18,6 +18,7 @@ kernel_reimpl_ansi
 
 //#include <stdio.h>
 #include <stdlib.h>
+#include <tk.h>
 
 #ifndef COMPARISON_FN_T 
 /*!
@@ -75,7 +76,7 @@ extern "C"
 
    #if defined(TK_NEEDS_QSORT)
       #define qsort tk_qsort
-      #if defined(_MSVC_) || defined(_WIN32)
+      #if defined(_WIN32) &&  defined(_MSC_VER)
          void __cdecl qsort ( void *, size_t, size_t, comparison_fn_t );         
       #else
          void         qsort ( void *, size_t, size_t, comparison_fn_t );         
@@ -85,7 +86,7 @@ extern "C"
 
    #if defined(TK_NEEDS_BSEARCH)
       #define bsearch tk_bsearch
-      #if defined(_MSVC_) || defined(_WIN32)
+      #if defined(_WIN32) &&  defined(_MSC_VER)
          void * __cdecl bsearch ( const void *, const void *, size_t, size_t, comparison_fn_t );
       #else
          void *         bsearch ( const void *, const void *, size_t, size_t, comparison_fn_t );
@@ -95,7 +96,7 @@ extern "C"
 
    #if defined(APP_NEEDS_INTERNALS)
 
-      #if defined(_MSVC_) || defined(_WIN32)
+      #if defined(_WIN32) &&  defined(_MSC_VER)
             void __cdecl _tk_quicksort ( void *, int, int, int, comparison_fn_t );
             int  __cdecl _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );
 
@@ -111,12 +112,21 @@ extern "C"
 #endif
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-#if defined(WIN32) && defined(_MSVC_)
-   #define CHAINPATH 
+#if defined(_WIN32) &&  defined(_MSC_VER)
+   #define CHAINPATH C:\Program Files\Microsoft Visual Studio\VC98\Include
+   #define USE_TINKER_TIME_F        NO
+   #define USE_TINKER_CLOCK_F       NO
+
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
    #define CHAINPATH C:/BC5/INCLUDE
+   #define USE_TINKER_TIME_F        NO
+   #define USE_TINKER_CLOCK_F       NO
+
 #elif defined( __C166__ )
    #define CHAINPATH 
+   #define USE_TINKER_TIME_F        YES
+   #define USE_TINKER_CLOCK_F       YES
+
 #elif defined(__GNUC__)
    #define CHAINPATH 
 #else
@@ -271,6 +281,11 @@ determinism e.t.a.)
 @attention <b>Warning:</b> notice we're playing around with void
 pointers... All sorts of strange shit happens around void pointers, be
 cartful!
+
+
+<H3>References</H2>
+@see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnanchor/html/vc6anchor.asp
+@see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore98/HTML/_PREDIR_Predefined_Macros.asp
 */
 
 
@@ -279,7 +294,14 @@ cartful!
  * @defgroup CVSLOG_tk_ansi_h tk_ansi_h
  * @ingroup CVSLOG
  *  $Log: tk_ansi.h,v $
- *  Revision 1.7  2006-02-28 11:50:08  ambrmi09
+ *  Revision 1.8  2006-02-28 13:18:20  ambrmi09
+ *  Got MSVC target back-on track also.
+ *
+ *  Seems both MSVC and BCC have the same "error" regarding \ref CLK_TICK
+ *  and/or \ref clock(). Could it be that it's TinKer's interpretation that
+ *  is in fact wrong?
+ *
+ *  Revision 1.7  2006/02/28 11:50:08  ambrmi09
  *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
  *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
  *  - Started experimenting with a indlude filename macro, that has the

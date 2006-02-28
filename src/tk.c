@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.37 $
+ *  Current $Revision: 1.38 $
  *
  *******************************************************************/
   
@@ -888,8 +888,10 @@ void _tk_main( void ){
 }
 
 
-#if defined(_MSVC_)        || defined(WIN32) \
- || defined(__BORLANDC__)  || defined(__BCPLUSPLUS__)
+#if (defined(_WIN32)          &&  defined(_MSC_VER))             \
+ ||  defined(__BORLANDC__)    || defined(__BCPLUSPLUS__)         \
+ ||  defined(__CYGWIN32__)    || defined(__CYGWIN__)
+ 
 int main(int argc, char **argv);
 int main(int argc, char **argv){
    _tk_main();
@@ -924,7 +926,14 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.37  2006-02-28 11:50:07  ambrmi09
+ *  Revision 1.38  2006-02-28 13:18:20  ambrmi09
+ *  Got MSVC target back-on track also.
+ *
+ *  Seems both MSVC and BCC have the same "error" regarding \ref CLK_TICK
+ *  and/or \ref clock(). Could it be that it's TinKer's interpretation that
+ *  is in fact wrong?
+ *
+ *  Revision 1.37  2006/02/28 11:50:07  ambrmi09
  *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
  *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
  *  - Started experimenting with a indlude filename macro, that has the

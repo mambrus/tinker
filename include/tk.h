@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.28 $
+ *  Current $Revision: 1.29 $
  *
  *******************************************************************/
    
@@ -72,11 +72,19 @@ Use either YES or NO to either include or omit.
 @note </b>Do not change these if using pre-built kernel as lib</b>
 */
 //@{
+/*
 #define  TK_COMP_ITC       YES         //!< @brief \ref ITC
 #define  TK_COMP_PTIMER    YES         //!< @brief \ref PTIMER
 #define  TK_COMP_KMEM      YES         //!< @brief \ref KMEM
 #define  TK_COMP_PTHREAD   YES         //!< @brief \ref PTHREAD
 #define  TK_COMP_POSIX_RT  YES         //!< @brief \ref POSIX_RT
+*/
+#define  TK_COMP_ITC       YES         //!< @brief \ref ITC
+#define  TK_COMP_PTIMER    NO          //!< @brief \ref PTIMER
+#define  TK_COMP_KMEM      NO          //!< @brief \ref KMEM
+#define  TK_COMP_PTHREAD   NO          //!< @brief \ref PTHREAD
+#define  TK_COMP_POSIX_RT  NO          //!< @brief \ref POSIX_RT
+
 //@}
 
 //Kernel termination codes (bit adressable) - 
@@ -182,7 +190,14 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.28  2006-02-27 13:30:03  ambrmi09
+ *  Revision 1.29  2006-02-28 13:18:19  ambrmi09
+ *  Got MSVC target back-on track also.
+ *
+ *  Seems both MSVC and BCC have the same "error" regarding \ref CLK_TICK
+ *  and/or \ref clock(). Could it be that it's TinKer's interpretation that
+ *  is in fact wrong?
+ *
+ *  Revision 1.28  2006/02/27 13:30:03  ambrmi09
  *  <b>Please read the in depth comments</b> about this check-in at \ref
  *  Blog051125
  *

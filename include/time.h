@@ -156,12 +156,12 @@ Works like the POSIX spec says, excepth that timezone is alway ignored.
 
 @todo investigate the timezone thingy and if there is an equivlent API wit nS resoution
 
-@todo implement this
+@todo implement this 
 */
 
 int settimeofday (const struct timeval *tp, const struct timezone *tzp);
 
-//#ifndef time_t time(time_t *result)
+#if USE_TINKER_TIME_F
 /*!
 The time function returns the current calendar time as a value of type
 time_t. If the argument result is not a null pointer, the calendar time
@@ -171,7 +171,7 @@ available, the value (time_t)(-1) is returned.
 @see http://www.gnu.org/software/libc/manual/html_mono/libc.html#Simple%20Calendar%20Time
 */
 time_t time (time_t *result);
-//#endif
+#endif
 
 
 /*!
@@ -274,9 +274,9 @@ struct fmttime{
 //------1---------2---------3---------4---------5---------6---------7---------8
 void timespec2fmttime_np( struct fmttime *totime, const struct timespec *fromtime);
 
-//#ifndef clock_t clock()
+#if USE_TINKER_CLOCK_F
 clock_t clock();
-//#endif
+#endif
 
 /*
 Confusion regarding this...
@@ -305,7 +305,14 @@ int clock_settime (clockid_t clock_id, const struct timespec *tp);
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.16  2006-02-28 11:50:07  ambrmi09
+ *  Revision 1.17  2006-02-28 13:18:19  ambrmi09
+ *  Got MSVC target back-on track also.
+ *
+ *  Seems both MSVC and BCC have the same "error" regarding \ref CLK_TICK
+ *  and/or \ref clock(). Could it be that it's TinKer's interpretation that
+ *  is in fact wrong?
+ *
+ *  Revision 1.16  2006/02/28 11:50:07  ambrmi09
  *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
  *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
  *  - Started experimenting with a indlude filename macro, that has the

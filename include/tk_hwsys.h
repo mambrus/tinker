@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.12 $
+ *  Current $Revision: 1.13 $
  *
  *******************************************************************/
   
@@ -302,7 +302,7 @@ cases might want to replace this with a NOP.
 #endif  //DOXYGEN_ONLY
    
 //------1---------2---------3---------4---------5---------6---------7---------8
-#if defined(WIN32) && defined(_MSVC_)
+#if defined(_WIN32) &&  defined(_MSC_VER)
 #include <../bsp/X86_msvc/tk_hwsys_msvcX86.h>
 
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
@@ -330,7 +330,14 @@ cases might want to replace this with a NOP.
  * @defgroup CVSLOG_tk_hwsys_h tk_hwsys_h
  * @ingroup CVSLOG
  *  $Log: tk_hwsys.h,v $
- *  Revision 1.12  2006-02-28 11:50:07  ambrmi09
+ *  Revision 1.13  2006-02-28 13:18:19  ambrmi09
+ *  Got MSVC target back-on track also.
+ *
+ *  Seems both MSVC and BCC have the same "error" regarding \ref CLK_TICK
+ *  and/or \ref clock(). Could it be that it's TinKer's interpretation that
+ *  is in fact wrong?
+ *
+ *  Revision 1.12  2006/02/28 11:50:07  ambrmi09
  *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
  *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
  *  - Started experimenting with a indlude filename macro, that has the
