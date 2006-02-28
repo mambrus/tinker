@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.5 $
+ *  Current $Revision: 1.6 $
  *
  *******************************************************************/
    
@@ -162,7 +162,7 @@ allready happened.
 
 #if defined(WIN32) && defined(_MSVC_)
    #error "HW timers not implemented for this target yet"
-#elif defined(WIN32) && defined(_BC50_)
+#elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
    #error "HW timers not implemented for this target yet"
 #elif defined( __C166__ )
    #include <dave/GPT1.H> 
@@ -184,7 +184,18 @@ allready happened.
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwclock.h,v $
- *  Revision 1.5  2006-02-22 13:05:47  ambrmi09
+ *  Revision 1.6  2006-02-28 11:50:08  ambrmi09
+ *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
+ *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
+ *  - Started experimenting with a indlude filename macro, that has the
+ *    the potential of solving my ANSI header/function dilemma (\ref
+ *    BUILDCHAIN )
+ *  - Some "fishyness" about BC5 handling of time. Either \ref clock or
+ *    \ref CLK_TCK doesn't follow standard (the latter I know for a fact,
+ *    since it's 1e3 instead of 1e6 - but thats not all). \ref tk_msleep is
+ *    adjusted to try to see the error.
+ *
+ *  Revision 1.5  2006/02/22 13:05:47  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.4  2006/02/19 12:44:33  ambrmi09

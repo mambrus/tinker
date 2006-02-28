@@ -1,20 +1,29 @@
 #ifndef TK_HWSYS_MSVCX86_H
 #define TK_HWSYS_MSVCX86_H
 
-/*! 
-Architecture specific representation of a stack adress. In x86 this can be a 
-simple char* even in 16bit modes, since a pointer contains both segment and 
-offset.
-*/
-typedef char * stack_t;
+/*
+#define TK_CLI()                                                              \
+   __asm{ CLI }
+
+#define TK_STI()	                                                            \
+   __asm{ STI }
+*/   
+
+#define TK_CLI()
+#define TK_STI()
 
 
-#define PREP_TOS( _oldTOS, _newSP, _temp1 )                                                                            \
+   
+#define REAL_STACK_SIZE( TCB )  \
+   ( TCB.stack_size ) 
+   
+
+#define PREP_TOS( _oldTOS, _newSP, _temp1, _temp2, _stack_struct )                                             \
                                                                                                                \
     __asm{ pushfd                       } /*Save CPU states affected so that we migth continue*/               \
     __asm{ pushad                       }                                                                      \
-    __asm{ mov _temp1,esp                 } /*Cange the stack pointer to the actual one*/                        \
-    __asm{ mov esp,_oldTOS                 }                                                                      \
+    __asm{ mov _temp1,esp               } /*Cange the stack pointer to the actual one*/                        \
+    __asm{ mov esp,_oldTOS              }                                                                      \
                                                                                                                \
     /*---> Compiler specific*/                                                                                 \
     /*push ebp*/                                                                                               \
@@ -36,22 +45,23 @@ typedef char * stack_t;
     __asm{ pushfd                       }/*Part of the stack content our kernel expects to find on the stack*/ \
     __asm{ pushad                       }                                                                      \
                                                                                                                \
-    __asm{ mov _newSP,esp                  } /*The current SP is now the new _newSP, save it..     */                \
-    __asm{ mov esp,_temp1                 } /*Restore the stack pointer so that we can continue*/                \                                                                      \
+    __asm{ mov _newSP,esp               } /*The current SP is now the new _newSP, save it..     */             \
+    __asm{ mov esp,_temp1               } /*Restore the stack pointer so that we can continue*/                \
                                                                                                                \
     __asm{ popad                        } /*Restore the CPU to the state befor this process was invoked*/      \
     __asm{ popfd                        }
+    
 
 
 
 //Push & pops of all regs and flags possibly not needed
-#define PUSH_CPU_GETCUR_STACK( TESP )                                                                          \
+#define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                                                    \
     __asm{ pushfd                       }                                                                      \
     __asm{ pushad                       }                                                                      \
-    __asm{ mov TESP,esp                 }
+    __asm{ mov TSP1,esp                 }
   
-#define CHANGE_STACK_POP_CPU( TESP )                                                                           \
-    __asm{ mov esp,TESP                 }                                                                      \
+#define CHANGE_STACK_POP_CPU( TSP1, TEMP )                                                                     \
+    __asm{ mov esp,TSP1                 }                                                                      \
     __asm{ popad                        }                                                                      \
     __asm{ popfd                        }
 
@@ -60,15 +70,27 @@ typedef char * stack_t;
 
 #define GET_THREADS_RETVAL( THRETVAL )                                                                         \
    __asm{ mov THRETVAL,EAX             }
-   
+
+#define PUSHALL()  \
+    __asm{ pushfd                       }                                                                      \
+    __asm{ pushad                       }                                                                      \
+
+#define POPALL()  \
+    __asm{ popad                        }                                                                      \
+    __asm{ popfd                        }																								\
+
 
 //Allready a char', no need to do handle in any special way.
-#define STACK_PTR( ADDR ) ADDR
+#define STACK_PTR( ADDR ) \
+   ((char *)ADDR.tstack)
 
-//Not needed to do anything. Deliberatlly empty.
-#define REINIT_STACKADDR( ADDR, size )
+//Not needed to do anything really. But just in case, follow the new convention 
+#define REINIT_STACKADDR( ADDR, size ) \
+   (ADDR.stack_size = size)
 
-
+//Just a stub ATM - TBD
+#define TRAP( NUM )                                                           \
+   exit( NUM )   
 
 #endif
 

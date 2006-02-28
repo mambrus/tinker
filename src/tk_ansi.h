@@ -110,6 +110,28 @@ extern "C"
 }
 #endif
 
+//------1---------2---------3---------4---------5---------6---------7---------8
+#if defined(WIN32) && defined(_MSVC_)
+   #define CHAINPATH 
+#elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
+   #define CHAINPATH C:/BC5/INCLUDE
+#elif defined( __C166__ )
+   #define CHAINPATH 
+#elif defined(__GNUC__)
+   #define CHAINPATH 
+#else
+   #error "Can\'t determine the target for the TINKER kernel"
+#endif
+//------1---------2---------3---------4---------5---------6---------7---------8
+
+#define DEFSTR( x ) \
+   #x
+
+#define FNAME( path, file ) \
+   DEFSTR( path/##file )
+   
+#define BUILDCHAIN( file ) \
+   FNAME( CHAINPATH, ##file ) \
 
 #endif //TK_ANSI_H
 
@@ -257,7 +279,18 @@ cartful!
  * @defgroup CVSLOG_tk_ansi_h tk_ansi_h
  * @ingroup CVSLOG
  *  $Log: tk_ansi.h,v $
- *  Revision 1.6  2006-02-22 13:05:47  ambrmi09
+ *  Revision 1.7  2006-02-28 11:50:08  ambrmi09
+ *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
+ *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
+ *  - Started experimenting with a indlude filename macro, that has the
+ *    the potential of solving my ANSI header/function dilemma (\ref
+ *    BUILDCHAIN )
+ *  - Some "fishyness" about BC5 handling of time. Either \ref clock or
+ *    \ref CLK_TCK doesn't follow standard (the latter I know for a fact,
+ *    since it's 1e3 instead of 1e6 - but thats not all). \ref tk_msleep is
+ *    adjusted to try to see the error.
+ *
+ *  Revision 1.6  2006/02/22 13:05:47  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.5  2006/02/16 15:11:00  ambrmi09

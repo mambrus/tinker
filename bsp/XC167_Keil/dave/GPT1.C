@@ -268,8 +268,15 @@ and..
 #define REGVAL          ((FCLK*PERT)/(1000*PRES) -1)
 
 #define X_CLK           100
-//#define ISRPEB          8500100 
-#define ISRPEB          8490100   //Possibly not needed anymore, since self adjusting timer ISR introduced
+
+//Possibly not needed anymore, since self adjusting timer ISR introduced
+/*
+#define ISRPEB          8500100   //Original calibration
+#define ISRPEB          8490100   //4 secs per 60s too fast               +66700 ppm
+#define ISRPEB          6000000   //15 sec 279s too fast
+#define ISRPEB          1000000   //5  sec on 14:14:43 (51 283s) to slow  -97.5 ppm
+*/
+#define ISRPEB          1011971   
 
 #define CMPPEB           ((ISRPEB + X_CLK * REGVAL)/1000000)
 

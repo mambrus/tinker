@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.36 $
+ *  Current $Revision: 1.37 $
  *
  *******************************************************************/
   
@@ -25,15 +25,15 @@ SCHED
 */
 
 /*- include files **/
-#include <stdio.h>                                                      
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
 
 #include <tk.h>
-//#include <tk_hwsys.h>
-#include "implement_tk.h"
+#include <tk_hwsys.h>
+#include "kernel/src/implement_tk.h"
 
 /*!
 @name \COMPONENTS headerfiles
@@ -91,6 +91,11 @@ any of them.   errno.h
 
 
 /*- local definitions **/
+#if defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
+   #define tk_clock()  (clock() * 10)
+#else
+   #define tk_clock()  clock()
+#endif
 
 /* default settings */
 
@@ -102,7 +107,7 @@ extern void _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
 
 /*- internal functions **/
 unsigned int _tk_destructor( void *foo );
-unsigned int _tk_idle( void *foo );
+void			*_tk_idle( void *foo );
 
 /*- public data **/
 
@@ -159,7 +164,7 @@ static unsigned int procs_in_use    = 0;
 static unsigned int proc_idx;             //!< Points at the last TCB created in the \ref proc_stat pool
 static unsigned int idle_Thid;            //!< Idle_Thid must be known, therefor public in this module (file)
 
-unsigned int _tk_idle( void *foo ){       //!< idle loop (non public)
+void *_tk_idle( void *foo ){       //!< idle loop (non public)
    while (TRUE){
       tk_yield();
    }
@@ -209,7 +214,7 @@ variable.
 */
 int *_tk_errno(){
    return &(proc_stat[active_thread]._errno_);
-} 
+}
 
 /*!
 @ingroup kernel
@@ -275,7 +280,7 @@ void tk_create_kernel( void ){
    }
    //Create a Idle thread, whoes sole purpose is to burn up time
    //when nobody else is running
-   idle_Thid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,NULL,0x600/*MINIMUM_STACK_SIZE*/);
+   idle_Thid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,(void*)NULL,0x600/*MINIMUM_STACK_SIZE*/);
    //IdleProc must like root, i.e. bee owned by itself
    proc_stat[proc_stat[idle_Thid].Gid].noChilds--;
    //Awkward way to say that root has created one process less than it has
@@ -440,7 +445,7 @@ unsigned int tk_create_thread(
        printf("tk: Error - Can't create process (can't allocate memory for stack)\n");
        tk_exit(1);  // terminate program if out of memory
    }
-   
+
    REINIT_STACKADDR( proc_stat[proc_idx].stack_begin, stack_size );
    
    proc_stat[proc_idx].isInit       = TRUE;
@@ -492,7 +497,7 @@ unsigned int tk_create_thread(
 
    //MARKALL();
    
-   PREP_TOS( ct_oldTOS, ct_newSP, ct_temp1, ct_temp2, ct_stack_struct );   
+   PREP_TOS( ct_oldTOS, ct_newSP, ct_temp1, ct_temp2, ct_stack_struct );
     //#pragma src
     //#pragma asm                                                                                                 
    //   MOV R1,R5                                                                                                
@@ -568,15 +573,20 @@ void tk_msleep( unsigned int time_ms ){
 /* It's our kernal so we "know" that a clock equals 1uS */
    clock_t act_time_us; 
    clock_t wkp_time_us;
+   unsigned long in_us;
+   unsigned long clk_sek = CLK_TCK;
    
-   act_time_us    = clock();
-   wkp_time_us    = act_time_us + (time_ms * 1000uL);
+   in_us = time_ms * (clk_sek/1000uL);
+   
+   act_time_us    = tk_clock();
+   wkp_time_us    = act_time_us + in_us;
 
    //need a function t_diff that handles wraparound (done 060225, note kept for ref.)
    proc_stat[active_thread].wakeuptime = wkp_time_us;
    proc_stat[active_thread].state |= SLEEP;
    tk_yield();
 }
+
 
 /*!
 @brief create a "virtual" timeout event (whenever possible).
@@ -614,14 +624,15 @@ void _tk_wakeup_timedout_threads( void ){
    int i;
    clock_t act_time;
 
-   act_time = clock();
+   act_time = tk_clock();
    //Do not optimize this to "active_procs" until fragmentation of deleted procs
    //is solved.
    for(i=0;i<TK_MAX_THREADS;i++){
       if (proc_stat[i].state & SLEEP){
          if (proc_stat[i].isInit){           //dubble check (done 060225, note kept for ref.)
             //if ( act_time >= proc_stat[i].wakeuptime ){
-            if ( (signed long)(act_time - proc_stat[i].wakeuptime) >= 0 ){
+            //if ( (signed long)(act_time - proc_stat[i].wakeuptime) >= 0 ){
+            if ( (signed long)(difftime(act_time,proc_stat[i].wakeuptime) ) >= 0 ){
                proc_stat[i].state &= ~_____QST; /*Release ques also*/
                proc_stat[i].wakeupEvent = E_TIMER;
             }
@@ -698,14 +709,14 @@ void _tk_context_switch_to_thread(
    //INTEGRITY_CERTIFY_STACK( proc_stat[SID], cswTEMP2 ); //Certify the stack we're leaving from
 
    
-   PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );   
+   PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );
 
    STACK_PTR( proc_stat[SID].curr_sp ) = cswTSP;
    
    cswTSP = STACK_PTR( proc_stat[RID].curr_sp );
    active_thread=RID;
 
-   CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );   
+   CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );
    //TRY_CATCH_STACK_INTEGRITY_VIOLATION( proc_stat[active_thread], cswTEMP2 ); //Check integrity is OK before running 
 }
 
@@ -877,11 +888,12 @@ void _tk_main( void ){
 }
 
 
-#if defined(_MSVC_) || defined(WIN32) 
+#if defined(_MSVC_)        || defined(WIN32) \
+ || defined(__BORLANDC__)  || defined(__BCPLUSPLUS__)
 int main(int argc, char **argv);
 int main(int argc, char **argv){
    _tk_main();
-   return 0;
+   TRAP(0);
 }
 #endif
 
@@ -912,7 +924,18 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.36  2006-02-27 13:30:04  ambrmi09
+ *  Revision 1.37  2006-02-28 11:50:07  ambrmi09
+ *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
+ *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
+ *  - Started experimenting with a indlude filename macro, that has the
+ *    the potential of solving my ANSI header/function dilemma (\ref
+ *    BUILDCHAIN )
+ *  - Some "fishyness" about BC5 handling of time. Either \ref clock or
+ *    \ref CLK_TCK doesn't follow standard (the latter I know for a fact,
+ *    since it's 1e3 instead of 1e6 - but thats not all). \ref tk_msleep is
+ *    adjusted to try to see the error.
+ *
+ *  Revision 1.36  2006/02/27 13:30:04  ambrmi09
  *  <b>Please read the in depth comments</b> about this check-in at \ref
  *  Blog051125
  *

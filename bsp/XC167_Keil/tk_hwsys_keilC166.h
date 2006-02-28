@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.16 $
+ *  Current $Revision: 1.17 $
  *
  *******************************************************************/
   
@@ -360,14 +360,14 @@ TBD
 TBD
 
 */
-#define TRY_CATCH_STACK_INTEGRITY_VIOLATION( TCB_T, TEMP)   \
-   if ( TCB_T.stack_crc != 0 ){ \
-   STK_CRC_CALC( TEMP );                                    \
-   if ( TCB_T.stack_crc != TEMP )	{                       \
-      printf ("\ntk: Error - Thread 0x%02X \"%s\" has got a tainted stack\n",TCB_T.Thid,TCB_T.name); \
-      tk_exit( TK_ERR_STKINT );                             \
-   }                                                        \
-   } \
+#define TRY_CATCH_STACK_INTEGRITY_VIOLATION( TCB_T, TEMP)      \
+   if ( TCB_T.stack_crc != 0 ){                                \
+      STK_CRC_CALC( TEMP );                                    \
+      if ( TCB_T.stack_crc != TEMP )	{                       \
+         printf ("\ntk: Error - Thread 0x%02X \"%s\" has got a tainted stack\n",TCB_T.Thid,TCB_T.name); \
+         tk_exit( TK_ERR_STKINT );                             \
+      }                                                        \
+   }
 
 
 
@@ -383,7 +383,18 @@ TBD
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.h,v $
- *  Revision 1.16  2006-02-27 13:30:03  ambrmi09
+ *  Revision 1.17  2006-02-28 11:50:07  ambrmi09
+ *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
+ *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
+ *  - Started experimenting with a indlude filename macro, that has the
+ *    the potential of solving my ANSI header/function dilemma (\ref
+ *    BUILDCHAIN )
+ *  - Some "fishyness" about BC5 handling of time. Either \ref clock or
+ *    \ref CLK_TCK doesn't follow standard (the latter I know for a fact,
+ *    since it's 1e3 instead of 1e6 - but thats not all). \ref tk_msleep is
+ *    adjusted to try to see the error.
+ *
+ *  Revision 1.16  2006/02/27 13:30:03  ambrmi09
  *  <b>Please read the in depth comments</b> about this check-in at \ref
  *  Blog051125
  *

@@ -22,40 +22,48 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#Simple%20Calendar%20
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#Elapsed%20Time
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#Sleeping
 
-@note "the epoch" = 00:00:00 on January 1, 1970, Coordinated Universal Time. 
+@note "the epoch" = 00:00:00 on January 1, 1970, Coordinated Universal Time.
 
 
 */
 
-#ifndef time_h
-#define time_h
+#ifndef time_h_tk
+#define time_h_tk
+#include "kernel/src/tk_ansi.h"
 
-#include <limits.h> //<! Information about integers max and min values
+#include BUILDCHAIN(time.h)
+
+//#include <limits.h> //<! Information about integers max and min values
 //#include <stdint.h> //<! Fixed bitsize type definitions
 
+#ifndef CLOCKS_PER_SEC
 /*! 
 According to POSIX standard this must be 1 milion regardless of true
 resolution.
 
 */
 #define CLOCKS_PER_SEC 1000000L
+#endif
 
+#ifndef CLK_TCK
 //! Obsolete macro for historical reasons (because POSIX says so)
 #define CLK_TCK CLOCKS_PER_SEC
+#endif
 
 /*! 
 Wrapper macro until \ref PTIMER is ready
 */
 #define sleep(t) ( tk_msleep( t * 1000 ) )
 
-/*! 
+/*!
 Wrapper macro until \ref PTIMER is ready
 */
 #define usleep(t) ( tk_msleep( t / 1000 ) )
 
 
-/*! 
-A clock entity is supposed to mean some sort of system ticks (i.e. 
+#ifndef clock_t
+/*!
+A clock entity is supposed to mean some sort of system ticks (i.e.
 clocks), which doesnt nessesary have to be in a SI unit scale. However,
 POSIX has determined to fix the scale of a clock unit to 1uS, hence our
 clock entities are 1uS long.<br>
@@ -75,11 +83,12 @@ http://www.keil.com/support/man/docs/c166/c166_ap_datastorage.htm <br>
 @see CLOCKS_PER_SEC
 
 */
-
 #define clock_t unsigned long
+#endif
 
 
-/*! 
+#ifndef time_t
+/*!
 Represents time. This entity is time in some SI scale (i.e. precision).
 Use time_h everywhere where you need to represent, store or handle real
 world time values. Avoid using clock_t unless your desired scale is
@@ -90,12 +99,12 @@ TinKer has defined the precision of time_h to 1uS. The representation is
 on most systems 32 bit (depending on how <i>long int</i> is
 interpreted).
 
-*/ 
-
+*/
 #define time_t unsigned long
+#endif
 
 /*!
-The struct timeval structure represents an elapsed time. It is declared in sys/time.h 
+The struct timeval structure represents an elapsed time. It is declared in sys/time.h
 
 Honestly speaking, I don't understand why this struct is needed since the struct timespec does the same job AND is of much higher presition. However, it's used in the POSIX standard API gettimeofday so I suppose we'll have to stick with it.
 
@@ -119,7 +128,7 @@ A 32 bit signed storage for tv_nsec is enough to store a fraction of a secons in
 Further reference: http://www.gnu.org/software/libc/manual/html_mono/libc.html#Elapsed%20Time
 */
 struct timespec{
-   long int tv_sec;  //!< This represents the number of whole seconds of elapsed time. 
+   long int tv_sec;  //!< This represents the number of whole seconds of elapsed time.
    long int tv_nsec; //!< This is the rest of the elapsed time (a fraction of a second), represented as the number of <b>nanoseconds</b>. It is always less than one billion
 };
 
@@ -152,6 +161,7 @@ Works like the POSIX spec says, excepth that timezone is alway ignored.
 
 int settimeofday (const struct timeval *tp, const struct timezone *tzp);
 
+//#ifndef time_t time(time_t *result)
 /*!
 The time function returns the current calendar time as a value of type
 time_t. If the argument result is not a null pointer, the calendar time
@@ -161,12 +171,10 @@ available, the value (time_t)(-1) is returned.
 @see http://www.gnu.org/software/libc/manual/html_mono/libc.html#Simple%20Calendar%20Time
 */
 time_t time (time_t *result);
+//#endif
 
 
-
-
-
-/*! 
+/*!
 This macro calculates the time between two times (or expressed
 differently: the relative time between to points in time).
 
@@ -201,7 +209,7 @@ time_t is always OK to use even for applications that might run on other
 kernels. The difftime function (or macro) is a POSIX standard and will
 in that case be implemented to calculate the time difference according
 to whatever representation time_h has on that system (including complex
-structure representations). 
+structure representations).
 
 @see
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#Time%20Basics
@@ -213,27 +221,29 @@ system time and it's representation.)
 
 @note difftime in TinKer can only accuratly calculate time differences
 according to the following:
- 
+
  - If you <b>know</b> which time comes firs, the resulting diff may lay
  in the range 0 - \ref ULONG_MAX.
- 
+
  - If you don't know or, if you want to detect which time comes first,
  then you need a result that is signed. Either user signed arguments or
  cast the result to signed (explicit casting may not be needed on your
  system, but it's best to do to avoid dependance on if your compiler
  works on value or type preservation).
- 
+
 I.e. depending on which of the above cases apply, the relative time
 difference may not exceed either ULONG_MAX or (ULONG_MAX/2 -1).
 
-*/ 
+*/
 
 /*
 #define difftime(t1, t0) \
    (t0 <= t1 ? t1 - t0 : t1 + (ULONG_MAX - t0) + 1 )
-*/   
+*/
+#ifndef difftime
 #define difftime(t1, t0) \
    (t1 - t0)
+#endif   
 
 /*!
 @brief Struct holds time in formatted form for easier readability.
@@ -245,15 +255,15 @@ it.
 
 @note The types are signed for the following reasons:
 - They are big enough to keep the values they should represent
-- Signed integers are safer to use in arithmetic in-between calculus. 
+- Signed integers are safer to use in arithmetic in-between calculus.
   Especially subtractions are easy to mess up when the values are big.
-- Signed integers can be compared between each other. This is the same 
+- Signed integers can be compared between each other. This is the same
   issue as with the above point regarding subtractions. Problem accrues
   when the values are big.
 */
 struct fmttime{
    long int days; /*!The remaining seconds goes into "days". This can in
-                     theory become a very large value, hence a type as 
+                     theory become a very large value, hence a type as
                      large as the types converted from */
    int      hrs;  /*!Hours, this value is between 0-24 */
    int      mins; /*!Minutes, this value is between 0-60 */
@@ -263,12 +273,15 @@ struct fmttime{
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 void timespec2fmttime_np( struct fmttime *totime, const struct timespec *fromtime);
+
+//#ifndef clock_t clock()
 clock_t clock();
+//#endif
 
 /*
 Confusion regarding this...
 
-...and what is 
+...and what is
 #define TIMER_ABSTIME	1
 ?
 
@@ -276,7 +289,7 @@ Confusion regarding this...
 typedef enum{
    CLOCK_REALTIME = 0,          /*!< Use HW clock to deliver time? Or actual time since epoch? */
    CLOCK_MONOTONIC = 1          /*!< Use sys clock (i.e updated \e "monotonic")*/
-} clockid_t; 
+} clockid_t;
 
 int nanosleep (const struct timespec *rqtp, struct timespec *rmtp);
 int clock_getres (clockid_t clock_id, struct timespec *res);
@@ -285,14 +298,25 @@ int clock_settime (clockid_t clock_id, const struct timespec *tp);
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-#endif /*time_h*/
+#endif /*time_h_tk*/
 
   
-/*! 
+/*!
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.15  2006-02-27 13:30:03  ambrmi09
+ *  Revision 1.16  2006-02-28 11:50:07  ambrmi09
+ *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
+ *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
+ *  - Started experimenting with a indlude filename macro, that has the
+ *    the potential of solving my ANSI header/function dilemma (\ref
+ *    BUILDCHAIN )
+ *  - Some "fishyness" about BC5 handling of time. Either \ref clock or
+ *    \ref CLK_TCK doesn't follow standard (the latter I know for a fact,
+ *    since it's 1e3 instead of 1e6 - but thats not all). \ref tk_msleep is
+ *    adjusted to try to see the error.
+ *
+ *  Revision 1.15  2006/02/27 13:30:03  ambrmi09
  *  <b>Please read the in depth comments</b> about this check-in at \ref
  *  Blog051125
  *

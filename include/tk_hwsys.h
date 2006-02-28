@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.11 $
+ *  Current $Revision: 1.12 $
  *
  *******************************************************************/
   
@@ -305,7 +305,7 @@ cases might want to replace this with a NOP.
 #if defined(WIN32) && defined(_MSVC_)
 #include <../bsp/X86_msvc/tk_hwsys_msvcX86.h>
 
-#elif defined(WIN32) && defined(_BC50_)
+#elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
 #include <../bsp/X86_Borland/tk_hwsys_borlandX86.h>
 
 
@@ -330,7 +330,18 @@ cases might want to replace this with a NOP.
  * @defgroup CVSLOG_tk_hwsys_h tk_hwsys_h
  * @ingroup CVSLOG
  *  $Log: tk_hwsys.h,v $
- *  Revision 1.11  2006-02-22 13:05:46  ambrmi09
+ *  Revision 1.12  2006-02-28 11:50:07  ambrmi09
+ *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
+ *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
+ *  - Started experimenting with a indlude filename macro, that has the
+ *    the potential of solving my ANSI header/function dilemma (\ref
+ *    BUILDCHAIN )
+ *  - Some "fishyness" about BC5 handling of time. Either \ref clock or
+ *    \ref CLK_TCK doesn't follow standard (the latter I know for a fact,
+ *    since it's 1e3 instead of 1e6 - but thats not all). \ref tk_msleep is
+ *    adjusted to try to see the error.
+ *
+ *  Revision 1.11  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.10  2005/12/03 14:04:30  ambrmi09
