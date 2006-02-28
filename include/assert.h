@@ -1,6 +1,8 @@
 #ifndef ASSERT_H_TK
 #define ASSERT_H_TK
-#include "kernel/src/tk_ansi.h"
+
+//#include "kernel/src/tk_ansi.h"
+#include <../src/tk_ansi.h>
 
 #include BUILDCHAIN(assert.h)
 
@@ -39,7 +41,14 @@ The assert macro.
  * @defgroup CVSLOG_assert_h assert_h
  * @ingroup CVSLOG
  *  $Log: assert.h,v $
- *  Revision 1.4  2006-02-28 13:18:19  ambrmi09
+ *  Revision 1.5  2006-02-28 18:59:23  ambrmi09
+ *  Minor adjustments and verified that all (intended) build environment
+ *  compile and produce runnable code. I.e.:
+ *  - uVisionKernelProject
+ *  - BC5
+ *  - Core and POSIX projects in MSVC
+ *
+ *  Revision 1.4  2006/02/28 13:18:19  ambrmi09
  *  Got MSVC target back-on track also.
  *
  *  Seems both MSVC and BCC have the same "error" regarding \ref CLK_TICK

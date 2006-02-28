@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.19 $
+ *  Current $Revision: 1.20 $
  *******************************************************************/
    
   
@@ -37,7 +37,7 @@ ITC
 #define NOTDEBUG_WITH_CURSES  //!< Visual "debugging" for queue operations if disabled
 
 #include <tk.h>
-#include "kernel/src/implement_tk.h"
+#include <../src/implement_tk.h>
 #include <tk_hwsys.h>
 #include <tk_ipc.h>
 
@@ -1372,7 +1372,14 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.19  2006-02-28 11:50:08  ambrmi09
+ *  Revision 1.20  2006-02-28 18:59:23  ambrmi09
+ *  Minor adjustments and verified that all (intended) build environment
+ *  compile and produce runnable code. I.e.:
+ *  - uVisionKernelProject
+ *  - BC5
+ *  - Core and POSIX projects in MSVC
+ *
+ *  Revision 1.19  2006/02/28 11:50:08  ambrmi09
  *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
  *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
  *  - Started experimenting with a indlude filename macro, that has the

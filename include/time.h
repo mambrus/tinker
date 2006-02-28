@@ -30,8 +30,9 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#Sleeping
 #ifndef time_h_tk
 #define time_h_tk
 
-#include "kernel/src/tk_ansi.h"
-#include "kernel/src/tk_ansi_dirwrap.h"
+#include <../src/tk_ansi.h>
+#include <../src/tk_ansi_dirwrap.h>
+//#include "kernel/src/tk_ansi_dirwrap.h"
 #include BUILDCHAIN(time.h)
 
 //#include <limits.h> //<! Information about integers max and min values
@@ -306,7 +307,14 @@ int clock_settime (clockid_t clock_id, const struct timespec *tp);
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.18  2006-02-28 18:16:54  ambrmi09
+ *  Revision 1.19  2006-02-28 18:59:23  ambrmi09
+ *  Minor adjustments and verified that all (intended) build environment
+ *  compile and produce runnable code. I.e.:
+ *  - uVisionKernelProject
+ *  - BC5
+ *  - Core and POSIX projects in MSVC
+ *
+ *  Revision 1.18  2006/02/28 18:16:54  ambrmi09
  *  - Mainly a ci for the new Workspace structure
  *  - Houwever, found and corrected a bug in mqueue.c (a NULL pointer
  *    assignement)

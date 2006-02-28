@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.38 $
+ *  Current $Revision: 1.39 $
  *
  *******************************************************************/
   
@@ -33,7 +33,7 @@ SCHED
 
 #include <tk.h>
 #include <tk_hwsys.h>
-#include "kernel/src/implement_tk.h"
+#include <../src/implement_tk.h>
 
 /*!
 @name \COMPONENTS headerfiles
@@ -926,7 +926,14 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.38  2006-02-28 13:18:20  ambrmi09
+ *  Revision 1.39  2006-02-28 18:59:23  ambrmi09
+ *  Minor adjustments and verified that all (intended) build environment
+ *  compile and produce runnable code. I.e.:
+ *  - uVisionKernelProject
+ *  - BC5
+ *  - Core and POSIX projects in MSVC
+ *
+ *  Revision 1.38  2006/02/28 13:18:20  ambrmi09
  *  Got MSVC target back-on track also.
  *
  *  Seems both MSVC and BCC have the same "error" regarding \ref CLK_TICK
