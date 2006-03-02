@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.40 $
+ *  Current $Revision: 1.41 $
  *
  *******************************************************************/
   
@@ -837,10 +837,10 @@ void _tk_assertfail(
 Called from your real main() or from your start-up code 
 
 @note (for deeply embedded developers) You target have to fulfill two
-things at least
+things at least:
 
-- malloc has to work and return valid pointers - You need a working
-printf to see run-time errors
+- malloc has to work and return valid pointers 
+- You need a working printf to see run-time errors
 
 */
 void _tk_main( void ){
@@ -890,10 +890,10 @@ void _tk_main( void ){
 
 #if (defined(_WIN32)          &&  defined(_MSC_VER))             \
  ||  defined(__BORLANDC__)    || defined(__BCPLUSPLUS__)         \
- ||  defined(__CYGWIN32__)    || defined(__CYGWIN__)
+ ||  defined(__CYGWIN32__)    || defined(__CYGWIN__) || defined(__GNUC__)
  
 int main(int argc, char **argv);
-int main(int argc, char **argv){
+int main(int argc, char **argv){ 
    _tk_main();
    TRAP(0);
 }
@@ -926,7 +926,10 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.40  2006-03-02 14:05:49  ambrmi09
+ *  Revision 1.41  2006-03-02 15:33:08  ambrmi09
+ *  Experimenting with build under Linux
+ *
+ *  Revision 1.40  2006/03/02 14:05:49  ambrmi09
  *  Posting to GNU toolchain started
  *
  *  Revision 1.39  2006/02/28 18:59:23  ambrmi09

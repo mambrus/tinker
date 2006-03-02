@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:
  *
- *  Current $Revision: 1.6 $
+ *  Current $Revision: 1.7 $
  *
  *******************************************************************/
   
@@ -39,7 +39,8 @@
 #include <../bsp/X86_cygwin/tk_hwtypes_cygwin.h>
 
 #elif defined(__GNUC__)
-#error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"
+#include <../bsp/X86_cygwin/tk_hwtypes_cygwin.h>
+/*#error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"*/
 
 #else
 #error "Can\'t determine the target for the TINKER kernel"
@@ -56,7 +57,10 @@
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwtypes.h,v $
- *  Revision 1.6  2006-03-02 14:05:48  ambrmi09
+ *  Revision 1.7  2006-03-02 15:33:08  ambrmi09
+ *  Experimenting with build under Linux
+ *
+ *  Revision 1.6  2006/03/02 14:05:48  ambrmi09
  *  Posting to GNU toolchain started
  *
  *  Revision 1.5  2006/02/28 13:18:19  ambrmi09

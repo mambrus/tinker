@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.14 $
+ *  Current $Revision: 1.15 $
  *
  *******************************************************************/
   
@@ -318,7 +318,8 @@ cases might want to replace this with a NOP.
 
 
 #elif defined(__GNUC__)
-#error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"
+#include <../bsp/X86_cygwin/tk_hwsys_cygwin.h>
+//#error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"
 
 #else
 #error "Can\'t determine the target for the TINKER kernel"   
@@ -334,7 +335,10 @@ cases might want to replace this with a NOP.
  * @defgroup CVSLOG_tk_hwsys_h tk_hwsys_h
  * @ingroup CVSLOG
  *  $Log: tk_hwsys.h,v $
- *  Revision 1.14  2006-03-02 14:05:48  ambrmi09
+ *  Revision 1.15  2006-03-02 15:33:08  ambrmi09
+ *  Experimenting with build under Linux
+ *
+ *  Revision 1.14  2006/03/02 14:05:48  ambrmi09
  *  Posting to GNU toolchain started
  *
  *  Revision 1.13  2006/02/28 13:18:19  ambrmi09

@@ -27,14 +27,12 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#Sleeping
 
 */
 
-#ifndef TIME_H_TK
-#define TIME_H_TK
-
-
-
 #include <../src/tk_ansi.h>
 #include <../src/tk_ansi_dirwrap.h>
 #include BUILDCHAIN(time.h)
+
+#ifndef TIME_H_TK
+#define TIME_H_TK
 
 //#include <limits.h> //<! Information about integers max and min values
 //#include <stdint.h> //<! Fixed bitsize type definitions
@@ -313,7 +311,10 @@ void timespec2fmttime_np( struct fmttime *totime, const struct timespec *fromtim
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.20  2006-03-02 14:05:48  ambrmi09
+ *  Revision 1.21  2006-03-02 15:33:08  ambrmi09
+ *  Experimenting with build under Linux
+ *
+ *  Revision 1.20  2006/03/02 14:05:48  ambrmi09
  *  Posting to GNU toolchain started
  *
  *  Revision 1.19  2006/02/28 18:59:23  ambrmi09
