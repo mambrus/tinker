@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.41 $
+ *  Current $Revision: 1.42 $
  *
  *******************************************************************/
   
@@ -731,11 +731,11 @@ timeout-events on all threads currently sleeping, but who's timeout has
 expired (i.e. search for expired timeouts and change state to READY if needed).
 
 @note In TinKer lingo we use the words
-- \e sleeping for blocked on timeout
-- \e blocked for thread blocked for any other reason
+- \e "sleeping" - for tread blocked on timeout
+- \e "blocked" - for thread blocked for any other reason
 
 The concept of passively sleeping threads but actively awaken by the
-kernel (in idle thread or any dispatck point) is a key-concept in
+kernel (in idle thread or any dispatch point) is a key-concept in
 non-preemptable mode. In this mode the kernel is constantly searching
 for who's ready to run. This is normaly done in a specially
 dedicated - the \ref _tk_idle "idle thread" (i.e. the lowest priority
@@ -926,7 +926,10 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.41  2006-03-02 15:33:08  ambrmi09
+ *  Revision 1.42  2006-03-02 17:28:07  ambrmi09
+ *  Eclipse forces me to make a stupid patch in the top Makefile.
+ *
+ *  Revision 1.41  2006/03/02 15:33:08  ambrmi09
  *  Experimenting with build under Linux
  *
  *  Revision 1.40  2006/03/02 14:05:49  ambrmi09
