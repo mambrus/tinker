@@ -18,9 +18,16 @@ KMEM
 
 #include <stddef.h>  //Needed for size_t
 
+#include <tk_ptime.h> //last in error chain
+
 /*- Error codes **/
-//#define ERR_UNDEF_HEAPID      0x02 /*!< No such or invalid \ref heap_t "heap" */
-//#define ERR_NOMEM             0x03 /*!< Can't allocate memory */
+
+enum KMEM_ERROR_CODES{
+
+ERR_UNDEF_HEAPID=ERR_PTIMER_SENTINEL  ,/*!< @brief No such or invalid \ref heap_t "heap" */
+ERR_KMEM_SENTINEL
+
+};
 
 
 /*! 
@@ -128,7 +135,10 @@ void           tk_mem_free    ( heapid_t, void* );
  * @defgroup CVSLOG_tk_mem_h tk_mem_h
  * @ingroup CVSLOG
  *  $Log: tk_mem.h,v $
- *  Revision 1.7  2006-02-22 13:05:46  ambrmi09
+ *  Revision 1.8  2006-03-02 14:05:49  ambrmi09
+ *  Posting to GNU toolchain started
+ *
+ *  Revision 1.7  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.6  2006/02/20 15:22:00  ambrmi09

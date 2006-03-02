@@ -1,12 +1,12 @@
 /*******************************************************************
  *
- *  DESCRIPTION: tk.c Scheduler for TinKerOS.
+ *  DESCRIPTION: tk.c Scheduler for TinKerOS. 
  *
  *  AUTHOR: Michael Ambrus
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.39 $
+ *  Current $Revision: 1.40 $
  *
  *******************************************************************/
   
@@ -302,7 +302,7 @@ This function is entered as a result of a ret instruction from a thread. EAX
 is passed as the return value. Not shure if it works on every processor 
 */
 unsigned int _tk_destructor( void *foo ){
-   unsigned int retval;
+   unsigned int retval;   
    GET_THREADS_RETVAL( retval );
    
    //This is critical, no more stack, will not work as is in a preemtive kernal
@@ -399,11 +399,11 @@ unsigned int tk_create_thread(
 ){
    //where in theScheduler to put thread id
    unsigned int   slot_idx = scheduleIdxs[prio].procs_at_prio;
-   start_func_f    *f_p;
+   start_func_f  *f_p;
    void          *v_p;
    size_t         real_stack_size;
    #ifdef DEBUG
-   int            i;
+   unsigned int   i;
    #endif
 
    //Error handling needs improvment (don't forget taking special care of
@@ -926,7 +926,10 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.39  2006-02-28 18:59:23  ambrmi09
+ *  Revision 1.40  2006-03-02 14:05:49  ambrmi09
+ *  Posting to GNU toolchain started
+ *
+ *  Revision 1.39  2006/02/28 18:59:23  ambrmi09
  *  Minor adjustments and verified that all (intended) build environment
  *  compile and produce runnable code. I.e.:
  *  - uVisionKernelProject

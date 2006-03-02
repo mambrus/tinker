@@ -3,6 +3,7 @@
 
 //#include "kernel/src/tk_ansi.h"
 #include <../src/tk_ansi.h>
+#include <../src/tk_ansi_dirwrap.h>
 
 #include BUILDCHAIN(assert.h)
 
@@ -36,12 +37,15 @@ The assert macro.
                     #p, __FILE__, __LINE__ ) )
 #endif
 
-#endif ASSERT_H_TK
+#endif //ASSERT_H_TK
 /*!
  * @defgroup CVSLOG_assert_h assert_h
  * @ingroup CVSLOG
  *  $Log: assert.h,v $
- *  Revision 1.5  2006-02-28 18:59:23  ambrmi09
+ *  Revision 1.6  2006-03-02 14:05:48  ambrmi09
+ *  Posting to GNU toolchain started
+ *
+ *  Revision 1.5  2006/02/28 18:59:23  ambrmi09
  *  Minor adjustments and verified that all (intended) build environment
  *  compile and produce runnable code. I.e.:
  *  - uVisionKernelProject

@@ -111,41 +111,6 @@ extern "C"
 }
 #endif
 
-/*
-
-//------1---------2---------3---------4---------5---------6---------7---------8
-#if defined(_WIN32) &&  defined(_MSC_VER)
-   #define CHAINPATH C:\Program Files\Microsoft Visual Studio\VC98\Include
-   #define USE_TINKER_TIME_F        NO
-   #define USE_TINKER_CLOCK_F       NO
-
-#elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
-   #define CHAINPATH C:/BC5/INCLUDE
-   #define USE_TINKER_TIME_F        NO
-   #define USE_TINKER_CLOCK_F       NO
-
-#elif defined( __C166__ )
-   #define CHAINPATH 
-   #define USE_TINKER_TIME_F        YES
-   #define USE_TINKER_CLOCK_F       YES
-
-#elif defined(__GNUC__)
-   #define CHAINPATH 
-#else
-   #error "Can\'t determine the target for the TINKER kernel"
-#endif
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-#define DEFSTR( x ) \
-   #x
-
-#define FNAME( path, file ) \
-   DEFSTR( path/##file )
-   
-#define BUILDCHAIN( file ) \
-   FNAME( CHAINPATH, ##file ) \
-
-*/
 
 
 
@@ -300,7 +265,10 @@ cartful!
  * @defgroup CVSLOG_tk_ansi_h tk_ansi_h
  * @ingroup CVSLOG
  *  $Log: tk_ansi.h,v $
- *  Revision 1.9  2006-02-28 18:16:55  ambrmi09
+ *  Revision 1.10  2006-03-02 14:05:49  ambrmi09
+ *  Posting to GNU toolchain started
+ *
+ *  Revision 1.9  2006/02/28 18:16:55  ambrmi09
  *  - Mainly a ci for the new Workspace structure
  *  - Houwever, found and corrected a bug in mqueue.c (a NULL pointer
  *    assignement)

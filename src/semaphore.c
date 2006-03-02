@@ -47,7 +47,7 @@ int sem_init (
    else
       return EINVAL;
 
-
+   return 0;
 }
 
 /*!
@@ -57,6 +57,8 @@ int sem_init (
 */
 int sem_destroy (sem_t * sem){
    assert("sem_destroy - Not implemented" == NULL);
+   
+   return 0;
 }
 
 /*!
@@ -66,6 +68,8 @@ int sem_destroy (sem_t * sem){
 */
 int sem_trywait (sem_t * sem){
    assert("sem_trywait - Not implemented" == NULL);
+   
+   return 0;
 }
 
 /*!
@@ -83,6 +87,8 @@ int sem_wait (sem_t * sem){
       return 0;
    else
       return EINVAL;
+   
+   return 0;
 }
 
 /*!
@@ -100,14 +106,18 @@ int sem_post (sem_t * sem){
       return 0;
    else
       return EINVAL;
-
+   
+   return 0;
 }
 
 /*!
  * @defgroup CVSLOG_semaphore_c semaphore_c
  * @ingroup CVSLOG
  *  $Log: semaphore.c,v $
- *  Revision 1.7  2006-02-23 15:33:33  ambrmi09
+ *  Revision 1.8  2006-03-02 14:05:49  ambrmi09
+ *  Posting to GNU toolchain started
+ *
+ *  Revision 1.7  2006/02/23 15:33:33  ambrmi09
  *  Found a nasty "bug", that was not a read bug after all. At least not in the kernel as a feared. It turned out that I forgot some of the details about how timeouts were to be handled (especially in \ref ITC ). A timeout of value \b zero is equal of never to timeout (read more about it in define \ref FOREVER). However two important lesson learned: Even simple add operations get "funny" when adding large numbers (see line 303 in tk_ipc.c - in the \ref lock_stage function). Anyway. FOREVER should equal zero. (This issue makes me wonder sometimes how sane it really was to resurrect a project that has been dormant for nearly 10 years.) The CodeWright project ruler should be positioned on the actual line btw. This check-in will be accompanied  by a <tt>cvs tag</tt> for this reason, and for yet another nasty bug that seems to be a real dispatcher bug. The current source-set-up will show the bug within one mint (which is good since it makes it a little bit less of a search for the <I>"needle in the haystack</i>").
  *
  *  Revision 1.6  2006/02/22 13:05:46  ambrmi09

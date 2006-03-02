@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.7 $
+ *  Current $Revision: 1.8 $
  *
  *******************************************************************/
   
@@ -34,8 +34,23 @@ PTIMER
 /*- include files **/
 //#include <time.h>
 
+#include <tk_ipc.h> //last in error chain
+
 
 /*- public definitions **/
+
+/*COMPONENT PTIMER*/                   
+
+enum PTIMER_ERROR_CODES{
+
+ERR_UNDEF_PTIMER=ERR_ITC_SENTINEL   ,//!< @brief No such or invalid ptimer 
+ERR_TIME_NEG               ,//!< @brief Trying to set event for time that's passed 
+ERR_TIMER_DELETED          ,//!< @brief The timer (i.e. the requested event) has been deleted 
+ERR_NO_MORE_TIMERS         ,//!< @brief You try to exeed the maximum number of pending timers
+
+ERR_PTIMER_SENTINEL
+};
+
 
 /*!
 @name Protocol macros
@@ -171,7 +186,10 @@ unsigned long  tk_ptimer_sleep  ( unsigned int  tid, time_t *relTime );
  * @ingroup CVSLOG
  *
  *  $Log: tk_ptime.h,v $
- *  Revision 1.7  2006-02-22 13:05:46  ambrmi09
+ *  Revision 1.8  2006-03-02 14:05:49  ambrmi09
+ *  Posting to GNU toolchain started
+ *
+ *  Revision 1.7  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  Revision 1.6  2006/02/20 15:22:00  ambrmi09

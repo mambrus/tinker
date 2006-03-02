@@ -105,8 +105,18 @@ on other systems.
 
 */
 
-#ifndef ERRNO_H
-#define ERRNO_H
+#ifndef ERRNO_H_TK
+#define ERRNO_H_TK
+
+
+#include <../src/tk_ansi.h>
+#include <../src/tk_ansi_dirwrap.h>
+#include BUILDCHAIN(errno.h)
+
+
+#if defined(errno)
+   #undef errno 
+#endif
 
 #include <tk.h>
 
@@ -118,11 +128,12 @@ exactly as if it would be a variable, but it's not.
 */
 #define errno (*_tk_errno())
 
-/*! Tell everyone that somewhere there exists this variable (translates
-to \ref errno)*/
-//extern int _tk_daft_errno;
 
 
+
+//#if !defined(__GNUC__) && !( defined(_WIN32) || defined(_MSC_VER))
+#if !defined(__GNUC__)
+#include <tk_mem.h>  //Last in error chain 
 /*!
 To make life easier and not to have to trim every tiny errorcode, all
 are put in this enumertion list.  ANSI error codes are normally defined
@@ -137,41 +148,41 @@ should be fairlly small and even shrink over time the close we get to
 following ANSI standard.
 
 */
-enum ERROR_CODES{
-/*First are TiNker codes*/
-/*COMPONENT SCHED*/
-TK_OK            ,//!< @brief Operation returned without errors
-TK_ERROR         ,//!< @brief General TinKer catch all error
-
-
-/*COMPONENT ITC (originally pSos error codes). NOTE that the numbers are changed!!*/
-ERR_TIMEOUT      ,//!< @brief ITC has timedout
-ERR_OBJDEL       ,//!< @brief ITC has been deleted
-ERR_OBJID        ,//!< @brief ITC id incorrect ??
-ERR_OBJTYPE      ,//!< @brief ITC type doesn'e mach object id
-ERR_OBJFULL      ,//!< @brief Nodes objecttable is full
-ERR_BUFSIZ       ,//!< @brief The allocated buffer is smaller than a message could be
-ERR_NOQCB        ,//!< @brief Exceeds max numer of queues
-ERR_FULL         ,//!< @brief The message buffer is full
-ERR_NOSCB        ,//!< @brief Exceeds max numer of semaphores
-ERR_NOSEM        ,//!< @brief Only if NOWAIT was selected
-ERR_TATSDEL      ,//!< @brief There were threads waiting 
-ERR_NOMEM        ,//!< @brief No more memory
-ERR_BLOCKLIMIT   ,//!< @brief Can't block more procs on queue or semaphore
-
-/*COMPONENT PTIMER*/                   
-
-ERR_UNDEF_PTIMER           ,//!< @brief No such or invalid ptimer 
-ERR_TIME_NEG               ,//!< @brief Trying to set event for time that's passed 
-ERR_TIMER_DELETED          ,//!< @brief The timer (i.e. the requested event) has been deleted 
-ERR_NO_MORE_TIMERS         ,//!< @brief You try to exeed the maximum number of pending timers
-
-/*COMPONENT KMEM*/                   
-ERR_UNDEF_HEAPID           ,/*!< @brief No such or invalid \ref heap_t "heap" */
-
+enum ANSI_ERROR_CODES{
+///*First are TiNker codes*/
+///*COMPONENT SCHED*/
+//TK_OK            ,//!< @brief Operation returned without errors
+//TK_ERROR         ,//!< @brief General TinKer catch all error
+//
+//
+///*COMPONENT ITC (originally pSos error codes). NOTE that the numbers are changed!!*/
+//ERR_TIMEOUT      ,//!< @brief ITC has timedout
+//ERR_OBJDEL       ,//!< @brief ITC has been deleted
+//ERR_OBJID        ,//!< @brief ITC id incorrect ??
+//ERR_OBJTYPE      ,//!< @brief ITC type doesn'e mach object id
+//ERR_OBJFULL      ,//!< @brief Nodes objecttable is full
+//ERR_BUFSIZ       ,//!< @brief The allocated buffer is smaller than a message could be
+//ERR_NOQCB        ,//!< @brief Exceeds max numer of queues
+//ERR_FULL         ,//!< @brief The message buffer is full
+//ERR_NOSCB        ,//!< @brief Exceeds max numer of semaphores
+//ERR_NOSEM        ,//!< @brief Only if NOWAIT was selected
+//ERR_TATSDEL      ,//!< @brief There were threads waiting 
+//ERR_NOMEM        ,//!< @brief No more memory
+//ERR_BLOCKLIMIT   ,//!< @brief Can't block more procs on queue or semaphore
+//
+///*COMPONENT PTIMER*/                   
+//
+//ERR_UNDEF_PTIMER           ,//!< @brief No such or invalid ptimer 
+//ERR_TIME_NEG               ,//!< @brief Trying to set event for time that's passed 
+//ERR_TIMER_DELETED          ,//!< @brief The timer (i.e. the requested event) has been deleted 
+//ERR_NO_MORE_TIMERS         ,//!< @brief You try to exeed the maximum number of pending timers
+//
+///*COMPONENT KMEM*/                   
+//ERR_UNDEF_HEAPID           ,/*!< @brief No such or invalid \ref heap_t "heap" */
+//
 
 /*ANSI codes*/                                      
-ANSI_ENUM_EPERM            , //!< @brief \ref EPERM
+ANSI_ENUM_EPERM=ERR_KMEM_SENTINEL , //!< @brief \ref EPERM
 ANSI_ENUM_ENOENT           , //!< @brief \ref ENOENT
 ANSI_ENUM_ESRCH            , //!< @brief \ref ESRCH
 ANSI_ENUM_EINTR            , //!< @brief \ref EINTR
@@ -314,7 +325,7 @@ ANSI_ENUM_ENOMEDIUM        , //!< @brief \ref ENOMEDIUM
 ANSI_ENUM_EMEDIUMTYPE        //!< @brief \ref ANSI_ENUM_EMEDIUMTYPE
 }; 
 
-#define ERR_OK TK_OK            //!< TinKer: No error
+
 
 
 
@@ -993,13 +1004,18 @@ TBD
 TBD
 */
 
+#endif // !(__GNUC__)
+
 #endif //ERRNO_H
 
 /*!
  * @defgroup CVSLOG_errno_h errno_h
  * @ingroup CVSLOG
  *  $Log: errno.h,v $
- *  Revision 1.7  2006-02-22 13:05:45  ambrmi09
+ *  Revision 1.8  2006-03-02 14:05:48  ambrmi09
+ *  Posting to GNU toolchain started
+ *
+ *  Revision 1.7  2006/02/22 13:05:45  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
  *  

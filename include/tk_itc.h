@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.14 $
+ *  Current $Revision: 1.15 $
  *
  *******************************************************************/
    
@@ -52,22 +52,31 @@ actual time us added)
 
 /*- Error codes **/
 
-/* #define ERR_OK              0x00 //!< No error #define ERR_TIMEOUT
-0x01 //!< ITC has timedout
-#define ERR_OBJDEL          0x05 //!< ITC has been deleted
-#define ERR_OBJID           0x06 //!< ITC id incorrect ??
-#define ERR_OBJTYPE         0x07 //!< ITC type doesn'e mach object id
-#define ERR_OBJFULL         0x08 //!< Nodes objecttable is full
-#define ERR_BUFSIZ          0x32 //!< The allocated buffer is smaller than a message could be
-#define ERR_NOQCB           0x33 //!< Exceeds max numer of queues
-#define ERR_FULL            0x35 //!< The message buffer is full
-#define ERR_NOSCB           0x41 //!< Exceeds max numer of semaphores
-#define ERR_NOSEM           0x42 //!< Only if NOWAIT was selected
-#define ERR_TATSDEL         0x44 //!< There were threads waiting 
-
-#define ERR_NOMEM           0x100//!<  No more memory
-#define ERR_BLOCKLIMIT      0x101//!<  Can't block more procs on queue or semaphore
+/*!
+COMPONENT ITC (originally pSos error codes). NOTE that the numbers are changed!!
 */
+enum ITC_ERROR_CODES{
+
+
+ERR_TIMEOUT=TK_SENTINEL  ,//!< @brief ITC has timedout
+ERR_OBJDEL       ,//!< @brief ITC has been deleted
+ERR_OBJID        ,//!< @brief ITC id incorrect ??
+ERR_OBJTYPE      ,//!< @brief ITC type doesn'e mach object id
+ERR_OBJFULL      ,//!< @brief Nodes objecttable is full
+ERR_BUFSIZ       ,//!< @brief The allocated buffer is smaller than a message could be
+ERR_NOQCB        ,//!< @brief Exceeds max numer of queues
+ERR_FULL         ,//!< @brief The message buffer is full
+ERR_NOSCB        ,//!< @brief Exceeds max numer of semaphores
+ERR_NOSEM        ,//!< @brief Only if NOWAIT was selected
+ERR_TATSDEL      ,//!< @brief There were threads waiting 
+ERR_NOMEM        ,//!< @brief No more memory
+ERR_BLOCKLIMIT   ,//!< @brief Can't block more procs on queue or semaphore
+ERR_ITC_SENTINEL
+
+};
+
+
+
 
 /*!
 Bit flags (or-able), used where ever there is a flag argument. 
@@ -380,7 +389,10 @@ unsigned long sm_v_ny(
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.14  2006-02-23 15:33:33  ambrmi09
+ *  Revision 1.15  2006-03-02 14:05:48  ambrmi09
+ *  Posting to GNU toolchain started
+ *
+ *  Revision 1.14  2006/02/23 15:33:33  ambrmi09
  *  Found a nasty "bug", that was not a read bug after all. At least not in the kernel as a feared. It turned out that I forgot some of the details about how timeouts were to be handled (especially in \ref ITC ). A timeout of value \b zero is equal of never to timeout (read more about it in define \ref FOREVER). However two important lesson learned: Even simple add operations get "funny" when adding large numbers (see line 303 in tk_ipc.c - in the \ref lock_stage function). Anyway. FOREVER should equal zero. (This issue makes me wonder sometimes how sane it really was to resurrect a project that has been dormant for nearly 10 years.) The CodeWright project ruler should be positioned on the actual line btw. This check-in will be accompanied  by a <tt>cvs tag</tt> for this reason, and for yet another nasty bug that seems to be a real dispatcher bug. The current source-set-up will show the bug within one mint (which is good since it makes it a little bit less of a search for the <I>"needle in the haystack</i>").
  *
  *  Revision 1.13  2006/02/22 13:05:46  ambrmi09

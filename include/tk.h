@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.30 $
+ *  Current $Revision: 1.31 $
  *
  *******************************************************************/
    
@@ -33,6 +33,16 @@ SCHED
 #include <time.h>
 #include <tk_hwtypes.h>   //should be OK now
 
+
+enum SCHED_ERROR_CODES{
+/*First are TiNker codes*/
+/*COMPONENT SCHED*/
+TK_OK            ,//!< @brief Operation returned without errors
+TK_ERROR         ,//!< @brief General TinKer catch all error
+TK_SENTINEL
+};
+
+#define ERR_OK TK_OK            //!< TinKer: No error
 
 /*!
 @name Kernel trimming constants
@@ -210,7 +220,10 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.30  2006-02-28 18:16:54  ambrmi09
+ *  Revision 1.31  2006-03-02 14:05:48  ambrmi09
+ *  Posting to GNU toolchain started
+ *
+ *  Revision 1.30  2006/02/28 18:16:54  ambrmi09
  *  - Mainly a ci for the new Workspace structure
  *  - Houwever, found and corrected a bug in mqueue.c (a NULL pointer
  *    assignement)

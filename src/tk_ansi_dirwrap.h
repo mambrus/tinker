@@ -41,9 +41,13 @@ kernel_reimpl_ansi
    #define CHAINPATH 
    #define USE_TINKER_TIME_F        YES
    #define USE_TINKER_CLOCK_F       YES
-
+/*   
+#elif defined(__CYGWIN32__)  || defined(__CYGWIN__)
+   #define CHAINPATH /usr/include
+*/
 #elif defined(__GNUC__)
-   #define CHAINPATH 
+   #define CHAINPATH /usr/include
+   //Not needed to "fine tune" - handled much more corse grained (since GNU headers always include all we need anyway)
 #else
    #error "Can\'t determine the target for the TINKER kernel"
 #endif
@@ -53,17 +57,21 @@ kernel_reimpl_ansi
    #x
 
 #define FNAME( path, file ) \
-   DEFSTR( path/##file )
+   DEFSTR( path/file )
    
 #define BUILDCHAIN( file ) \
-   FNAME( CHAINPATH, ##file ) \
+   FNAME( CHAINPATH, file ) \
+
 
 /*! 
  * @defgroup CVSLOG_tk_ansi_dirwrap_h tk_ansi_dirwrap_h
  * @ingroup CVSLOG
  *
  *  $Log: tk_ansi_dirwrap.h,v $
- *  Revision 1.1  2006-02-28 18:40:11  ambrmi09
+ *  Revision 1.2  2006-03-02 14:05:50  ambrmi09
+ *  Posting to GNU toolchain started
+ *
+ *  Revision 1.1  2006/02/28 18:40:11  ambrmi09
  *  initial ci
  *
  *

@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.13 $
+ *  Current $Revision: 1.14 $
  *
  *******************************************************************/
   
@@ -313,6 +313,10 @@ cases might want to replace this with a NOP.
 #include <../bsp/XC167_Keil/tk_hwsys_keilC166.h>
 
 
+#elif defined(__CYGWIN32__)  || defined(__CYGWIN__)
+#include <../bsp/X86_cygwin/tk_hwsys_cygwin.h>
+
+
 #elif defined(__GNUC__)
 #error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"
 
@@ -330,7 +334,10 @@ cases might want to replace this with a NOP.
  * @defgroup CVSLOG_tk_hwsys_h tk_hwsys_h
  * @ingroup CVSLOG
  *  $Log: tk_hwsys.h,v $
- *  Revision 1.13  2006-02-28 13:18:19  ambrmi09
+ *  Revision 1.14  2006-03-02 14:05:48  ambrmi09
+ *  Posting to GNU toolchain started
+ *
+ *  Revision 1.13  2006/02/28 13:18:19  ambrmi09
  *  Got MSVC target back-on track also.
  *
  *  Seems both MSVC and BCC have the same "error" regarding \ref CLK_TICK

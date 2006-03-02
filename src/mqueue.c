@@ -9,7 +9,7 @@
  * Notes:      Todo: Prioritize messages with qsort ( timestamp+prio = orderby)
  *
  * Modifications:
- * Current $Revision: 1.9 $
+ * Current $Revision: 1.10 $
  *
  *****************************************************************************/
 /*!
@@ -149,6 +149,8 @@ int mq_close(
    assert(sem_wait(&poolAccessSem) == 0);
    
    assert(sem_post(&poolAccessSem) == 0);
+
+   return 0;
 }
 
 
@@ -165,6 +167,8 @@ int mq_getattr(
    /*Find next empy slot in qPool*/
    
    assert(sem_post(&poolAccessSem) == 0);
+
+   return 0;
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -181,7 +185,6 @@ mqd_t mq_open(
    size_t                k;
    int                   qId;   /* queue ID in message pool */
    int                   dId;   /* descriptor */
-   char                 *tArray;
    
    pthread_once(&mq_once, initialize);
    
@@ -436,6 +439,8 @@ int mq_setattr(
    assert(sem_wait(&poolAccessSem) == 0);
    
    assert(sem_post(&poolAccessSem) == 0);
+
+   return 0;
 }
 
 
@@ -595,7 +600,7 @@ static int compMess(
 //------1---------2---------3---------4---------5---------6---------7---------8
 static void sortByPrio( QueueD *Q ){
    int szMess = NUMB_MESS(Q);
-   int i,j,k,l;
+   int i,j;
    
    
    if (Q->mBox.mIdxOut <= Q->mBox.mIdxIn){    
@@ -693,7 +698,10 @@ Good references about the API:
  * @defgroup CVSLOG_mqueue_c mqueue_c
  * @ingroup CVSLOG
  *  $Log: mqueue.c,v $
- *  Revision 1.9  2006-02-28 18:16:55  ambrmi09
+ *  Revision 1.10  2006-03-02 14:05:49  ambrmi09
+ *  Posting to GNU toolchain started
+ *
+ *  Revision 1.9  2006/02/28 18:16:55  ambrmi09
  *  - Mainly a ci for the new Workspace structure
  *  - Houwever, found and corrected a bug in mqueue.c (a NULL pointer
  *    assignement)
