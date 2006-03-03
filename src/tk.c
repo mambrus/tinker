@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.42 $
+ *  Current $Revision: 1.43 $
  *
  *******************************************************************/
   
@@ -574,12 +574,13 @@ void tk_msleep( unsigned int time_ms ){
    clock_t act_time_us; 
    clock_t wkp_time_us;
    unsigned long in_us;
-   unsigned long clk_sek = CLK_TCK;
+   //unsigned long clk_sek = CLK_TCK; 
+   unsigned long clk_sek = CLOCKS_PER_SEC;
    
-   in_us = time_ms * (clk_sek/1000uL);
-   
+   in_us = time_ms * (clk_sek/1000uL);   
    act_time_us    = tk_clock();
-   wkp_time_us    = act_time_us + in_us;
+   //wkp_time_us    = act_time_us + in_us;
+   wkp_time_us    = act_time_us + time_ms*1000uL;
 
    //need a function t_diff that handles wraparound (done 060225, note kept for ref.)
    proc_stat[active_thread].wakeuptime = wkp_time_us;
@@ -926,7 +927,10 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.42  2006-03-02 17:28:07  ambrmi09
+ *  Revision 1.43  2006-03-03 16:57:32  ambrmi09
+ *  Fust successfull run under Linux. I recon the ABI is correct, but needs verifying. If Im right, this should run on Cygwin as well
+ *
+ *  Revision 1.42  2006/03/02 17:28:07  ambrmi09
  *  Eclipse forces me to make a stupid patch in the top Makefile.
  *
  *  Revision 1.41  2006/03/02 15:33:08  ambrmi09
