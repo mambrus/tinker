@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.44 $
+ *  Current $Revision: 1.45 $
  *
  *******************************************************************/
   
@@ -35,9 +35,9 @@ SCHED
 #include <tk_hwsys.h>
 #include <../src/implement_tk.h>
 
-#if !(CLK_TCK == CLOCKS_PER_SEC)
-#error CLK_TCK == CLOCKS_PER_SEC. Target not following POSIX standard
-#endif
+//#if !(CLK_TCK == CLOCKS_PER_SEC)
+//#error CLK_TCK == CLOCKS_PER_SEC. Target not following POSIX standard
+//#endif
 
 /*!
 @name \COMPONENTS headerfiles
@@ -95,11 +95,14 @@ any of them.   errno.h
 
 
 /*- local definitions **/
+/*
 #if defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
    #define tk_clock()  (clock() * 10)
 #else
    #define tk_clock()  clock()
 #endif
+*/
+#define tk_clock()  clock()
 
 /* default settings */
 
@@ -581,10 +584,10 @@ void tk_msleep( unsigned int time_ms ){
    unsigned long clk_sek = CLK_TCK; 
    //unsigned long clk_sek = CLOCKS_PER_SEC;
    
-   in_us = time_ms * (clk_sek/1000uL);   
-   act_time_us    = tk_clock();
-   //wkp_time_us    = act_time_us + in_us;
-   wkp_time_us    = act_time_us + time_ms*1000uL;
+   in_us = time_ms * 1000uL;   
+   act_time_us    = tk_clock() * (1000000uL/CLOCKS_PER_SEC);
+   wkp_time_us    = act_time_us + in_us;
+   //wkp_time_us    = act_time_us + time_ms*1000uL;
 
    //need a function t_diff that handles wraparound (done 060225, note kept for ref.)
    proc_stat[active_thread].wakeuptime = wkp_time_us;
@@ -627,9 +630,10 @@ time keeping (even though that works quite well also).
  */
 void _tk_wakeup_timedout_threads( void ){
    int i;
-   clock_t act_time;
+   clock_t act_time_us;
 
-   act_time = tk_clock();
+   //act_time = tk_clock();
+   act_time_us    = tk_clock() * (1000000uL/CLOCKS_PER_SEC);
    //Do not optimize this to "active_procs" until fragmentation of deleted procs
    //is solved.
    for(i=0;i<TK_MAX_THREADS;i++){
@@ -637,7 +641,7 @@ void _tk_wakeup_timedout_threads( void ){
          if (proc_stat[i].isInit){           //dubble check (done 060225, note kept for ref.)
             //if ( act_time >= proc_stat[i].wakeuptime ){
             //if ( (signed long)(act_time - proc_stat[i].wakeuptime) >= 0 ){
-            if ( (signed long)(difftime(act_time,proc_stat[i].wakeuptime) ) >= 0 ){
+            if ( (signed long)(difftime(act_time_us,proc_stat[i].wakeuptime) ) >= 0 ){
                proc_stat[i].state &= ~_____QST; /*Release ques also*/
                proc_stat[i].wakeupEvent = E_TIMER;
             }
@@ -933,7 +937,10 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.44  2006-03-04 11:30:00  ambrmi09
+ *  Revision 1.45  2006-03-04 12:50:30  ambrmi09
+ *  Struggling with ANSi time constants
+ *
+ *  Revision 1.44  2006/03/04 11:30:00  ambrmi09
  *  Runds under Cygwin now.
  *  @note. Threads seem to need a very big stack under Cygwin (reason unknown),
  *
