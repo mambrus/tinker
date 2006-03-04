@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.43 $
+ *  Current $Revision: 1.44 $
  *
  *******************************************************************/
   
@@ -34,6 +34,10 @@ SCHED
 #include <tk.h>
 #include <tk_hwsys.h>
 #include <../src/implement_tk.h>
+
+#if !(CLK_TCK == CLOCKS_PER_SEC)
+#error CLK_TCK == CLOCKS_PER_SEC. Target not following POSIX standard
+#endif
 
 /*!
 @name \COMPONENTS headerfiles
@@ -574,8 +578,8 @@ void tk_msleep( unsigned int time_ms ){
    clock_t act_time_us; 
    clock_t wkp_time_us;
    unsigned long in_us;
-   //unsigned long clk_sek = CLK_TCK; 
-   unsigned long clk_sek = CLOCKS_PER_SEC;
+   unsigned long clk_sek = CLK_TCK; 
+   //unsigned long clk_sek = CLOCKS_PER_SEC;
    
    in_us = time_ms * (clk_sek/1000uL);   
    act_time_us    = tk_clock();
@@ -846,6 +850,8 @@ things at least:
 */
 void _tk_main( void ){
    tk_create_kernel();
+   printf("ANSI timing constants:\n");
+   printf("CLK_TCK=[%d], CLOCKS_PER_SEC=[%d]\n",CLK_TCK, CLOCKS_PER_SEC);
    #if defined(TK_COMP_KMEM) && TK_COMP_KMEM
       assert( tk_mem() == ERR_OK );
    #endif
@@ -927,7 +933,11 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.43  2006-03-03 16:57:32  ambrmi09
+ *  Revision 1.44  2006-03-04 11:30:00  ambrmi09
+ *  Runds under Cygwin now.
+ *  @note. Threads seem to need a very big stack under Cygwin (reason unknown),
+ *
+ *  Revision 1.43  2006/03/03 16:57:32  ambrmi09
  *  Fust successfull run under Linux. I recon the ABI is correct, but needs verifying. If Im right, this should run on Cygwin as well
  *
  *  Revision 1.42  2006/03/02 17:28:07  ambrmi09

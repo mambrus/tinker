@@ -153,6 +153,18 @@ digraph components {
         http://www.gnu.org/software/make/manual/html_mono/make.html
         http://publications.gbdirect.co.uk/c_book/chapter2/expressions_and_arithmetic.html
 
+        <h2>ABI & EABI</h2>
+        http://www.jankratochvil.net/project/captive/doc/CallType.pm#calltype_cdecl
+        http://www.answers.com/main/ntquery?method=4&dsid=2222&dekey=Application+binary+interface&gwp=8&curtab=2222_1&linktext=Application%20Binary%20Interface
+        http://gcc.gnu.org/onlinedocs/gcc/Function-Attributes.html#Function%20Attributes
+        http://www.arm.com/miscPDFs/8030.pdf
+        http://www.unixwiz.net/techtips/win32-callconv.html
+        http://www.unixwiz.net/techtips/gnu-c-attributes.html
+        http://sourceware.org/ml/libc-ports/2005-11/msg00028.html
+        http://en.wikipedia.org/wiki/GPL
+        http://linux.bkbits.net:8080/linux-2.4/anno/COPYING@1.3?nav=index.html%7Csrc/
+
+
    */
 
 
