@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:
  *
- *  Current $Revision: 1.7 $
+ *  Current $Revision: 1.8 $
  *
  *******************************************************************/
   
@@ -35,12 +35,33 @@
 #elif defined( __C166__ )
 #include <../bsp/XC167_Keil/tk_hwtypes_keilC166.h>
 
-#elif defined(__CYGWIN32__)  || defined(__CYGWIN__)
-#include <../bsp/X86_cygwin/tk_hwtypes_cygwin.h>
-
 #elif defined(__GNUC__)
-#include <../bsp/X86_cygwin/tk_hwtypes_cygwin.h>
-/*#error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"*/
+
+
+   #ifndef ARCH
+   #  error For GNU targets, ARCH has to be defined
+   #endif
+
+      
+   #define str( x ) \
+      #x
+
+   #define INCLNAME( arch ) \
+      <../bsp/gnu arch/tk_hwtypes-gnu arch.h>
+   
+   #define INCLABI( arch, abi )                      \
+      <../bsp/gnu arch/tk_hwtypes-gnu arch abi.h>
+   
+
+   #ifdef ABI
+   #   include INCLABI( ARCH, ABI )
+   #else
+   #   include INCLNAME( ARCH )
+   #endif
+   
+   #undef str
+   #undef INCLNAME
+   #undef INCLABI
 
 #else
 #error "Can\'t determine the target for the TINKER kernel"
@@ -57,7 +78,10 @@
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwtypes.h,v $
- *  Revision 1.7  2006-03-02 15:33:08  ambrmi09
+ *  Revision 1.8  2006-03-04 19:32:34  ambrmi09
+ *  Modified sources to allow build GNU targets transparently.
+ *
+ *  Revision 1.7  2006/03/02 15:33:08  ambrmi09
  *  Experimenting with build under Linux
  *
  *  Revision 1.6  2006/03/02 14:05:48  ambrmi09

@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.46 $
+ *  Current $Revision: 1.47 $
  *
  *******************************************************************/
   
@@ -261,8 +261,8 @@ void tk_create_kernel( void ){
       proc_stat[i].noChilds                     = 0;
       proc_stat[i]._errno_                      = 0;
       proc_stat[i].stack_size                   = 0;
-      STACK_PTR(proc_stat[i].stack_begin)       = 0uL;
-      STACK_PTR(proc_stat[i].curr_sp)           = 0uL;
+      STACK_PTR(proc_stat[i].stack_begin)       = NULL;      
+      STACK_PTR(proc_stat[i].curr_sp)           = NULL;      
       proc_stat[i].stack_crc                    = 0;
       proc_stat[i].prmtRetAddr                  = NULL;
       proc_stat[i].wakeupEvent                  = 0;
@@ -963,7 +963,10 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.46  2006-03-04 14:28:44  ambrmi09
+ *  Revision 1.47  2006-03-04 19:32:35  ambrmi09
+ *  Modified sources to allow build GNU targets transparently.
+ *
+ *  Revision 1.46  2006/03/04 14:28:44  ambrmi09
  *  Finally got the \ref clock() representation right. Now timing is
  *  behaving equaly between the targets X86_Linux, Cygqing, MSVC, BC5 and
  *  XC167.

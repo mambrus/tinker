@@ -37,7 +37,9 @@ kernel_reimpl_ansi
    #define CHAINPATH C:\Program Files\Keil\C166\BIN
 
 #elif defined(__GNUC__) /*|| defined(__CYGWIN32__)  || defined(__CYGWIN__)*/
-   #define CHAINPATH /usr/include
+   #ifndef CHAINPATH
+      #define CHAINPATH /usr/include
+   #endif
 
 #else
    #error "Can\'t determine the target for the TINKER kernel"
@@ -59,7 +61,10 @@ kernel_reimpl_ansi
  * @ingroup CVSLOG
  *
  *  $Log: tk_ansi_dirwrap.h,v $
- *  Revision 1.3  2006-03-04 14:28:44  ambrmi09
+ *  Revision 1.4  2006-03-04 19:32:35  ambrmi09
+ *  Modified sources to allow build GNU targets transparently.
+ *
+ *  Revision 1.3  2006/03/04 14:28:44  ambrmi09
  *  Finally got the \ref clock() representation right. Now timing is
  *  behaving equaly between the targets X86_Linux, Cygqing, MSVC, BC5 and
  *  XC167.

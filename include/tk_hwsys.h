@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.15 $
+ *  Current $Revision: 1.16 $
  *
  *******************************************************************/
   
@@ -313,13 +313,29 @@ cases might want to replace this with a NOP.
 #include <../bsp/XC167_Keil/tk_hwsys_keilC166.h>
 
 
-#elif defined(__CYGWIN32__)  || defined(__CYGWIN__)
-#include <../bsp/X86_cygwin/tk_hwsys_cygwin.h>
+#elif defined(__GNUC__)   
+   
+   #ifndef ARCH
+   #  error For GNU targets, ARCH has to be defined
+   #endif
+   
+   #define INCLNAME( arch ) \
+      <../bsp/gnu arch/tk_hwsys-gnu arch.h>
+   
+   #define INCLABI( arch, abi ) \
+      <../bsp/gnu arch/tk_hwsys-gnu arch abi.h>
+   
+   #ifdef ABI
+   #   include INCLABI( ARCH, ABI )
+   #else
+   #   include INCLNAME( ARCH )
+   #endif
 
+   
+   #undef str
+   #undef INCLNAME
+   #undef INCLABI
 
-#elif defined(__GNUC__)
-#include <../bsp/X86_cygwin/tk_hwsys_cygwin.h>
-//#error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"
 
 #else
 #error "Can\'t determine the target for the TINKER kernel"   
@@ -335,7 +351,10 @@ cases might want to replace this with a NOP.
  * @defgroup CVSLOG_tk_hwsys_h tk_hwsys_h
  * @ingroup CVSLOG
  *  $Log: tk_hwsys.h,v $
- *  Revision 1.15  2006-03-02 15:33:08  ambrmi09
+ *  Revision 1.16  2006-03-04 19:32:34  ambrmi09
+ *  Modified sources to allow build GNU targets transparently.
+ *
+ *  Revision 1.15  2006/03/02 15:33:08  ambrmi09
  *  Experimenting with build under Linux
  *
  *  Revision 1.14  2006/03/02 14:05:48  ambrmi09
