@@ -51,12 +51,13 @@ Bus arbitration enabled
 
 // USER CODE BEGIN (MAIN_General,2)
 //#include <XC167.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <tk.h>            
 #include <errno.h>
-#include <time.h>
+#include <time.h> 
 #include <assert.h>
 
 

@@ -110,12 +110,15 @@ on other systems.
 
 
 #include <../src/tk_ansi.h>
-#include <../src/tk_ansi_dirwrap.h>
-#include BUILDCHAIN(errno.h)
+
+#if !defined(__C166__)
+#   include <../src/tk_ansi_dirwrap.h>
+#   include BUILDCHAIN(errno.h)
+#endif
 
 
 #if defined(errno)
-   #undef errno 
+   #undef errno          //!< We'll define our own errno \e "varialble"
 #endif
 
 #include <tk.h>
@@ -1012,7 +1015,12 @@ TBD
  * @defgroup CVSLOG_errno_h errno_h
  * @ingroup CVSLOG
  *  $Log: errno.h,v $
- *  Revision 1.8  2006-03-02 14:05:48  ambrmi09
+ *  Revision 1.9  2006-03-04 14:28:44  ambrmi09
+ *  Finally got the \ref clock() representation right. Now timing is
+ *  behaving equaly between the targets X86_Linux, Cygqing, MSVC, BC5 and
+ *  XC167.
+ *
+ *  Revision 1.8  2006/03/02 14:05:48  ambrmi09
  *  Posting to GNU toolchain started
  *
  *  Revision 1.7  2006/02/22 13:05:45  ambrmi09

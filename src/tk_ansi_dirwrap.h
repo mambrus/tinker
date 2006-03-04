@@ -29,25 +29,16 @@ kernel_reimpl_ansi
 //------1---------2---------3---------4---------5---------6---------7---------8
 #if defined(_WIN32) &&  defined(_MSC_VER)
    #define CHAINPATH C:\Program Files\Microsoft Visual Studio\VC98\Include
-   #define USE_TINKER_TIME_F        NO
-   #define USE_TINKER_CLOCK_F       NO
 
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
    #define CHAINPATH C:/BC5/INCLUDE
-   #define USE_TINKER_TIME_F        NO
-   #define USE_TINKER_CLOCK_F       NO
 
 #elif defined( __C166__ )
-   #define CHAINPATH 
-   #define USE_TINKER_TIME_F        YES
-   #define USE_TINKER_CLOCK_F       YES
-/*   
-#elif defined(__CYGWIN32__)  || defined(__CYGWIN__)
+   #define CHAINPATH C:\Program Files\Keil\C166\BIN
+
+#elif defined(__GNUC__) /*|| defined(__CYGWIN32__)  || defined(__CYGWIN__)*/
    #define CHAINPATH /usr/include
-*/
-#elif defined(__GNUC__)
-   #define CHAINPATH /usr/include
-   //Not needed to "fine tune" - handled much more corse grained (since GNU headers always include all we need anyway)
+
 #else
    #error "Can\'t determine the target for the TINKER kernel"
 #endif
@@ -68,7 +59,12 @@ kernel_reimpl_ansi
  * @ingroup CVSLOG
  *
  *  $Log: tk_ansi_dirwrap.h,v $
- *  Revision 1.2  2006-03-02 14:05:50  ambrmi09
+ *  Revision 1.3  2006-03-04 14:28:44  ambrmi09
+ *  Finally got the \ref clock() representation right. Now timing is
+ *  behaving equaly between the targets X86_Linux, Cygqing, MSVC, BC5 and
+ *  XC167.
+ *
+ *  Revision 1.2  2006/03/02 14:05:50  ambrmi09
  *  Posting to GNU toolchain started
  *
  *  Revision 1.1  2006/02/28 18:40:11  ambrmi09

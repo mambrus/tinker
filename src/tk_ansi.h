@@ -17,8 +17,9 @@ kernel_reimpl_ansi
 #define TK_ANSI_H
 
 //#include <stdio.h>
-#include <stdlib.h>
-#include <tk.h>
+//#include <stdlib.h>
+//#include <tk.h>
+#include <stddef.h>  //Needed for size_t
 
 #ifndef COMPARISON_FN_T 
 /*!
@@ -56,12 +57,53 @@ should be part of the TinKer binary or not.
 #define TK_NEEDS_BSEARCH
 #define TK_NEEDS_PRINTF
 
+
 //@}
 
 #define APP_NEEDS_INTERNALS /*!< Define this conditional if you want access to the
                                  internal functions this module has */
 
 
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+
+#ifndef YES
+#define YES 1
+#endif
+
+#ifndef NO
+#define NO 0
+#endif
+
+/*
+Define which functions must be supplied by TinKer
+@note You can omitt those that woulöd render no
+*/
+
+#if defined(_WIN32) &&  defined(_MSC_VER)
+   #define __TINKER_TIME_F        NO
+   #define __TINKER_CLOCK_F       NO
+
+#elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
+   #define __TINKER_TIME_F        NO
+   #define __TINKER_CLOCK_F       NO
+
+#elif defined( __C166__ )
+   #define __TINKER_TIME_F        YES
+   #define __TINKER_CLOCK_F       YES
+
+#elif defined(__CYGWIN32__)  || defined(__CYGWIN__)
+   //Not needed to "fine tune" - handled much more corse grained (since GNU headers always include all we need anyway)
+#elif defined(__GNUC__)
+   //Not needed to "fine tune" - handled much more corse grained (since GNU headers always include all we need anyway)
+#else
+   #error "Can\'t determine the target for the TINKER kernel"
+#endif
+
+//Some preprocessors need the following "wrapping" also
+
+#define USE_TINKER_TIME_F       (defined(__TINKER_TIME_F)     && __TINKER_TIME_F)
+#define USE_TINKER_CLOCK_F      (defined(__TINKER_CLOCK_F)    && __TINKER_CLOCK_F)
 
 
 
@@ -77,9 +119,9 @@ extern "C"
    #if defined(TK_NEEDS_QSORT)
       #define qsort tk_qsort
       #if defined(_WIN32) &&  defined(_MSC_VER)
-         void __cdecl qsort ( void *, size_t, size_t, comparison_fn_t );         
+         void __cdecl qsort ( void *, size_t , size_t , comparison_fn_t );         
       #else
-         void         qsort ( void *, size_t, size_t, comparison_fn_t );         
+         void         qsort ( void *, size_t , size_t , comparison_fn_t );         
       #endif
    #endif
 
@@ -87,9 +129,9 @@ extern "C"
    #if defined(TK_NEEDS_BSEARCH)
       #define bsearch tk_bsearch
       #if defined(_WIN32) &&  defined(_MSC_VER)
-         void * __cdecl bsearch ( const void *, const void *, size_t, size_t, comparison_fn_t );
+         void * __cdecl bsearch ( const void *, const void *, size_t , size_t , comparison_fn_t );
       #else
-         void *         bsearch ( const void *, const void *, size_t, size_t, comparison_fn_t );
+         void *         bsearch ( const void *, const void *, size_t , size_t , comparison_fn_t );
       #endif
    
    #endif
@@ -265,7 +307,12 @@ cartful!
  * @defgroup CVSLOG_tk_ansi_h tk_ansi_h
  * @ingroup CVSLOG
  *  $Log: tk_ansi.h,v $
- *  Revision 1.10  2006-03-02 14:05:49  ambrmi09
+ *  Revision 1.11  2006-03-04 14:28:44  ambrmi09
+ *  Finally got the \ref clock() representation right. Now timing is
+ *  behaving equaly between the targets X86_Linux, Cygqing, MSVC, BC5 and
+ *  XC167.
+ *
+ *  Revision 1.10  2006/03/02 14:05:49  ambrmi09
  *  Posting to GNU toolchain started
  *
  *  Revision 1.9  2006/02/28 18:16:55  ambrmi09

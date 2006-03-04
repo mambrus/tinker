@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.45 $
+ *  Current $Revision: 1.46 $
  *
  *******************************************************************/
   
@@ -30,6 +30,7 @@ SCHED
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
+#include <time.h>
 
 #include <tk.h>
 #include <tk_hwsys.h>
@@ -574,6 +575,27 @@ some time to reach the point where a dispatch is actuated.
 
 @note (060227). Detected problems using variables after the yield. Problem is believed to be C166 related due to the way it handles local variables (stack, register or other memory)
 
+I noticed that the assumptions about the ANSI clock constants were
+wrong. Either some targets don't follow standard or I've misunderstood
+the text at GNU glibc. There's what different targets report:
+
+- X86 Linux: CLK_TCK=[100], CLOCKS_PER_SEC=[1000000]
+- Cywin: CLK_TCK=[1000], CLOCKS_PER_SEC=[1000]
+- XC167: CLK_TCK=[1000000], CLOCKS_PER_SEC=[1000000]
+
+I believe that the linux target is closest to following standard and
+then I believe it means that says something about either the clock
+update frequency OR the resolution (I don't know which yet).
+
+It seems that the documentation at GNU regarding this is wrong. The only
+thing that seems right is that to get the time in \b seconds, you take
+the output from the \ref clock() function and divide that with \ref
+CLOCKS_PER_SEC. Note that to get time in uS we're dividing 1e6 with
+CLOCKS_PER_SEC separately.
+
+@todo \ref ITC has some timeouts that need correcting according to this
+also
+
 */
 
 void tk_msleep( unsigned int time_ms ){
@@ -855,7 +877,11 @@ things at least:
 void _tk_main( void ){
    tk_create_kernel();
    printf("ANSI timing constants:\n");
-   printf("CLK_TCK=[%d], CLOCKS_PER_SEC=[%d]\n",CLK_TCK, CLOCKS_PER_SEC);
+   #if  defined( __C166__ )
+       printf("CLK_TCK=[%ld], CLOCKS_PER_SEC=[%ld]\n",CLK_TCK, CLOCKS_PER_SEC);
+   #else
+       printf("CLK_TCK=[%d], CLOCKS_PER_SEC=[%d]\n",CLK_TCK, CLOCKS_PER_SEC);
+   #endif
    #if defined(TK_COMP_KMEM) && TK_COMP_KMEM
       assert( tk_mem() == ERR_OK );
    #endif
@@ -937,7 +963,12 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.45  2006-03-04 12:50:30  ambrmi09
+ *  Revision 1.46  2006-03-04 14:28:44  ambrmi09
+ *  Finally got the \ref clock() representation right. Now timing is
+ *  behaving equaly between the targets X86_Linux, Cygqing, MSVC, BC5 and
+ *  XC167.
+ *
+ *  Revision 1.45  2006/03/04 12:50:30  ambrmi09
  *  Struggling with ANSi time constants
  *
  *  Revision 1.44  2006/03/04 11:30:00  ambrmi09

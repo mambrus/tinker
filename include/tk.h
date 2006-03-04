@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.31 $
+ *  Current $Revision: 1.32 $
  *
  *******************************************************************/
    
@@ -70,14 +70,17 @@ Modify these constants to get a kernel of desired size/speed ratio
 #define YES                      1
 #define NO                       0
 
-#if      defined(__CYGWIN32__)  || defined(__CYGWIN__)  || \
-         defined(__GNUC__)      || defined(__USE_GNU)   || \
+#if      defined(__CYGWIN32__)  || defined(__CYGWIN__)
+#   define TK_NORMAL_STACK_SIZE     0xD000 //!< @note Cygwin needs a humongus stack
+
+#elif    defined(__GNUC__)      || defined(__USE_GNU)   || \
          defined(_WIN32)        || defined(__BORLANDC__) || defined(__BCPLUSPLUS__) 
 
-   #define TK_NORMAL_STACK_SIZE     0x1200 //!< @note Whats normal or reasonable differs between architectures. 
+#   define TK_NORMAL_STACK_SIZE     0x1200 //!< @note Whats normal or reasonable differs between architectures. 
 
-#else
-   #define TK_NORMAL_STACK_SIZE     0x600 //!< @note Whats normal or reasonable differs between architectures.    
+#else  //Embedded cases
+#	define TK_NORMAL_STACK_SIZE     0x600 //!< @note Whats normal or reasonable differs between architectures.    
+
 #endif
 
 
@@ -205,12 +208,9 @@ void           tk_exit( int ec );
 void           tk_msleep( unsigned int time_ms );
 unsigned int   tk_thread_id( void );            
 
-extern void    root( void ); /*! supplied by YOU - constitutes the root thread function*/
+extern void    root( void ); /*! supplied by \b YOU - constitutes the root thread function*/
 
 /*- private functions **/
-
-
-
 
 #endif
 
@@ -220,7 +220,12 @@ extern void    root( void ); /*! supplied by YOU - constitutes the root thread f
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.31  2006-03-02 14:05:48  ambrmi09
+ *  Revision 1.32  2006-03-04 14:28:44  ambrmi09
+ *  Finally got the \ref clock() representation right. Now timing is
+ *  behaving equaly between the targets X86_Linux, Cygqing, MSVC, BC5 and
+ *  XC167.
+ *
+ *  Revision 1.31  2006/03/02 14:05:48  ambrmi09
  *  Posting to GNU toolchain started
  *
  *  Revision 1.30  2006/02/28 18:16:54  ambrmi09

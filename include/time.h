@@ -28,8 +28,11 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#Sleeping
 */
 
 #include <../src/tk_ansi.h>
-#include <../src/tk_ansi_dirwrap.h>
-#include BUILDCHAIN(time.h)
+
+#if !defined(__C166__)
+#	include <../src/tk_ansi_dirwrap.h>
+#	include BUILDCHAIN(time.h)
+#endif
 
 #ifndef TIME_H_TK
 #define TIME_H_TK
@@ -75,7 +78,7 @@ void timespec2fmttime_np( struct fmttime *totime, const struct timespec *fromtim
    According to POSIX standard this must be 1 milion regardless of true
    resolution.
 
-   */
+   */   
    #define CLOCKS_PER_SEC 1000000L
    #endif
 
@@ -311,7 +314,12 @@ void timespec2fmttime_np( struct fmttime *totime, const struct timespec *fromtim
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.21  2006-03-02 15:33:08  ambrmi09
+ *  Revision 1.22  2006-03-04 14:28:44  ambrmi09
+ *  Finally got the \ref clock() representation right. Now timing is
+ *  behaving equaly between the targets X86_Linux, Cygqing, MSVC, BC5 and
+ *  XC167.
+ *
+ *  Revision 1.21  2006/03/02 15:33:08  ambrmi09
  *  Experimenting with build under Linux
  *
  *  Revision 1.20  2006/03/02 14:05:48  ambrmi09

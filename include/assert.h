@@ -3,9 +3,11 @@
 
 //#include "kernel/src/tk_ansi.h"
 #include <../src/tk_ansi.h>
-#include <../src/tk_ansi_dirwrap.h>
 
-#include BUILDCHAIN(assert.h)
+#if !defined(__C166__)
+#	include <../src/tk_ansi_dirwrap.h>
+#	include BUILDCHAIN(assert.h)
+#endif
 
 #if   !defined (assert) && ( \
          defined(__CYGWIN32__)  || defined(__CYGWIN__)  || \
@@ -42,7 +44,12 @@ The assert macro.
  * @defgroup CVSLOG_assert_h assert_h
  * @ingroup CVSLOG
  *  $Log: assert.h,v $
- *  Revision 1.6  2006-03-02 14:05:48  ambrmi09
+ *  Revision 1.7  2006-03-04 14:28:44  ambrmi09
+ *  Finally got the \ref clock() representation right. Now timing is
+ *  behaving equaly between the targets X86_Linux, Cygqing, MSVC, BC5 and
+ *  XC167.
+ *
+ *  Revision 1.6  2006/03/02 14:05:48  ambrmi09
  *  Posting to GNU toolchain started
  *
  *  Revision 1.5  2006/02/28 18:59:23  ambrmi09
