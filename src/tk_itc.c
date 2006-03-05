@@ -6,7 +6,7 @@
  *
  *  HISTORY:    
  *
- *  Current $Revision: 1.20 $
+ *  Current $Revision: 1.21 $
  *******************************************************************/
    
   
@@ -749,8 +749,8 @@ unsigned long q_vreceive(
 
 	/* If execution reached here it means there is a message in the queue */
 	/*gotoxy(1,20);
-	printf("%s \n",msg_buf);
-	printf("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);*/
+	//printf("%s \n",msg_buf);
+	//printf("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);*/
 	memcpy(
 		msg_buf, 
 		ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].mb,
@@ -1072,8 +1072,8 @@ unsigned long q_vreceive_ny(
 
    /* If execution reached here it means there is a message in the queue */
    /*gotoxy(1,20);
-   printf("%s \n",msg_buf);
-   printf("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);*/
+   //printf("%s \n",msg_buf);
+   //printf("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);*/
    memcpy(
       msg_buf, 
       ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].mb,
@@ -1372,7 +1372,10 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.20  2006-02-28 18:59:23  ambrmi09
+ *  Revision 1.21  2006-03-05 10:39:02  ambrmi09
+ *  Code will now compile for arm7. Note compile only, not run.
+ *
+ *  Revision 1.20  2006/02/28 18:59:23  ambrmi09
  *  Minor adjustments and verified that all (intended) build environment
  *  compile and produce runnable code. I.e.:
  *  - uVisionKernelProject

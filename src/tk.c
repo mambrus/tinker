@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.47 $
+ *  Current $Revision: 1.48 $
  *
  *******************************************************************/
   
@@ -242,8 +242,8 @@ void tk_create_kernel( void ){
    */
    testArea = malloc(TSTSZ);
    if (strncmp(testPatt,testArea,TSTSZ) == 0){   
-      printf("Error: Kernel running amok detected\n");
-      printf("Broken thread was ID=%d (name=\"%s\")\n",\
+      //printf("Error: Kernel running amok detected\n");
+      //printf("Broken thread was ID=%d (name=\"%s\")\n",\
          active_thread,proc_stat[active_thread].name);
       memset (testArea, '\0', TSTSZ);     //Clear area then wait for reset
       tk_exit(2);
@@ -315,7 +315,7 @@ unsigned int _tk_destructor( void *foo ){
    
    //This is critical, no more stack, will not work as is in a preemtive kernal
    #ifdef DEBUG
-   printf("Dieing thread is returning %d\n\n",retval);
+   //printf("Dieing thread is returning %d\n\n",retval);
    #endif
    tk_delete_thread(active_thread);
    tk_yield();
@@ -417,17 +417,17 @@ unsigned int tk_create_thread(
    //Error handling needs improvment (don't forget taking special care of
    //proc_idx)
    if (procs_in_use >= TK_MAX_THREADS){
-      printf("tk: Error - Total amount of threads would exceed limit\n");
+      //printf("tk: Error - Total amount of threads would exceed limit\n");
       tk_exit(1);
    }
    //Check if chosen prio is within limits
    if (prio >= TK_MAX_PRIO_LEVELS){
-      printf("tk: Error - Chosen priority exceed bounds\n");
+      //printf("tk: Error - Chosen priority exceed bounds\n");
       tk_exit(1);
    }
    //Check if there will be enough room at that prio
    if (TK_MAX_THREADS_AT_PRIO <= ( scheduleIdxs[prio].procs_at_prio ) ){
-      printf("tk: Error - To many threads at this prio\n");
+      //printf("tk: Error - To many threads at this prio\n");
       tk_exit(1);
    }
    //Find next empty slot - which is also the CREATED Thid
@@ -442,7 +442,7 @@ unsigned int tk_create_thread(
       if (strlen(name)<TK_THREAD_NAME_LEN)
          strncpy(proc_stat[proc_idx].name,name,TK_THREAD_NAME_LEN);
       else{
-         printf("tk: Error - Thread-name to long\n");
+         //printf("tk: Error - Thread-name to long\n");
          tk_exit(1);
       }
    #endif
@@ -450,7 +450,7 @@ unsigned int tk_create_thread(
    
    //Try to allocate memory for stack
    if (( STACK_PTR(proc_stat[proc_idx].stack_begin) = (char *) malloc(stack_size)) == NULL){
-       printf("tk: Error - Can't create process (can't allocate memory for stack)\n");
+       //printf("tk: Error - Can't create process (can't allocate memory for stack)\n");
        tk_exit(1);  // terminate program if out of memory
    }
 
@@ -836,9 +836,9 @@ entr point (critical = execution is deemed to stop).
 
 void tk_exit( int ec ) {
    if (ec==0)
-      printf("tk: Program terminated normally");
+      ;//printf("tk: Program terminated normally");
    else
-      printf("tk: Warning - Program terminated with errorcode [%d]",ec);
+      ;//printf("tk: Warning - Program terminated with errorcode [%d]",ec);
    while (1) {
       TRAP(ec);
    }
@@ -857,7 +857,7 @@ void _tk_assertfail(
    char *filestr, 
    int line
 ) {
-   printf("tk: Error - Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line);
+   //printf("tk: Error - Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line);
    tk_exit( TK_ERR_ASSERT );
 }
 
@@ -876,11 +876,11 @@ things at least:
 */
 void _tk_main( void ){
    tk_create_kernel();
-   printf("ANSI timing constants:\n");
+   //printf("ANSI timing constants:\n");
    #if  defined( __C166__ )
-       printf("CLK_TCK=[%ld], CLOCKS_PER_SEC=[%ld]\n",CLK_TCK, CLOCKS_PER_SEC);
+       //printf("CLK_TCK=[%ld], CLOCKS_PER_SEC=[%ld]\n",CLK_TCK, CLOCKS_PER_SEC);
    #else
-       printf("CLK_TCK=[%d], CLOCKS_PER_SEC=[%d]\n",CLK_TCK, CLOCKS_PER_SEC);
+       //printf("CLK_TCK=[%d], CLOCKS_PER_SEC=[%d]\n",CLK_TCK, CLOCKS_PER_SEC);
    #endif
    #if defined(TK_COMP_KMEM) && TK_COMP_KMEM
       assert( tk_mem() == ERR_OK );
@@ -963,7 +963,10 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.47  2006-03-04 19:32:35  ambrmi09
+ *  Revision 1.48  2006-03-05 10:39:02  ambrmi09
+ *  Code will now compile for arm7. Note compile only, not run.
+ *
+ *  Revision 1.47  2006/03/04 19:32:35  ambrmi09
  *  Modified sources to allow build GNU targets transparently.
  *
  *  Revision 1.46  2006/03/04 14:28:44  ambrmi09
