@@ -1,13 +1,22 @@
-/*******************************************************************
- *
- *  DESCRIPTION: tk_ipc.c Inter Process Comunication TinKerOS.
- *
- *  AUTHOR: Michael Ambrus
- *
- *  HISTORY:    
- *
- *  Current $Revision: 1.21 $
- *******************************************************************/
+/***************************************************************************
+ *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   michael.ambrus@maquet.com                                             *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
    
   
 /*!
@@ -1372,7 +1381,10 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.21  2006-03-05 10:39:02  ambrmi09
+ *  Revision 1.22  2006-03-05 11:11:28  ambrmi09
+ *  License added (GPL).
+ *
+ *  Revision 1.21  2006/03/05 10:39:02  ambrmi09
  *  Code will now compile for arm7. Note compile only, not run.
  *
  *  Revision 1.20  2006/02/28 18:59:23  ambrmi09

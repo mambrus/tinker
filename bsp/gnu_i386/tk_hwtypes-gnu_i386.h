@@ -6,13 +6,13 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.1 $
+ *  Current $Revision: 1.2 $
  *
  *******************************************************************/
   
 
-#ifndef TK_HWTYPES_BORLANDX86_H
-#define TK_HWTYPES_BORLANDX86_H
+#ifndef TK_HWTYPES_GNU_i386_H
+#define TK_HWTYPES_GNU_i386_H
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -41,7 +41,10 @@ typedef struct{
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwtypes-gnu_i386.h,v $
- *  Revision 1.1  2006-03-04 19:31:02  ambrmi09
+ *  Revision 1.2  2006-03-05 11:11:24  ambrmi09
+ *  License added (GPL).
+ *
+ *  Revision 1.1  2006/03/04 19:31:02  ambrmi09
  *  Structure for new targets based on GNU toolchain added.
  *  - gnu-i386  (Linux, Cygwin)
  *  - gnu-arm   (LPC2129 i.e. ARM7 derivate)

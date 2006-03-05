@@ -1,14 +1,22 @@
-/*******************************************************************
- *
- *  DESCRIPTION: tk_ptime.h  Pre-emptive timers for TinKer.
- *
- *  AUTHOR: Michael Ambrus
- *
- *  HISTORY:    
- *
- *  Current $Revision: 1.8 $
- *
- *******************************************************************/
+/***************************************************************************
+ *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   michael.ambrus@maquet.com                                             *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
   
   
 /*!
@@ -186,7 +194,10 @@ unsigned long  tk_ptimer_sleep  ( unsigned int  tid, time_t *relTime );
  * @ingroup CVSLOG
  *
  *  $Log: tk_ptime.h,v $
- *  Revision 1.8  2006-03-02 14:05:49  ambrmi09
+ *  Revision 1.9  2006-03-05 11:11:26  ambrmi09
+ *  License added (GPL).
+ *
+ *  Revision 1.8  2006/03/02 14:05:49  ambrmi09
  *  Posting to GNU toolchain started
  *
  *  Revision 1.7  2006/02/22 13:05:46  ambrmi09

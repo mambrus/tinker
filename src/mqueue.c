@@ -1,17 +1,23 @@
-/*****************************************************************************
- * File: MQUEUE_EX.C
- *****************************************************************************
- *
- * Author:     Michael Ambrus, Siemens-Elema AB, EM-LSS.
- *
- * Abstract:   
- *
- * Notes:      Todo: Prioritize messages with qsort ( timestamp+prio = orderby)
- *
- * Modifications:
- * Current $Revision: 1.10 $
- *
- *****************************************************************************/
+/***************************************************************************
+ *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   michael.ambrus@maquet.com                                             *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 /*!
 @file
 @ingroup POSIX_RT
@@ -698,7 +704,10 @@ Good references about the API:
  * @defgroup CVSLOG_mqueue_c mqueue_c
  * @ingroup CVSLOG
  *  $Log: mqueue.c,v $
- *  Revision 1.10  2006-03-02 14:05:49  ambrmi09
+ *  Revision 1.11  2006-03-05 11:11:27  ambrmi09
+ *  License added (GPL).
+ *
+ *  Revision 1.10  2006/03/02 14:05:49  ambrmi09
  *  Posting to GNU toolchain started
  *
  *  Revision 1.9  2006/02/28 18:16:55  ambrmi09
