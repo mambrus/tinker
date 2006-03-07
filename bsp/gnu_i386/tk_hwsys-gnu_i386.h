@@ -28,6 +28,8 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #ifndef TK_HWSYS_GNU_i386_H
 #define TK_HWSYS_GNU_i386_H
 
+#define MINIMUM_STACK_SIZE 0x0600  //!< TBD this @todo TBD this
+
 /*
 #define TK_CLI()                          \
    asm __volatile__ (" CLI ");

@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!
+/*!   
 @file
 @ingroup kernel_reimpl_ansi
 
@@ -230,7 +230,10 @@ char * strerror (int errnum){
  *  @defgroup CVSLOG_errno_c errno_c
  *  @ingroup CVSLOG
  *  $Log: errno.c,v $
- *  Revision 1.3  2006-03-05 11:11:27  ambrmi09
+ *  Revision 1.4  2006-03-07 08:24:13  ambrmi09
+ *  A very crude port for ARM is running (LPC2129) - @note THIS IS HIGHLY EXPERIMENTAL CODE
+ *
+ *  Revision 1.3  2006/03/05 11:11:27  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.2  2006/02/22 13:05:46  ambrmi09

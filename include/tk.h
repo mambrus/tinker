@@ -67,9 +67,9 @@ Modify these constants to get a kernel of desired size/speed ratio
 @note </b>Do not change these if using pre-built kernel as lib</b>
 */
 //@{
-#define TK_MAX_THREADS           10    //!< Maximum number of threads kernel can handle
-#define TK_MAX_PRIO_LEVELS       0x10  //!< Maximum number of priority levels. @todo fix this, Idle needs to bee last in last prio( needs one extra )
-#define TK_MAX_THREADS_AT_PRIO   0x0A  //!< Maximum number of threads at a priority at any one time
+#define TK_MAX_THREADS           5    //!< Maximum number of threads kernel can handle
+#define TK_MAX_PRIO_LEVELS       0x08  //!< Maximum number of priority levels. @todo fix this, Idle needs to bee last in last prio( needs one extra )
+#define TK_MAX_THREADS_AT_PRIO   0x05  //!< Maximum number of threads at a priority at any one time
 #define TK_THREAD_NAME_LEN       0x17  //!< Number of characters (at most) in the TCB identifying the thread. @note If this is zero, which is valid, no human readable info about the thread is stored @note A size of 4 bytes is what used to be standard in pSos
 //@}
 
@@ -228,7 +228,10 @@ extern void    root( void ); /*! supplied by \b YOU - constitutes the root threa
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.33  2006-03-05 11:11:24  ambrmi09
+ *  Revision 1.34  2006-03-07 08:24:13  ambrmi09
+ *  A very crude port for ARM is running (LPC2129) - @note THIS IS HIGHLY EXPERIMENTAL CODE
+ *
+ *  Revision 1.33  2006/03/05 11:11:24  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.32  2006/03/04 14:28:44  ambrmi09

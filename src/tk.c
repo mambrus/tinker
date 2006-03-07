@@ -32,7 +32,7 @@ SCHED
 @see COMPONENTS
 */
 
-/*- include files **/
+/*- include files **/ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -248,6 +248,8 @@ void tk_create_kernel( void ){
    /*
    Detect if a kernel is running amok.    
    */
+
+   /* PLEEEEEEEEEEASE REMEBER TO UNCOMMENT THIS LATER!
    testArea = malloc(TSTSZ);
    if (strncmp(testPatt,testArea,TSTSZ) == 0){   
       //printf("Error: Kernel running amok detected\n");
@@ -258,6 +260,7 @@ void tk_create_kernel( void ){
    }else{
       strncpy(testArea,testPatt,TSTSZ);
    }
+   */
 
    for (i=0; i<TK_MAX_THREADS; i++){
       proc_stat[i].state                        = ZOMBIE;
@@ -296,7 +299,7 @@ void tk_create_kernel( void ){
    }
    //Create a Idle thread, whoes sole purpose is to burn up time
    //when nobody else is running
-   idle_Thid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,(void*)NULL,0x600/*MINIMUM_STACK_SIZE*/);
+   idle_Thid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,(void*)NULL,MINIMUM_STACK_SIZE);
    //IdleProc must like root, i.e. bee owned by itself
    proc_stat[proc_stat[idle_Thid].Gid].noChilds--;
    //Awkward way to say that root has created one process less than it has
@@ -806,6 +809,7 @@ void tk_yield( void ){
    //(i.e. thread statuses) frozen in time.
    thread_to_run = _tk_next_runable_thread();
    _tk_context_switch_to_thread(thread_to_run,active_thread);   
+   //_tk_context_switch_to_thread(0,0);   
    
    POPALL();
    TK_STI();
@@ -868,7 +872,29 @@ void _tk_assertfail(
    //printf("tk: Error - Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line);
    tk_exit( TK_ERR_ASSERT );
 }
-
+/*
+   testcall(regval);
+0x00001c74 <_tk_main+16>:  ldr   r3, [r11, #-20]
+0x00001c78 <_tk_main+20>:  mov   r0, r3
+0x00001c7c <_tk_main+24>:  bl    0x1c44 <testcall>
+   GET_SP(regval);
+*/
+void *testcall(void *inpar ){
+   return inpar;
+}
+/*
+void *testcall(void *inpar ){
+0x00001c44 <testcall>:    mov   r12, sp
+0x00001c48 <testcall+4>:  stmdb sp!, {r11, r12, lr, pc}
+0x00001c4c <testcall+8>:  sub   r11, r12, #4	; 0x4
+0x00001c50 <testcall+12>: sub   sp, sp, #4	; 0x4
+0x00001c54 <testcall+16>: str   r0, [r11, #-16]
+   return inpar;
+0x00001c58 <testcall+20>: ldr   r3, [r11, #-16]
+}
+0x00001c5c <testcall+24>: mov   r0, r3
+0x00001c60 <testcall+28>: ldmia sp, {r3, r11, sp, pc}
+*/
 
 /*!
 @ingroup kernel_glue
@@ -883,6 +909,25 @@ things at least:
 
 */
 void _tk_main( void ){
+/*Learning about ARM */
+   unsigned int      regval; 
+   char *cptr;
+/*
+   int i;
+  
+   
+   for (i=0; i<17; i++){
+      cptr = (char*)malloc(1024);
+   };
+*/
+   testcall(regval);
+   GET_SP(regval);
+   GET_LR(regval);
+   GET_PC(regval);
+
+   
+/*Learning about ARM */
+
    tk_create_kernel();
    //printf("ANSI timing constants:\n");
    #if  defined( __C166__ )
@@ -944,6 +989,22 @@ int main(int argc, char **argv){
 }
 #endif
 
+#define TK_STUBS
+#ifdef TK_STUBS
+long int stub_mickey = 0;
+/*!
+ When involved with porting, the \ref clock function is most often on implemented, wrong or just stubbed. 
+ 
+ Since \ref clock is a esential part of the \ref SCHED internals, you need to have a stub that will do something  meantingful, so at least the dispaching will work.
+
+ */
+clock_t clock(){   
+	stub_mickey++;
+    //stub_mickey=0;
+	return (clock_t)stub_mickey;
+}
+#endif //TK_STUBS
+
 /*
 void Test_scheduler( void ){
    while (TRUE){
@@ -971,7 +1032,10 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.49  2006-03-05 11:11:27  ambrmi09
+ *  Revision 1.50  2006-03-07 08:24:13  ambrmi09
+ *  A very crude port for ARM is running (LPC2129) - @note THIS IS HIGHLY EXPERIMENTAL CODE
+ *
+ *  Revision 1.49  2006/03/05 11:11:27  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.48  2006/03/05 10:39:02  ambrmi09

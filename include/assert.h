@@ -21,6 +21,7 @@
 #ifndef ASSERT_H_TK
 #define ASSERT_H_TK
 
+
 //#include "kernel/src/tk_ansi.h"
 #include <../src/tk_ansi.h>
 
@@ -64,7 +65,10 @@ The assert macro.
  * @defgroup CVSLOG_assert_h assert_h
  * @ingroup CVSLOG
  *  $Log: assert.h,v $
- *  Revision 1.8  2006-03-05 11:11:24  ambrmi09
+ *  Revision 1.9  2006-03-07 08:24:13  ambrmi09
+ *  A very crude port for ARM is running (LPC2129) - @note THIS IS HIGHLY EXPERIMENTAL CODE
+ *
+ *  Revision 1.8  2006/03/05 11:11:24  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.7  2006/03/04 14:28:44  ambrmi09

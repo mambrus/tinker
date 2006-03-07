@@ -41,8 +41,8 @@ ITC
 #include <tk.h>
 
 /*- local definitions **/
-#define MAX_BLOCKED_ON_Q    20   /*!< Max num of proces blocked on queue or sem*/
-#define MAX_NUM_Q           50   /*!< Max num of semaphores OR queues (i.e. primitives) in total*/
+#define MAX_BLOCKED_ON_Q    /*20*/ TK_MAX_THREADS   /*!< Max num of proces blocked on queue or sem*/
+#define MAX_NUM_Q       /*50*/ 10  /*!< Max num of semaphores OR queues (i.e. primitives) in total*/
 
 /*!<
 @brief Never timeout blocking. I.e. block \e "for-ever"
@@ -397,7 +397,10 @@ unsigned long sm_v_ny(
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.16  2006-03-05 11:11:25  ambrmi09
+ *  Revision 1.17  2006-03-07 08:24:13  ambrmi09
+ *  A very crude port for ARM is running (LPC2129) - @note THIS IS HIGHLY EXPERIMENTAL CODE
+ *
+ *  Revision 1.16  2006/03/05 11:11:25  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.15  2006/03/02 14:05:48  ambrmi09

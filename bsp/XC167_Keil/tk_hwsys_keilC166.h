@@ -86,7 +86,8 @@ Read ratio as x:y or user_size/system_size
 //With a rato of 2 this will give a stack size for sys_stack of 64
 
 #define minimum_system_stack_size  0xC0
-#define MINIMUM_STACK_SIZE ((minimum_system_stack_size + 1)*USR_SYS_RATIO) + SAFEZONE)
+//#define MINIMUM_STACK_SIZE ((minimum_system_stack_size + 1)*USR_SYS_RATIO) + SAFEZONE)
+#define MINIMUM_STACK_SIZE 0x0600  //!< TBD this @todo TBD this
 
 
 
@@ -391,7 +392,10 @@ TBD
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.h,v $
- *  Revision 1.18  2006-03-05 11:11:23  ambrmi09
+ *  Revision 1.19  2006-03-07 08:24:12  ambrmi09
+ *  A very crude port for ARM is running (LPC2129) - @note THIS IS HIGHLY EXPERIMENTAL CODE
+ *
+ *  Revision 1.18  2006/03/05 11:11:23  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.17  2006/02/28 11:50:07  ambrmi09

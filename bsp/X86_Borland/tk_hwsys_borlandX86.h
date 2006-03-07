@@ -21,6 +21,7 @@
 #ifndef TK_HWSYS_BORLANDX86_H
 #define TK_HWSYS_BORLANDX86_H
 
+#define MINIMUM_STACK_SIZE 0x0600  //!< TBD this @todo TBD this
 /*
 #define TK_CLI()                                                              \
    __asm{ CLI }
