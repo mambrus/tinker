@@ -31,7 +31,7 @@
 // USER CODE BEGIN (ASC1_General,2)
 
 #include <tk.h>
-#include <tk_ipc.h>
+#include <tk_itc.h>
 #include <tk_sysqueues.h>
 
 // USER CODE END

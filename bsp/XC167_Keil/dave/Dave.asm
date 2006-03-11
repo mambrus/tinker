@@ -1,0 +1,5046 @@
+;****************************************************************************
+; Filename      Dave.asm
+; Project       Dave.dav
+;----------------------------------------------------------------------------
+; Description   This file contains the assembler formatted information
+;                about the actual project values. It will be used by your
+;                programming environment.
+;
+;                PLEASE DO NOT MODIFY THIS FILE !
+;
+;----------------------------------------------------------------------------
+; Date          2006-03-11 15:46:53
+;
+;****************************************************************************
+
+
+; ADC End of Conversion Interrupt Control Register
+ADC_CIC_0	SET	0
+ADC_CIC_GLVL	SET	0
+ADC_CIC_GPX	SET	0
+ADC_CIC_IE	SET	0
+ADC_CIC_ILVL	SET	0
+ADC_CIC_IR	SET	0
+
+; A/D Converter Control Register 1
+ADC_CON1_ADCTC	SET	63
+ADC_CON1_ADSTC	SET	0
+ADC_CON1_CAL	SET	0
+ADC_CON1_ICST	SET	0
+ADC_CON1_RES	SET	0
+ADC_CON1_SAMPLE	SET	0
+
+; A/D Converter Control Register
+ADC_CON_ADBSY	SET	0
+ADC_CON_ADCH	SET	4
+ADC_CON_ADCIN	SET	0
+ADC_CON_ADCRQ	SET	0
+ADC_CON_ADCTC	SET	2
+ADC_CON_ADM	SET	0
+ADC_CON_ADST	SET	0
+ADC_CON_ADSTC	SET	3
+ADC_CON_ADWR	SET	0
+
+; A/D Converter Control Register 0
+ADC_CTR0_0	SET	0
+ADC_CTR0_ADBSY	SET	0
+ADC_CTR0_ADCH	SET	0
+ADC_CTR0_ADCIN	SET	0
+ADC_CTR0_ADCRQ	SET	0
+ADC_CTR0_ADCTS	SET	1
+ADC_CTR0_ADM	SET	0
+ADC_CTR0_ADST	SET	0
+ADC_CTR0_ADWR	SET	0
+ADC_CTR0_MD	SET	0
+ADC_CTR0_SMPL	SET	0
+
+; A/D Converter Injection Control Register 2
+ADC_CTR2IN_0	SET	0
+ADC_CTR2IN_ADCTC	SET	0
+ADC_CTR2IN_ADSTC	SET	0
+ADC_CTR2IN_RES	SET	0
+
+; A/D Converter Control Register 2
+ADC_CTR2_0	SET	0
+ADC_CTR2_ADCTC	SET	0
+ADC_CTR2_ADSTC	SET	0
+ADC_CTR2_RES	SET	0
+
+; A/D Converter Result Register 2
+ADC_DAT2_ADRES	SET	0
+ADC_DAT2_CHNR	SET	0
+
+; A/D Converter Result Register
+ADC_DAT_ADRES	SET	0
+ADC_DAT_CHNR	SET	0
+
+; ADC Overrun Error Control Register
+ADC_EIC_0	SET	0
+ADC_EIC_GLVL	SET	0
+ADC_EIC_GPX	SET	0
+ADC_EIC_IE	SET	0
+ADC_EIC_ILVL	SET	0
+ADC_EIC_IR	SET	0
+
+; CS1 Address Range and Size Selection Register
+ADDRSEL1_RGSAD1	SET	1024
+ADDRSEL1_RGSZ1	SET	7
+
+; CS2 Address Range and Size Selection Register
+ADDRSEL2_RGSAD2	SET	1280
+ADDRSEL2_RGSZ2	SET	0
+
+; CS3 Address Range and Size Selection Register
+ADDRSEL3_RGSAD3	SET	0
+ADDRSEL3_RGSZ3	SET	0
+
+; CS4 Address Range and Size Selection Register
+ADDRSEL4_RGSAD4	SET	0
+ADDRSEL4_RGSZ4	SET	0
+
+; CS5 Address Range and Size Selection Register
+ADDRSEL5_RGSAD5	SET	0
+ADDRSEL5_RGSZ5	SET	0
+
+; CS6 Address Range and Size Selection Register
+ADDRSEL6_RGSAD6	SET	0
+ADDRSEL6_RGSZ6	SET	0
+
+; CS7 Address Range and Size Selection Register
+ADDRSEL7_RGSAD7	SET	0
+ADDRSEL7_RGSZ7	SET	0
+
+; Alternate I/O Source 0 Port P1H
+ALTSEL0P1H_P0	SET	0
+ALTSEL0P1H_P1	SET	0
+ALTSEL0P1H_P2	SET	0
+ALTSEL0P1H_P3	SET	0
+ALTSEL0P1H_P4	SET	0
+ALTSEL0P1H_P5	SET	0
+ALTSEL0P1H_P6	SET	0
+ALTSEL0P1H_P7	SET	0
+
+; P1L Alternate Select Register 0
+ALTSEL0P1L_P0	SET	0
+ALTSEL0P1L_P1	SET	0
+ALTSEL0P1L_P2	SET	0
+ALTSEL0P1L_P3	SET	0
+ALTSEL0P1L_P4	SET	0
+ALTSEL0P1L_P5	SET	0
+ALTSEL0P1L_P6	SET	0
+ALTSEL0P1L_P7	SET	0
+
+; Alternate I/O Source 0 Port P2
+ALTSEL0P2_P10	SET	0
+ALTSEL0P2_P11	SET	0
+ALTSEL0P2_P12	SET	0
+ALTSEL0P2_P13	SET	0
+ALTSEL0P2_P14	SET	0
+ALTSEL0P2_P15	SET	0
+ALTSEL0P2_P8	SET	0
+ALTSEL0P2_P9	SET	0
+
+; Alternate I/O Source Port 3 Selection
+ALTSEL0P3_P0	SET	1
+ALTSEL0P3_P1	SET	0
+ALTSEL0P3_P10	SET	1
+ALTSEL0P3_P11	SET	0
+ALTSEL0P3_P13	SET	0
+ALTSEL0P3_P3	SET	0
+ALTSEL0P3_P8	SET	0
+ALTSEL0P3_P9	SET	0
+
+; Alternate I/O Source 0 Port P4
+ALTSEL0P4_P6	SET	0
+ALTSEL0P4_P7	SET	0
+
+; Alternate I/O Source 0 Port P6
+ALTSEL0P6_P0	SET	0
+ALTSEL0P6_P1	SET	0
+ALTSEL0P6_P2	SET	0
+ALTSEL0P6_P3	SET	0
+ALTSEL0P6_P4	SET	0
+ALTSEL0P6_P5	SET	0
+ALTSEL0P6_P6	SET	0
+ALTSEL0P6_P7	SET	0
+
+; Alternate I/O Source 0 Port P7
+ALTSEL0P7_P4	SET	0
+ALTSEL0P7_P5	SET	0
+ALTSEL0P7_P6	SET	0
+ALTSEL0P7_P7	SET	0
+
+; Alternate I/O Source 0 Port P9
+ALTSEL0P9_P0	SET	0
+ALTSEL0P9_P1	SET	0
+ALTSEL0P9_P2	SET	0
+ALTSEL0P9_P3	SET	0
+ALTSEL0P9_P4	SET	0
+ALTSEL0P9_P5	SET	0
+
+; Alternate I/O Source 1 Port P3
+ALTSEL1P3_P1	SET	0
+
+; Alternate I/O Source 1 Port P4
+ALTSEL1P4_P7	SET	0
+
+; Alternate I/O Source 1 Port P7
+ALTSEL1P7_P4	SET	0
+ALTSEL1P7_P5	SET	0
+ALTSEL1P7_P6	SET	0
+ALTSEL1P7_P7	SET	0
+
+; Alternate I/O Source 1 Port P9
+ALTSEL1P9_P0	SET	0
+ALTSEL1P9_P1	SET	0
+ALTSEL1P9_P2	SET	0
+ALTSEL1P9_P3	SET	0
+ALTSEL1P9_P4	SET	0
+ALTSEL1P9_P5	SET	0
+
+; ASC0 Autobaud Control Register
+ASC0_ABCON_0	SET	0
+ASC0_ABCON_0	SET	0
+ASC0_ABCON_ABDETEN	SET	0
+ASC0_ABCON_ABEM	SET	0
+ASC0_ABCON_ABEN	SET	0
+ASC0_ABCON_ABSTEN	SET	0
+ASC0_ABCON_AUREN	SET	0
+ASC0_ABCON_FCDETEN	SET	0
+ASC0_ABCON_RXINV	SET	0
+ASC0_ABCON_TXINV	SET	0
+
+; ASC0 Autobaud Interrupt Control Register
+ASC0_ABIC_0	SET	0
+ASC0_ABIC_GLVL	SET	0
+ASC0_ABIC_GPX	SET	0
+ASC0_ABIC_IE	SET	0
+ASC0_ABIC_ILVL	SET	0
+ASC0_ABIC_IR	SET	0
+
+; ASC0 Autobaud Status Register
+ASC0_ABSTAT_0	SET	0
+ASC0_ABSTAT_DETWAIT	SET	0
+ASC0_ABSTAT_FCCDET	SET	0
+ASC0_ABSTAT_FCSDET	SET	0
+ASC0_ABSTAT_SCCDET	SET	0
+ASC0_ABSTAT_SCSDET	SET	0
+
+; Serial Channel 0 Baud Rate Generator Reload Register
+ASC0_BG_0	SET	0
+ASC0_BG_BR_VALUE	SET	10
+
+; Serial Channel 0 Control Register
+ASC0_CON_BRS	SET	0
+ASC0_CON_FDE	SET	0
+ASC0_CON_FE	SET	0
+ASC0_CON_FEN	SET	0
+ASC0_CON_LB	SET	0
+ASC0_CON_M	SET	1
+ASC0_CON_ODD	SET	0
+ASC0_CON_OE	SET	0
+ASC0_CON_OEN	SET	0
+ASC0_CON_PE	SET	0
+ASC0_CON_PEN_RXDI	SET	0
+ASC0_CON_R	SET	1
+ASC0_CON_REN	SET	1
+ASC0_CON_STP	SET	0
+
+; ASC0 Error Interrupt Control Register
+ASC0_EIC_0	SET	0
+ASC0_EIC_GLVL	SET	0
+ASC0_EIC_GPX	SET	0
+ASC0_EIC_IE	SET	0
+ASC0_EIC_ILVL	SET	0
+ASC0_EIC_IR	SET	0
+
+; Fractional Divider Register
+ASC0_FDV_0	SET	0
+ASC0_FDV_FD_VALUE	SET	0
+
+; FIFO Status Register
+ASC0_FSTAT_0	SET	0
+ASC0_FSTAT_0	SET	0
+ASC0_FSTAT_RXFFL	SET	0
+ASC0_FSTAT_TXFFL	SET	0
+
+; ASC0 IrDA Pulse Mode and Width Reg.
+ASC0_PMW_0	SET	0
+ASC0_PMW_IRPW	SET	0
+ASC0_PMW_PW_VALUE	SET	8
+
+; Serial Channel 0 Receiver Buffer Register (RO)
+ASC0_RBUF_0	SET	0
+ASC0_RBUF_RD_VALUE	SET	0
+
+; ASC0 Receive Interrupt Control Register
+ASC0_RIC_0	SET	0
+ASC0_RIC_GLVL	SET	0
+ASC0_RIC_GPX	SET	0
+ASC0_RIC_IE	SET	1
+ASC0_RIC_ILVL	SET	1
+ASC0_RIC_IR	SET	0
+
+; Receive FIFO Control Register
+ASC0_RXFCON_0	SET	0
+ASC0_RXFCON_0	SET	0
+ASC0_RXFCON_RXFEN	SET	0
+ASC0_RXFCON_RXFFLU	SET	0
+ASC0_RXFCON_RXFITL	SET	1
+ASC0_RXFCON_RXTMEN	SET	0
+
+; ASC0 Transmit Buffer Interrupt Control Register
+ASC0_TBIC_0	SET	0
+ASC0_TBIC_GLVL	SET	0
+ASC0_TBIC_GPX	SET	0
+ASC0_TBIC_IE	SET	0
+ASC0_TBIC_ILVL	SET	0
+ASC0_TBIC_IR	SET	0
+
+; Serial Channel 0 Transmitter Buffer Register (WO)
+ASC0_TBUF_0	SET	0
+ASC0_TBUF_TD_VALUE	SET	0
+
+; ASC0 Transmit Interrupt Control Register
+ASC0_TIC_0	SET	0
+ASC0_TIC_GLVL	SET	0
+ASC0_TIC_GPX	SET	0
+ASC0_TIC_IE	SET	1
+ASC0_TIC_ILVL	SET	14
+ASC0_TIC_IR	SET	0
+
+; Transmit FIFO Control Register
+ASC0_TXFCON_0	SET	0
+ASC0_TXFCON_0	SET	0
+ASC0_TXFCON_TXFEN	SET	1
+ASC0_TXFCON_TXFFLU	SET	0
+ASC0_TXFCON_TXFITL	SET	8
+ASC0_TXFCON_TXTMEN	SET	1
+
+; ASC1 Autobaud Control Register
+ASC1_ABCON_0	SET	0
+ASC1_ABCON_0	SET	0
+ASC1_ABCON_ABDETEN	SET	0
+ASC1_ABCON_ABEM	SET	0
+ASC1_ABCON_ABEN	SET	0
+ASC1_ABCON_ABSTEN	SET	0
+ASC1_ABCON_AUREN	SET	0
+ASC1_ABCON_FCDETEN	SET	0
+ASC1_ABCON_RXINV	SET	0
+ASC1_ABCON_TXINV	SET	0
+
+; ASC1 Autobaud Interrupt Control Register
+ASC1_ABIC_0	SET	0
+ASC1_ABIC_GLVL	SET	0
+ASC1_ABIC_GPX	SET	0
+ASC1_ABIC_IE	SET	0
+ASC1_ABIC_ILVL	SET	0
+ASC1_ABIC_IR	SET	0
+
+; ASC1 Autobaud Status Register
+ASC1_ABSTAT_0	SET	0
+ASC1_ABSTAT_DETWAIT	SET	0
+ASC1_ABSTAT_FCCDET	SET	0
+ASC1_ABSTAT_FCSDET	SET	0
+ASC1_ABSTAT_SCCDET	SET	0
+ASC1_ABSTAT_SCSDET	SET	0
+
+; Serial Channel 1 Baud Rate Generator Reload Register
+ASC1_BG_0	SET	0
+ASC1_BG_BR_VALUE	SET	10
+
+; Serial Channel 1 Control Register
+ASC1_CON_BRS	SET	0
+ASC1_CON_FDE	SET	0
+ASC1_CON_FE	SET	0
+ASC1_CON_FEN	SET	0
+ASC1_CON_LB	SET	0
+ASC1_CON_M	SET	1
+ASC1_CON_ODD	SET	0
+ASC1_CON_OE	SET	0
+ASC1_CON_OEN	SET	0
+ASC1_CON_PE	SET	0
+ASC1_CON_PEN_RXDI	SET	0
+ASC1_CON_R	SET	1
+ASC1_CON_REN	SET	1
+ASC1_CON_STP	SET	0
+
+; ASC1 Error Interrupt Control Register
+ASC1_EIC_0	SET	0
+ASC1_EIC_GLVL	SET	0
+ASC1_EIC_GPX	SET	0
+ASC1_EIC_IE	SET	0
+ASC1_EIC_ILVL	SET	0
+ASC1_EIC_IR	SET	0
+
+; Fractional Divider Register
+ASC1_FDV_0	SET	0
+ASC1_FDV_FD_VALUE	SET	0
+
+; FIFO Status Register
+ASC1_FSTAT_0	SET	0
+ASC1_FSTAT_0	SET	0
+ASC1_FSTAT_RXFFL	SET	0
+ASC1_FSTAT_TXFFL	SET	0
+
+; ASC1 IrDA Pulse Mode and Width Reg.
+ASC1_PMW_0	SET	0
+ASC1_PMW_IRPW	SET	0
+ASC1_PMW_PW_VALUE	SET	8
+
+; Serial Channel 1 Receiver Buffer Register (RO)
+ASC1_RBUF_0	SET	0
+ASC1_RBUF_RD_VALUE	SET	0
+
+; ASC1 Receive Interrupt Control Register
+ASC1_RIC_0	SET	0
+ASC1_RIC_GLVL	SET	0
+ASC1_RIC_GPX	SET	0
+ASC1_RIC_IE	SET	1
+ASC1_RIC_ILVL	SET	9
+ASC1_RIC_IR	SET	0
+
+; Receive FIFO Control Register
+ASC1_RXFCON_0	SET	0
+ASC1_RXFCON_0	SET	0
+ASC1_RXFCON_RXFEN	SET	0
+ASC1_RXFCON_RXFFLU	SET	0
+ASC1_RXFCON_RXFITL	SET	1
+ASC1_RXFCON_RXTMEN	SET	0
+
+; ASC1 Transmit Buffer Interrupt Control Register
+ASC1_TBIC_0	SET	0
+ASC1_TBIC_GLVL	SET	0
+ASC1_TBIC_GPX	SET	0
+ASC1_TBIC_IE	SET	0
+ASC1_TBIC_ILVL	SET	0
+ASC1_TBIC_IR	SET	0
+
+; Serial Channel 1 Transmitter Buffer Register (WO)
+ASC1_TBUF_0	SET	0
+ASC1_TBUF_TD_VALUE	SET	0
+
+; ASC1 Transmit Interrupt Control Register
+ASC1_TIC_0	SET	0
+ASC1_TIC_GLVL	SET	0
+ASC1_TIC_GPX	SET	0
+ASC1_TIC_IE	SET	0
+ASC1_TIC_ILVL	SET	0
+ASC1_TIC_IR	SET	0
+
+; Transmit FIFO Control Register
+ASC1_TXFCON_0	SET	0
+ASC1_TXFCON_0	SET	0
+ASC1_TXFCON_TXFEN	SET	1
+ASC1_TXFCON_TXFFLU	SET	0
+ASC1_TXFCON_TXFITL	SET	8
+ASC1_TXFCON_TXTMEN	SET	1
+
+; Register Bank Selection Register 0
+BNKSEL0_GPRSEL0	SET	0
+BNKSEL0_GPRSEL1	SET	0
+BNKSEL0_GPRSEL2	SET	0
+BNKSEL0_GPRSEL3	SET	0
+BNKSEL0_GPRSEL4	SET	0
+BNKSEL0_GPRSEL5	SET	0
+BNKSEL0_GPRSEL6	SET	0
+BNKSEL0_GPRSEL7	SET	0
+
+; Register Bank Selection Register 1
+BNKSEL1_GPRSEL0	SET	0
+BNKSEL1_GPRSEL1	SET	0
+BNKSEL1_GPRSEL2	SET	0
+BNKSEL1_GPRSEL3	SET	0
+BNKSEL1_GPRSEL4	SET	0
+BNKSEL1_GPRSEL5	SET	0
+BNKSEL1_GPRSEL6	SET	0
+BNKSEL1_GPRSEL7	SET	0
+
+; Register Bank Selection Register 2
+BNKSEL2_GPRSEL0	SET	0
+BNKSEL2_GPRSEL1	SET	0
+BNKSEL2_GPRSEL2	SET	0
+BNKSEL2_GPRSEL3	SET	0
+BNKSEL2_GPRSEL4	SET	0
+BNKSEL2_GPRSEL5	SET	0
+BNKSEL2_GPRSEL6	SET	0
+BNKSEL2_GPRSEL7	SET	0
+
+; Register Bank Selection Register 3
+BNKSEL3_GPRSEL0	SET	0
+BNKSEL3_GPRSEL1	SET	0
+BNKSEL3_GPRSEL2	SET	0
+BNKSEL3_GPRSEL3	SET	0
+BNKSEL3_GPRSEL4	SET	0
+BNKSEL3_GPRSEL5	SET	0
+BNKSEL3_GPRSEL6	SET	0
+BNKSEL3_GPRSEL7	SET	0
+
+; CAN Mode 0 Interrupt Control register
+CAN_0IC_GLVL	SET	0
+CAN_0IC_GPX	SET	0
+CAN_0IC_IE	SET	0
+CAN_0IC_ILVL	SET	0
+CAN_0IC_IR	SET	0
+
+; CAN Mode 1 Interrupt Control register
+CAN_1IC_GLVL	SET	0
+CAN_1IC_GPX	SET	0
+CAN_1IC_IE	SET	0
+CAN_1IC_ILVL	SET	0
+CAN_1IC_IR	SET	0
+
+; CAN Mode 2 Interrupt Control register
+CAN_2IC_GLVL	SET	0
+CAN_2IC_GPX	SET	0
+CAN_2IC_IE	SET	0
+CAN_2IC_ILVL	SET	0
+CAN_2IC_IR	SET	0
+
+; CAN Mode 3 Interrupt Control register
+CAN_3IC_GLVL	SET	0
+CAN_3IC_GPX	SET	0
+CAN_3IC_IE	SET	0
+CAN_3IC_ILVL	SET	0
+CAN_3IC_IR	SET	0
+
+; CAN Mode 4 Interrupt Control register
+CAN_4IC_GLVL	SET	0
+CAN_4IC_GPX	SET	0
+CAN_4IC_IE	SET	0
+CAN_4IC_ILVL	SET	0
+CAN_4IC_IR	SET	0
+
+; CAN Mode 5 Interrupt Control register
+CAN_5IC_GLVL	SET	0
+CAN_5IC_GPX	SET	0
+CAN_5IC_IE	SET	0
+CAN_5IC_ILVL	SET	0
+CAN_5IC_IR	SET	0
+
+; CAN Mode 6 Interrupt Control register
+CAN_6IC_GLVL	SET	0
+CAN_6IC_GPX	SET	0
+CAN_6IC_IE	SET	0
+CAN_6IC_ILVL	SET	0
+CAN_6IC_IR	SET	0
+
+; CAN Mode 7 Interrupt Control register
+CAN_7IC_GLVL	SET	0
+CAN_7IC_GPX	SET	0
+CAN_7IC_IE	SET	0
+CAN_7IC_ILVL	SET	0
+CAN_7IC_IR	SET	0
+
+; Node A Bit Timing Register High
+CAN_ABTRH_LBM	SET	0
+
+; Node A Bit Timing Register Low
+CAN_ABTRL_BRP	SET	19
+CAN_ABTRL_DIV8X	SET	0
+CAN_ABTRL_SJW	SET	1
+CAN_ABTRL_TSEG1	SET	4
+CAN_ABTRL_TSEG2	SET	3
+
+; Node A Control Register
+CAN_ACR_CALM	SET	0
+CAN_ACR_CCE	SET	0
+CAN_ACR_EIE	SET	0
+CAN_ACR_INIT	SET	1
+CAN_ACR_LECIE	SET	0
+CAN_ACR_SIE	SET	0
+
+; Node A Error Counter Register High
+CAN_AECNTH_EWRNLVL	SET	96
+CAN_AECNTH_LEINC	SET	0
+CAN_AECNTH_LETD	SET	0
+
+; Node A Error Counter Register Low
+CAN_AECNTL_REC	SET	0
+CAN_AECNTL_TEC	SET	0
+
+; Node A Frame Counter Register High
+CAN_AFCRH_CFCIE	SET	0
+CAN_AFCRH_CFCMD	SET	0
+CAN_AFCRH_CFCOV	SET	0
+
+; Node A Frame Counter Register Low
+CAN_AFCRL_CFC	SET	0
+
+; Node A Global Interrupt Node Pointer Register
+CAN_AGINP_CFCINP	SET	0
+CAN_AGINP_EINP	SET	0
+CAN_AGINP_LECINP	SET	0
+CAN_AGINP_TRINP	SET	0
+
+; Node A INTID Mask Register 4 Low
+CAN_AIMR4_IMC32	SET	0
+CAN_AIMR4_IMC33	SET	0
+CAN_AIMR4_IMC34	SET	0
+
+; Node A INTID Mask Register 0 High
+CAN_AIMRH0_IMC16	SET	0
+CAN_AIMRH0_IMC17	SET	0
+CAN_AIMRH0_IMC18	SET	0
+CAN_AIMRH0_IMC19	SET	0
+CAN_AIMRH0_IMC20	SET	0
+CAN_AIMRH0_IMC21	SET	0
+CAN_AIMRH0_IMC22	SET	0
+CAN_AIMRH0_IMC23	SET	0
+CAN_AIMRH0_IMC24	SET	0
+CAN_AIMRH0_IMC25	SET	0
+CAN_AIMRH0_IMC26	SET	0
+CAN_AIMRH0_IMC27	SET	0
+CAN_AIMRH0_IMC28	SET	0
+CAN_AIMRH0_IMC29	SET	0
+CAN_AIMRH0_IMC30	SET	0
+CAN_AIMRH0_IMC31	SET	0
+
+; Node A INTID Mask Register 0 Low
+CAN_AIMRL0_IMC0	SET	0
+CAN_AIMRL0_IMC1	SET	0
+CAN_AIMRL0_IMC10	SET	0
+CAN_AIMRL0_IMC11	SET	0
+CAN_AIMRL0_IMC12	SET	0
+CAN_AIMRL0_IMC13	SET	0
+CAN_AIMRL0_IMC14	SET	0
+CAN_AIMRL0_IMC15	SET	0
+CAN_AIMRL0_IMC2	SET	0
+CAN_AIMRL0_IMC3	SET	0
+CAN_AIMRL0_IMC4	SET	0
+CAN_AIMRL0_IMC5	SET	0
+CAN_AIMRL0_IMC6	SET	0
+CAN_AIMRL0_IMC7	SET	0
+CAN_AIMRL0_IMC8	SET	0
+CAN_AIMRL0_IMC9	SET	0
+
+; Node A Interrupt Pending Register
+CAN_AIR_0	SET	0
+CAN_AIR_INTID	SET	0
+
+; Node A Status Register
+CAN_ASR_BOFF	SET	0
+CAN_ASR_EWRN	SET	0
+CAN_ASR_LEC	SET	0
+CAN_ASR_RXOK	SET	0
+CAN_ASR_TXOK	SET	0
+
+; Node B Bit Timing Register High
+CAN_BBTRH_LBM	SET	0
+
+; Node B Bit Timing Register Low
+CAN_BBTRL_BRP	SET	19
+CAN_BBTRL_DIV8X	SET	0
+CAN_BBTRL_SJW	SET	1
+CAN_BBTRL_TSEG1	SET	4
+CAN_BBTRL_TSEG2	SET	3
+
+; Node B Control Register
+CAN_BCR_CALM	SET	0
+CAN_BCR_CCE	SET	0
+CAN_BCR_EIE	SET	0
+CAN_BCR_INIT	SET	1
+CAN_BCR_LECIE	SET	0
+CAN_BCR_SIE	SET	0
+
+; Node B Error Counter Register High
+CAN_BECNTH_EWRNLVL	SET	96
+CAN_BECNTH_LEINC	SET	0
+CAN_BECNTH_LETD	SET	0
+
+; Node B Error Counter Register Low
+CAN_BECNTL_REC	SET	96
+CAN_BECNTL_TEC	SET	0
+
+; Node B Frame Counter Register High
+CAN_BFCRH_CFCIE	SET	0
+CAN_BFCRH_CFCMD	SET	0
+CAN_BFCRH_CFCOV	SET	0
+
+; Node B Frame Counter Register Low
+CAN_BFCRL_CFC	SET	0
+
+; Node B Global Interrupt Node Pointer Register
+CAN_BGINP_CFCINP	SET	0
+CAN_BGINP_EINP	SET	0
+CAN_BGINP_LECINP	SET	0
+CAN_BGINP_TRINP	SET	0
+
+; Node B INTID Mask Register 4 Low
+CAN_BIMR4_IMC32	SET	0
+CAN_BIMR4_IMC33	SET	0
+CAN_BIMR4_IMC34	SET	0
+
+; Node B INTID Mask Register 0 High
+CAN_BIMRH0_IMC16	SET	0
+CAN_BIMRH0_IMC17	SET	0
+CAN_BIMRH0_IMC18	SET	0
+CAN_BIMRH0_IMC19	SET	0
+CAN_BIMRH0_IMC20	SET	0
+CAN_BIMRH0_IMC21	SET	0
+CAN_BIMRH0_IMC22	SET	0
+CAN_BIMRH0_IMC23	SET	0
+CAN_BIMRH0_IMC24	SET	0
+CAN_BIMRH0_IMC25	SET	0
+CAN_BIMRH0_IMC26	SET	0
+CAN_BIMRH0_IMC27	SET	0
+CAN_BIMRH0_IMC28	SET	0
+CAN_BIMRH0_IMC29	SET	0
+CAN_BIMRH0_IMC30	SET	0
+CAN_BIMRH0_IMC31	SET	0
+
+; Node B INTID Mask Register 0 Low
+CAN_BIMRL0_IMC0	SET	0
+CAN_BIMRL0_IMC1	SET	0
+CAN_BIMRL0_IMC10	SET	0
+CAN_BIMRL0_IMC11	SET	0
+CAN_BIMRL0_IMC12	SET	0
+CAN_BIMRL0_IMC13	SET	0
+CAN_BIMRL0_IMC14	SET	0
+CAN_BIMRL0_IMC15	SET	0
+CAN_BIMRL0_IMC2	SET	0
+CAN_BIMRL0_IMC3	SET	0
+CAN_BIMRL0_IMC4	SET	0
+CAN_BIMRL0_IMC5	SET	0
+CAN_BIMRL0_IMC6	SET	0
+CAN_BIMRL0_IMC7	SET	0
+CAN_BIMRL0_IMC8	SET	0
+CAN_BIMRL0_IMC9	SET	0
+
+; Node B Interrupt Pending Register
+CAN_BIR_INTID	SET	0
+
+; Node B Status Register
+CAN_BSR_BOFF	SET	0
+CAN_BSR_EWRN	SET	0
+CAN_BSR_LEC	SET	0
+CAN_BSR_RXOK	SET	0
+CAN_BSR_TXOK	SET	0
+
+; Message Object 0 Arbitration Mask Register High
+CAN_MSGAMRH0_1	SET	7
+CAN_MSGAMRH0_AM	SET	3072
+
+; Message Object 10 Arbitration Mask Register High
+CAN_MSGAMRH10_1	SET	7
+CAN_MSGAMRH10_AM	SET	8191
+
+; Message Object 11 Arbitration Mask Register High
+CAN_MSGAMRH11_1	SET	7
+CAN_MSGAMRH11_AM	SET	8191
+
+; Message Object 12 Arbitration Mask Register High
+CAN_MSGAMRH12_1	SET	7
+CAN_MSGAMRH12_AM	SET	8191
+
+; Message Object 13 Arbitration Mask Register High
+CAN_MSGAMRH13_1	SET	7
+CAN_MSGAMRH13_AM	SET	8191
+
+; Message Object 14 Arbitration Mask Register High
+CAN_MSGAMRH14_1	SET	7
+CAN_MSGAMRH14_AM	SET	8191
+
+; Message Object 15 Arbitration Mask Register High
+CAN_MSGAMRH15_1	SET	7
+CAN_MSGAMRH15_AM	SET	3840
+
+; Message Object 16 Arbitration Mask Register High
+CAN_MSGAMRH16_1	SET	7
+CAN_MSGAMRH16_AM	SET	8191
+
+; Message Object 17 Arbitration Mask Register High
+CAN_MSGAMRH17_1	SET	7
+CAN_MSGAMRH17_AM	SET	8191
+
+; Message Object 18 Arbitration Mask Register High
+CAN_MSGAMRH18_1	SET	7
+CAN_MSGAMRH18_AM	SET	8191
+
+; Message Object 19 Arbitration Mask Register High
+CAN_MSGAMRH19_1	SET	7
+CAN_MSGAMRH19_AM	SET	8191
+
+; Message Object 1 Arbitration Mask Register High
+CAN_MSGAMRH1_1	SET	7
+CAN_MSGAMRH1_AM	SET	8191
+
+; Message Object 20 Arbitration Mask Register High
+CAN_MSGAMRH20_1	SET	7
+CAN_MSGAMRH20_AM	SET	8191
+
+; Message Object 21 Arbitration Mask Register High
+CAN_MSGAMRH21_1	SET	7
+CAN_MSGAMRH21_AM	SET	8191
+
+; Message Object 22 Arbitration Mask Register High
+CAN_MSGAMRH22_1	SET	7
+CAN_MSGAMRH22_AM	SET	8191
+
+; Message Object 23 Arbitration Mask Register High
+CAN_MSGAMRH23_1	SET	7
+CAN_MSGAMRH23_AM	SET	8191
+
+; Message Object 24 Arbitration Mask Register High
+CAN_MSGAMRH24_1	SET	7
+CAN_MSGAMRH24_AM	SET	8191
+
+; Message Object 25 Arbitration Mask Register High
+CAN_MSGAMRH25_1	SET	7
+CAN_MSGAMRH25_AM	SET	8191
+
+; Message Object 26 Arbitration Mask Register High
+CAN_MSGAMRH26_1	SET	7
+CAN_MSGAMRH26_AM	SET	8191
+
+; Message Object 27 Arbitration Mask Register High
+CAN_MSGAMRH27_1	SET	7
+CAN_MSGAMRH27_AM	SET	8191
+
+; Message Object 28 Arbitration Mask Register High
+CAN_MSGAMRH28_1	SET	7
+CAN_MSGAMRH28_AM	SET	8191
+
+; Message Object 29 Arbitration Mask Register High
+CAN_MSGAMRH29_1	SET	7
+CAN_MSGAMRH29_AM	SET	8191
+
+; Message Object 2 Arbitration Mask Register High
+CAN_MSGAMRH2_1	SET	7
+CAN_MSGAMRH2_AM	SET	8188
+
+; Message Object 30 Arbitration Mask Register High
+CAN_MSGAMRH30_1	SET	7
+CAN_MSGAMRH30_AM	SET	8191
+
+; Message Object 31 Arbitration Mask Register High
+CAN_MSGAMRH31_1	SET	7
+CAN_MSGAMRH31_AM	SET	4028
+
+; Message Object 3 Arbitration Mask Register High
+CAN_MSGAMRH3_1	SET	7
+CAN_MSGAMRH3_AM	SET	8191
+
+; Message Object 4 Arbitration Mask Register High
+CAN_MSGAMRH4_1	SET	7
+CAN_MSGAMRH4_AM	SET	8191
+
+; Message Object 5 Arbitration Mask Register High
+CAN_MSGAMRH5_1	SET	7
+CAN_MSGAMRH5_AM	SET	8191
+
+; Message Object 6 Arbitration Mask Register High
+CAN_MSGAMRH6_1	SET	7
+CAN_MSGAMRH6_AM	SET	8191
+
+; Message Object 7 Arbitration Mask Register High
+CAN_MSGAMRH7_1	SET	7
+CAN_MSGAMRH7_AM	SET	8191
+
+; Message Object 8 Arbitration Mask Register High
+CAN_MSGAMRH8_1	SET	7
+CAN_MSGAMRH8_AM	SET	8191
+
+; Message Object 9 Arbitration Mask Register High
+CAN_MSGAMRH9_1	SET	7
+CAN_MSGAMRH9_AM	SET	8191
+
+; Message Object 0 Arbitration Mask Register Low
+CAN_MSGAMRL0_AM	SET	0
+
+; Message Object 10 Arbitration Mask Register Low
+CAN_MSGAMRL10_AM	SET	65535
+
+; Message Object 11 Arbitration Mask Register Low
+CAN_MSGAMRL11_AM	SET	65535
+
+; Message Object 12 Arbitration Mask Register Low
+CAN_MSGAMRL12_AM	SET	65535
+
+; Message Object 13 Arbitration Mask Register Low
+CAN_MSGAMRL13_AM	SET	65535
+
+; Message Object 14 Arbitration Mask Register Low
+CAN_MSGAMRL14_AM	SET	65535
+
+; Message Object 15 Arbitration Mask Register Low
+CAN_MSGAMRL15_AM	SET	0
+
+; Message Object 16 Arbitration Mask Register Low
+CAN_MSGAMRL16_AM	SET	65535
+
+; Message Object 17 Arbitration Mask Register Low
+CAN_MSGAMRL17_AM	SET	65535
+
+; Message Object 18 Arbitration Mask Register Low
+CAN_MSGAMRL18_AM	SET	65535
+
+; Message Object 19 Arbitration Mask Register Low
+CAN_MSGAMRL19_AM	SET	65535
+
+; Message Object 1 Arbitration Mask Register Low
+CAN_MSGAMRL1_AM	SET	65535
+
+; Message Object 20 Arbitration Mask Register Low
+CAN_MSGAMRL20_AM	SET	65535
+
+; Message Object 21 Arbitration Mask Register Low
+CAN_MSGAMRL21_AM	SET	65535
+
+; Message Object 22 Arbitration Mask Register Low
+CAN_MSGAMRL22_AM	SET	65535
+
+; Message Object 23 Arbitration Mask Register Low
+CAN_MSGAMRL23_AM	SET	65535
+
+; Message Object 24 Arbitration Mask Register Low
+CAN_MSGAMRL24_AM	SET	65535
+
+; Message Object 25 Arbitration Mask Register Low
+CAN_MSGAMRL25_AM	SET	65535
+
+; Message Object 26 Arbitration Mask Register Low
+CAN_MSGAMRL26_AM	SET	65535
+
+; Message Object 27 Arbitration Mask Register Low
+CAN_MSGAMRL27_AM	SET	65535
+
+; Message Object 28 Arbitration Mask Register Low
+CAN_MSGAMRL28_AM	SET	65535
+
+; Message Object 29 Arbitration Mask Register Low
+CAN_MSGAMRL29_AM	SET	65535
+
+; Message Object 2 Arbitration Mask Register Low
+CAN_MSGAMRL2_AM	SET	0
+
+; Message Object 30 Arbitration Mask Register Low
+CAN_MSGAMRL30_AM	SET	65535
+
+; Message Object 31 Arbitration Mask Register Low
+CAN_MSGAMRL31_AM	SET	0
+
+; Message Object 3 Arbitration Mask Register Low
+CAN_MSGAMRL3_AM	SET	65535
+
+; Message Object 4 Arbitration Mask Register Low
+CAN_MSGAMRL4_AM	SET	65535
+
+; Message Object 5 Arbitration Mask Register Low
+CAN_MSGAMRL5_AM	SET	65535
+
+; Message Object 6 Arbitration Mask Register Low
+CAN_MSGAMRL6_AM	SET	65535
+
+; Message Object 7 Arbitration Mask Register Low
+CAN_MSGAMRL7_AM	SET	65535
+
+; Message Object 8 Arbitration Mask Register Low
+CAN_MSGAMRL8_AM	SET	65535
+
+; Message Object 9 Arbitration Mask Register Low
+CAN_MSGAMRL9_AM	SET	65535
+
+; Message Object 0 Arbitration Register High
+CAN_MSGARH0_ID	SET	0
+
+; Message Object 10 Arbitration Register High
+CAN_MSGARH10_ID	SET	0
+
+; Message Object 11 Arbitration Register High
+CAN_MSGARH11_ID	SET	0
+
+; Message Object 12 Arbitration Register High
+CAN_MSGARH12_ID	SET	1024
+
+; Message Object 13 Arbitration Register High
+CAN_MSGARH13_ID	SET	1028
+
+; Message Object 14 Arbitration Register High
+CAN_MSGARH14_ID	SET	0
+
+; Message Object 15 Arbitration Register High
+CAN_MSGARH15_ID	SET	1024
+
+; Message Object 16 Arbitration Register High
+CAN_MSGARH16_ID	SET	1536
+
+; Message Object 17 Arbitration Register High
+CAN_MSGARH17_ID	SET	1540
+
+; Message Object 18 Arbitration Register High
+CAN_MSGARH18_ID	SET	520
+
+; Message Object 19 Arbitration Register High
+CAN_MSGARH19_ID	SET	524
+
+; Message Object 1 Arbitration Register High
+CAN_MSGARH1_ID	SET	0
+
+; Message Object 20 Arbitration Register High
+CAN_MSGARH20_ID	SET	0
+
+; Message Object 21 Arbitration Register High
+CAN_MSGARH21_ID	SET	1568
+
+; Message Object 22 Arbitration Register High
+CAN_MSGARH22_ID	SET	1548
+
+; Message Object 23 Arbitration Register High
+CAN_MSGARH23_ID	SET	3584
+
+; Message Object 24 Arbitration Register High
+CAN_MSGARH24_ID	SET	3588
+
+; Message Object 25 Arbitration Register High
+CAN_MSGARH25_ID	SET	3592
+
+; Message Object 26 Arbitration Register High
+CAN_MSGARH26_ID	SET	3596
+
+; Message Object 27 Arbitration Register High
+CAN_MSGARH27_ID	SET	3600
+
+; Message Object 28 Arbitration Register High
+CAN_MSGARH28_ID	SET	3712
+
+; Message Object 29 Arbitration Register High
+CAN_MSGARH29_ID	SET	0
+
+; Message Object 2 Arbitration Register High
+CAN_MSGARH2_ID	SET	1024
+
+; Message Object 30 Arbitration Register High
+CAN_MSGARH30_ID	SET	0
+
+; Message Object 31 Arbitration Register High
+CAN_MSGARH31_ID	SET	2176
+
+; Message Object 3 Arbitration Register High
+CAN_MSGARH3_ID	SET	0
+
+; Message Object 4 Arbitration Register High
+CAN_MSGARH4_ID	SET	612
+
+; Message Object 5 Arbitration Register High
+CAN_MSGARH5_ID	SET	608
+
+; Message Object 6 Arbitration Register High
+CAN_MSGARH6_ID	SET	8188
+
+; Message Object 7 Arbitration Register High
+CAN_MSGARH7_ID	SET	8188
+
+; Message Object 8 Arbitration Register High
+CAN_MSGARH8_ID	SET	8188
+
+; Message Object 9 Arbitration Register High
+CAN_MSGARH9_ID	SET	8188
+
+; Message Object 0 Arbitration Register Low
+CAN_MSGARL0_ID	SET	0
+
+; Message Object 10 Arbitration Register Low
+CAN_MSGARL10_ID	SET	0
+
+; Message Object 11 Arbitration Register Low
+CAN_MSGARL11_ID	SET	0
+
+; Message Object 12 Arbitration Register Low
+CAN_MSGARL12_ID	SET	0
+
+; Message Object 13 Arbitration Register Low
+CAN_MSGARL13_ID	SET	0
+
+; Message Object 14 Arbitration Register Low
+CAN_MSGARL14_ID	SET	0
+
+; Message Object 15 Arbitration Register Low
+CAN_MSGARL15_ID	SET	0
+
+; Message Object 16 Arbitration Register Low
+CAN_MSGARL16_ID	SET	0
+
+; Message Object 17 Arbitration Register Low
+CAN_MSGARL17_ID	SET	0
+
+; Message Object 18 Arbitration Register Low
+CAN_MSGARL18_ID	SET	0
+
+; Message Object 19 Arbitration Register Low
+CAN_MSGARL19_ID	SET	0
+
+; Message Object 1 Arbitration Register Low
+CAN_MSGARL1_ID	SET	0
+
+; Message Object 20 Arbitration Register Low
+CAN_MSGARL20_ID	SET	0
+
+; Message Object 21 Arbitration Register Low
+CAN_MSGARL21_ID	SET	0
+
+; Message Object 22 Arbitration Register Low
+CAN_MSGARL22_ID	SET	0
+
+; Message Object 23 Arbitration Register Low
+CAN_MSGARL23_ID	SET	0
+
+; Message Object 24 Arbitration Register Low
+CAN_MSGARL24_ID	SET	0
+
+; Message Object 25 Arbitration Register Low
+CAN_MSGARL25_ID	SET	0
+
+; Message Object 26 Arbitration Register Low
+CAN_MSGARL26_ID	SET	0
+
+; Message Object 27 Arbitration Register Low
+CAN_MSGARL27_ID	SET	0
+
+; Message Object 28 Arbitration Register Low
+CAN_MSGARL28_ID	SET	0
+
+; Message Object 29 Arbitration Register Low
+CAN_MSGARL29_ID	SET	0
+
+; Message Object 2 Arbitration Register Low
+CAN_MSGARL2_ID	SET	0
+
+; Message Object 30 Arbitration Register Low
+CAN_MSGARL30_ID	SET	0
+
+; Message Object 31 Arbitration Register Low
+CAN_MSGARL31_ID	SET	0
+
+; Message Object 3 Arbitration Register Low
+CAN_MSGARL3_ID	SET	0
+
+; Message Object 4 Arbitration Register Low
+CAN_MSGARL4_ID	SET	0
+
+; Message Object 5 Arbitration Register Low
+CAN_MSGARL5_ID	SET	0
+
+; Message Object 6 Arbitration Register Low
+CAN_MSGARL6_ID	SET	0
+
+; Message Object 7 Arbitration Register Low
+CAN_MSGARL7_ID	SET	0
+
+; Message Object 8 Arbitration Register Low
+CAN_MSGARL8_ID	SET	0
+
+; Message Object 9 Arbitration Register Low
+CAN_MSGARL9_ID	SET	0
+
+; Message Object 0 Message Configuration Register High
+CAN_MSGCFGH0_RXINP	SET	0
+CAN_MSGCFGH0_TXINP	SET	0
+
+; Message Object 10 Message Configuration Register High
+CAN_MSGCFGH10_RXINP	SET	0
+CAN_MSGCFGH10_TXINP	SET	0
+
+; Message Object 11 Message Configuration Register High
+CAN_MSGCFGH11_RXINP	SET	0
+CAN_MSGCFGH11_TXINP	SET	0
+
+; Message Object 12 Message Configuration Register High
+CAN_MSGCFGH12_RXINP	SET	0
+CAN_MSGCFGH12_TXINP	SET	0
+
+; Message Object 13 Message Configuration Register High
+CAN_MSGCFGH13_RXINP	SET	0
+CAN_MSGCFGH13_TXINP	SET	0
+
+; Message Object 14 Message Configuration Register High
+CAN_MSGCFGH14_RXINP	SET	0
+CAN_MSGCFGH14_TXINP	SET	0
+
+; Message Object 15 Message Configuration Register High
+CAN_MSGCFGH15_RXINP	SET	0
+CAN_MSGCFGH15_TXINP	SET	0
+
+; Message Object 16 Message Configuration Register High
+CAN_MSGCFGH16_RXINP	SET	0
+CAN_MSGCFGH16_TXINP	SET	0
+
+; Message Object 17 Message Configuration Register High
+CAN_MSGCFGH17_RXINP	SET	0
+CAN_MSGCFGH17_TXINP	SET	0
+
+; Message Object 18 Message Configuration Register High
+CAN_MSGCFGH18_RXINP	SET	0
+CAN_MSGCFGH18_TXINP	SET	0
+
+; Message Object 19 Message Configuration Register High
+CAN_MSGCFGH19_RXINP	SET	0
+CAN_MSGCFGH19_TXINP	SET	0
+
+; Message Object 1 Message Configuration Register High
+CAN_MSGCFGH1_RXINP	SET	0
+CAN_MSGCFGH1_TXINP	SET	0
+
+; Message Object 20 Message Configuration Register High
+CAN_MSGCFGH20_RXINP	SET	0
+CAN_MSGCFGH20_TXINP	SET	0
+
+; Message Object 21 Message Configuration Register High
+CAN_MSGCFGH21_RXINP	SET	0
+CAN_MSGCFGH21_TXINP	SET	0
+
+; Message Object 22 Message Configuration Register High
+CAN_MSGCFGH22_RXINP	SET	0
+CAN_MSGCFGH22_TXINP	SET	0
+
+; Message Object 23 Message Configuration Register High
+CAN_MSGCFGH23_RXINP	SET	0
+CAN_MSGCFGH23_TXINP	SET	0
+
+; Message Object 24 Message Configuration Register High
+CAN_MSGCFGH24_RXINP	SET	0
+CAN_MSGCFGH24_TXINP	SET	0
+
+; Message Object 25 Message Configuration Register High
+CAN_MSGCFGH25_RXINP	SET	0
+CAN_MSGCFGH25_TXINP	SET	0
+
+; Message Object 26 Message Configuration Register High
+CAN_MSGCFGH26_RXINP	SET	0
+CAN_MSGCFGH26_TXINP	SET	0
+
+; Message Object 27 Message Configuration Register High
+CAN_MSGCFGH27_RXINP	SET	0
+CAN_MSGCFGH27_TXINP	SET	0
+
+; Message Object 28 Message Configuration Register High
+CAN_MSGCFGH28_RXINP	SET	0
+CAN_MSGCFGH28_TXINP	SET	0
+
+; Message Object 29 Message Configuration Register High
+CAN_MSGCFGH29_RXINP	SET	0
+CAN_MSGCFGH29_TXINP	SET	0
+
+; Message Object 2 Message Configuration Register High
+CAN_MSGCFGH2_RXINP	SET	0
+CAN_MSGCFGH2_TXINP	SET	0
+
+; Message Object 30 Message Configuration Register High
+CAN_MSGCFGH30_RXINP	SET	0
+CAN_MSGCFGH30_TXINP	SET	0
+
+; Message Object 31 Message Configuration Register High
+CAN_MSGCFGH31_RXINP	SET	0
+CAN_MSGCFGH31_TXINP	SET	0
+
+; Message Object 3 Message Configuration Register High
+CAN_MSGCFGH3_RXINP	SET	0
+CAN_MSGCFGH3_TXINP	SET	0
+
+; Message Object 4 Message Configuration Register High
+CAN_MSGCFGH4_RXINP	SET	0
+CAN_MSGCFGH4_TXINP	SET	0
+
+; Message Object 5 Message Configuration Register High
+CAN_MSGCFGH5_RXINP	SET	0
+CAN_MSGCFGH5_TXINP	SET	0
+
+; Message Object 6 Message Configuration Register High
+CAN_MSGCFGH6_RXINP	SET	0
+CAN_MSGCFGH6_TXINP	SET	0
+
+; Message Object 7 Message Configuration Register High
+CAN_MSGCFGH7_RXINP	SET	0
+CAN_MSGCFGH7_TXINP	SET	0
+
+; Message Object 8 Message Configuration Register High
+CAN_MSGCFGH8_RXINP	SET	0
+CAN_MSGCFGH8_TXINP	SET	0
+
+; Message Object 9 Message Configuration Register High
+CAN_MSGCFGH9_RXINP	SET	0
+CAN_MSGCFGH9_TXINP	SET	0
+
+; Message Object 0 Message Configuration Register Low
+CAN_MSGCFGL0_DIR	SET	0
+CAN_MSGCFGL0_DLC	SET	0
+CAN_MSGCFGL0_NODE	SET	0
+CAN_MSGCFGL0_RMM	SET	0
+CAN_MSGCFGL0_XTD	SET	0
+
+; Message Object 10 Message Configuration Register Low
+CAN_MSGCFGL10_DIR	SET	0
+CAN_MSGCFGL10_DLC	SET	0
+CAN_MSGCFGL10_NODE	SET	0
+CAN_MSGCFGL10_RMM	SET	0
+CAN_MSGCFGL10_XTD	SET	0
+
+; Message Object 11 Message Configuration Register Low
+CAN_MSGCFGL11_DIR	SET	0
+CAN_MSGCFGL11_DLC	SET	0
+CAN_MSGCFGL11_NODE	SET	0
+CAN_MSGCFGL11_RMM	SET	0
+CAN_MSGCFGL11_XTD	SET	0
+
+; Message Object 12 Message Configuration Register Low
+CAN_MSGCFGL12_DIR	SET	0
+CAN_MSGCFGL12_DLC	SET	0
+CAN_MSGCFGL12_NODE	SET	0
+CAN_MSGCFGL12_RMM	SET	0
+CAN_MSGCFGL12_XTD	SET	0
+
+; Message Object 13 Message Configuration Register Low
+CAN_MSGCFGL13_DIR	SET	0
+CAN_MSGCFGL13_DLC	SET	0
+CAN_MSGCFGL13_NODE	SET	0
+CAN_MSGCFGL13_RMM	SET	0
+CAN_MSGCFGL13_XTD	SET	0
+
+; Message Object 14 Message Configuration Reg Low
+CAN_MSGCFGL14_DIR	SET	0
+CAN_MSGCFGL14_DLC	SET	0
+CAN_MSGCFGL14_NODE	SET	0
+CAN_MSGCFGL14_RMM	SET	0
+CAN_MSGCFGL14_XTD	SET	0
+
+; Message Object 15 Message Configuration Register Low
+CAN_MSGCFGL15_DIR	SET	0
+CAN_MSGCFGL15_DLC	SET	0
+CAN_MSGCFGL15_NODE	SET	0
+CAN_MSGCFGL15_RMM	SET	0
+CAN_MSGCFGL15_XTD	SET	0
+
+; Message Object 16 Message Configuration Register Low
+CAN_MSGCFGL16_DIR	SET	0
+CAN_MSGCFGL16_DLC	SET	0
+CAN_MSGCFGL16_NODE	SET	0
+CAN_MSGCFGL16_RMM	SET	0
+CAN_MSGCFGL16_XTD	SET	0
+
+; Message Object 17 Message Configuration Register Low
+CAN_MSGCFGL17_DIR	SET	0
+CAN_MSGCFGL17_DLC	SET	0
+CAN_MSGCFGL17_NODE	SET	0
+CAN_MSGCFGL17_RMM	SET	0
+CAN_MSGCFGL17_XTD	SET	0
+
+; Message Object 18 Message Configuration Register Low
+CAN_MSGCFGL18_DIR	SET	0
+CAN_MSGCFGL18_DLC	SET	0
+CAN_MSGCFGL18_NODE	SET	0
+CAN_MSGCFGL18_RMM	SET	0
+CAN_MSGCFGL18_XTD	SET	0
+
+; Message Object 19 Message Configuration Register Low
+CAN_MSGCFGL19_DIR	SET	0
+CAN_MSGCFGL19_DLC	SET	0
+CAN_MSGCFGL19_NODE	SET	0
+CAN_MSGCFGL19_RMM	SET	0
+CAN_MSGCFGL19_XTD	SET	0
+
+; Message Object 1 Message Configuration Register Low
+CAN_MSGCFGL1_DIR	SET	0
+CAN_MSGCFGL1_DLC	SET	0
+CAN_MSGCFGL1_NODE	SET	0
+CAN_MSGCFGL1_RMM	SET	0
+CAN_MSGCFGL1_XTD	SET	0
+
+; Message Object 20 Message Configuration Register Low
+CAN_MSGCFGL20_DIR	SET	0
+CAN_MSGCFGL20_DLC	SET	0
+CAN_MSGCFGL20_NODE	SET	0
+CAN_MSGCFGL20_RMM	SET	0
+CAN_MSGCFGL20_XTD	SET	0
+
+; Message Object 21 Message Configuration Register Low
+CAN_MSGCFGL21_DIR	SET	0
+CAN_MSGCFGL21_DLC	SET	0
+CAN_MSGCFGL21_NODE	SET	0
+CAN_MSGCFGL21_RMM	SET	0
+CAN_MSGCFGL21_XTD	SET	0
+
+; Message Object 22 Message Configuration Register Low
+CAN_MSGCFGL22_DIR	SET	0
+CAN_MSGCFGL22_DLC	SET	0
+CAN_MSGCFGL22_NODE	SET	0
+CAN_MSGCFGL22_RMM	SET	0
+CAN_MSGCFGL22_XTD	SET	0
+
+; Message Object 23 Message Configuration Register Low
+CAN_MSGCFGL23_DIR	SET	0
+CAN_MSGCFGL23_DLC	SET	0
+CAN_MSGCFGL23_NODE	SET	0
+CAN_MSGCFGL23_RMM	SET	0
+CAN_MSGCFGL23_XTD	SET	0
+
+; Message Object 24 Message Configuration Register Low
+CAN_MSGCFGL24_DIR	SET	0
+CAN_MSGCFGL24_DLC	SET	0
+CAN_MSGCFGL24_NODE	SET	0
+CAN_MSGCFGL24_RMM	SET	0
+CAN_MSGCFGL24_XTD	SET	0
+
+; Message Object 25 Message Configuration Register Low
+CAN_MSGCFGL25_DIR	SET	0
+CAN_MSGCFGL25_DLC	SET	0
+CAN_MSGCFGL25_NODE	SET	0
+CAN_MSGCFGL25_RMM	SET	0
+CAN_MSGCFGL25_XTD	SET	0
+
+; Message Object 26 Message Configuration Register Low
+CAN_MSGCFGL26_DIR	SET	0
+CAN_MSGCFGL26_DLC	SET	0
+CAN_MSGCFGL26_NODE	SET	0
+CAN_MSGCFGL26_RMM	SET	0
+CAN_MSGCFGL26_XTD	SET	0
+
+; Message Object 27 Message Configuration Register Low
+CAN_MSGCFGL27_DIR	SET	0
+CAN_MSGCFGL27_DLC	SET	0
+CAN_MSGCFGL27_NODE	SET	0
+CAN_MSGCFGL27_RMM	SET	0
+CAN_MSGCFGL27_XTD	SET	0
+
+; Message Object 28 Message Configuration Register Low
+CAN_MSGCFGL28_DIR	SET	0
+CAN_MSGCFGL28_DLC	SET	0
+CAN_MSGCFGL28_NODE	SET	0
+CAN_MSGCFGL28_RMM	SET	0
+CAN_MSGCFGL28_XTD	SET	0
+
+; Message Object 29 Message Configuration Register Low
+CAN_MSGCFGL29_DIR	SET	0
+CAN_MSGCFGL29_DLC	SET	0
+CAN_MSGCFGL29_NODE	SET	0
+CAN_MSGCFGL29_RMM	SET	0
+CAN_MSGCFGL29_XTD	SET	0
+
+; Message Object 2 Message Configuration Register Low
+CAN_MSGCFGL2_DIR	SET	0
+CAN_MSGCFGL2_DLC	SET	0
+CAN_MSGCFGL2_NODE	SET	0
+CAN_MSGCFGL2_RMM	SET	0
+CAN_MSGCFGL2_XTD	SET	0
+
+; Message Object 30 Message Configuration Register Low
+CAN_MSGCFGL30_DIR	SET	0
+CAN_MSGCFGL30_DLC	SET	0
+CAN_MSGCFGL30_NODE	SET	0
+CAN_MSGCFGL30_RMM	SET	0
+CAN_MSGCFGL30_XTD	SET	0
+
+; Message Object 31 Message Configuration Register Low
+CAN_MSGCFGL31_DIR	SET	0
+CAN_MSGCFGL31_DLC	SET	0
+CAN_MSGCFGL31_NODE	SET	0
+CAN_MSGCFGL31_RMM	SET	0
+CAN_MSGCFGL31_XTD	SET	0
+
+; Message Object 3 Message Configuration Register Low
+CAN_MSGCFGL3_0	SET	0
+CAN_MSGCFGL3_DIR	SET	0
+CAN_MSGCFGL3_DLC	SET	0
+CAN_MSGCFGL3_NODE	SET	0
+CAN_MSGCFGL3_RMM	SET	0
+CAN_MSGCFGL3_XTD	SET	0
+
+; Message Object 4 Message Configuration Register Low
+CAN_MSGCFGL4_DIR	SET	0
+CAN_MSGCFGL4_DLC	SET	0
+CAN_MSGCFGL4_NODE	SET	0
+CAN_MSGCFGL4_RMM	SET	0
+CAN_MSGCFGL4_XTD	SET	0
+
+; Message Object 5 Message Configuration Register Low
+CAN_MSGCFGL5_DIR	SET	0
+CAN_MSGCFGL5_DLC	SET	0
+CAN_MSGCFGL5_NODE	SET	0
+CAN_MSGCFGL5_RMM	SET	0
+CAN_MSGCFGL5_XTD	SET	0
+
+; Message Object 6 Message Configuration Register Low
+CAN_MSGCFGL6_DIR	SET	0
+CAN_MSGCFGL6_DLC	SET	0
+CAN_MSGCFGL6_NODE	SET	0
+CAN_MSGCFGL6_RMM	SET	0
+CAN_MSGCFGL6_XTD	SET	0
+
+; Message Object 7 Message Configuration Register Low
+CAN_MSGCFGL7_DIR	SET	0
+CAN_MSGCFGL7_DLC	SET	0
+CAN_MSGCFGL7_NODE	SET	0
+CAN_MSGCFGL7_RMM	SET	0
+CAN_MSGCFGL7_XTD	SET	0
+
+; Message Object 8 Message Configuration Register Low
+CAN_MSGCFGL8_DIR	SET	0
+CAN_MSGCFGL8_DLC	SET	0
+CAN_MSGCFGL8_NODE	SET	0
+CAN_MSGCFGL8_RMM	SET	0
+CAN_MSGCFGL8_XTD	SET	0
+
+; Message Object 9 Message Configuration Register Low
+CAN_MSGCFGL9_DIR	SET	0
+CAN_MSGCFGL9_DLC	SET	0
+CAN_MSGCFGL9_NODE	SET	0
+CAN_MSGCFGL9_RMM	SET	0
+CAN_MSGCFGL9_XTD	SET	0
+
+; Message Object 0 Message Control Register High
+CAN_MSGCTRH0_CFCVAL	SET	0
+
+; Message Object 10 Message Control Register High
+CAN_MSGCTRH10_CFCVAL	SET	0
+
+; Message Object 11 Message Control Register High
+CAN_MSGCTRH11_CFCVAL	SET	0
+
+; Message Object 12 Message Control Register High
+CAN_MSGCTRH12_CFCVAL	SET	0
+
+; Message Object 13 Message Control Register High
+CAN_MSGCTRH13_CFCVAL	SET	0
+
+; Message Object 14 Message Control Register High
+CAN_MSGCTRH14_CFCVAL	SET	0
+
+; Message Object 15 Message Control Register High
+CAN_MSGCTRH15_CFCVAL	SET	0
+
+; Message Object 16 Message Control Register High
+CAN_MSGCTRH16_CFCVAL	SET	0
+
+; Message Object 17 Message Control Register High
+CAN_MSGCTRH17_CFCVAL	SET	0
+
+; Message Object 18 Message Control Register High
+CAN_MSGCTRH18_CFCVAL	SET	0
+
+; Message Object 19 Message Control Register High
+CAN_MSGCTRH19_CFCVAL	SET	0
+
+; Message Object 1 Message Control Register High
+CAN_MSGCTRH1_CFCVAL	SET	0
+
+; Message Object 20 Message Control Register High
+CAN_MSGCTRH20_CFCVAL	SET	0
+
+; Message Object 21 Message Control Register High
+CAN_MSGCTRH21_CFCVAL	SET	0
+
+; Message Object 22 Message Control Register High
+CAN_MSGCTRH22_CFCVAL	SET	0
+
+; Message Object 23 Message Control Register High
+CAN_MSGCTRH23_CFCVAL	SET	0
+
+; Message Object 24 Message Control Register High
+CAN_MSGCTRH24_CFCVAL	SET	0
+
+; Message Object 25 Message Control Register High
+CAN_MSGCTRH25_CFCVAL	SET	0
+
+; Message Object 26 Message Control Register High
+CAN_MSGCTRH26_CFCVAL	SET	0
+
+; Message Object 27 Message Control Register High
+CAN_MSGCTRH27_CFCVAL	SET	0
+
+; Message Object 28 Message Control Register High
+CAN_MSGCTRH28_CFCVAL	SET	0
+
+; Message Object 29 Message Control Register High
+CAN_MSGCTRH29_CFCVAL	SET	0
+
+; Message Object 2 Message Control Register High
+CAN_MSGCTRH2_CFCVAL	SET	0
+
+; Message Object 30 Message Control Register High
+CAN_MSGCTRH30_CFCVAL	SET	0
+
+; Message Object 31 Message Control Register High
+CAN_MSGCTRH31_CFCVAL	SET	0
+
+; Message Object 3 Message Control Register High
+CAN_MSGCTRH3_CFCVAL	SET	0
+
+; Message Object 4 Message Control Register High
+CAN_MSGCTRH4_CFCVAL	SET	0
+
+; Message Object 5 Message Control Register High
+CAN_MSGCTRH5_CFCVAL	SET	0
+
+; Message Object 6 Message Control Register High
+CAN_MSGCTRH6_CFCVAL	SET	0
+
+; Message Object 7 Message Control Register High
+CAN_MSGCTRH7_CFCVAL	SET	0
+
+; Message Object 8 Message Control Register High
+CAN_MSGCTRH8_CFCVAL	SET	0
+
+; Message Object 9 Message Control Register High
+CAN_MSGCTRH9_CFCVAL	SET	0
+
+; Message Object 0 Message Control Register Low
+CAN_MSGCTRL0_INTPND	SET	1
+CAN_MSGCTRL0_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL0_MSGVAL	SET	1
+CAN_MSGCTRL0_NEWDAT	SET	1
+CAN_MSGCTRL0_RMTPND	SET	1
+CAN_MSGCTRL0_RXIE	SET	1
+CAN_MSGCTRL0_TXIE	SET	1
+CAN_MSGCTRL0_TXRQ	SET	1
+
+; Message Object 10 Message Control Register Low
+CAN_MSGCTRL10_INTPND	SET	1
+CAN_MSGCTRL10_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL10_MSGVAL	SET	1
+CAN_MSGCTRL10_NEWDAT	SET	1
+CAN_MSGCTRL10_RMTPND	SET	1
+CAN_MSGCTRL10_RXIE	SET	1
+CAN_MSGCTRL10_TXIE	SET	1
+CAN_MSGCTRL10_TXRQ	SET	1
+
+; Message Object 11 Message Control Register Low
+CAN_MSGCTRL11_INTPND	SET	1
+CAN_MSGCTRL11_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL11_MSGVAL	SET	1
+CAN_MSGCTRL11_NEWDAT	SET	1
+CAN_MSGCTRL11_RMTPND	SET	1
+CAN_MSGCTRL11_RXIE	SET	1
+CAN_MSGCTRL11_TXIE	SET	1
+CAN_MSGCTRL11_TXRQ	SET	1
+
+; Message Object 12 Message Control Register Low
+CAN_MSGCTRL12_INTPND	SET	1
+CAN_MSGCTRL12_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL12_MSGVAL	SET	1
+CAN_MSGCTRL12_NEWDAT	SET	1
+CAN_MSGCTRL12_RMTPND	SET	1
+CAN_MSGCTRL12_RXIE	SET	1
+CAN_MSGCTRL12_TXIE	SET	1
+CAN_MSGCTRL12_TXRQ	SET	1
+
+; Message Object 13 Message Control Register Low
+CAN_MSGCTRL13_INTPND	SET	1
+CAN_MSGCTRL13_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL13_MSGVAL	SET	1
+CAN_MSGCTRL13_NEWDAT	SET	1
+CAN_MSGCTRL13_RMTPND	SET	1
+CAN_MSGCTRL13_RXIE	SET	1
+CAN_MSGCTRL13_TXIE	SET	1
+CAN_MSGCTRL13_TXRQ	SET	1
+
+; Message Object 14 Message Control Register Low
+CAN_MSGCTRL14_INTPND	SET	1
+CAN_MSGCTRL14_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL14_MSGVAL	SET	1
+CAN_MSGCTRL14_NEWDAT	SET	1
+CAN_MSGCTRL14_RMTPND	SET	1
+CAN_MSGCTRL14_RXIE	SET	1
+CAN_MSGCTRL14_TXIE	SET	1
+CAN_MSGCTRL14_TXRQ	SET	1
+
+; Message Object 15 Message Control Register Low
+CAN_MSGCTRL15_INTPND	SET	1
+CAN_MSGCTRL15_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL15_MSGVAL	SET	1
+CAN_MSGCTRL15_NEWDAT	SET	1
+CAN_MSGCTRL15_RMTPND	SET	1
+CAN_MSGCTRL15_RXIE	SET	1
+CAN_MSGCTRL15_TXIE	SET	1
+CAN_MSGCTRL15_TXRQ	SET	1
+
+; Message Object 16 Message Control Register Low
+CAN_MSGCTRL16_INTPND	SET	1
+CAN_MSGCTRL16_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL16_MSGVAL	SET	1
+CAN_MSGCTRL16_NEWDAT	SET	1
+CAN_MSGCTRL16_RMTPND	SET	1
+CAN_MSGCTRL16_RXIE	SET	1
+CAN_MSGCTRL16_TXIE	SET	1
+CAN_MSGCTRL16_TXRQ	SET	1
+
+; Message Object 17 Message Control Register Low
+CAN_MSGCTRL17_INTPND	SET	1
+CAN_MSGCTRL17_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL17_MSGVAL	SET	1
+CAN_MSGCTRL17_NEWDAT	SET	1
+CAN_MSGCTRL17_RMTPND	SET	1
+CAN_MSGCTRL17_RXIE	SET	1
+CAN_MSGCTRL17_TXIE	SET	1
+CAN_MSGCTRL17_TXRQ	SET	1
+
+; Message Object 18 Message Control Register Low
+CAN_MSGCTRL18_INTPND	SET	1
+CAN_MSGCTRL18_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL18_MSGVAL	SET	1
+CAN_MSGCTRL18_NEWDAT	SET	1
+CAN_MSGCTRL18_RMTPND	SET	1
+CAN_MSGCTRL18_RXIE	SET	1
+CAN_MSGCTRL18_TXIE	SET	1
+CAN_MSGCTRL18_TXRQ	SET	1
+
+; Message Object 19 Message Control Register Low
+CAN_MSGCTRL19_INTPND	SET	1
+CAN_MSGCTRL19_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL19_MSGVAL	SET	1
+CAN_MSGCTRL19_NEWDAT	SET	1
+CAN_MSGCTRL19_RMTPND	SET	1
+CAN_MSGCTRL19_RXIE	SET	1
+CAN_MSGCTRL19_TXIE	SET	1
+CAN_MSGCTRL19_TXRQ	SET	1
+
+; Message Object 1 Message Control Register Low
+CAN_MSGCTRL1_INTPND	SET	1
+CAN_MSGCTRL1_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL1_MSGVAL	SET	1
+CAN_MSGCTRL1_NEWDAT	SET	1
+CAN_MSGCTRL1_RMTPND	SET	1
+CAN_MSGCTRL1_RXIE	SET	1
+CAN_MSGCTRL1_TXIE	SET	1
+CAN_MSGCTRL1_TXRQ	SET	1
+
+; Message Object 20 Message Control Register Low
+CAN_MSGCTRL20_INTPND	SET	1
+CAN_MSGCTRL20_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL20_MSGVAL	SET	1
+CAN_MSGCTRL20_NEWDAT	SET	1
+CAN_MSGCTRL20_RMTPND	SET	1
+CAN_MSGCTRL20_RXIE	SET	1
+CAN_MSGCTRL20_TXIE	SET	1
+CAN_MSGCTRL20_TXRQ	SET	1
+
+; Message Object 21 Message Control Register Low
+CAN_MSGCTRL21_INTPND	SET	1
+CAN_MSGCTRL21_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL21_MSGVAL	SET	1
+CAN_MSGCTRL21_NEWDAT	SET	1
+CAN_MSGCTRL21_RMTPND	SET	1
+CAN_MSGCTRL21_RXIE	SET	1
+CAN_MSGCTRL21_TXIE	SET	1
+CAN_MSGCTRL21_TXRQ	SET	1
+
+; Message Object 22 Message Control Register Low
+CAN_MSGCTRL22_INTPND	SET	1
+CAN_MSGCTRL22_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL22_MSGVAL	SET	1
+CAN_MSGCTRL22_NEWDAT	SET	1
+CAN_MSGCTRL22_RMTPND	SET	1
+CAN_MSGCTRL22_RXIE	SET	1
+CAN_MSGCTRL22_TXIE	SET	1
+CAN_MSGCTRL22_TXRQ	SET	1
+
+; Message Object 23 Message Control Register Low
+CAN_MSGCTRL23_INTPND	SET	1
+CAN_MSGCTRL23_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL23_MSGVAL	SET	1
+CAN_MSGCTRL23_NEWDAT	SET	1
+CAN_MSGCTRL23_RMTPND	SET	1
+CAN_MSGCTRL23_RXIE	SET	1
+CAN_MSGCTRL23_TXIE	SET	1
+CAN_MSGCTRL23_TXRQ	SET	1
+
+; Message Object 24 Message Control Register Low
+CAN_MSGCTRL24_INTPND	SET	1
+CAN_MSGCTRL24_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL24_MSGVAL	SET	1
+CAN_MSGCTRL24_NEWDAT	SET	1
+CAN_MSGCTRL24_RMTPND	SET	1
+CAN_MSGCTRL24_RXIE	SET	1
+CAN_MSGCTRL24_TXIE	SET	1
+CAN_MSGCTRL24_TXRQ	SET	1
+
+; Message Object 25 Message Control Register Low
+CAN_MSGCTRL25_INTPND	SET	1
+CAN_MSGCTRL25_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL25_MSGVAL	SET	1
+CAN_MSGCTRL25_NEWDAT	SET	1
+CAN_MSGCTRL25_RMTPND	SET	1
+CAN_MSGCTRL25_RXIE	SET	1
+CAN_MSGCTRL25_TXIE	SET	1
+CAN_MSGCTRL25_TXRQ	SET	1
+
+; Message Object 26 Message Control Register Low
+CAN_MSGCTRL26_INTPND	SET	1
+CAN_MSGCTRL26_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL26_MSGVAL	SET	1
+CAN_MSGCTRL26_NEWDAT	SET	1
+CAN_MSGCTRL26_RMTPND	SET	1
+CAN_MSGCTRL26_RXIE	SET	1
+CAN_MSGCTRL26_TXIE	SET	1
+CAN_MSGCTRL26_TXRQ	SET	1
+
+; Message Object 27 Message Control Register Low
+CAN_MSGCTRL27_INTPND	SET	1
+CAN_MSGCTRL27_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL27_MSGVAL	SET	1
+CAN_MSGCTRL27_NEWDAT	SET	1
+CAN_MSGCTRL27_RMTPND	SET	1
+CAN_MSGCTRL27_RXIE	SET	1
+CAN_MSGCTRL27_TXIE	SET	1
+CAN_MSGCTRL27_TXRQ	SET	1
+
+; Message Object 28 Message Control Register Low
+CAN_MSGCTRL28_INTPND	SET	1
+CAN_MSGCTRL28_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL28_MSGVAL	SET	1
+CAN_MSGCTRL28_NEWDAT	SET	1
+CAN_MSGCTRL28_RMTPND	SET	1
+CAN_MSGCTRL28_RXIE	SET	1
+CAN_MSGCTRL28_TXIE	SET	1
+CAN_MSGCTRL28_TXRQ	SET	1
+
+; Message Object 29 Message Control Register Low
+CAN_MSGCTRL29_INTPND	SET	1
+CAN_MSGCTRL29_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL29_MSGVAL	SET	1
+CAN_MSGCTRL29_NEWDAT	SET	1
+CAN_MSGCTRL29_RMTPND	SET	1
+CAN_MSGCTRL29_RXIE	SET	1
+CAN_MSGCTRL29_TXIE	SET	1
+CAN_MSGCTRL29_TXRQ	SET	1
+
+; Message Object 2 Message Control Register Low
+CAN_MSGCTRL2_INTPND	SET	1
+CAN_MSGCTRL2_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL2_MSGVAL	SET	1
+CAN_MSGCTRL2_NEWDAT	SET	1
+CAN_MSGCTRL2_RMTPND	SET	1
+CAN_MSGCTRL2_RXIE	SET	1
+CAN_MSGCTRL2_TXIE	SET	1
+CAN_MSGCTRL2_TXRQ	SET	1
+
+; Message Object 30 Message Control Register Low
+CAN_MSGCTRL30_INTPND	SET	1
+CAN_MSGCTRL30_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL30_MSGVAL	SET	1
+CAN_MSGCTRL30_NEWDAT	SET	1
+CAN_MSGCTRL30_RMTPND	SET	1
+CAN_MSGCTRL30_RXIE	SET	1
+CAN_MSGCTRL30_TXIE	SET	1
+CAN_MSGCTRL30_TXRQ	SET	1
+
+; Message Object 31 Message Control Register Low
+CAN_MSGCTRL31_INTPND	SET	1
+CAN_MSGCTRL31_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL31_MSGVAL	SET	1
+CAN_MSGCTRL31_NEWDAT	SET	1
+CAN_MSGCTRL31_RMTPND	SET	1
+CAN_MSGCTRL31_RXIE	SET	1
+CAN_MSGCTRL31_TXIE	SET	1
+CAN_MSGCTRL31_TXRQ	SET	1
+
+; Message Object 3 Message Control Register Low
+CAN_MSGCTRL3_INTPND	SET	1
+CAN_MSGCTRL3_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL3_MSGVAL	SET	1
+CAN_MSGCTRL3_NEWDAT	SET	1
+CAN_MSGCTRL3_RMTPND	SET	1
+CAN_MSGCTRL3_RXIE	SET	1
+CAN_MSGCTRL3_TXIE	SET	1
+CAN_MSGCTRL3_TXRQ	SET	1
+
+; Message Object 4 Message Control Register Low
+CAN_MSGCTRL4_INTPND	SET	1
+CAN_MSGCTRL4_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL4_MSGVAL	SET	1
+CAN_MSGCTRL4_NEWDAT	SET	1
+CAN_MSGCTRL4_RMTPND	SET	1
+CAN_MSGCTRL4_RXIE	SET	1
+CAN_MSGCTRL4_TXIE	SET	1
+CAN_MSGCTRL4_TXRQ	SET	1
+
+; Message Object 5 Message Control Register Low
+CAN_MSGCTRL5_INTPND	SET	1
+CAN_MSGCTRL5_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL5_MSGVAL	SET	1
+CAN_MSGCTRL5_NEWDAT	SET	1
+CAN_MSGCTRL5_RMTPND	SET	1
+CAN_MSGCTRL5_RXIE	SET	1
+CAN_MSGCTRL5_TXIE	SET	1
+CAN_MSGCTRL5_TXRQ	SET	1
+
+; Message Object 6 Message Control Register Low
+CAN_MSGCTRL6_INTPND	SET	1
+CAN_MSGCTRL6_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL6_MSGVAL	SET	1
+CAN_MSGCTRL6_NEWDAT	SET	1
+CAN_MSGCTRL6_RMTPND	SET	1
+CAN_MSGCTRL6_RXIE	SET	1
+CAN_MSGCTRL6_TXIE	SET	1
+CAN_MSGCTRL6_TXRQ	SET	1
+
+; Message Object 7 Message Control Register Low
+CAN_MSGCTRL7_INTPND	SET	1
+CAN_MSGCTRL7_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL7_MSGVAL	SET	1
+CAN_MSGCTRL7_NEWDAT	SET	1
+CAN_MSGCTRL7_RMTPND	SET	1
+CAN_MSGCTRL7_RXIE	SET	1
+CAN_MSGCTRL7_TXIE	SET	1
+CAN_MSGCTRL7_TXRQ	SET	1
+
+; Message Object 8 Message Control Register Low
+CAN_MSGCTRL8_INTPND	SET	1
+CAN_MSGCTRL8_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL8_MSGVAL	SET	1
+CAN_MSGCTRL8_NEWDAT	SET	1
+CAN_MSGCTRL8_RMTPND	SET	1
+CAN_MSGCTRL8_RXIE	SET	1
+CAN_MSGCTRL8_TXIE	SET	1
+CAN_MSGCTRL8_TXRQ	SET	1
+
+; Message Object 9 Message Control Register Low
+CAN_MSGCTRL9_INTPND	SET	1
+CAN_MSGCTRL9_MSGLSTCPUUPD	SET	1
+CAN_MSGCTRL9_MSGVAL	SET	1
+CAN_MSGCTRL9_NEWDAT	SET	1
+CAN_MSGCTRL9_RMTPND	SET	1
+CAN_MSGCTRL9_RXIE	SET	1
+CAN_MSGCTRL9_TXIE	SET	1
+CAN_MSGCTRL9_TXRQ	SET	1
+
+; Message Object 0 Data Register 0 High
+CAN_MSGDRH00_DATA2	SET	0
+CAN_MSGDRH00_DATA3	SET	0
+
+; Message Object 0 Data Register 4 High
+CAN_MSGDRH04_DATA6	SET	0
+CAN_MSGDRH04_DATA7	SET	0
+
+; Message Object 10 Data Register 0 High
+CAN_MSGDRH100_DATA2	SET	0
+CAN_MSGDRH100_DATA3	SET	0
+
+; Message Object 10 Data Register 4 High
+CAN_MSGDRH104_DATA6	SET	0
+CAN_MSGDRH104_DATA7	SET	0
+
+; Message Object 1 Data Register 0 High
+CAN_MSGDRH10_DATA2	SET	0
+CAN_MSGDRH10_DATA3	SET	0
+
+; Message Object 11 Data Register 0 High
+CAN_MSGDRH110_DATA2	SET	0
+CAN_MSGDRH110_DATA3	SET	0
+
+; Message Object 11 Data Register 4 High
+CAN_MSGDRH114_DATA6	SET	0
+CAN_MSGDRH114_DATA7	SET	0
+
+; Message Object 12 Data Register 0 High
+CAN_MSGDRH120_DATA2	SET	0
+CAN_MSGDRH120_DATA3	SET	0
+
+; Message Object 12 Data Register 4 High
+CAN_MSGDRH124_DATA6	SET	0
+CAN_MSGDRH124_DATA7	SET	0
+
+; Message Object 13 Data Register 0 High
+CAN_MSGDRH130_DATA2	SET	0
+CAN_MSGDRH130_DATA3	SET	0
+
+; Message Object 13 Data Register 4 High
+CAN_MSGDRH134_DATA6	SET	0
+CAN_MSGDRH134_DATA7	SET	0
+
+; Message Object 14 Data Register 0 High
+CAN_MSGDRH140_DATA2	SET	0
+CAN_MSGDRH140_DATA3	SET	0
+
+; Message Object 14 Data Register 4 High
+CAN_MSGDRH144_DATA6	SET	0
+CAN_MSGDRH144_DATA7	SET	0
+
+; Message Object 1 Data Register 4 High
+CAN_MSGDRH14_DATA6	SET	0
+CAN_MSGDRH14_DATA7	SET	0
+
+; Message Object 15 Data Register 0 High
+CAN_MSGDRH150_DATA2	SET	0
+CAN_MSGDRH150_DATA3	SET	0
+
+; Message Object 15 Data Register 4 High
+CAN_MSGDRH154_DATA6	SET	0
+CAN_MSGDRH154_DATA7	SET	0
+
+; Message Object 16 Data Register 0 High
+CAN_MSGDRH160_DATA2	SET	0
+CAN_MSGDRH160_DATA3	SET	0
+
+; Message Object 16 Data Register 4 High
+CAN_MSGDRH164_DATA6	SET	0
+CAN_MSGDRH164_DATA7	SET	0
+
+; Message Object 17 Data Register 0 High
+CAN_MSGDRH170_DATA2	SET	0
+CAN_MSGDRH170_DATA3	SET	0
+
+; Message Object 17 Data Register 4 High
+CAN_MSGDRH174_DATA6	SET	0
+CAN_MSGDRH174_DATA7	SET	0
+
+; Message Object 18 Data Register 0 High
+CAN_MSGDRH180_DATA2	SET	0
+CAN_MSGDRH180_DATA3	SET	0
+
+; Message Object 18 Data Register 4 High
+CAN_MSGDRH184_DATA6	SET	0
+CAN_MSGDRH184_DATA7	SET	0
+
+; Message Object 19 Data Register 0 High
+CAN_MSGDRH190_DATA2	SET	0
+CAN_MSGDRH190_DATA3	SET	0
+
+; Message Object 19 Data Register 4 High
+CAN_MSGDRH194_DATA6	SET	0
+CAN_MSGDRH194_DATA7	SET	0
+
+; Message Object 20 Data Register 0 High
+CAN_MSGDRH200_DATA2	SET	0
+CAN_MSGDRH200_DATA3	SET	0
+
+; Message Object 20 Data Register 4 High
+CAN_MSGDRH204_DATA6	SET	0
+CAN_MSGDRH204_DATA7	SET	0
+
+; Message Object 2 Data Register 0 High
+CAN_MSGDRH20_DATA2	SET	0
+CAN_MSGDRH20_DATA3	SET	0
+
+; Message Object 21 Data Register 0 High
+CAN_MSGDRH210_DATA2	SET	0
+CAN_MSGDRH210_DATA3	SET	0
+
+; Message Object 21 Data Register 4 High
+CAN_MSGDRH214_DATA6	SET	0
+CAN_MSGDRH214_DATA7	SET	0
+
+; Message Object 22 Data Register 0 High
+CAN_MSGDRH220_DATA2	SET	0
+CAN_MSGDRH220_DATA3	SET	0
+
+; Message Object 22 Data Register 4 High
+CAN_MSGDRH224_DATA6	SET	0
+CAN_MSGDRH224_DATA7	SET	0
+
+; Message Object 23 Data Register 0 High
+CAN_MSGDRH230_DATA2	SET	0
+CAN_MSGDRH230_DATA3	SET	0
+
+; Message Object 23 Data Register 4 High
+CAN_MSGDRH234_DATA6	SET	0
+CAN_MSGDRH234_DATA7	SET	0
+
+; Message Object 24 Data Register 0 High
+CAN_MSGDRH240_DATA2	SET	0
+CAN_MSGDRH240_DATA3	SET	0
+
+; Message Object 24 Data Register 4 High
+CAN_MSGDRH244_DATA6	SET	0
+CAN_MSGDRH244_DATA7	SET	0
+
+; Message Object 2 Data Register 4 High
+CAN_MSGDRH24_DATA6	SET	0
+CAN_MSGDRH24_DATA7	SET	0
+
+; Message Object 25 Data Register 0 High
+CAN_MSGDRH250_DATA2	SET	0
+CAN_MSGDRH250_DATA3	SET	0
+
+; Message Object 25 Data Register 4 High
+CAN_MSGDRH254_DATA6	SET	0
+CAN_MSGDRH254_DATA7	SET	0
+
+; Message Object 26 Data Register 0 High
+CAN_MSGDRH260_DATA2	SET	0
+CAN_MSGDRH260_DATA3	SET	0
+
+; Message Object 26 Data Register 4 High
+CAN_MSGDRH264_DATA6	SET	0
+CAN_MSGDRH264_DATA7	SET	0
+
+; Message Object 27 Data Register 0 High
+CAN_MSGDRH270_DATA2	SET	0
+CAN_MSGDRH270_DATA3	SET	0
+
+; Message Object 27 Data Register 4 High
+CAN_MSGDRH274_DATA6	SET	0
+CAN_MSGDRH274_DATA7	SET	0
+
+; Message Object 28 Data Register 0 High
+CAN_MSGDRH280_DATA2	SET	0
+CAN_MSGDRH280_DATA3	SET	0
+
+; Message Object 28 Data Register 4 High
+CAN_MSGDRH284_DATA6	SET	0
+CAN_MSGDRH284_DATA7	SET	0
+
+; Message Object 29 Data Register 0 High
+CAN_MSGDRH290_DATA2	SET	0
+CAN_MSGDRH290_DATA3	SET	0
+
+; Message Object 29 Data Register 4 High
+CAN_MSGDRH294_DATA6	SET	0
+CAN_MSGDRH294_DATA7	SET	0
+
+; Message Object 30 Data Register 0 High
+CAN_MSGDRH300_DATA2	SET	0
+CAN_MSGDRH300_DATA3	SET	0
+
+; Message Object 30 Data Register 4 High
+CAN_MSGDRH304_DATA6	SET	0
+CAN_MSGDRH304_DATA7	SET	0
+
+; Message Object 3 Data Register 0 High
+CAN_MSGDRH30_DATA2	SET	0
+CAN_MSGDRH30_DATA3	SET	0
+
+; Message Object 31 Data Register 0 High
+CAN_MSGDRH310_DATA2	SET	0
+CAN_MSGDRH310_DATA3	SET	0
+
+; Message Object 31 Data Register 4 High
+CAN_MSGDRH314_DATA6	SET	0
+CAN_MSGDRH314_DATA7	SET	0
+
+; Message Object 3 Data Register 4 High
+CAN_MSGDRH34_DATA6	SET	0
+CAN_MSGDRH34_DATA7	SET	0
+
+; Message Object 4 Data Register 0 High
+CAN_MSGDRH40_DATA2	SET	0
+CAN_MSGDRH40_DATA3	SET	0
+
+; Message Object 4 Data Register 4 High
+CAN_MSGDRH44_DATA6	SET	0
+CAN_MSGDRH44_DATA7	SET	0
+
+; Message Object 5 Data Register 0 High
+CAN_MSGDRH50_DATA2	SET	0
+CAN_MSGDRH50_DATA3	SET	0
+
+; Message Object 5 Data Register 4 High
+CAN_MSGDRH54_DATA6	SET	0
+CAN_MSGDRH54_DATA7	SET	0
+
+; Message Object 6 Data Register 0 High
+CAN_MSGDRH60_DATA2	SET	0
+CAN_MSGDRH60_DATA3	SET	0
+
+; Message Object 6 Data Register 4 High
+CAN_MSGDRH64_DATA6	SET	0
+CAN_MSGDRH64_DATA7	SET	0
+
+; Message Object 7 Data Register 0 High
+CAN_MSGDRH70_DATA2	SET	0
+CAN_MSGDRH70_DATA3	SET	0
+
+; Message Object 7 Data Register 4 High
+CAN_MSGDRH74_DATA6	SET	0
+CAN_MSGDRH74_DATA7	SET	0
+
+; Message Object 8 Data Register 0 High
+CAN_MSGDRH80_DATA2	SET	0
+CAN_MSGDRH80_DATA3	SET	0
+
+; Message Object 8 Data Register 4 High
+CAN_MSGDRH84_DATA6	SET	0
+CAN_MSGDRH84_DATA7	SET	0
+
+; Message Object 9 Data Register 0 High
+CAN_MSGDRH90_DATA2	SET	0
+CAN_MSGDRH90_DATA3	SET	0
+
+; Message Object 9 Data Register 4 High
+CAN_MSGDRH94_DATA6	SET	0
+CAN_MSGDRH94_DATA7	SET	0
+
+; Message Object 0 Data Register 0 Low
+CAN_MSGDRL00_DATA0	SET	0
+CAN_MSGDRL00_DATA1	SET	0
+
+; Message Object 0 Data Register 4 Low
+CAN_MSGDRL04_DATA4	SET	0
+CAN_MSGDRL04_DATA5	SET	0
+
+; Message Object 10 Data Register 0 Low
+CAN_MSGDRL100_DATA0	SET	0
+CAN_MSGDRL100_DATA1	SET	0
+
+; Message Object 10 Data Register 4 Low
+CAN_MSGDRL104_DATA4	SET	0
+CAN_MSGDRL104_DATA5	SET	0
+
+; Message Object 1 Data Register 0 Low
+CAN_MSGDRL10_DATA0	SET	0
+CAN_MSGDRL10_DATA1	SET	0
+
+; Message Object 11 Data Register 0 Low
+CAN_MSGDRL110_DATA0	SET	0
+CAN_MSGDRL110_DATA1	SET	0
+
+; Message Object 11 Data Register 4 Low
+CAN_MSGDRL114_DATA4	SET	0
+CAN_MSGDRL114_DATA5	SET	0
+
+; Message Object 12 Data Register 0 Low
+CAN_MSGDRL120_DATA0	SET	0
+CAN_MSGDRL120_DATA1	SET	0
+
+; Message Object 12 Data Register 4 Low
+CAN_MSGDRL124_DATA4	SET	0
+CAN_MSGDRL124_DATA5	SET	0
+
+; Message Object 13 Data Register 0 Low
+CAN_MSGDRL130_DATA0	SET	0
+CAN_MSGDRL130_DATA1	SET	0
+
+; Message Object 13 Data Register 4 Low
+CAN_MSGDRL134_DATA4	SET	0
+CAN_MSGDRL134_DATA5	SET	0
+
+; Message Object 14 Data Register 0 Low
+CAN_MSGDRL140_DATA0	SET	0
+CAN_MSGDRL140_DATA1	SET	0
+
+; Message Object 14 Data Register 4 Low
+CAN_MSGDRL144_DATA4	SET	0
+CAN_MSGDRL144_DATA5	SET	0
+
+; Message Object 1 Data Register 4 Low
+CAN_MSGDRL14_DATA4	SET	0
+CAN_MSGDRL14_DATA5	SET	0
+
+; Message Object 15 Data Register 0 Low
+CAN_MSGDRL150_DATA0	SET	0
+CAN_MSGDRL150_DATA1	SET	0
+
+; Message Object 15 Data Register 4 Low
+CAN_MSGDRL154_DATA4	SET	0
+CAN_MSGDRL154_DATA5	SET	0
+
+; Message Object 16 Data Register 0 Low
+CAN_MSGDRL160_DATA0	SET	0
+CAN_MSGDRL160_DATA1	SET	0
+
+; Message Object 16 Data Register 4 Low
+CAN_MSGDRL164_DATA4	SET	0
+CAN_MSGDRL164_DATA5	SET	0
+
+; Message Object 17 Data Register 0 Low
+CAN_MSGDRL170_DATA0	SET	0
+CAN_MSGDRL170_DATA1	SET	0
+
+; Message Object 17 Data Register 4 Low
+CAN_MSGDRL174_DATA4	SET	0
+CAN_MSGDRL174_DATA5	SET	0
+
+; Message Object 18 Data Register 0 Low
+CAN_MSGDRL180_DATA0	SET	0
+CAN_MSGDRL180_DATA1	SET	0
+
+; Message Object 18 Data Register 4 Low
+CAN_MSGDRL184_DATA4	SET	0
+CAN_MSGDRL184_DATA5	SET	0
+
+; Message Object 19 Data Register 0 Low
+CAN_MSGDRL190_DATA0	SET	0
+CAN_MSGDRL190_DATA1	SET	0
+
+; Message Object 19 Data Register 4 Low
+CAN_MSGDRL194_DATA4	SET	0
+CAN_MSGDRL194_DATA5	SET	0
+
+; Message Object 20 Data Register 0 Low
+CAN_MSGDRL200_DATA0	SET	0
+CAN_MSGDRL200_DATA1	SET	0
+
+; Message Object 20 Data Register 4 Low
+CAN_MSGDRL204_DATA4	SET	0
+CAN_MSGDRL204_DATA5	SET	0
+
+; Message Object 2 Data Register 0 Low
+CAN_MSGDRL20_DATA0	SET	0
+CAN_MSGDRL20_DATA1	SET	0
+
+; Message Object 21 Data Register 0 Low
+CAN_MSGDRL210_DATA0	SET	0
+CAN_MSGDRL210_DATA1	SET	0
+
+; Message Object 21 Data Register 4 Low
+CAN_MSGDRL214_DATA4	SET	0
+CAN_MSGDRL214_DATA5	SET	0
+
+; Message Object 22 Data Register 0 Low
+CAN_MSGDRL220_DATA0	SET	0
+CAN_MSGDRL220_DATA1	SET	0
+
+; Message Object 22 Data Register 4 Low
+CAN_MSGDRL224_DATA4	SET	0
+CAN_MSGDRL224_DATA5	SET	0
+
+; Message Object 23 Data Register 0 Low
+CAN_MSGDRL230_DATA0	SET	0
+CAN_MSGDRL230_DATA1	SET	0
+
+; Message Object 23 Data Register 4 Low
+CAN_MSGDRL234_DATA4	SET	0
+CAN_MSGDRL234_DATA5	SET	0
+
+; Message Object 24 Data Register 0 Low
+CAN_MSGDRL240_DATA0	SET	0
+CAN_MSGDRL240_DATA1	SET	0
+
+; Message Object 24 Data Register 4 Low
+CAN_MSGDRL244_DATA4	SET	0
+CAN_MSGDRL244_DATA5	SET	0
+
+; Message Object 2 Data Register 4 Low
+CAN_MSGDRL24_DATA4	SET	0
+CAN_MSGDRL24_DATA5	SET	0
+
+; Message Object 25 Data Register 0 Low
+CAN_MSGDRL250_DATA0	SET	0
+CAN_MSGDRL250_DATA1	SET	0
+
+; Message Object 25 Data Register 4 Low
+CAN_MSGDRL254_DATA4	SET	0
+CAN_MSGDRL254_DATA5	SET	0
+
+; Message Object 26 Data Register 0 Low
+CAN_MSGDRL260_DATA0	SET	0
+CAN_MSGDRL260_DATA1	SET	0
+
+; Message Object 26 Data Register 4 Low
+CAN_MSGDRL264_DATA4	SET	0
+CAN_MSGDRL264_DATA5	SET	0
+
+; Message Object 27 Data Register 0 Low
+CAN_MSGDRL270_DATA0	SET	0
+CAN_MSGDRL270_DATA1	SET	0
+
+; Message Object 27 Data Register 4 Low
+CAN_MSGDRL274_DATA4	SET	0
+CAN_MSGDRL274_DATA5	SET	0
+
+; Message Object 28 Data Register 0 Low
+CAN_MSGDRL280_DATA0	SET	0
+CAN_MSGDRL280_DATA1	SET	0
+
+; Message Object 28 Data Register 4 Low
+CAN_MSGDRL284_DATA4	SET	0
+CAN_MSGDRL284_DATA5	SET	0
+
+; Message Object 29 Data Register 0 Low
+CAN_MSGDRL290_DATA0	SET	0
+CAN_MSGDRL290_DATA1	SET	0
+
+; Message Object 29 Data Register 4 Low
+CAN_MSGDRL294_DATA4	SET	0
+CAN_MSGDRL294_DATA5	SET	0
+
+; Message Object 30 Data Register 0 Low
+CAN_MSGDRL300_DATA0	SET	0
+CAN_MSGDRL300_DATA1	SET	0
+
+; Message Object 30 Data Register 4 Low
+CAN_MSGDRL304_DATA4	SET	0
+CAN_MSGDRL304_DATA5	SET	0
+
+; Message Object 3 Data Register 0 Low
+CAN_MSGDRL30_DATA0	SET	0
+CAN_MSGDRL30_DATA1	SET	0
+
+; Message Object 31 Data Register 0 Low
+CAN_MSGDRL310_DATA0	SET	0
+CAN_MSGDRL310_DATA1	SET	0
+
+; Message Object 31 Data Register 4 Low
+CAN_MSGDRL314_DATA4	SET	0
+CAN_MSGDRL314_DATA5	SET	0
+
+; Message Object 3 Data Register 4 Low
+CAN_MSGDRL34_DATA4	SET	0
+CAN_MSGDRL34_DATA5	SET	0
+
+; Message Object 4 Data Register 0 Low
+CAN_MSGDRL40_DATA0	SET	0
+CAN_MSGDRL40_DATA1	SET	0
+
+; Message Object 4 Data Register 4 Low
+CAN_MSGDRL44_DATA4	SET	0
+CAN_MSGDRL44_DATA5	SET	0
+
+; Message Object 5 Data Register 0 Low
+CAN_MSGDRL50_DATA0	SET	0
+CAN_MSGDRL50_DATA1	SET	0
+
+; Message Object 5 Data Register 4 Low
+CAN_MSGDRL54_DATA4	SET	0
+CAN_MSGDRL54_DATA5	SET	0
+
+; Message Object 6 Data Register 0 Low
+CAN_MSGDRL60_DATA0	SET	0
+CAN_MSGDRL60_DATA1	SET	0
+
+; Message Object 6 Data Register 4 Low
+CAN_MSGDRL64_DATA4	SET	0
+CAN_MSGDRL64_DATA5	SET	0
+
+; Message Object 7 Data Register 0 Low
+CAN_MSGDRL70_DATA0	SET	0
+CAN_MSGDRL70_DATA1	SET	0
+
+; Message Object 7 Data Register 4 Low
+CAN_MSGDRL74_DATA4	SET	0
+CAN_MSGDRL74_DATA5	SET	0
+
+; Message Object 8 Data Register 0 Low
+CAN_MSGDRL80_DATA0	SET	0
+CAN_MSGDRL80_DATA1	SET	0
+
+; Message Object 8 Data Register 4 Low
+CAN_MSGDRL84_DATA4	SET	0
+CAN_MSGDRL84_DATA5	SET	0
+
+; Message Object 9 Data Register 0 Low
+CAN_MSGDRL90_DATA0	SET	0
+CAN_MSGDRL90_DATA1	SET	0
+
+; Message Object 9 Data Register 4 Low
+CAN_MSGDRL94_DATA4	SET	0
+CAN_MSGDRL94_DATA5	SET	0
+
+; Message Object 0 FIFO/Gateway Control Register High
+CAN_MSGFGCRH0_CANPTR	SET	0
+CAN_MSGFGCRH0_MMC	SET	0
+
+; Message Object 10 FIFO/Gateway Control Register High
+CAN_MSGFGCRH10_CANPTR	SET	0
+CAN_MSGFGCRH10_MMC	SET	0
+
+; Message Object 11 FIFO/Gateway Control Register High
+CAN_MSGFGCRH11_CANPTR	SET	0
+CAN_MSGFGCRH11_MMC	SET	0
+
+; Message Object 12 FIFO/Gateway Control Register High
+CAN_MSGFGCRH12_CANPTR	SET	0
+CAN_MSGFGCRH12_MMC	SET	0
+
+; Message Object 13 FIFO/Gateway Control Register High
+CAN_MSGFGCRH13_CANPTR	SET	0
+CAN_MSGFGCRH13_MMC	SET	0
+
+; Message Object 14 FIFO/Gateway Control Register High
+CAN_MSGFGCRH14_CANPTR	SET	0
+CAN_MSGFGCRH14_MMC	SET	0
+
+; Message Object 15 FIFO/Gateway Control Register High
+CAN_MSGFGCRH15_CANPTR	SET	0
+CAN_MSGFGCRH15_MMC	SET	0
+
+; Message Object 16 FIFO/Gateway Control Register High
+CAN_MSGFGCRH16_CANPTR	SET	0
+CAN_MSGFGCRH16_MMC	SET	0
+
+; Message Object 17 FIFO/Gateway Control Register High
+CAN_MSGFGCRH17_CANPTR	SET	0
+CAN_MSGFGCRH17_MMC	SET	0
+
+; Message Object 18 FIFO/Gateway Control Register High
+CAN_MSGFGCRH18_CANPTR	SET	0
+CAN_MSGFGCRH18_MMC	SET	0
+
+; Message Object 19 FIFO/Gateway Control Register High
+CAN_MSGFGCRH19_CANPTR	SET	0
+CAN_MSGFGCRH19_MMC	SET	0
+
+; Message Object 1 FIFO/Gateway Control Register High
+CAN_MSGFGCRH1_CANPTR	SET	0
+CAN_MSGFGCRH1_MMC	SET	0
+
+; Message Object 20 FIFO/Gateway Control Register High
+CAN_MSGFGCRH20_CANPTR	SET	0
+CAN_MSGFGCRH20_MMC	SET	0
+
+; Message Object 21 FIFO/Gateway Control Register High
+CAN_MSGFGCRH21_CANPTR	SET	0
+CAN_MSGFGCRH21_MMC	SET	0
+
+; Message Object 22 FIFO/Gateway Control Register High
+CAN_MSGFGCRH22_CANPTR	SET	0
+CAN_MSGFGCRH22_MMC	SET	0
+
+; Message Object 23 FIFO/Gateway Control Register High
+CAN_MSGFGCRH23_CANPTR	SET	0
+CAN_MSGFGCRH23_MMC	SET	0
+
+; Message Object 24 FIFO/Gateway Control Register High
+CAN_MSGFGCRH24_CANPTR	SET	0
+CAN_MSGFGCRH24_MMC	SET	0
+
+; Message Object 25 FIFO/Gateway Control Register High
+CAN_MSGFGCRH25_CANPTR	SET	0
+CAN_MSGFGCRH25_MMC	SET	0
+
+; Message Object 26 FIFO/Gateway Control Register High
+CAN_MSGFGCRH26_CANPTR	SET	0
+CAN_MSGFGCRH26_MMC	SET	0
+
+; Message Object 27 FIFO/Gateway Control Register High
+CAN_MSGFGCRH27_CANPTR	SET	0
+CAN_MSGFGCRH27_MMC	SET	0
+
+; Message Object 28 FIFO/Gateway Control Register High
+CAN_MSGFGCRH28_CANPTR	SET	0
+CAN_MSGFGCRH28_MMC	SET	0
+
+; Message Object 29 FIFO/Gateway Control Register High
+CAN_MSGFGCRH29_CANPTR	SET	0
+CAN_MSGFGCRH29_MMC	SET	0
+
+; Message Object 2 FIFO/Gateway Control Register High
+CAN_MSGFGCRH2_CANPTR	SET	0
+CAN_MSGFGCRH2_MMC	SET	0
+
+; Message Object 30 FIFO/Gateway Control Register High
+CAN_MSGFGCRH30_CANPTR	SET	0
+CAN_MSGFGCRH30_MMC	SET	0
+
+; Message Object 31 FIFO/Gateway Control Register High
+CAN_MSGFGCRH31_CANPTR	SET	0
+CAN_MSGFGCRH31_MMC	SET	0
+
+; Message Object 3 FIFO/Gateway Control Register High
+CAN_MSGFGCRH3_CANPTR	SET	0
+CAN_MSGFGCRH3_MMC	SET	0
+
+; Message Object 4 FIFO/Gateway Control Register High
+CAN_MSGFGCRH4_CANPTR	SET	0
+CAN_MSGFGCRH4_MMC	SET	0
+
+; Message Object 5 FIFO/Gateway Control Register High
+CAN_MSGFGCRH5_CANPTR	SET	0
+CAN_MSGFGCRH5_MMC	SET	0
+
+; Message Object 6 FIFO/Gateway Control Register High
+CAN_MSGFGCRH6_CANPTR	SET	0
+CAN_MSGFGCRH6_MMC	SET	0
+
+; Message Object 7 FIFO/Gateway Control Register High
+CAN_MSGFGCRH7_CANPTR	SET	0
+CAN_MSGFGCRH7_MMC	SET	0
+
+; Message Object 8 FIFO/Gateway Control Register High
+CAN_MSGFGCRH8_CANPTR	SET	0
+CAN_MSGFGCRH8_MMC	SET	0
+
+; Message Object 9 FIFO/Gateway Control Register High
+CAN_MSGFGCRH9_CANPTR	SET	0
+CAN_MSGFGCRH9_MMC	SET	0
+
+; Message Object 0 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL0_DLCC	SET	0
+CAN_MSGFGCRL0_FD	SET	0
+CAN_MSGFGCRL0_FSIZE	SET	0
+CAN_MSGFGCRL0_GDFS	SET	0
+CAN_MSGFGCRL0_IDC	SET	0
+CAN_MSGFGCRL0_SDT	SET	0
+CAN_MSGFGCRL0_SRREN	SET	0
+CAN_MSGFGCRL0_STT	SET	0
+
+; Message Object 10 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL10_DLCC	SET	0
+CAN_MSGFGCRL10_FD	SET	0
+CAN_MSGFGCRL10_FSIZE	SET	0
+CAN_MSGFGCRL10_GDFS	SET	0
+CAN_MSGFGCRL10_IDC	SET	0
+CAN_MSGFGCRL10_SDT	SET	0
+CAN_MSGFGCRL10_SRREN	SET	0
+CAN_MSGFGCRL10_STT	SET	0
+
+; Message Object 11 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL11_DLCC	SET	0
+CAN_MSGFGCRL11_FD	SET	0
+CAN_MSGFGCRL11_FSIZE	SET	0
+CAN_MSGFGCRL11_GDFS	SET	0
+CAN_MSGFGCRL11_IDC	SET	0
+CAN_MSGFGCRL11_SDT	SET	0
+CAN_MSGFGCRL11_SRREN	SET	0
+CAN_MSGFGCRL11_STT	SET	0
+
+; Message Object 12 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL12_DLCC	SET	0
+CAN_MSGFGCRL12_FD	SET	0
+CAN_MSGFGCRL12_FSIZE	SET	0
+CAN_MSGFGCRL12_GDFS	SET	0
+CAN_MSGFGCRL12_IDC	SET	0
+CAN_MSGFGCRL12_SDT	SET	0
+CAN_MSGFGCRL12_SRREN	SET	0
+CAN_MSGFGCRL12_STT	SET	0
+
+; Message Object 13 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL13_DLCC	SET	0
+CAN_MSGFGCRL13_FD	SET	0
+CAN_MSGFGCRL13_FSIZE	SET	0
+CAN_MSGFGCRL13_GDFS	SET	0
+CAN_MSGFGCRL13_IDC	SET	0
+CAN_MSGFGCRL13_SDT	SET	0
+CAN_MSGFGCRL13_SRREN	SET	0
+CAN_MSGFGCRL13_STT	SET	0
+
+; Message Object 14 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL14_DLCC	SET	0
+CAN_MSGFGCRL14_FD	SET	0
+CAN_MSGFGCRL14_FSIZE	SET	0
+CAN_MSGFGCRL14_GDFS	SET	0
+CAN_MSGFGCRL14_IDC	SET	0
+CAN_MSGFGCRL14_SDT	SET	0
+CAN_MSGFGCRL14_SRREN	SET	0
+CAN_MSGFGCRL14_STT	SET	0
+
+; Message Object 15 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL15_DLCC	SET	0
+CAN_MSGFGCRL15_FD	SET	0
+CAN_MSGFGCRL15_FSIZE	SET	0
+CAN_MSGFGCRL15_GDFS	SET	0
+CAN_MSGFGCRL15_IDC	SET	0
+CAN_MSGFGCRL15_SDT	SET	0
+CAN_MSGFGCRL15_SRREN	SET	0
+CAN_MSGFGCRL15_STT	SET	0
+
+; Message Object 16 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL16_DLCC	SET	0
+CAN_MSGFGCRL16_FD	SET	0
+CAN_MSGFGCRL16_FSIZE	SET	0
+CAN_MSGFGCRL16_GDFS	SET	0
+CAN_MSGFGCRL16_IDC	SET	0
+CAN_MSGFGCRL16_SDT	SET	0
+CAN_MSGFGCRL16_SRREN	SET	0
+CAN_MSGFGCRL16_STT	SET	0
+
+; Message Object 17 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL17_DLCC	SET	0
+CAN_MSGFGCRL17_FD	SET	0
+CAN_MSGFGCRL17_FSIZE	SET	0
+CAN_MSGFGCRL17_GDFS	SET	0
+CAN_MSGFGCRL17_IDC	SET	0
+CAN_MSGFGCRL17_SDT	SET	0
+CAN_MSGFGCRL17_SRREN	SET	0
+CAN_MSGFGCRL17_STT	SET	0
+
+; Message Object 18 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL18_DLCC	SET	0
+CAN_MSGFGCRL18_FD	SET	0
+CAN_MSGFGCRL18_FSIZE	SET	0
+CAN_MSGFGCRL18_GDFS	SET	0
+CAN_MSGFGCRL18_IDC	SET	0
+CAN_MSGFGCRL18_SDT	SET	0
+CAN_MSGFGCRL18_SRREN	SET	0
+CAN_MSGFGCRL18_STT	SET	0
+
+; Message Object 19 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL19_DLCC	SET	0
+CAN_MSGFGCRL19_FD	SET	0
+CAN_MSGFGCRL19_FSIZE	SET	0
+CAN_MSGFGCRL19_GDFS	SET	0
+CAN_MSGFGCRL19_IDC	SET	0
+CAN_MSGFGCRL19_SDT	SET	0
+CAN_MSGFGCRL19_SRREN	SET	0
+CAN_MSGFGCRL19_STT	SET	0
+
+; Message Object 1 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL1_DLCC	SET	0
+CAN_MSGFGCRL1_FD	SET	0
+CAN_MSGFGCRL1_FSIZE	SET	0
+CAN_MSGFGCRL1_GDFS	SET	0
+CAN_MSGFGCRL1_IDC	SET	0
+CAN_MSGFGCRL1_SDT	SET	0
+CAN_MSGFGCRL1_SRREN	SET	0
+CAN_MSGFGCRL1_STT	SET	0
+
+; Message Object 20 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL20_DLCC	SET	0
+CAN_MSGFGCRL20_FD	SET	0
+CAN_MSGFGCRL20_FSIZE	SET	0
+CAN_MSGFGCRL20_GDFS	SET	0
+CAN_MSGFGCRL20_IDC	SET	0
+CAN_MSGFGCRL20_SDT	SET	0
+CAN_MSGFGCRL20_SRREN	SET	0
+CAN_MSGFGCRL20_STT	SET	0
+
+; Message Object 21 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL21_DLCC	SET	0
+CAN_MSGFGCRL21_FD	SET	0
+CAN_MSGFGCRL21_FSIZE	SET	0
+CAN_MSGFGCRL21_GDFS	SET	0
+CAN_MSGFGCRL21_IDC	SET	0
+CAN_MSGFGCRL21_SDT	SET	0
+CAN_MSGFGCRL21_SRREN	SET	0
+CAN_MSGFGCRL21_STT	SET	0
+
+; Message Object 22 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL22_DLCC	SET	0
+CAN_MSGFGCRL22_FD	SET	0
+CAN_MSGFGCRL22_FSIZE	SET	0
+CAN_MSGFGCRL22_GDFS	SET	0
+CAN_MSGFGCRL22_IDC	SET	0
+CAN_MSGFGCRL22_SDT	SET	0
+CAN_MSGFGCRL22_SRREN	SET	0
+CAN_MSGFGCRL22_STT	SET	0
+
+; Message Object 23 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL23_DLCC	SET	0
+CAN_MSGFGCRL23_FD	SET	0
+CAN_MSGFGCRL23_FSIZE	SET	0
+CAN_MSGFGCRL23_GDFS	SET	0
+CAN_MSGFGCRL23_IDC	SET	0
+CAN_MSGFGCRL23_SDT	SET	0
+CAN_MSGFGCRL23_SRREN	SET	0
+CAN_MSGFGCRL23_STT	SET	0
+
+; Message Object 24 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL24_DLCC	SET	0
+CAN_MSGFGCRL24_FD	SET	0
+CAN_MSGFGCRL24_FSIZE	SET	0
+CAN_MSGFGCRL24_GDFS	SET	0
+CAN_MSGFGCRL24_IDC	SET	0
+CAN_MSGFGCRL24_SDT	SET	0
+CAN_MSGFGCRL24_SRREN	SET	0
+CAN_MSGFGCRL24_STT	SET	0
+
+; Message Object 25 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL25_DLCC	SET	0
+CAN_MSGFGCRL25_FD	SET	0
+CAN_MSGFGCRL25_FSIZE	SET	0
+CAN_MSGFGCRL25_GDFS	SET	0
+CAN_MSGFGCRL25_IDC	SET	0
+CAN_MSGFGCRL25_SDT	SET	0
+CAN_MSGFGCRL25_SRREN	SET	0
+CAN_MSGFGCRL25_STT	SET	0
+
+; Message Object 26 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL26_DLCC	SET	0
+CAN_MSGFGCRL26_FD	SET	0
+CAN_MSGFGCRL26_FSIZE	SET	0
+CAN_MSGFGCRL26_GDFS	SET	0
+CAN_MSGFGCRL26_IDC	SET	0
+CAN_MSGFGCRL26_SDT	SET	0
+CAN_MSGFGCRL26_SRREN	SET	0
+CAN_MSGFGCRL26_STT	SET	0
+
+; Message Object 27 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL27_DLCC	SET	0
+CAN_MSGFGCRL27_FD	SET	0
+CAN_MSGFGCRL27_FSIZE	SET	0
+CAN_MSGFGCRL27_GDFS	SET	0
+CAN_MSGFGCRL27_IDC	SET	0
+CAN_MSGFGCRL27_SDT	SET	0
+CAN_MSGFGCRL27_SRREN	SET	0
+CAN_MSGFGCRL27_STT	SET	0
+
+; Message Object 28 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL28_DLCC	SET	0
+CAN_MSGFGCRL28_FD	SET	0
+CAN_MSGFGCRL28_FSIZE	SET	0
+CAN_MSGFGCRL28_GDFS	SET	0
+CAN_MSGFGCRL28_IDC	SET	0
+CAN_MSGFGCRL28_SDT	SET	0
+CAN_MSGFGCRL28_SRREN	SET	0
+CAN_MSGFGCRL28_STT	SET	0
+
+; Message Object 29 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL29_DLCC	SET	0
+CAN_MSGFGCRL29_FD	SET	0
+CAN_MSGFGCRL29_FSIZE	SET	0
+CAN_MSGFGCRL29_GDFS	SET	0
+CAN_MSGFGCRL29_IDC	SET	0
+CAN_MSGFGCRL29_SDT	SET	0
+CAN_MSGFGCRL29_SRREN	SET	0
+CAN_MSGFGCRL29_STT	SET	0
+
+; Message Object 2 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL2_DLCC	SET	0
+CAN_MSGFGCRL2_FD	SET	0
+CAN_MSGFGCRL2_FSIZE	SET	0
+CAN_MSGFGCRL2_GDFS	SET	0
+CAN_MSGFGCRL2_IDC	SET	0
+CAN_MSGFGCRL2_SDT	SET	0
+CAN_MSGFGCRL2_SRREN	SET	0
+CAN_MSGFGCRL2_STT	SET	0
+
+; Message Object 30 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL30_DLCC	SET	0
+CAN_MSGFGCRL30_FD	SET	0
+CAN_MSGFGCRL30_FSIZE	SET	0
+CAN_MSGFGCRL30_GDFS	SET	0
+CAN_MSGFGCRL30_IDC	SET	0
+CAN_MSGFGCRL30_SDT	SET	0
+CAN_MSGFGCRL30_SRREN	SET	0
+CAN_MSGFGCRL30_STT	SET	0
+
+; Message Object 31 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL31_DLCC	SET	0
+CAN_MSGFGCRL31_FD	SET	0
+CAN_MSGFGCRL31_FSIZE	SET	0
+CAN_MSGFGCRL31_GDFS	SET	0
+CAN_MSGFGCRL31_IDC	SET	0
+CAN_MSGFGCRL31_SDT	SET	0
+CAN_MSGFGCRL31_SRREN	SET	0
+CAN_MSGFGCRL31_STT	SET	0
+
+; Message Object 3 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL3_DLCC	SET	0
+CAN_MSGFGCRL3_FD	SET	0
+CAN_MSGFGCRL3_FSIZE	SET	0
+CAN_MSGFGCRL3_GDFS	SET	0
+CAN_MSGFGCRL3_IDC	SET	0
+CAN_MSGFGCRL3_SDT	SET	0
+CAN_MSGFGCRL3_SRREN	SET	0
+CAN_MSGFGCRL3_STT	SET	0
+
+; Message Object 4 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL4_DLCC	SET	0
+CAN_MSGFGCRL4_FD	SET	0
+CAN_MSGFGCRL4_FSIZE	SET	0
+CAN_MSGFGCRL4_GDFS	SET	0
+CAN_MSGFGCRL4_IDC	SET	0
+CAN_MSGFGCRL4_SDT	SET	0
+CAN_MSGFGCRL4_SRREN	SET	0
+CAN_MSGFGCRL4_STT	SET	0
+
+; Message Object 5 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL5_DLCC	SET	0
+CAN_MSGFGCRL5_FD	SET	0
+CAN_MSGFGCRL5_FSIZE	SET	0
+CAN_MSGFGCRL5_GDFS	SET	0
+CAN_MSGFGCRL5_IDC	SET	0
+CAN_MSGFGCRL5_SDT	SET	0
+CAN_MSGFGCRL5_SRREN	SET	0
+CAN_MSGFGCRL5_STT	SET	0
+
+; Message Object 6 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL6_DLCC	SET	0
+CAN_MSGFGCRL6_FD	SET	0
+CAN_MSGFGCRL6_FSIZE	SET	0
+CAN_MSGFGCRL6_GDFS	SET	0
+CAN_MSGFGCRL6_IDC	SET	0
+CAN_MSGFGCRL6_SDT	SET	0
+CAN_MSGFGCRL6_SRREN	SET	0
+CAN_MSGFGCRL6_STT	SET	0
+
+; Message Object 7 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL7_DLCC	SET	0
+CAN_MSGFGCRL7_FD	SET	0
+CAN_MSGFGCRL7_FSIZE	SET	0
+CAN_MSGFGCRL7_GDFS	SET	0
+CAN_MSGFGCRL7_IDC	SET	0
+CAN_MSGFGCRL7_SDT	SET	0
+CAN_MSGFGCRL7_SRREN	SET	0
+CAN_MSGFGCRL7_STT	SET	0
+
+; Message Object 8 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL8_DLCC	SET	0
+CAN_MSGFGCRL8_FD	SET	0
+CAN_MSGFGCRL8_FSIZE	SET	0
+CAN_MSGFGCRL8_GDFS	SET	0
+CAN_MSGFGCRL8_IDC	SET	0
+CAN_MSGFGCRL8_SDT	SET	0
+CAN_MSGFGCRL8_SRREN	SET	0
+CAN_MSGFGCRL8_STT	SET	0
+
+; Message Object 9 FIFO/Gateway Control Register Low
+CAN_MSGFGCRL9_DLCC	SET	0
+CAN_MSGFGCRL9_FD	SET	0
+CAN_MSGFGCRL9_FSIZE	SET	0
+CAN_MSGFGCRL9_GDFS	SET	0
+CAN_MSGFGCRL9_IDC	SET	0
+CAN_MSGFGCRL9_SDT	SET	0
+CAN_MSGFGCRL9_SRREN	SET	0
+CAN_MSGFGCRL9_STT	SET	0
+
+; TwinCAN Port Input Select Register
+CAN_PISEL_RISA	SET	0
+CAN_PISEL_RISB	SET	0
+
+; Receive Interrupt Pending Register High
+CAN_RXIPNDH_RXIPND16	SET	0
+CAN_RXIPNDH_RXIPND17	SET	0
+CAN_RXIPNDH_RXIPND18	SET	0
+CAN_RXIPNDH_RXIPND19	SET	0
+CAN_RXIPNDH_RXIPND20	SET	0
+CAN_RXIPNDH_RXIPND21	SET	0
+CAN_RXIPNDH_RXIPND22	SET	0
+CAN_RXIPNDH_RXIPND23	SET	0
+CAN_RXIPNDH_RXIPND24	SET	0
+CAN_RXIPNDH_RXIPND25	SET	0
+CAN_RXIPNDH_RXIPND26	SET	0
+CAN_RXIPNDH_RXIPND27	SET	0
+CAN_RXIPNDH_RXIPND28	SET	0
+CAN_RXIPNDH_RXIPND29	SET	0
+CAN_RXIPNDH_RXIPND30	SET	0
+CAN_RXIPNDH_RXIPND31	SET	0
+
+; Receive Interrupt Pending Register Low
+CAN_RXIPNDL_RXIPND0	SET	0
+CAN_RXIPNDL_RXIPND1	SET	0
+CAN_RXIPNDL_RXIPND10	SET	0
+CAN_RXIPNDL_RXIPND11	SET	0
+CAN_RXIPNDL_RXIPND12	SET	0
+CAN_RXIPNDL_RXIPND13	SET	0
+CAN_RXIPNDL_RXIPND14	SET	0
+CAN_RXIPNDL_RXIPND15	SET	0
+CAN_RXIPNDL_RXIPND2	SET	0
+CAN_RXIPNDL_RXIPND3	SET	0
+CAN_RXIPNDL_RXIPND4	SET	0
+CAN_RXIPNDL_RXIPND5	SET	0
+CAN_RXIPNDL_RXIPND6	SET	0
+CAN_RXIPNDL_RXIPND7	SET	0
+CAN_RXIPNDL_RXIPND8	SET	0
+CAN_RXIPNDL_RXIPND9	SET	0
+
+; Transmit Interrupt Pending Register High
+CAN_TXIPNDH_TXIPND16	SET	0
+CAN_TXIPNDH_TXIPND17	SET	0
+CAN_TXIPNDH_TXIPND18	SET	0
+CAN_TXIPNDH_TXIPND19	SET	0
+CAN_TXIPNDH_TXIPND20	SET	0
+CAN_TXIPNDH_TXIPND21	SET	0
+CAN_TXIPNDH_TXIPND22	SET	0
+CAN_TXIPNDH_TXIPND23	SET	0
+CAN_TXIPNDH_TXIPND24	SET	0
+CAN_TXIPNDH_TXIPND25	SET	0
+CAN_TXIPNDH_TXIPND26	SET	0
+CAN_TXIPNDH_TXIPND27	SET	0
+CAN_TXIPNDH_TXIPND28	SET	0
+CAN_TXIPNDH_TXIPND29	SET	0
+CAN_TXIPNDH_TXIPND30	SET	0
+CAN_TXIPNDH_TXIPND31	SET	0
+
+; Transmit Interrupt Pending Register Low
+CAN_TXIPNDL_TXIPND0	SET	0
+CAN_TXIPNDL_TXIPND1	SET	0
+CAN_TXIPNDL_TXIPND10	SET	0
+CAN_TXIPNDL_TXIPND11	SET	0
+CAN_TXIPNDL_TXIPND12	SET	0
+CAN_TXIPNDL_TXIPND13	SET	0
+CAN_TXIPNDL_TXIPND14	SET	0
+CAN_TXIPNDL_TXIPND15	SET	0
+CAN_TXIPNDL_TXIPND2	SET	0
+CAN_TXIPNDL_TXIPND3	SET	0
+CAN_TXIPNDL_TXIPND4	SET	0
+CAN_TXIPNDL_TXIPND5	SET	0
+CAN_TXIPNDL_TXIPND6	SET	0
+CAN_TXIPNDL_TXIPND7	SET	0
+CAN_TXIPNDL_TXIPND8	SET	0
+CAN_TXIPNDL_TXIPND9	SET	0
+
+; CAPCOM Channel 0 Interrupt Control Register
+CC1_CC0IC_0	SET	0
+CC1_CC0IC_GLVL	SET	0
+CC1_CC0IC_GPX	SET	0
+CC1_CC0IC_IE	SET	0
+CC1_CC0IC_ILVL	SET	0
+CC1_CC0IC_IR	SET	0
+
+; CAPCOM 1 Register 0
+CC1_CC0_CC0	SET	0
+
+; CAPCOM Channel 10 Interrupt Control Register
+CC1_CC10IC_0	SET	0
+CC1_CC10IC_GLVL	SET	0
+CC1_CC10IC_GPX	SET	0
+CC1_CC10IC_IE	SET	0
+CC1_CC10IC_ILVL	SET	0
+CC1_CC10IC_IR	SET	0
+
+; CAPCOM 1 Register 10
+CC1_CC10_CC10	SET	0
+
+; CAPCOM Channel 11 Interrupt Control Register
+CC1_CC11IC_0	SET	0
+CC1_CC11IC_GLVL	SET	0
+CC1_CC11IC_GPX	SET	0
+CC1_CC11IC_IE	SET	0
+CC1_CC11IC_ILVL	SET	0
+CC1_CC11IC_IR	SET	0
+
+; CAPCOM 1 Register 11
+CC1_CC11_CC11	SET	0
+
+; CAPCOM Channel 12 Interrupt Control Register
+CC1_CC12IC_0	SET	0
+CC1_CC12IC_GLVL	SET	0
+CC1_CC12IC_GPX	SET	0
+CC1_CC12IC_IE	SET	0
+CC1_CC12IC_ILVL	SET	0
+CC1_CC12IC_IR	SET	0
+
+; CAPCOM 1 Register 12
+CC1_CC12_CC12	SET	0
+
+; CAPCOM Channel 13 Interrupt Control Register
+CC1_CC13IC_0	SET	0
+CC1_CC13IC_GLVL	SET	0
+CC1_CC13IC_GPX	SET	0
+CC1_CC13IC_IE	SET	0
+CC1_CC13IC_ILVL	SET	0
+CC1_CC13IC_IR	SET	0
+
+; CAPCOM 1 Register 13
+CC1_CC13_CC13	SET	0
+
+; CAPCOM Channel 14 Interrupt Control Register
+CC1_CC14IC_0	SET	0
+CC1_CC14IC_GLVL	SET	0
+CC1_CC14IC_GPX	SET	0
+CC1_CC14IC_IE	SET	0
+CC1_CC14IC_ILVL	SET	0
+CC1_CC14IC_IR	SET	0
+
+; CAPCOM 1 Register 14
+CC1_CC14_CC14	SET	0
+
+; CAPCOM Channel 15 Interrupt Control Register
+CC1_CC15IC_0	SET	0
+CC1_CC15IC_GLVL	SET	0
+CC1_CC15IC_GPX	SET	0
+CC1_CC15IC_IE	SET	0
+CC1_CC15IC_ILVL	SET	0
+CC1_CC15IC_IR	SET	0
+
+; CAPCOM 1 Register 15
+CC1_CC15_CC15	SET	0
+
+; CAPCOM Channel 1 Interrupt Control Register
+CC1_CC1IC_0	SET	0
+CC1_CC1IC_GLVL	SET	0
+CC1_CC1IC_GPX	SET	0
+CC1_CC1IC_IE	SET	0
+CC1_CC1IC_ILVL	SET	0
+CC1_CC1IC_IR	SET	0
+
+; CAPCOM 1 Register 1
+CC1_CC1_CC1	SET	0
+
+; CAPCOM Channel 2 Interrupt Control Register
+CC1_CC2IC_0	SET	0
+CC1_CC2IC_GLVL	SET	0
+CC1_CC2IC_GPX	SET	0
+CC1_CC2IC_IE	SET	0
+CC1_CC2IC_ILVL	SET	0
+CC1_CC2IC_IR	SET	0
+
+; CAPCOM 1 Register 2
+CC1_CC2_CC2	SET	0
+
+; CAPCOM Channel 3 Interrupt Control Register
+CC1_CC3IC_0	SET	0
+CC1_CC3IC_GLVL	SET	0
+CC1_CC3IC_GPX	SET	0
+CC1_CC3IC_IE	SET	0
+CC1_CC3IC_ILVL	SET	0
+CC1_CC3IC_IR	SET	0
+
+; CAPCOM 1 Register 3
+CC1_CC3_CC3	SET	0
+
+; CAPCOM Channel 4 Interrupt Control Register
+CC1_CC4IC_0	SET	0
+CC1_CC4IC_GLVL	SET	0
+CC1_CC4IC_GPX	SET	0
+CC1_CC4IC_IE	SET	0
+CC1_CC4IC_ILVL	SET	0
+CC1_CC4IC_IR	SET	0
+
+; CAPCOM 1 Register 4
+CC1_CC4_CC4	SET	0
+
+; CAPCOM Channel 5 Interrupt Control Register
+CC1_CC5IC_0	SET	0
+CC1_CC5IC_GLVL	SET	0
+CC1_CC5IC_GPX	SET	0
+CC1_CC5IC_IE	SET	0
+CC1_CC5IC_ILVL	SET	0
+CC1_CC5IC_IR	SET	0
+
+; CAPCOM 1 Register 5
+CC1_CC5_CC5	SET	0
+
+; CAPCOM Channel 6 Interrupt Control Register
+CC1_CC6IC_0	SET	0
+CC1_CC6IC_GLVL	SET	0
+CC1_CC6IC_GPX	SET	0
+CC1_CC6IC_IE	SET	0
+CC1_CC6IC_ILVL	SET	0
+CC1_CC6IC_IR	SET	0
+
+; CAPCOM 1 Register 6
+CC1_CC6_CC6	SET	0
+
+; CC Register 7 Interrupt Control Register
+CC1_CC7IC_0	SET	0
+CC1_CC7IC_GLVL	SET	0
+CC1_CC7IC_GPX	SET	0
+CC1_CC7IC_IE	SET	0
+CC1_CC7IC_ILVL	SET	0
+CC1_CC7IC_IR	SET	0
+
+; CAPCOM 1 Register 7
+CC1_CC7_CC7	SET	0
+
+; CC Register 8 Interrupt Control Register
+CC1_CC8IC_0	SET	0
+CC1_CC8IC_GLVL	SET	0
+CC1_CC8IC_GPX	SET	0
+CC1_CC8IC_IE	SET	0
+CC1_CC8IC_ILVL	SET	0
+CC1_CC8IC_IR	SET	0
+
+; CAPCOM 1 Register 8
+CC1_CC8_CC8	SET	0
+
+; CC Register 9 Interrupt Control Register
+CC1_CC9IC_0	SET	0
+CC1_CC9IC_GLVL	SET	0
+CC1_CC9IC_GPX	SET	0
+CC1_CC9IC_IE	SET	0
+CC1_CC9IC_ILVL	SET	0
+CC1_CC9IC_IR	SET	0
+
+; CAPCOM 1 Register 9
+CC1_CC9_CC9	SET	0
+
+; CAPCOM1 Double Register Mode Register
+CC1_DRM_DR0M	SET	0
+CC1_DRM_DR1M	SET	0
+CC1_DRM_DR2M	SET	0
+CC1_DRM_DR3M	SET	0
+CC1_DRM_DR4M	SET	0
+CC1_DRM_DR5M	SET	0
+CC1_DRM_DR6M	SET	0
+CC1_DRM_DR7M	SET	0
+
+; CAPCOM1 IO Control
+CC1_IOC_PL	SET	0
+CC1_IOC_STAG	SET	0
+
+; Capture/Compare Mode Registers for the CAPCOM Unit (CC0...CC3)
+CC1_M0_ACC0	SET	0
+CC1_M0_ACC1	SET	0
+CC1_M0_ACC2	SET	0
+CC1_M0_ACC3	SET	0
+CC1_M0_MOD0	SET	0
+CC1_M0_MOD1	SET	0
+CC1_M0_MOD2	SET	0
+CC1_M0_MOD3	SET	0
+
+; Capture/Compare Mode Register for the CAPCOM Unit (CC4...CC79
+CC1_M1_ACC4	SET	0
+CC1_M1_ACC5	SET	0
+CC1_M1_ACC6	SET	0
+CC1_M1_ACC7	SET	0
+CC1_M1_MOD4	SET	0
+CC1_M1_MOD5	SET	0
+CC1_M1_MOD6	SET	0
+CC1_M1_MOD7	SET	0
+
+; Capture/Compare Mode Registers for the CAPCOM Unit (CC8...CC11)
+CC1_M2_ACC10	SET	0
+CC1_M2_ACC11	SET	0
+CC1_M2_ACC8	SET	0
+CC1_M2_ACC9	SET	0
+CC1_M2_MOD10	SET	0
+CC1_M2_MOD11	SET	0
+CC1_M2_MOD8	SET	0
+CC1_M2_MOD9	SET	0
+
+; Capture/Compare Mode Registers for the CAPCOM Unit (CC12...CC15)
+CC1_M3_ACC12	SET	0
+CC1_M3_ACC13	SET	0
+CC1_M3_ACC14	SET	0
+CC1_M3_ACC15	SET	0
+CC1_M3_MOD12	SET	0
+CC1_M3_MOD13	SET	0
+CC1_M3_MOD14	SET	0
+CC1_M3_MOD15	SET	0
+
+; CAPCOM1 Output Register
+CC1_OUT_CC0IO	SET	0
+CC1_OUT_CC10IO	SET	0
+CC1_OUT_CC11IO	SET	0
+CC1_OUT_CC12IO	SET	0
+CC1_OUT_CC13IO	SET	0
+CC1_OUT_CC14IO	SET	0
+CC1_OUT_CC15IO	SET	0
+CC1_OUT_CC1IO	SET	0
+CC1_OUT_CC2IO	SET	0
+CC1_OUT_CC3IO	SET	0
+CC1_OUT_CC4IO	SET	0
+CC1_OUT_CC5IO	SET	0
+CC1_OUT_CC6IO	SET	0
+CC1_OUT_CC7IO	SET	0
+CC1_OUT_CC8IO	SET	0
+CC1_OUT_CC9IO	SET	0
+
+; CAPCOM 1 Single Event Enable Register
+CC1_SEE_SEE0	SET	0
+CC1_SEE_SEE1	SET	0
+CC1_SEE_SEE10	SET	0
+CC1_SEE_SEE11	SET	0
+CC1_SEE_SEE12	SET	0
+CC1_SEE_SEE13	SET	0
+CC1_SEE_SEE14	SET	0
+CC1_SEE_SEE15	SET	0
+CC1_SEE_SEE2	SET	0
+CC1_SEE_SEE3	SET	0
+CC1_SEE_SEE4	SET	0
+CC1_SEE_SEE5	SET	0
+CC1_SEE_SEE6	SET	0
+CC1_SEE_SEE7	SET	0
+CC1_SEE_SEE8	SET	0
+CC1_SEE_SEE9	SET	0
+
+; CAPCOM 1 Single Event Control Register
+CC1_SEM_SEM0	SET	0
+CC1_SEM_SEM1	SET	0
+CC1_SEM_SEM10	SET	0
+CC1_SEM_SEM11	SET	0
+CC1_SEM_SEM12	SET	0
+CC1_SEM_SEM13	SET	0
+CC1_SEM_SEM14	SET	0
+CC1_SEM_SEM15	SET	0
+CC1_SEM_SEM2	SET	0
+CC1_SEM_SEM3	SET	0
+CC1_SEM_SEM4	SET	0
+CC1_SEM_SEM5	SET	0
+CC1_SEM_SEM6	SET	0
+CC1_SEM_SEM7	SET	0
+CC1_SEM_SEM8	SET	0
+CC1_SEM_SEM9	SET	0
+
+; Timer 0/1 Control Register
+CC1_T01CON_0	SET	0
+CC1_T01CON_0	SET	0
+CC1_T01CON_0	SET	0
+CC1_T01CON_T0I	SET	0
+CC1_T01CON_T0M	SET	0
+CC1_T01CON_T0R	SET	0
+CC1_T01CON_T1I	SET	0
+CC1_T01CON_T1M	SET	0
+CC1_T01CON_T1R	SET	0
+
+; CAPCOM 1 Timer 0 Interrupt Control Register
+CC1_T0IC_0	SET	0
+CC1_T0IC_GLVL	SET	0
+CC1_T0IC_GPX	SET	0
+CC1_T0IC_IE	SET	0
+CC1_T0IC_ILVL	SET	0
+CC1_T0IC_IR	SET	0
+
+; CAPCOM 1 Timer 0 Reload Register
+CC1_T0REL_T0REL	SET	0
+
+; CAPCOM 1 Timer 0 Register
+CC1_T0_T0	SET	0
+
+; CC Timer 1 Interrupt Control Register
+CC1_T1IC_0	SET	0
+CC1_T1IC_GLVL	SET	0
+CC1_T1IC_GPX	SET	0
+CC1_T1IC_IE	SET	0
+CC1_T1IC_ILVL	SET	0
+CC1_T1IC_IR	SET	0
+
+; CC Timer 1 Reloed Register
+CC1_T1REL_T1REL	SET	0
+
+; CAPCOM 1 Timer 1 Register
+CC1_T1_T1	SET	0
+
+; CAPCOM Channel 16 Interrupt Control Register
+CC2_CC16IC_0	SET	0
+CC2_CC16IC_GLVL	SET	0
+CC2_CC16IC_GPX	SET	0
+CC2_CC16IC_IE	SET	0
+CC2_CC16IC_ILVL	SET	0
+CC2_CC16IC_IR	SET	0
+
+; CAPCOM 2 Register 16
+CC2_CC16_CC16	SET	0
+
+; CAPCOM Channel 17 Interrupt Control Register
+CC2_CC17IC_0	SET	0
+CC2_CC17IC_GLVL	SET	0
+CC2_CC17IC_GPX	SET	0
+CC2_CC17IC_IE	SET	0
+CC2_CC17IC_ILVL	SET	0
+CC2_CC17IC_IR	SET	0
+
+; CAPCOM 2 Register 17
+CC2_CC17_CC17	SET	0
+
+; CAPCOM Channel 18 Interrupt Control Register
+CC2_CC18IC_0	SET	0
+CC2_CC18IC_GLVL	SET	0
+CC2_CC18IC_GPX	SET	0
+CC2_CC18IC_IE	SET	0
+CC2_CC18IC_ILVL	SET	0
+CC2_CC18IC_IR	SET	0
+
+; CAPCOM 2 Register 18
+CC2_CC18_CC18	SET	0
+
+; CAPCOM Channel 19 Interrupt Control Register
+CC2_CC19IC_0	SET	0
+CC2_CC19IC_GLVL	SET	0
+CC2_CC19IC_GPX	SET	0
+CC2_CC19IC_IE	SET	0
+CC2_CC19IC_ILVL	SET	0
+CC2_CC19IC_IR	SET	0
+
+; CAPCOM 2 Register 19
+CC2_CC19_CC19	SET	0
+
+; CAPCOM Channel 20 Interrupt Control Register
+CC2_CC20IC_0	SET	0
+CC2_CC20IC_GLVL	SET	0
+CC2_CC20IC_GPX	SET	0
+CC2_CC20IC_IE	SET	0
+CC2_CC20IC_ILVL	SET	0
+CC2_CC20IC_IR	SET	0
+
+; CAPCOM 2 Register 20
+CC2_CC20_CC20	SET	0
+
+; CAPCOM Channel 21 Interrupt Control Register
+CC2_CC21IC_0	SET	0
+CC2_CC21IC_GLVL	SET	0
+CC2_CC21IC_GPX	SET	0
+CC2_CC21IC_IE	SET	0
+CC2_CC21IC_ILVL	SET	0
+CC2_CC21IC_IR	SET	0
+
+; CAPCOM 2 Register 21
+CC2_CC21_CC21	SET	0
+
+; CAPCOM Channel 22 Interrupt Control Register
+CC2_CC22IC_0	SET	0
+CC2_CC22IC_GLVL	SET	0
+CC2_CC22IC_GPX	SET	0
+CC2_CC22IC_IE	SET	0
+CC2_CC22IC_ILVL	SET	0
+CC2_CC22IC_IR	SET	0
+
+; CAPCOM 2 Register 22
+CC2_CC22_CC22	SET	0
+
+; CAPCOM Channel 23 Interrupt Control Register
+CC2_CC23IC_0	SET	0
+CC2_CC23IC_GLVL	SET	0
+CC2_CC23IC_GPX	SET	0
+CC2_CC23IC_IE	SET	0
+CC2_CC23IC_ILVL	SET	0
+CC2_CC23IC_IR	SET	0
+
+; CAPCOM 2 Register 23
+CC2_CC23_CC23	SET	0
+
+; CAPCOM Channel 24 Interrupt Control Register
+CC2_CC24IC_0	SET	0
+CC2_CC24IC_GLVL	SET	0
+CC2_CC24IC_GPX	SET	0
+CC2_CC24IC_IE	SET	0
+CC2_CC24IC_ILVL	SET	0
+CC2_CC24IC_IR	SET	0
+
+; CAPCOM 2 Register 24
+CC2_CC24_CC24	SET	0
+
+; CAPCOM Channel 25 Interrupt Control Register
+CC2_CC25IC_0	SET	0
+CC2_CC25IC_GLVL	SET	0
+CC2_CC25IC_GPX	SET	0
+CC2_CC25IC_IE	SET	0
+CC2_CC25IC_ILVL	SET	0
+CC2_CC25IC_IR	SET	0
+
+; CAPCOM 2 Register 25
+CC2_CC25_CC25	SET	0
+
+; CAPCOM Channel 26 Interrupt Control Register
+CC2_CC26IC_0	SET	0
+CC2_CC26IC_GLVL	SET	0
+CC2_CC26IC_GPX	SET	0
+CC2_CC26IC_IE	SET	0
+CC2_CC26IC_ILVL	SET	0
+CC2_CC26IC_IR	SET	0
+
+; CAPCOM 2 Register 26
+CC2_CC26_CC26	SET	0
+
+; CAPCOM Channel 27 Interrupt Control Register
+CC2_CC27IC_0	SET	0
+CC2_CC27IC_GLVL	SET	0
+CC2_CC27IC_GPX	SET	0
+CC2_CC27IC_IE	SET	0
+CC2_CC27IC_ILVL	SET	0
+CC2_CC27IC_IR	SET	0
+
+; CAPCOM 2 Register 27
+CC2_CC27_CC27	SET	0
+
+; CAPCOM Channel 28 Interrupt Control Register
+CC2_CC28IC_0	SET	0
+CC2_CC28IC_GLVL	SET	0
+CC2_CC28IC_GPX	SET	0
+CC2_CC28IC_IE	SET	0
+CC2_CC28IC_ILVL	SET	0
+CC2_CC28IC_IR	SET	0
+
+; CAPCOM 2 Register 28
+CC2_CC28_CC28	SET	0
+
+; CAPCOM Channel 29 Interrupt Control Register
+CC2_CC29IC_0	SET	0
+CC2_CC29IC_GLVL	SET	0
+CC2_CC29IC_GPX	SET	0
+CC2_CC29IC_IE	SET	0
+CC2_CC29IC_ILVL	SET	0
+CC2_CC29IC_IR	SET	0
+
+; CAPCOM 2 Register 29
+CC2_CC29_CC29	SET	0
+
+; CAPCOM Channel 30 Interrupt Control Register
+CC2_CC30IC_0	SET	0
+CC2_CC30IC_GLVL	SET	0
+CC2_CC30IC_GPX	SET	0
+CC2_CC30IC_IE	SET	0
+CC2_CC30IC_ILVL	SET	0
+CC2_CC30IC_IR	SET	0
+
+; CAPCOM 2 Register 30
+CC2_CC30_CC30	SET	0
+
+; CAPCOM Channel 31 Interrupt Control Register
+CC2_CC31IC_0	SET	0
+CC2_CC31IC_GLVL	SET	0
+CC2_CC31IC_GPX	SET	0
+CC2_CC31IC_IE	SET	0
+CC2_CC31IC_ILVL	SET	0
+CC2_CC31IC_IR	SET	0
+
+; CAPCOM 2 Register 31
+CC2_CC31_CC31	SET	0
+
+; CAPCOM 2 Double Register Mode Register
+CC2_DRM_DR0M	SET	0
+CC2_DRM_DR1M	SET	0
+CC2_DRM_DR2M	SET	0
+CC2_DRM_DR3M	SET	0
+CC2_DRM_DR4M	SET	0
+CC2_DRM_DR5M	SET	0
+CC2_DRM_DR6M	SET	0
+CC2_DRM_DR7M	SET	0
+
+; CAPCOM2 IO Control
+CC2_IOC_PL	SET	0
+CC2_IOC_STAG	SET	0
+
+; CC Mode Control Register 4
+CC2_M4_ACC16	SET	0
+CC2_M4_ACC17	SET	0
+CC2_M4_ACC18	SET	0
+CC2_M4_ACC19	SET	0
+CC2_M4_MOD16	SET	0
+CC2_M4_MOD17	SET	0
+CC2_M4_MOD18	SET	0
+CC2_M4_MOD19	SET	0
+
+; CC Mode Control Register 5
+CC2_M5_ACC20	SET	0
+CC2_M5_ACC21	SET	0
+CC2_M5_ACC22	SET	0
+CC2_M5_ACC23	SET	0
+CC2_M5_MOD20	SET	0
+CC2_M5_MOD21	SET	0
+CC2_M5_MOD22	SET	0
+CC2_M5_MOD23	SET	0
+
+; CC Mode Control Register 6
+CC2_M6_ACC24	SET	0
+CC2_M6_ACC25	SET	0
+CC2_M6_ACC26	SET	0
+CC2_M6_ACC27	SET	0
+CC2_M6_MOD24	SET	0
+CC2_M6_MOD25	SET	0
+CC2_M6_MOD26	SET	0
+CC2_M6_MOD27	SET	0
+
+; CC Mode Control Register 7
+CC2_M7_ACC28	SET	0
+CC2_M7_ACC29	SET	0
+CC2_M7_ACC30	SET	0
+CC2_M7_ACC31	SET	0
+CC2_M7_MOD28	SET	0
+CC2_M7_MOD29	SET	0
+CC2_M7_MOD30	SET	0
+CC2_M7_MOD31	SET	0
+
+; CAPCOM 2 Output Register
+CC2_OUT_CC0IO	SET	0
+CC2_OUT_CC10IO	SET	0
+CC2_OUT_CC11IO	SET	0
+CC2_OUT_CC12IO	SET	0
+CC2_OUT_CC13IO	SET	0
+CC2_OUT_CC14IO	SET	0
+CC2_OUT_CC15IO	SET	0
+CC2_OUT_CC1IO	SET	0
+CC2_OUT_CC2IO	SET	0
+CC2_OUT_CC3IO	SET	0
+CC2_OUT_CC4IO	SET	0
+CC2_OUT_CC5IO	SET	0
+CC2_OUT_CC6IO	SET	0
+CC2_OUT_CC7IO	SET	0
+CC2_OUT_CC8IO	SET	0
+CC2_OUT_CC9IO	SET	0
+
+; CAPCOM 2 Single Event Enable Register
+CC2_SEE_SEE0	SET	0
+CC2_SEE_SEE1	SET	0
+CC2_SEE_SEE10	SET	0
+CC2_SEE_SEE11	SET	0
+CC2_SEE_SEE12	SET	0
+CC2_SEE_SEE13	SET	0
+CC2_SEE_SEE14	SET	0
+CC2_SEE_SEE15	SET	0
+CC2_SEE_SEE2	SET	0
+CC2_SEE_SEE3	SET	0
+CC2_SEE_SEE4	SET	0
+CC2_SEE_SEE5	SET	0
+CC2_SEE_SEE6	SET	0
+CC2_SEE_SEE7	SET	0
+CC2_SEE_SEE8	SET	0
+CC2_SEE_SEE9	SET	0
+
+; CAPCOM 2 Single Event Control Register
+CC2_SEM_SEM0	SET	0
+CC2_SEM_SEM1	SET	0
+CC2_SEM_SEM10	SET	0
+CC2_SEM_SEM11	SET	0
+CC2_SEM_SEM12	SET	0
+CC2_SEM_SEM13	SET	0
+CC2_SEM_SEM14	SET	0
+CC2_SEM_SEM15	SET	0
+CC2_SEM_SEM2	SET	0
+CC2_SEM_SEM3	SET	0
+CC2_SEM_SEM4	SET	0
+CC2_SEM_SEM5	SET	0
+CC2_SEM_SEM6	SET	0
+CC2_SEM_SEM7	SET	0
+CC2_SEM_SEM8	SET	0
+CC2_SEM_SEM9	SET	0
+
+; CAPCOM 2 Timer 7 and Timer 8 Control Register
+CC2_T78CON_T7I	SET	0
+CC2_T78CON_T7M	SET	0
+CC2_T78CON_T7R	SET	0
+CC2_T78CON_T8I	SET	0
+CC2_T78CON_T8M	SET	0
+CC2_T78CON_T8R	SET	0
+
+; CAPCOM 2 Timer 7 Interrupt Control Register
+CC2_T7IC_0	SET	0
+CC2_T7IC_GLVL	SET	0
+CC2_T7IC_GPX	SET	0
+CC2_T7IC_IE	SET	0
+CC2_T7IC_ILVL	SET	0
+CC2_T7IC_IR	SET	0
+
+; CAPCOM 2 Timer 7 Reload Register
+CC2_T7REL_T7REL	SET	0
+
+; CAPCOM 2 Timer 7 Register
+CC2_T7_T7	SET	0
+
+; CAPCOM 2 Timer 8 Interrupt Control Register
+CC2_T8IC_0	SET	0
+CC2_T8IC_GLVL	SET	0
+CC2_T8IC_GPX	SET	0
+CC2_T8IC_IE	SET	0
+CC2_T8IC_ILVL	SET	0
+CC2_T8IC_IR	SET	0
+
+; CAPCOM 2 Timer 8 Reload Register
+CC2_T8REL_T8REL	SET	0
+
+; CAPCOM 2 Timer 8 Register
+CC2_T8_T8	SET	0
+
+; Capture/Compare Register for Channel CC60
+CCU6_CC60R_CC60V	SET	0
+
+; Capture/Compare Shadow Register for Channel 0
+CCU6_CC60SR_CC60S	SET	0
+
+; Capture/Compare Register for Channel CC61
+CCU6_CC61R_CC61V	SET	0
+
+; Capture/Compare Shadow Register for Channel 1
+CCU6_CC61SR_CC61S	SET	0
+
+; Capture/Compare Register for Channel CC62
+CCU6_CC62R_CC62V	SET	0
+
+; Capture/Compare Shadow Register for Channel 2
+CCU6_CC62SR_CC62S	SET	0
+
+; Compare Register for Channel CC63
+CCU6_CC63R_CC63V	SET	0
+
+; Compare Shadow Register for Channel  CC63
+CCU6_CC63SR_CC63S	SET	0
+
+; Compare State Modification Register
+CCU6_CMPMODIF_MCC60R	SET	0
+CCU6_CMPMODIF_MCC60S	SET	0
+CCU6_CMPMODIF_MCC61R	SET	0
+CCU6_CMPMODIF_MCC61S	SET	0
+CCU6_CMPMODIF_MCC62R	SET	0
+CCU6_CMPMODIF_MCC62S	SET	0
+CCU6_CMPMODIF_MCC63R	SET	0
+CCU6_CMPMODIF_MCC63S	SET	0
+
+; Compare Status Register
+CCU6_CMPSTAT_CC60PS	SET	0
+CCU6_CMPSTAT_CC60ST	SET	0
+CCU6_CMPSTAT_CC61PS	SET	0
+CCU6_CMPSTAT_CC61ST	SET	0
+CCU6_CMPSTAT_CC62PS	SET	0
+CCU6_CMPSTAT_CC62ST	SET	0
+CCU6_CMPSTAT_CC63ST	SET	0
+CCU6_CMPSTAT_COUT60PS	SET	0
+CCU6_CMPSTAT_COUT61PS	SET	0
+CCU6_CMPSTAT_COUT62PS	SET	0
+CCU6_CMPSTAT_COUT63PS	SET	0
+CCU6_CMPSTAT_T13IM	SET	0
+
+; CAPCOM 6 Emergency Interrupt Control Register
+CCU6_EIC_GLVL	SET	0
+CCU6_EIC_GPX	SET	0
+CCU6_EIC_IE	SET	0
+CCU6_EIC_ILVL	SET	0
+CCU6_EIC_IR	SET	0
+
+; CAPCOM 6 Interrupt Control Register
+CCU6_IC_GLVL	SET	0
+CCU6_IC_GPX	SET	0
+CCU6_IC_IE	SET	0
+CCU6_IC_ILVL	SET	0
+CCU6_IC_IR	SET	0
+
+; Capture/Compare Interrupt Enable Register
+CCU6_IEN_ENCC60F	SET	0
+CCU6_IEN_ENCC60R	SET	0
+CCU6_IEN_ENCC61F	SET	0
+CCU6_IEN_ENCC61R	SET	0
+CCU6_IEN_ENCC62F	SET	0
+CCU6_IEN_ENCC62R	SET	0
+CCU6_IEN_ENCHE	SET	0
+CCU6_IEN_ENIDLE	SET	0
+CCU6_IEN_ENT12OM	SET	0
+CCU6_IEN_ENT12PM	SET	0
+CCU6_IEN_ENT13CM	SET	0
+CCU6_IEN_ENT13PM	SET	0
+CCU6_IEN_ENTRPF	SET	0
+CCU6_IEN_ENWHE	SET	0
+
+; Capture/Compare Interrupt Node Pointer Register
+CCU6_INP_INPCC60	SET	0
+CCU6_INP_INPCC61	SET	0
+CCU6_INP_INPCC62	SET	0
+CCU6_INP_INPCHE	SET	0
+CCU6_INP_INPERR	SET	0
+CCU6_INP_INPT12	SET	0
+CCU6_INP_INPT13	SET	0
+
+; Capture/Compare Interrupt Status Reset Register
+CCU6_ISR_RCC60F	SET	0
+CCU6_ISR_RCC60R	SET	0
+CCU6_ISR_RCC61F	SET	0
+CCU6_ISR_RCC61R	SET	0
+CCU6_ISR_RCC62F	SET	0
+CCU6_ISR_RCC62R	SET	0
+CCU6_ISR_RCHE	SET	0
+CCU6_ISR_RIDLE	SET	0
+CCU6_ISR_RT12OM	SET	0
+CCU6_ISR_RT12PM	SET	0
+CCU6_ISR_RT13CM	SET	0
+CCU6_ISR_RT13PM	SET	0
+CCU6_ISR_RTRPF	SET	0
+CCU6_ISR_RWHE	SET	0
+
+; Capture/Compare Interrupt Status Set Register
+CCU6_ISS_SCC60F	SET	0
+CCU6_ISS_SCC60R	SET	0
+CCU6_ISS_SCC61F	SET	0
+CCU6_ISS_SCC61R	SET	0
+CCU6_ISS_SCC62F	SET	0
+CCU6_ISS_SCC62R	SET	0
+CCU6_ISS_SCHE	SET	0
+CCU6_ISS_SIDLE	SET	0
+CCU6_ISS_ST12OM	SET	0
+CCU6_ISS_ST12PM	SET	0
+CCU6_ISS_ST13CM	SET	0
+CCU6_ISS_ST13PM	SET	0
+CCU6_ISS_STRPF	SET	0
+CCU6_ISS_SWHE	SET	0
+
+; Capture/Compare Interrupt Status Register
+CCU6_IS_CHE	SET	0
+CCU6_IS_ICC60F	SET	0
+CCU6_IS_ICC60R	SET	0
+CCU6_IS_ICC61F	SET	0
+CCU6_IS_ICC61R	SET	0
+CCU6_IS_ICC62F	SET	0
+CCU6_IS_ICC62R	SET	0
+CCU6_IS_IDLE	SET	0
+CCU6_IS_T12OM	SET	0
+CCU6_IS_T12PM	SET	0
+CCU6_IS_T13CM	SET	0
+CCU6_IS_T13PM	SET	0
+CCU6_IS_TRPF	SET	0
+CCU6_IS_TRPS	SET	0
+CCU6_IS_WHE	SET	0
+
+; Multi-Channel Mode Control Register
+CCU6_MCMCTR_SWSEL	SET	0
+CCU6_MCMCTR_SWSYN	SET	0
+
+; Multi-Channel Mode Output Shadow Register
+CCU6_MCMOUTS_CURHS	SET	0
+CCU6_MCMOUTS_EXPHS	SET	0
+CCU6_MCMOUTS_MCMPS	SET	0
+CCU6_MCMOUTS_STRHP	SET	0
+CCU6_MCMOUTS_STRMCM	SET	0
+
+; Multi-Channel Mode Output Register
+CCU6_MCMOUT_CURH	SET	0
+CCU6_MCMOUT_EXPH	SET	0
+CCU6_MCMOUT_MCMP	SET	0
+CCU6_MCMOUT_R	SET	0
+
+; Modulation Control Register
+CCU6_MODCTR_ECT13O	SET	0
+CCU6_MODCTR_MCMEN	SET	0
+CCU6_MODCTR_T12MODEN	SET	0
+CCU6_MODCTR_T13MODEN	SET	0
+
+; Passive State Level Register
+CCU6_PSLR_PSL	SET	0
+CCU6_PSLR_PSL63	SET	0
+
+; Dead-Time Control Register for Timer 12
+CCU6_T12DTC_DTE0	SET	0
+CCU6_T12DTC_DTE1	SET	0
+CCU6_T12DTC_DTE2	SET	0
+CCU6_T12DTC_DTM	SET	1
+
+; CAPCOM 6 Timer 12 Interrupt Control Register
+CCU6_T12IC_GLVL	SET	0
+CCU6_T12IC_GPX	SET	0
+CCU6_T12IC_IE	SET	0
+CCU6_T12IC_ILVL	SET	0
+CCU6_T12IC_IR	SET	0
+
+; T12 Capture/Compare Mode Select Register
+CCU6_T12MSEL_MSEL60	SET	0
+CCU6_T12MSEL_MSEL61	SET	0
+CCU6_T12MSEL_MSEL62	SET	0
+
+; Timer 12 Period Register
+CCU6_T12PR_T12PV	SET	1
+
+; Timer T12 Counter Register
+CCU6_T12_T12CV	SET	0
+
+; CAPCOM 6 Timer 13 Interrupt Control Register
+CCU6_T13IC_GLVL	SET	0
+CCU6_T13IC_GPX	SET	0
+CCU6_T13IC_IE	SET	0
+CCU6_T13IC_ILVL	SET	0
+CCU6_T13IC_IR	SET	0
+
+; Timer 13 Period Register
+CCU6_T13PR_T13PV	SET	1
+
+; Timer T13 Counter Register
+CCU6_T13_T13CV	SET	0
+
+; Timer Control Register 0
+CCU6_TCTR0_CDIR	SET	0
+CCU6_TCTR0_CTM	SET	0
+CCU6_TCTR0_STE12	SET	0
+CCU6_TCTR0_STE13	SET	0
+CCU6_TCTR0_T12CLK	SET	0
+CCU6_TCTR0_T12PRE	SET	0
+CCU6_TCTR0_T12R	SET	0
+CCU6_TCTR0_T13CLK	SET	0
+CCU6_TCTR0_T13PRE	SET	0
+CCU6_TCTR0_T13R	SET	0
+
+; Timer Control Register 2
+CCU6_TCTR2_T12SSC	SET	0
+CCU6_TCTR2_T13SSC	SET	0
+CCU6_TCTR2_T13TEC	SET	0
+CCU6_TCTR2_T13TED	SET	1
+
+; Timer Control Register 4
+CCU6_TCTR4_T12RES	SET	0
+CCU6_TCTR4_T12RR	SET	0
+CCU6_TCTR4_T12RS	SET	0
+CCU6_TCTR4_T12STD	SET	0
+CCU6_TCTR4_T12STR	SET	0
+CCU6_TCTR4_T13RES	SET	0
+CCU6_TCTR4_T13RR	SET	0
+CCU6_TCTR4_T13RS	SET	0
+CCU6_TCTR4_T13STD	SET	0
+CCU6_TCTR4_T13STR	SET	0
+
+; Trap Control Register
+CCU6_TRPCTR_TRPEN	SET	0
+CCU6_TRPCTR_TRPEN13	SET	0
+CCU6_TRPCTR_TRPM0	SET	0
+CCU6_TRPCTR_TRPM1	SET	0
+CCU6_TRPCTR_TRPM2	SET	0
+CCU6_TRPCTR_TRPPEN	SET	0
+
+; CPU Control Register 1
+CPUCON1_0	SET	0
+CPUCON1_BP	SET	1
+CPUCON1_INTSCXT	SET	1
+CPUCON1_SGTDIS	SET	0
+CPUCON1_VECSC	SET	0
+CPUCON1_WDTCTL	SET	0
+CPUCON1_ZCJ	SET	1
+
+; CPU Control Register 2
+CPUCON2_BYPF	SET	1
+CPUCON2_BYPPF	SET	1
+CPUCON2_DAID	SET	1
+CPUCON2_EIOIAEN	SET	1
+CPUCON2_FASTBL	SET	0
+CPUCON2_FIFODEPTH	SET	8
+CPUCON2_FIFOFED	SET	3
+CPUCON2_LFIC	SET	1
+CPUCON2_OVRUN	SET	1
+CPUCON2_RETST	SET	1
+CPUCON2_SL	SET	1
+CPUCON2_STEN	SET	0
+
+; CPU Contex Pointer Register
+CP_1	SET	0
+CP_1	SET	0
+CP_1	SET	0
+CP_1	SET	0
+CP_CP	SET	1536
+
+; CPU Code Segment Point Register
+CSP_SEGNR	SET	0
+
+; Port 0 High Direction Control Register
+DP0H_P0	SET	1
+DP0H_P1	SET	1
+DP0H_P2	SET	1
+DP0H_P3	SET	1
+DP0H_P4	SET	1
+DP0H_P5	SET	1
+DP0H_P6	SET	1
+DP0H_P7	SET	1
+
+; Port 0 Low Direction Control Register
+DP0L_P0	SET	1
+DP0L_P1	SET	1
+DP0L_P2	SET	1
+DP0L_P3	SET	1
+DP0L_P4	SET	1
+DP0L_P5	SET	1
+DP0L_P6	SET	1
+DP0L_P7	SET	1
+
+; Port 1 High Direction Control Register
+DP1H_P0	SET	0
+DP1H_P1	SET	0
+DP1H_P2	SET	0
+DP1H_P3	SET	0
+DP1H_P4	SET	0
+DP1H_P5	SET	0
+DP1H_P6	SET	0
+DP1H_P7	SET	0
+
+; Port 1 Low Direction Control Register
+DP1L_P0	SET	0
+DP1L_P1	SET	0
+DP1L_P2	SET	0
+DP1L_P3	SET	0
+DP1L_P4	SET	0
+DP1L_P5	SET	0
+DP1L_P6	SET	0
+DP1L_P7	SET	0
+
+; Port 20 Direction Control Register
+DP20_P0	SET	0
+DP20_P1	SET	0
+DP20_P12	SET	0
+DP20_P2	SET	0
+DP20_P4	SET	1
+DP20_P5	SET	0
+
+; Port 2 Direction Control Register
+DP2_P10	SET	0
+DP2_P11	SET	0
+DP2_P12	SET	0
+DP2_P13	SET	0
+DP2_P14	SET	0
+DP2_P15	SET	0
+DP2_P8	SET	1
+DP2_P9	SET	0
+
+; Port 3 Direction Control Register
+DP3_P0	SET	1
+DP3_P1	SET	0
+DP3_P10	SET	1
+DP3_P11	SET	0
+DP3_P12	SET	1
+DP3_P13	SET	0
+DP3_P15	SET	0
+DP3_P2	SET	0
+DP3_P3	SET	0
+DP3_P4	SET	0
+DP3_P5	SET	0
+DP3_P6	SET	0
+DP3_P7	SET	0
+DP3_P8	SET	0
+DP3_P9	SET	0
+
+; Port 4 Direction Control Register
+DP4_P0	SET	0
+DP4_P1	SET	0
+DP4_P2	SET	0
+DP4_P3	SET	0
+DP4_P4	SET	0
+DP4_P5	SET	0
+DP4_P6	SET	0
+DP4_P7	SET	0
+
+; Port 6 Direction Control Register
+DP6_P0	SET	0
+DP6_P1	SET	0
+DP6_P2	SET	0
+DP6_P3	SET	0
+DP6_P4	SET	0
+DP6_P5	SET	0
+DP6_P6	SET	1
+DP6_P7	SET	1
+
+; Port 7 Direction Control Register
+DP7_P4	SET	0
+DP7_P5	SET	0
+DP7_P6	SET	0
+DP7_P7	SET	0
+
+; Port 9 Direction Control Register
+DP9_P0	SET	0
+DP9_P1	SET	0
+DP9_P2	SET	0
+DP9_P3	SET	0
+DP9_P4	SET	0
+DP9_P5	SET	0
+
+; CPU Data Page Pointer 0 Register (10 bits)
+DPP0_DPP0PN	SET	0
+
+; CPU Data Page Pointer 1 Register (10 bits)
+DPP1_DPP1PN	SET	1
+
+; CPU Data Page Pointer 2 Register (10 bits)
+DPP2_DPP2PN	SET	2
+
+; CPU Data Page Pointer 3 Register (10 bits)
+DPP3_DPP3PN	SET	3
+
+; EBC Mode Control Register 0
+EBCMOD0_ALEDIS	SET	0
+EBCMOD0_ARBEN	SET	1
+EBCMOD0_BYTDIS	SET	0
+EBCMOD0_CSPEN	SET	5
+EBCMOD0_EBCDIS	SET	0
+EBCMOD0_RDYDIS	SET	1
+EBCMOD0_RDYPOL	SET	0
+EBCMOD0_SAPEN	SET	4
+EBCMOD0_SLAVE	SET	0
+EBCMOD0_WRCFG	SET	0
+
+; EBC Mode Control Register 1
+EBCMOD1_A0PDIS	SET	1
+EBCMOD1_ALPDIS	SET	1
+EBCMOD1_APDIS	SET	15
+EBCMOD1_DHPDIS	SET	0
+EBCMOD1_WRPDIS	SET	0
+
+; Interrupt Control Register
+EOPIC_GLVL	SET	0
+EOPIC_GPX	SET	0
+EOPIC_IE	SET	0
+EOPIC_ILVL	SET	0
+EOPIC_IR	SET	0
+
+; External Interrupt Control Register
+EXICON_EXI0ES	SET	0
+EXICON_EXI1ES	SET	0
+EXICON_EXI2ES	SET	0
+EXICON_EXI3ES	SET	0
+EXICON_EXI4ES	SET	0
+EXICON_EXI5ES	SET	0
+EXICON_EXI6ES	SET	0
+EXICON_EXI7ES	SET	0
+
+; External Interrupt Input Select Register
+EXISEL0_EXI0SS	SET	0
+EXISEL0_EXI1SS	SET	0
+EXISEL0_EXI2SS	SET	0
+EXISEL0_EXI3SS	SET	0
+
+; External Interrupt Input Select Register
+EXISEL1_EXI4SS	SET	0
+EXISEL1_EXI5SS	SET	0
+EXISEL1_EXI6SS	SET	0
+EXISEL1_EXI7SS	SET	0
+
+; CS0 Function Configuration Register
+FCONCS0_0	SET	0
+FCONCS0_0	SET	0
+FCONCS0_BTYP0	SET	3
+FCONCS0_ENCS0	SET	1
+FCONCS0_RDYEN0	SET	0
+FCONCS0_RDYMOD0	SET	0
+
+; CS1 Function Configuration Register
+FCONCS1_0	SET	0
+FCONCS1_0	SET	0
+FCONCS1_BTYP1	SET	3
+FCONCS1_ENCS1	SET	1
+FCONCS1_RDYEN1	SET	0
+FCONCS1_RDYMOD1	SET	0
+
+; CS2 Function Configuration Register
+FCONCS2_0	SET	0
+FCONCS2_0	SET	0
+FCONCS2_BTYP2	SET	0
+FCONCS2_ENCS2	SET	0
+FCONCS2_RDYEN2	SET	0
+FCONCS2_RDYMOD2	SET	0
+
+; CS3 Function Configuration Register
+FCONCS3_0	SET	0
+FCONCS3_0	SET	0
+FCONCS3_BTYP3	SET	0
+FCONCS3_ENCS3	SET	0
+FCONCS3_RDYEN3	SET	0
+FCONCS3_RDYMOD3	SET	0
+
+; CS4 Function Configuration Register
+FCONCS4_0	SET	0
+FCONCS4_0	SET	0
+FCONCS4_BTYP4	SET	0
+FCONCS4_ENCS4	SET	0
+FCONCS4_RDYEN4	SET	0
+FCONCS4_RDYMOD4	SET	0
+
+; CS5 Function Configuration Register
+FCONCS5_0	SET	0
+FCONCS5_0	SET	0
+FCONCS5_BTYP5	SET	0
+FCONCS5_ENCS5	SET	0
+FCONCS5_RDYEN5	SET	0
+FCONCS5_RDYMOD5	SET	0
+
+; CS6 Function Configuration Register
+FCONCS6_0	SET	0
+FCONCS6_0	SET	0
+FCONCS6_BTYP6	SET	0
+FCONCS6_ENCS6	SET	0
+FCONCS6_RDYEN6	SET	0
+FCONCS6_RDYMOD6	SET	0
+
+; CS7 Function Configuration Register
+FCONCS7_0	SET	0
+FCONCS7_0	SET	0
+FCONCS7_BTYP7	SET	0
+FCONCS7_ENCS7	SET	0
+FCONCS7_RDYEN7	SET	0
+FCONCS7_RDYMOD7	SET	0
+
+; Fast Interrupt  Address Register 0
+FINT0ADDR_ADDR	SET	0
+
+; Fast Interrupt Control Register 0
+FINT0CSP_EN	SET	0
+FINT0CSP_GLVL	SET	0
+FINT0CSP_GPX	SET	0
+FINT0CSP_ILVL	SET	0
+FINT0CSP_SEG	SET	0
+
+; Fast Interrupt  Address Register 1
+FINT1ADDR_ADDR	SET	0
+
+; Fast Interrupt Control Register 1
+FINT1CSP_EN	SET	0
+FINT1CSP_GLVL	SET	0
+FINT1CSP_GPX	SET	0
+FINT1CSP_ILVL	SET	0
+FINT1CSP_SEG	SET	0
+
+; Frequency Output Control Register
+FOCON_CLKEN	SET	0
+FOCON_FOCNT	SET	0
+FOCON_FOEN	SET	0
+FOCON_FORV	SET	2
+FOCON_FOSS	SET	0
+FOCON_FOTL	SET	0
+
+; GPT12 Capture/Reload Register
+GPT12E_CAPREL_CAPREL	SET	12500
+
+; GPT2 CAPREL Interrupt Control Register
+GPT12E_CRIC_GLVL	SET	0
+GPT12E_CRIC_GPX	SET	0
+GPT12E_CRIC_IE	SET	0
+GPT12E_CRIC_ILVL	SET	0
+GPT12E_CRIC_IR	SET	0
+
+; GPT1 Timer 2 Control Register
+GPT12E_T2CON_T2CHDIR	SET	0
+GPT12E_T2CON_T2EDGE	SET	0
+GPT12E_T2CON_T2I	SET	0
+GPT12E_T2CON_T2IRDIS	SET	0
+GPT12E_T2CON_T2M	SET	0
+GPT12E_T2CON_T2R	SET	0
+GPT12E_T2CON_T2RC	SET	0
+GPT12E_T2CON_T2RDIR	SET	0
+GPT12E_T2CON_T2UD	SET	1
+GPT12E_T2CON_T2UDE	SET	0
+
+; GPT1 Timer 2 Interrupt Control Register
+GPT12E_T2IC_GLVL	SET	1
+GPT12E_T2IC_GPX	SET	0
+GPT12E_T2IC_IE	SET	1
+GPT12E_T2IC_ILVL	SET	15
+GPT12E_T2IC_IR	SET	0
+
+; GPT1 Timer 2 Register
+GPT12E_T2_T2	SET	64999
+
+; GPT1 Timer 3 Control Register
+GPT12E_T3CON_BPS1	SET	0
+GPT12E_T3CON_T3CHDIR	SET	0
+GPT12E_T3CON_T3EDGE	SET	0
+GPT12E_T3CON_T3I	SET	0
+GPT12E_T3CON_T3M	SET	0
+GPT12E_T3CON_T3OE	SET	0
+GPT12E_T3CON_T3OTL	SET	0
+GPT12E_T3CON_T3R	SET	0
+GPT12E_T3CON_T3RDIR	SET	0
+GPT12E_T3CON_T3UD	SET	0
+GPT12E_T3CON_T3UDE	SET	0
+
+; GPT1 Timer 3 Interrupt Control Register
+GPT12E_T3IC_GLVL	SET	0
+GPT12E_T3IC_GPX	SET	0
+GPT12E_T3IC_IE	SET	0
+GPT12E_T3IC_ILVL	SET	0
+GPT12E_T3IC_IR	SET	0
+
+; GPT1 Timer 3 Register
+GPT12E_T3_T3	SET	0
+
+; GPT1 Timer 4 Control Register
+GPT12E_T4CON_T4CHDIR	SET	0
+GPT12E_T4CON_T4EDGE	SET	0
+GPT12E_T4CON_T4I	SET	0
+GPT12E_T4CON_T4IRDIS	SET	0
+GPT12E_T4CON_T4M	SET	0
+GPT12E_T4CON_T4R	SET	0
+GPT12E_T4CON_T4RC	SET	0
+GPT12E_T4CON_T4RDIR	SET	0
+GPT12E_T4CON_T4UD	SET	0
+GPT12E_T4CON_T4UDE	SET	0
+
+; GPT1 Timer 4 Interrupt Control Register
+GPT12E_T4IC_GLVL	SET	0
+GPT12E_T4IC_GPX	SET	0
+GPT12E_T4IC_IE	SET	0
+GPT12E_T4IC_ILVL	SET	0
+GPT12E_T4IC_IR	SET	0
+
+; GPT1 Timer 4 Register
+GPT12E_T4_T4	SET	0
+
+; GPT2 Timer 5 Control Register
+GPT12E_T5CON_CI	SET	0
+GPT12E_T5CON_CT3	SET	0
+GPT12E_T5CON_T5CC	SET	0
+GPT12E_T5CON_T5CLR	SET	0
+GPT12E_T5CON_T5I	SET	0
+GPT12E_T5CON_T5M	SET	0
+GPT12E_T5CON_T5R	SET	0
+GPT12E_T5CON_T5RC	SET	0
+GPT12E_T5CON_T5SC	SET	0
+GPT12E_T5CON_T5UD	SET	0
+GPT12E_T5CON_T5UDE	SET	0
+
+; GPT2 Timer 5 Interrupt Control Register
+GPT12E_T5IC_GLVL	SET	0
+GPT12E_T5IC_GPX	SET	0
+GPT12E_T5IC_IE	SET	0
+GPT12E_T5IC_ILVL	SET	0
+GPT12E_T5IC_IR	SET	0
+
+; GPT2 Timer 5 Register
+GPT12E_T5_T5	SET	0
+
+; GPT2 Timer 6 Control Register
+GPT12E_T6CON_BPS2	SET	3
+GPT12E_T6CON_T6CLR	SET	0
+GPT12E_T6CON_T6I	SET	0
+GPT12E_T6CON_T6M	SET	0
+GPT12E_T6CON_T6OE	SET	0
+GPT12E_T6CON_T6OTL	SET	0
+GPT12E_T6CON_T6R	SET	0
+GPT12E_T6CON_T6SR	SET	0
+GPT12E_T6CON_T6UD	SET	1
+GPT12E_T6CON_T6UDE	SET	0
+
+; GPT2 Timer 6 Interrupt Control Register
+GPT12E_T6IC_GLVL	SET	0
+GPT12E_T6IC_GPX	SET	0
+GPT12E_T6IC_IE	SET	1
+GPT12E_T6IC_ILVL	SET	0
+GPT12E_T6IC_IR	SET	0
+
+; GPT2 Timer 6 Register
+GPT12E_T6_T6	SET	12500
+
+; Identifier
+IDCHIP_IDCHIP	SET	8193
+
+; Identifier
+IDMANUF_IDMANUF	SET	6176
+
+; Identifier
+IDMEM2_IDMEM2	SET	0
+
+; Identifier
+IDMEM_IDMEM	SET	12320
+
+; Identifier
+IDPROG_IDPROG	SET	16448
+
+; IIC Address Register
+IIC_ADR_BRPMOD	SET	0
+IIC_ADR_ICA0	SET	0
+IIC_ADR_ICA1	SET	0
+IIC_ADR_ICA2	SET	0
+IIC_ADR_ICA3	SET	0
+IIC_ADR_ICA4	SET	0
+IIC_ADR_ICA5	SET	0
+IIC_ADR_ICA6	SET	0
+IIC_ADR_ICA7	SET	0
+IIC_ADR_ICA8	SET	0
+IIC_ADR_ICA9	SET	0
+IIC_ADR_PREDIV	SET	0
+
+; IIC Configuration Register
+IIC_CFG_BRP	SET	99
+IIC_CFG_SCLEN0	SET	0
+IIC_CFG_SCLEN1	SET	0
+IIC_CFG_SCLEN2	SET	0
+IIC_CFG_SCLEN3	SET	0
+IIC_CFG_SDAEN0	SET	0
+IIC_CFG_SDAEN1	SET	0
+IIC_CFG_SDAEN2	SET	0
+IIC_CFG_SDAEN3	SET	0
+
+; IIC Control Register
+IIC_CON_ACKDIS	SET	0
+IIC_CON_BUM	SET	0
+IIC_CON_CI	SET	0
+IIC_CON_IGE	SET	0
+IIC_CON_INT	SET	0
+IIC_CON_M10	SET	0
+IIC_CON_MOD	SET	0
+IIC_CON_RSC	SET	0
+IIC_CON_STP	SET	0
+IIC_CON_TRX	SET	0
+IIC_CON_WMEN	SET	0
+
+; IIC Data Interrupt Control Register
+IIC_DIC_GLVL	SET	0
+IIC_DIC_GPX	SET	0
+IIC_DIC_IE	SET	0
+IIC_DIC_ILVL	SET	0
+IIC_DIC_IR	SET	0
+
+; IIC Protocol Event Interrupt Control Register
+IIC_PEIC_GLVL	SET	0
+IIC_PEIC_GPX	SET	0
+IIC_PEIC_IE	SET	0
+IIC_PEIC_ILVL	SET	0
+IIC_PEIC_IR	SET	0
+
+; IIC Receive/Transmit Buffer High Register
+IIC_RTBH_RTB2	SET	0
+IIC_RTBH_RTB3	SET	0
+
+; IIC Receive/Transmit Buffer Low Register
+IIC_RTBL_RTB0	SET	0
+IIC_RTBL_RTB1	SET	0
+
+; IIC Status Register
+IIC_ST_ADR	SET	0
+IIC_ST_AL	SET	0
+IIC_ST_BB	SET	0
+IIC_ST_CO	SET	0
+IIC_ST_IRQD	SET	0
+IIC_ST_IRQE	SET	0
+IIC_ST_IRQP	SET	0
+IIC_ST_LRB	SET	0
+IIC_ST_RMEN	SET	0
+IIC_ST_SLA	SET	0
+
+; CPU Multiply Divide Control Register
+MDC_MDRIU	SET	0
+
+; CPU Multiply Divide Register - High Word
+MDH_MDH	SET	0
+
+; CPU Multiply Divide Register - Low Word
+MDL_MDL	SET	0
+
+; Port 2 Open Drain Control Register
+ODP2_P10	SET	0
+ODP2_P11	SET	0
+ODP2_P12	SET	0
+ODP2_P13	SET	0
+ODP2_P14	SET	0
+ODP2_P15	SET	0
+ODP2_P8	SET	0
+ODP2_P9	SET	0
+
+; Port 3 Open Drain Control Register
+ODP3_P0	SET	0
+ODP3_P1	SET	0
+ODP3_P10	SET	0
+ODP3_P11	SET	0
+ODP3_P13	SET	0
+ODP3_P2	SET	0
+ODP3_P3	SET	0
+ODP3_P4	SET	0
+ODP3_P5	SET	0
+ODP3_P6	SET	0
+ODP3_P7	SET	0
+ODP3_P8	SET	0
+ODP3_P9	SET	0
+
+; Port 4 Open Drain Control Register
+ODP4_P0	SET	0
+ODP4_P1	SET	0
+ODP4_P2	SET	0
+ODP4_P3	SET	0
+ODP4_P4	SET	0
+ODP4_P5	SET	0
+ODP4_P6	SET	0
+ODP4_P7	SET	0
+
+; Port 6 Open Drain Control Register
+ODP6_P0	SET	0
+ODP6_P1	SET	0
+ODP6_P2	SET	0
+ODP6_P3	SET	0
+ODP6_P4	SET	0
+ODP6_P5	SET	0
+ODP6_P6	SET	0
+ODP6_P7	SET	0
+
+; Port 7 Open Drain Control Register
+ODP7_P4	SET	0
+ODP7_P5	SET	0
+ODP7_P6	SET	0
+ODP7_P7	SET	0
+
+; Port 9 Open Drain Control Register
+ODP9_P0	SET	0
+ODP9_P1	SET	0
+ODP9_P2	SET	0
+ODP9_P3	SET	0
+ODP9_P4	SET	0
+ODP9_P5	SET	0
+
+; Constant Value 1's Register
+ONES_ONES	SET	65535
+
+; Port 0 High Register (Upper half)
+P0H_P0	SET	0
+P0H_P1	SET	0
+P0H_P2	SET	0
+P0H_P3	SET	0
+P0H_P4	SET	0
+P0H_P5	SET	0
+P0H_P6	SET	0
+P0H_P7	SET	0
+
+; Port 0 Low Register (Lower half)
+P0L_P0	SET	0
+P0L_P1	SET	0
+P0L_P2	SET	0
+P0L_P3	SET	0
+P0L_P4	SET	0
+P0L_P5	SET	0
+P0L_P6	SET	0
+P0L_P7	SET	0
+
+; Port 1 High Register (Upper half)
+P1H_P0	SET	0
+P1H_P1	SET	0
+P1H_P2	SET	0
+P1H_P3	SET	0
+P1H_P4	SET	0
+P1H_P5	SET	0
+P1H_P6	SET	0
+P1H_P7	SET	0
+
+; Port 1 Low Register (Lower half)
+P1L_P0	SET	0
+P1L_P1	SET	0
+P1L_P2	SET	0
+P1L_P3	SET	0
+P1L_P4	SET	0
+P1L_P5	SET	0
+P1L_P6	SET	0
+P1L_P7	SET	0
+
+; Port 20 Data Register
+P20_P0	SET	0
+P20_P1	SET	0
+P20_P12	SET	0
+P20_P2	SET	0
+P20_P4	SET	0
+P20_P5	SET	0
+
+; Port 2 Register (16 bits)
+P2_P10	SET	0
+P2_P11	SET	0
+P2_P12	SET	0
+P2_P13	SET	0
+P2_P14	SET	0
+P2_P15	SET	0
+P2_P8	SET	0
+P2_P9	SET	0
+
+; Port 3 Register
+P3_P0	SET	1
+P3_P1	SET	1
+P3_P10	SET	1
+P3_P11	SET	1
+P3_P12	SET	1
+P3_P13	SET	0
+P3_P15	SET	0
+P3_P2	SET	0
+P3_P3	SET	0
+P3_P4	SET	0
+P3_P5	SET	0
+P3_P6	SET	0
+P3_P7	SET	0
+P3_P8	SET	0
+P3_P9	SET	0
+
+; Port 4 Register (8 bits)
+P4_P0	SET	0
+P4_P1	SET	0
+P4_P2	SET	0
+P4_P3	SET	0
+P4_P4	SET	0
+P4_P5	SET	0
+P4_P6	SET	0
+P4_P7	SET	0
+
+; Port 5 Digital Input Disable Register
+P5DIDIS_P0	SET	0
+P5DIDIS_P1	SET	0
+P5DIDIS_P10	SET	0
+P5DIDIS_P11	SET	0
+P5DIDIS_P12	SET	0
+P5DIDIS_P13	SET	0
+P5DIDIS_P14	SET	0
+P5DIDIS_P15	SET	0
+P5DIDIS_P2	SET	0
+P5DIDIS_P3	SET	0
+P5DIDIS_P4	SET	0
+P5DIDIS_P5	SET	0
+P5DIDIS_P6	SET	0
+P5DIDIS_P7	SET	0
+P5DIDIS_P8	SET	0
+P5DIDIS_P9	SET	0
+
+; Port 5 Register (16 bits)
+P5_P0	SET	0
+P5_P1	SET	0
+P5_P10	SET	0
+P5_P11	SET	0
+P5_P12	SET	0
+P5_P13	SET	0
+P5_P14	SET	0
+P5_P15	SET	0
+P5_P2	SET	0
+P5_P3	SET	0
+P5_P4	SET	0
+P5_P5	SET	0
+P5_P6	SET	0
+P5_P7	SET	0
+P5_P8	SET	0
+P5_P9	SET	0
+
+; Port 6 Register (8 bits)
+P6_P0	SET	0
+P6_P1	SET	0
+P6_P2	SET	0
+P6_P3	SET	0
+P6_P4	SET	0
+P6_P5	SET	0
+P6_P6	SET	0
+P6_P7	SET	0
+
+; Port 7 Register (8 bits)
+P7_P4	SET	0
+P7_P5	SET	0
+P7_P6	SET	0
+P7_P7	SET	0
+
+; Port 9 Register (6 bits)
+P9_P0	SET	0
+P9_P1	SET	0
+P9_P2	SET	0
+P9_P3	SET	0
+P9_P4	SET	0
+P9_P5	SET	0
+
+; PEC Channel 0 Control Register
+PECC0_BWT	SET	1
+PECC0_COUNT	SET	1
+PECC0_EOPINT	SET	0
+PECC0_INC	SET	2
+PECC0_PLEV	SET	0
+
+; PEC Channel 1 Control Register
+PECC1_BWT	SET	0
+PECC1_COUNT	SET	0
+PECC1_EOPINT	SET	0
+PECC1_INC	SET	0
+PECC1_PLEV	SET	0
+
+; PEC Channel 2 Control Register
+PECC2_BWT	SET	0
+PECC2_COUNT	SET	0
+PECC2_EOPINT	SET	0
+PECC2_INC	SET	0
+PECC2_PLEV	SET	0
+
+; PEC Channel 3 Control Register
+PECC3_BWT	SET	0
+PECC3_COUNT	SET	0
+PECC3_EOPINT	SET	0
+PECC3_INC	SET	0
+PECC3_PLEV	SET	0
+
+; PEC Channel 4 Control Register
+PECC4_BWT	SET	0
+PECC4_COUNT	SET	0
+PECC4_EOPINT	SET	0
+PECC4_INC	SET	0
+PECC4_PLEV	SET	0
+
+; PEC Channel 5 Control Register
+PECC5_BWT	SET	0
+PECC5_COUNT	SET	0
+PECC5_EOPINT	SET	0
+PECC5_INC	SET	0
+PECC5_PLEV	SET	0
+
+; PEC Channel 6 Control Register
+PECC6_BWT	SET	0
+PECC6_COUNT	SET	0
+PECC6_EOPINT	SET	0
+PECC6_INC	SET	0
+PECC6_PLEV	SET	0
+
+; PEC Channel 7 Control Register
+PECC7_BWT	SET	0
+PECC7_COUNT	SET	0
+PECC7_EOPINT	SET	0
+PECC7_INC	SET	0
+PECC7_PLEV	SET	0
+
+; PEC Interrupt Subnode Control Register
+PECISNC_C0IE	SET	0
+PECISNC_C0IR	SET	0
+PECISNC_C1IE	SET	0
+PECISNC_C1IR	SET	0
+PECISNC_C2IE	SET	0
+PECISNC_C2IR	SET	0
+PECISNC_C3IE	SET	0
+PECISNC_C3IR	SET	0
+PECISNC_C4IE	SET	0
+PECISNC_C4IR	SET	0
+PECISNC_C5IE	SET	0
+PECISNC_C5IR	SET	0
+PECISNC_C6IE	SET	0
+PECISNC_C6IR	SET	0
+PECISNC_C7IE	SET	0
+PECISNC_C7IR	SET	0
+
+; PEC Pointer 0 Segment Address Register
+PECSEG0_DSTSEG0	SET	0
+PECSEG0_SRCSEG0	SET	0
+
+; PEC Pointer 1 Segment Address Register
+PECSEG1_DSTSEG1	SET	0
+PECSEG1_SRCSEG1	SET	0
+
+; PEC Pointer 2 Segment Address Register
+PECSEG2_DSTSEG2	SET	0
+PECSEG2_SRCSEG2	SET	0
+
+; PEC Pointer 3 Segment Address Register
+PECSEG3_DSTSEG3	SET	0
+PECSEG3_SRCSEG3	SET	0
+
+; PEC Pointer 4 Segment Address Register
+PECSEG4_DSTSEG4	SET	0
+PECSEG4_SRCSEG4	SET	0
+
+; PEC Pointer 5 Segment Address Register
+PECSEG5_DSTSEG5	SET	0
+PECSEG5_SRCSEG5	SET	0
+
+; PEC Pointer 6 Segment Address Register
+PECSEG6_DSTSEG6	SET	0
+PECSEG6_SRCSEG6	SET	0
+
+; PEC Pointer 7 Segment Address Register
+PECSEG7_DSTSEG7	SET	0
+PECSEG7_SRCSEG7	SET	0
+
+; Port Input Control Register
+PICON_P20HIN	SET	0
+PICON_P20LIN	SET	0
+PICON_P2HIN	SET	0
+PICON_P3HIN	SET	0
+PICON_P3LIN	SET	0
+PICON_P4LIN	SET	0
+PICON_P6LIN	SET	0
+PICON_P7LIN	SET	0
+PICON_P9LIN	SET	0
+
+; PLL Control Register
+PLLCON_PLLCSF	SET	0
+PLLCON_PLLCTRL	SET	3
+PLLCON_PLLIDIV	SET	1
+PLLCON_PLLMUL	SET	24
+PLLCON_PLLODIV	SET	4
+PLLCON_PLLVB	SET	0
+
+; Port P0H Output Control Register
+POCON0H_PDM0N	SET	0
+POCON0H_PDM1N	SET	0
+
+; Port 0L Output Control Register
+POCON0L_PDM0N	SET	0
+POCON0L_PDM1N	SET	0
+
+; Port 1H Output Control Register
+POCON1H_PDM0N	SET	0
+POCON1H_PDM1N	SET	0
+
+; Port 1L Output Control Register
+POCON1L_PDM0N	SET	0
+POCON1L_PDM1N	SET	0
+
+; Port 20 Output Control Register
+POCON20_PDM0N	SET	0
+POCON20_PDM1N	SET	0
+POCON20_PDM3N	SET	0
+
+; Port 2 Output Control Register
+POCON2_PDM2N	SET	0
+POCON2_PDM3N	SET	0
+
+; Port 3 Output Control Register
+POCON3_PDM0N	SET	0
+POCON3_PDM1N	SET	0
+POCON3_PDM2N	SET	0
+POCON3_PDM3N	SET	0
+
+; Port 4 Output Control Register
+POCON4_PDM0N	SET	0
+POCON4_PDM1N	SET	0
+
+; Port 6 Output Control Register
+POCON6_PDM0N	SET	0
+POCON6_PDM1N	SET	0
+
+; Port 7 Output Control Register
+POCON7_PDM0N	SET	0
+POCON7_PDM1N	SET	0
+
+; Port 9 Output Control Register
+POCON9_PDM0N	SET	0
+POCON9_PDM1N	SET	0
+
+; CPU Program Status Word
+PSW_C	SET	0
+PSW_E	SET	0
+PSW_HLDEN	SET	0
+PSW_IEN	SET	1
+PSW_ILVL	SET	0
+PSW_MULIP	SET	0
+PSW_N	SET	0
+PSW_USR0	SET	0
+PSW_V	SET	0
+PSW_Z	SET	0
+
+; Reset Configuration Register
+RSTCFG_ADP	SET	0
+RSTCFG_BUSTYP	SET	3
+RSTCFG_CLKCFG	SET	0
+RSTCFG_CSSEL	SET	3
+RSTCFG_ROC	SET	0
+RSTCFG_SALSEL	SET	0
+RSTCFG_SMOD	SET	0
+RSTCFG_WRC	SET	1
+
+; Reset Control Register
+RSTCON_0	SET	0
+RSTCON_0	SET	0
+RSTCON_ROCOFF	SET	0
+RSTCON_ROCON	SET	0
+RSTCON_RODIS	SET	0
+RSTCON_RORMV	SET	0
+RSTCON_RSTLEN	SET	0
+
+; RTC Control Register
+RTC_CON_0	SET	0
+RTC_CON_ACCPOS	SET	0
+RTC_CON_PRE	SET	1
+RTC_CON_REFCLK	SET	0
+RTC_CON_RUN	SET	1
+RTC_CON_T14DEC	SET	0
+RTC_CON_T14INC	SET	0
+
+; RTC Interrupt Control Register
+RTC_IC_0	SET	0
+RTC_IC_GLVL	SET	0
+RTC_IC_GPX	SET	0
+RTC_IC_IE	SET	0
+RTC_IC_ILVL	SET	0
+RTC_IC_IR	SET	0
+
+; RTC Interrupt Sub Node Control Register
+RTC_ISNC_0	SET	0
+RTC_ISNC_0IE	SET	0
+RTC_ISNC_0IR	SET	0
+RTC_ISNC_1IE	SET	0
+RTC_ISNC_1IR	SET	0
+RTC_ISNC_2IE	SET	0
+RTC_ISNC_2IR	SET	0
+RTC_ISNC_3IE	SET	0
+RTC_ISNC_3IR	SET	0
+RTC_ISNC_T14IE	SET	0
+RTC_ISNC_T14IR	SET	0
+
+; RTC Timer Reload High Register
+RTC_RELH_REL	SET	42216
+
+; RTC Timer Reload Low Register
+RTC_RELL_REL	SET	5060
+
+; RTC Timer High Register
+RTC_RTCH_RTCH	SET	0
+
+; RTC Timer Low Register
+RTC_RTCL_RTCL	SET	0
+
+; Timer 14 Reload Register
+RTC_T14REL_T14REL	SET	61440
+
+; Timer 14 Register
+RTC_T14_T14	SET	0
+
+; Security Level Command Register
+SCUSLC_COMMAND	SET	0
+
+; Security Level Status Register
+SCUSLS_PASSWORD	SET	0
+SCUSLS_SL	SET	0
+SCUSLS_STATE	SET	0
+
+; CPU System Stack Pointer Register
+SP_1	SET	0
+SP_1	SET	0
+SP_1	SET	0
+SP_1	SET	0
+SP_SP	SET	1536
+
+; SSC0 Baudrate Register
+SSC0_BR_BR_VALUE	SET	199
+
+; SSC0 Control Register
+SSC0_CON_AREN_BSY	SET	0
+SSC0_CON_BEN_BE	SET	0
+SSC0_CON_BM_BC	SET	7
+SSC0_CON_EN	SET	0
+SSC0_CON_HB	SET	0
+SSC0_CON_LB	SET	0
+SSC0_CON_MS	SET	1
+SSC0_CON_PEN_PE	SET	0
+SSC0_CON_PH	SET	0
+SSC0_CON_PO	SET	0
+SSC0_CON_REN_RE	SET	0
+SSC0_CON_TEN_TE	SET	0
+
+; SSC0 Error Interrupt Control Register
+SSC0_EIC_GLVL	SET	0
+SSC0_EIC_GPX	SET	0
+SSC0_EIC_IE	SET	0
+SSC0_EIC_ILVL	SET	0
+SSC0_EIC_IR	SET	0
+
+; SSC0 Receive Buffer
+SSC0_RB_RB_VALUE	SET	0
+
+; SSC0 Receive Interrupt Control Register
+SSC0_RIC_GLVL	SET	0
+SSC0_RIC_GPX	SET	0
+SSC0_RIC_IE	SET	0
+SSC0_RIC_ILVL	SET	0
+SSC0_RIC_IR	SET	0
+
+; SSC0 Transmit Buffer
+SSC0_TB_TB_VALUE	SET	0
+
+; SSC0 Transmit Interrupt Control Register
+SSC0_TIC_GLVL	SET	0
+SSC0_TIC_GPX	SET	0
+SSC0_TIC_IE	SET	0
+SSC0_TIC_ILVL	SET	0
+SSC0_TIC_IR	SET	0
+
+; SSC1 Baudrate Register
+SSC1_BR_BR_VALUE	SET	199
+
+; SSC1 Control Register
+SSC1_CON_AREN_BSY	SET	0
+SSC1_CON_BEN_BE	SET	0
+SSC1_CON_BM_BC	SET	7
+SSC1_CON_EN	SET	0
+SSC1_CON_HB	SET	0
+SSC1_CON_LB	SET	0
+SSC1_CON_MS	SET	0
+SSC1_CON_PEN_PE	SET	0
+SSC1_CON_PH	SET	0
+SSC1_CON_PO	SET	0
+SSC1_CON_REN_RE	SET	0
+SSC1_CON_TEN_TE	SET	0
+
+; SSC1 Error Interrupt Control Register
+SSC1_EIC_GLVL	SET	0
+SSC1_EIC_GPX	SET	0
+SSC1_EIC_IE	SET	0
+SSC1_EIC_ILVL	SET	0
+SSC1_EIC_IR	SET	0
+
+; SSC1 Receive Buffer
+SSC1_RB_RB_VALUE	SET	0
+
+; SSC1 Receive Interrupt Control Register
+SSC1_RIC_GLVL	SET	0
+SSC1_RIC_GPX	SET	0
+SSC1_RIC_IE	SET	0
+SSC1_RIC_ILVL	SET	0
+SSC1_RIC_IR	SET	0
+
+; SSC1 Transmit Buffer
+SSC1_TB_TB_VALUE	SET	0
+
+; SSC1 Transmit Interrupt Control Register
+SSC1_TIC_GLVL	SET	0
+SSC1_TIC_GPX	SET	0
+SSC1_TIC_IE	SET	0
+SSC1_TIC_ILVL	SET	0
+SSC1_TIC_IR	SET	0
+
+; CPU Stack Overflow Pointer Register
+STKOV_STKOV	SET	64000
+
+; CPU Stack Underflow Pointer Register
+STKUN_STKUN	SET	64512
+
+; General System Control Register
+SYSCON0_RTCCM	SET	0
+SYSCON0_RTCRST	SET	0
+
+; System Control Register 1
+SYSCON1_CPSYS	SET	0
+SYSCON1_PDCFG	SET	0
+SYSCON1_PFCFG	SET	0
+SYSCON1_SLEEPCON	SET	0
+
+; CPU System Configuration Register 3
+SYSCON3_ADCDIS	SET	1
+SYSCON3_ASC0DIS	SET	0
+SYSCON3_ASC1DIS	SET	0
+SYSCON3_CANDIS	SET	1
+SYSCON3_CC1DIS	SET	1
+SYSCON3_CC2DIS	SET	1
+SYSCON3_CC6DIS	SET	1
+SYSCON3_GPTDIS	SET	0
+SYSCON3_I2CDIS	SET	1
+SYSCON3_PFMDIS	SET	0
+SYSCON3_SSC0DIS	SET	1
+SYSCON3_SSC1DIS	SET	1
+
+; System Status Register
+SYSSTAT_CLKHIX	SET	0
+SYSSTAT_CLKLOX	SET	0
+SYSSTAT_HWR	SET	0
+SYSSTAT_OSCLOCK	SET	0
+SYSSTAT_PLLLOCK	SET	0
+SYSSTAT_SWR	SET	0
+SYSSTAT_WDTR	SET	0
+
+; CS0 Timing Configuration Register
+TCONCS0_0	SET	0
+TCONCS0_PHA0	SET	3
+TCONCS0_PHB0	SET	0
+TCONCS0_PHC0	SET	0
+TCONCS0_PHD0	SET	0
+TCONCS0_PHE0	SET	9
+TCONCS0_RDPHF0	SET	0
+TCONCS0_WRPHF0	SET	3
+
+; CS1 Timing Configuration Register
+TCONCS1_0	SET	0
+TCONCS1_PHA1	SET	0
+TCONCS1_PHB1	SET	0
+TCONCS1_PHC1	SET	1
+TCONCS1_PHD1	SET	1
+TCONCS1_PHE1	SET	1
+TCONCS1_RDPHF1	SET	1
+TCONCS1_WRPHF1	SET	1
+
+; CS2 Timing Configuration Register
+TCONCS2_0	SET	0
+TCONCS2_PHA2	SET	0
+TCONCS2_PHB2	SET	0
+TCONCS2_PHC2	SET	1
+TCONCS2_PHD2	SET	1
+TCONCS2_PHE2	SET	3
+TCONCS2_RDPHF2	SET	1
+TCONCS2_WRPHF2	SET	1
+
+; CS3 Timing Configuration Register
+TCONCS3_0	SET	0
+TCONCS3_PHA3	SET	0
+TCONCS3_PHB3	SET	0
+TCONCS3_PHC3	SET	0
+TCONCS3_PHD3	SET	0
+TCONCS3_PHE3	SET	0
+TCONCS3_RDPHF3	SET	0
+TCONCS3_WRPHF3	SET	0
+
+; CS4 Timing Configuration Register
+TCONCS4_0	SET	0
+TCONCS4_PHA4	SET	0
+TCONCS4_PHB4	SET	0
+TCONCS4_PHC4	SET	0
+TCONCS4_PHD4	SET	0
+TCONCS4_PHE4	SET	0
+TCONCS4_RDPHF4	SET	0
+TCONCS4_WRPHF4	SET	0
+
+; CS5 Timing Configuration Register
+TCONCS5_0	SET	0
+TCONCS5_PHA5	SET	0
+TCONCS5_PHB5	SET	0
+TCONCS5_PHC5	SET	0
+TCONCS5_PHD5	SET	0
+TCONCS5_PHE5	SET	0
+TCONCS5_RDPHF5	SET	0
+TCONCS5_WRPHF5	SET	0
+
+; CS6 Timing Configuration Register
+TCONCS6_0	SET	0
+TCONCS6_PHA6	SET	0
+TCONCS6_PHB6	SET	0
+TCONCS6_PHC6	SET	0
+TCONCS6_PHD6	SET	0
+TCONCS6_PHE6	SET	0
+TCONCS6_RDPHF6	SET	0
+TCONCS6_WRPHF6	SET	0
+
+; CS7 Timing Configuration Register
+TCONCS7_0	SET	0
+TCONCS7_PHA7	SET	0
+TCONCS7_PHB7	SET	0
+TCONCS7_PHC7	SET	0
+TCONCS7_PHD7	SET	0
+TCONCS7_PHE7	SET	0
+TCONCS7_RDPHF7	SET	0
+TCONCS7_WRPHF7	SET	0
+
+; Startup Memory CS Timing Configuration Register
+TCONCSSM_0	SET	0
+TCONCSSM_PHABR	SET	0
+TCONCSSM_PHBBR	SET	0
+TCONCSSM_PHCBR	SET	0
+TCONCSSM_PHDBR	SET	0
+TCONCSSM_PHEBR	SET	0
+TCONCSSM_RDPHFBR	SET	0
+TCONCSSM_WRPHFBR	SET	0
+
+; Trap Flag Register
+TFR_ILLOPA	SET	0
+TFR_NMI	SET	0
+TFR_PACER	SET	0
+TFR_PRTFLT	SET	0
+TFR_SOFTBRK	SET	0
+TFR_STKOF	SET	0
+TFR_STKUF	SET	0
+TFR_UNDOPC	SET	0
+
+; Vector Segment Pointer
+VECSEG_VECSEG	SET	192
+
+; Watchdog Timer Control Register
+WDTCON_WDTIN	SET	0
+WDTCON_WDTREL	SET	0
+
+; Watchdog Timer Register
+WDT_WDT	SET	0
+
+; Constant Value 0's Register
+ZEROS_ZEROS	SET	0
+

@@ -31,7 +31,7 @@
 // USER CODE BEGIN (ASC0_General,2)
 #include <tk_sysqueues.h>
 #include <tk.h>
-#include <tk_ipc.h>
+#include <tk_itc.h>
 /*
 
 #define TK_CLI() \
