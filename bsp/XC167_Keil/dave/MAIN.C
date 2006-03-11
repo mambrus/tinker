@@ -12,7 +12,7 @@
 // @Description   This file contains the project initialization function.
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-28 18:52:19
+// @Date          2006-03-11 15:46:50
 //
 //****************************************************************************
 
@@ -142,7 +142,7 @@ Bus arbitration enabled
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-28
+// @Date          2006-03-11
 //
 //****************************************************************************
 
@@ -323,20 +323,11 @@ void MAIN_vInit(void)
   //   initializes the Asynchronous/Synchronous Serial Interface (ASC1)
   ASC1_vInit();
 
-  //   initializes the High-Speed Synchronous Serial Interface 0 (SSC0)
-  SSC0_vInit();
-
   //   initializes the General Purpose Timer Unit (GPT1)
   GPT1_vInit();
 
   //   initializes the General Purpose Timer Unit (GPT2)
   GPT2_vInit();
-
-  //   initializes the Analog / Digital Converter (ADC)
-  ADC_vInit();
-
-  //   initializes the TwinCAN Module (CAN)
-  CAN_vInit();
 
   // USER CODE BEGIN (Init,3)
 
@@ -364,7 +355,7 @@ void MAIN_vInit(void)
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-28
+// @Date          2006-03-11
 //
 //****************************************************************************
 
@@ -418,7 +409,7 @@ void MAIN_vUnlockProtecReg(void)
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-28
+// @Date          2006-03-11
 //
 //****************************************************************************
 

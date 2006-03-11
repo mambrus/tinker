@@ -12,7 +12,7 @@
 // @Description   This file contains functions that use the GPT1 module.
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-28 18:52:23
+// @Date          2006-03-11 15:46:52
 //
 //****************************************************************************
 
@@ -51,7 +51,7 @@ systimer will start loosing ticks. Being a little to late is OK, since
 readout's of the time is done by combining systimer with HW 
 */
 #define MONITOR_TISR_LATENCY 
-//#undef  MONITOR_TISR_LATENCY 
+#undef  MONITOR_TISR_LATENCY 
 
 /*!
 
@@ -389,7 +389,7 @@ and..
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-28
+// @Date          2006-03-11
 //
 //****************************************************************************
 
@@ -512,7 +512,7 @@ void GPT1_vInit(void)
 // @Parameters    None
 //
 //----------------------------------------------------------------------------
-// @Date          2006-02-28
+// @Date          2006-03-11
 //
 //****************************************************************************
 
