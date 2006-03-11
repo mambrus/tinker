@@ -45,20 +45,28 @@ kernel_reimpl_ansi
 #include <assert.h>
 
 
-//! An internal scaling factor that needs to be matched against the timer 
-//  resolution so that the POSIX requirements for CLOCKS_PER_SEC is fullfilled.
-//  The current resolution is 1000 tics per second (1kHZ interrupts). The 
-//  POSIX CLOCKS_PER_SEC is preset to 1*10e6. How many clock_ticks is there 
-//  (or would there be) in a sys_mickey.
-
+/*! 
+An internal scaling factor that needs to be matched against the
+timer resolution so that the POSIX requirements for CLOCKS_PER_SEC is
+fullfilled. The current resolution is 1000 tics per second (1kHZ
+interrupts). The POSIX CLOCKS_PER_SEC is preset to 1*10e6. How many
+clock_ticks is there (or would there be) in a sys_mickey.
+*/
 #define TICK_PER_CLK 1000ul  //<! How much a tick is advanced on 
 //each interrupt
 
 
-#include "tk_tick.h"      //internal macros for tick handliing
-#if defined (HW_CLOCKED)
-#   define USE_HW_CLOCK      //!< Undef this to see the "error" in tk_msleep that happens each 17.2 minuts (see \Blog060227 for indepth discussion)
+#include "tk_tick.h"         //internal macros for tick handliing in this header
+#if defined (HW_CLOCKED) 
+#   define USE_HW_CLOCK      //!< Undef this to see the "error" in tk_msleep that happens each 17.2 minutes (see \Blog060227 for in-deapth discussion). Should be undefined if monitoring of ISR latency is turned off in the HW clock, since it will generate worse accuracy then reading only the sys_mikey_mickey alone.
 #endif
+
+/*! 
+Optionally this can be defined instead, but leave /ref
+USE_HW_CLOCK defined (same reasoning remains though, accuracy will
+be totally spoiled). 
+*/
+#define NO_SYSTIMER_WRAP_MONITOR 
 
 //return (clock_t)(-1);
 
@@ -145,7 +153,9 @@ clock_t clock(){
    The following should be cought by the TISR and should never possible to happen.
    Note kept for reference.
    */
-   //assert(HWclock_stats.perPebbles > (unsigned long)pebbles);
+   #ifdef NO_SYSTIMER_WRAP_MONITOR
+   assert(HWclock_stats.perPebbles > (unsigned long)pebbles);
+   #endif
 
    // Calculate the nuber of uS since last update of tick
    TuS = HWclock_stats.maxPebbles - pebbles;
@@ -224,7 +234,9 @@ void timespec2fmttime_np(
 }
 
 /*!
-It is often necessary to subtract two values of type struct timeval or struct timespec. Here is the best way to do this. It works even on some peculiar operating systems where the tv_sec member has an unsigned type.
+It is often necessary to subtract two values of type struct timeval or
+struct timespec. Here is the best way to do this. It works even on some
+peculiar operating systems where the tv_sec member has an unsigned type.
 
 Subtract the `struct timeval' values X and Y,
 storing the result in RESULT.
@@ -262,7 +274,15 @@ int
 /*! 
  * @ingroup CVSLOG CVSLOG
  *  $Log: time.c,v $
- *  Revision 1.14  2006-03-11 14:37:50  ambrmi09
+ *  Revision 1.15  2006-03-11 15:11:32  ambrmi09
+ *  - Trimmed the monitoring contitionals concernig missed sys_mickey
+ *  updates (in time.c and GPT1.C). They are now off per default (remember to
+ *  reenaple in real case apps).
+ *
+ *  - Preparing for moving the dave branch out of kernel scope, and move it
+ *  as a part of the bsp instead.
+ *
+ *  Revision 1.14  2006/03/11 14:37:50  ambrmi09
  *  - Replaced printf with printk in in-depth parts of the kernel. This is
  *  to make porting easier since printk can then be mapped to whatever
  *  counsole output ability there is (including none if there isn't any).
