@@ -307,10 +307,10 @@ issue, the solution and the quirks and considerations are described.
 unsigned int timerdeamon(void *inpar ){
    unsigned long msg_buf[4];   
 
-   printf("Timer deamon started. Preemtive hi-res timer events now possible\n");
+   printk("Timer deamon started. Preemtive hi-res timer events now possible\n");
    while (1){
       q_receive(tk_sys_queues[Q_HW_TIMER_EVENT],WAIT,0,msg_buf);
-      printf("Timer deamon: %d\n",msg_buf[THWP_EVENT_ID]);
+      printk("Timer deamon: %d\n",msg_buf[THWP_EVENT_ID]);
       /*
       THWP_EVENT_ID
       THWP_TIMER_ID                                      
@@ -332,7 +332,7 @@ unsigned int timerdeamon(void *inpar ){
       case ET_CANCELLED: 
          break;
       default:
-         printf("tk_ptime: Error - we really need to polish the error handling...\n");
+         printk("tk_ptime: Error - we really need to polish the error handling...\n");
          tk_exit(1);
       };
 
@@ -439,7 +439,35 @@ digraph ptime_main {
  * @defgroup CVSLOG_tk_ptime_c tk_ptime_c
  * @ingroup CVSLOG
  *  $Log: tk_ptime.c,v $
- *  Revision 1.8  2006-03-05 11:11:28  ambrmi09
+ *  Revision 1.9  2006-03-11 14:37:50  ambrmi09
+ *  - Replaced printf with printk in in-depth parts of the kernel. This is
+ *  to make porting easier since printk can then be mapped to whatever
+ *  counsole output ability there is (including none if there isn't any).
+ *
+ *  - Conditionals for: 1) time ISR latency and 2) clock systimer faliure
+ *  introduced. This is because debugging involves stopping the program but
+ *  not the clock HW, which will trigger the "trap" as soon as resuming the
+ *  program after a BP stop (or step). I.e. inhibit those part's when
+ *  debugging (which is probably most of the time). Remeber to re-enable for
+ *  "release" version of any application.
+ *
+ *  - Working on getting rid of all the compilation warnings.
+ *
+ *  - Detected a new serious bug. If an extra malloc is not executed
+ *  *before* the first thread is created that requires a steck  (i.e. the
+ *  idle tread sice root allready has a stack), that thread will fail with
+ *  an illegal OP-code trap. This has been traced to be due to a faulty
+ *  malloc and/or possibly a memory alignement problem. The first block
+ *  allocated, will be about 6 positions to high up in the memory map, which
+ *  means that sthe total block will not really fit. If that block is the
+ *  stack of a thread, those positions will be either the context or the
+ *  return adress of that thread (which is bad). I'm concerned about not
+ *  detecting this error before, which leads me to believe that this
+ *  actually is an alignement issue in malloc and it's anly pure chance
+ *  wheather the bug will manifest or not. This is a problem related
+ *  to the Keil_XC167 target only.
+ *
+ *  Revision 1.8  2006/03/05 11:11:28  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.7  2006/02/22 13:05:47  ambrmi09

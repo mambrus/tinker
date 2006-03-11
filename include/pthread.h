@@ -659,47 +659,52 @@ The ones not commeted out is implemented by TinKer
 //   pthread_cleanup_push and pthread_cleanup_pop are macros and must always
 //   be used in matching pairs at the same nesting level of braces. */
 //
-//#define pthread_cleanup_push(routine,arg) \
-//  { struct _pthread_cleanup_buffer _buffer;                 \
-//    _pthread_cleanup_push (&_buffer, (routine), (arg));
-//
-//extern void _pthread_cleanup_push (struct _pthread_cleanup_buffer *__buffer,
-//               void (*__routine) (void *),
-//               void *__arg);
-//
-///*! Remove a cleanup handler installed by the matching pthread_cleanup_push.
-//   If EXECUTE is non-zero, the handler function is called. */
-//
-//#define pthread_cleanup_pop(execute) \
-//    _pthread_cleanup_pop (&_buffer, (execute)); }
-//
-//extern void _pthread_cleanup_pop (struct _pthread_cleanup_buffer *__buffer,
-//              int __execute);
-//
-///*! Install a cleanup handler as pthread_cleanup_push does, but also
-//   saves the current cancellation type and set it to deferred cancellation.  */
-//
-//#ifdef __USE_GNU
-//# define pthread_cleanup_push_defer_np(routine,arg) \
-//  { struct _pthread_cleanup_buffer _buffer;                 \
-//    _pthread_cleanup_push_defer (&_buffer, (routine), (arg));
-//
-//extern void _pthread_cleanup_push_defer (struct _pthread_cleanup_buffer *__buffer,
-//                void (*__routine) (void *),
-//                void *__arg);
-//
-///*! Remove a cleanup handler as pthread_cleanup_pop does, but also
-//   restores the cancellation type that was in effect when the matching
-//   pthread_cleanup_push_defer was called.  */
-//
-//# define pthread_cleanup_pop_restore_np(execute) \
-//  _pthread_cleanup_pop_restore (&_buffer, (execute)); }
-//
-//extern void _pthread_cleanup_pop_restore (struct _pthread_cleanup_buffer *__buffer,
-//                 int __execute);
-//#endif
-//
-//
+/*
+#define pthread_cleanup_push(routine,arg) \
+  { struct _pthread_cleanup_buffer _buffer;                 \
+    _pthread_cleanup_push (&_buffer, (routine), (arg));
+*/
+/*
+extern void _pthread_cleanup_push (struct _pthread_cleanup_buffer *__buffer,
+               void (*__routine) (void *),
+               void *__arg);
+*/
+/*! Remove a cleanup handler installed by the matching pthread_cleanup_push.
+   If EXECUTE is non-zero, the handler function is called. */
+/*
+#define pthread_cleanup_pop(execute) \
+    _pthread_cleanup_pop (&_buffer, (execute)); }
+*/
+/*
+extern void _pthread_cleanup_pop (struct _pthread_cleanup_buffer *__buffer,
+              int __execute);
+*/
+/*! Install a cleanup handler as pthread_cleanup_push does, but also
+   saves the current cancellation type and set it to deferred cancellation.  */
+/*
+#ifdef __USE_GNU
+# define pthread_cleanup_push_defer_np(routine,arg) \
+  { struct _pthread_cleanup_buffer _buffer;                 \
+    _pthread_cleanup_push_defer (&_buffer, (routine), (arg));
+*/
+/*
+extern void _pthread_cleanup_push_defer (struct _pthread_cleanup_buffer *__buffer,
+                void (*__routine) (void *),
+                void *__arg);
+*/
+/*! Remove a cleanup handler as pthread_cleanup_pop does, but also
+   restores the cancellation type that was in effect when the matching
+   pthread_cleanup_push_defer was called.  */
+
+/*
+# define pthread_cleanup_pop_restore_np(execute) \
+  _pthread_cleanup_pop_restore (&_buffer, (execute)); }
+
+extern void _pthread_cleanup_pop_restore (struct _pthread_cleanup_buffer *__buffer,
+                 int __execute);
+#endif
+*/
+
 //#ifdef __USE_XOPEN2K
 ///*! Get ID of CPU-time clock for thread THREAD_ID.  */
 //extern int pthread_getcpuclockid (pthread_t __thread_id,
@@ -732,6 +737,7 @@ The ones not commeted out is implemented by TinKer
 //   Should be called just before invoking one of the exec*() functions.  */
 //
 //extern void pthread_kill_other_threads_np (void);
+//
 
 /*!
 @name Creation and destruction of this component
@@ -792,7 +798,35 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.8  2006-03-05 11:11:24  ambrmi09
+ *  Revision 1.9  2006-03-11 14:37:48  ambrmi09
+ *  - Replaced printf with printk in in-depth parts of the kernel. This is
+ *  to make porting easier since printk can then be mapped to whatever
+ *  counsole output ability there is (including none if there isn't any).
+ *
+ *  - Conditionals for: 1) time ISR latency and 2) clock systimer faliure
+ *  introduced. This is because debugging involves stopping the program but
+ *  not the clock HW, which will trigger the "trap" as soon as resuming the
+ *  program after a BP stop (or step). I.e. inhibit those part's when
+ *  debugging (which is probably most of the time). Remeber to re-enable for
+ *  "release" version of any application.
+ *
+ *  - Working on getting rid of all the compilation warnings.
+ *
+ *  - Detected a new serious bug. If an extra malloc is not executed
+ *  *before* the first thread is created that requires a steck  (i.e. the
+ *  idle tread sice root allready has a stack), that thread will fail with
+ *  an illegal OP-code trap. This has been traced to be due to a faulty
+ *  malloc and/or possibly a memory alignement problem. The first block
+ *  allocated, will be about 6 positions to high up in the memory map, which
+ *  means that sthe total block will not really fit. If that block is the
+ *  stack of a thread, those positions will be either the context or the
+ *  return adress of that thread (which is bad). I'm concerned about not
+ *  detecting this error before, which leads me to believe that this
+ *  actually is an alignement issue in malloc and it's anly pure chance
+ *  wheather the bug will manifest or not. This is a problem related
+ *  to the Keil_XC167 target only.
+ *
+ *  Revision 1.8  2006/03/05 11:11:24  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.7  2006/02/22 13:05:46  ambrmi09

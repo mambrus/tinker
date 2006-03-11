@@ -57,7 +57,7 @@ kernel_reimpl_ansi
 
 #include "tk_tick.h"      //internal macros for tick handliing
 #if defined (HW_CLOCKED)
-#define USE_HW_CLOCK      //!< Undef this to see the "error" in tk_msleep that happens each 17.2 minuts (see \Blog060227 for indepth discussion)
+#   define USE_HW_CLOCK      //!< Undef this to see the "error" in tk_msleep that happens each 17.2 minuts (see \Blog060227 for indepth discussion)
 #endif
 
 //return (clock_t)(-1);
@@ -106,7 +106,7 @@ clock_t clock(){
    unsigned long        uS;       // Time passed since last update of tick expressed in uS.
    unsigned long        TuS;      // Temp of the above
    HWclock_stats_t      HWclock_stats;
-   int                  ecnt = 0;
+   //int                  ecnt = 0;
    int                  zerocrossed = 0;
       
 
@@ -140,18 +140,17 @@ clock_t clock(){
    }
    */
 
-   assert(HWclock_stats.perPebbles > (unsigned long)pebbles);
-   //assert( ecnt < 3 );
-   
+
+   /*
+   The following should be cought by the TISR and should never possible to happen.
+   Note kept for reference.
+   */
+   //assert(HWclock_stats.perPebbles > (unsigned long)pebbles);
 
    // Calculate the nuber of uS since last update of tick
    TuS = HWclock_stats.maxPebbles - pebbles;
    TuS = (TuS * (1000000L / (HWclock_stats.freq_hz/100)))/100;
-   
-   if (TuS > 8000){
-      assert("Hepp"==NULL);
-   }
-   
+      
    return (uS + TuS);
 
    #endif
@@ -263,7 +262,35 @@ int
 /*! 
  * @ingroup CVSLOG CVSLOG
  *  $Log: time.c,v $
- *  Revision 1.13  2006-03-05 11:11:27  ambrmi09
+ *  Revision 1.14  2006-03-11 14:37:50  ambrmi09
+ *  - Replaced printf with printk in in-depth parts of the kernel. This is
+ *  to make porting easier since printk can then be mapped to whatever
+ *  counsole output ability there is (including none if there isn't any).
+ *
+ *  - Conditionals for: 1) time ISR latency and 2) clock systimer faliure
+ *  introduced. This is because debugging involves stopping the program but
+ *  not the clock HW, which will trigger the "trap" as soon as resuming the
+ *  program after a BP stop (or step). I.e. inhibit those part's when
+ *  debugging (which is probably most of the time). Remeber to re-enable for
+ *  "release" version of any application.
+ *
+ *  - Working on getting rid of all the compilation warnings.
+ *
+ *  - Detected a new serious bug. If an extra malloc is not executed
+ *  *before* the first thread is created that requires a steck  (i.e. the
+ *  idle tread sice root allready has a stack), that thread will fail with
+ *  an illegal OP-code trap. This has been traced to be due to a faulty
+ *  malloc and/or possibly a memory alignement problem. The first block
+ *  allocated, will be about 6 positions to high up in the memory map, which
+ *  means that sthe total block will not really fit. If that block is the
+ *  stack of a thread, those positions will be either the context or the
+ *  return adress of that thread (which is bad). I'm concerned about not
+ *  detecting this error before, which leads me to believe that this
+ *  actually is an alignement issue in malloc and it's anly pure chance
+ *  wheather the bug will manifest or not. This is a problem related
+ *  to the Keil_XC167 target only.
+ *
+ *  Revision 1.13  2006/03/05 11:11:27  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.12  2006/02/27 13:30:04  ambrmi09

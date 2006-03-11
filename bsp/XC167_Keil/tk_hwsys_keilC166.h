@@ -23,7 +23,6 @@
 #define TK_HWSYS_KEILC166_H      
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*
-                                                                      
 The following pragmas are important compilor directives to ensure correct
 behavious of the kernal. They should be supplied on the command line or in the
 "misc control" of Uv2 project setting. For fonveniance (and for explanation)
@@ -109,6 +108,12 @@ device must follow Keils predifined devices, which you can find as files in the 
 #else
    #error "Error, No device specified - can't determine register definition file !!!!!!!!!!!"
 #endif
+
+
+/*!
+How printk is implemented on this target
+*/
+#define printk printf
 
 /*
 #include <dave/MAIN.H>
@@ -275,34 +280,37 @@ void _tk_initialize_system_ques( );
 #define TRY_CATCH_STACK_ERROR( STACK_T, TEMP )                                \
    __asm { mov TEMP, R0 }                                                     \
    if ( TEMP < STACK_T.userstack.u.offs24._offs + SAFEZONE ){                 \
-      printf("tk: Error - user stack trashed!\n");                            \
+      printk("tk: Error - user stack trashed!\n");                            \
       tk_exit(TK_ERR_STACK);                                                  \
    }                                                                          \
    if ( DPP0 < STACK_T.userstack.u.seg24._seg ){                              \
-      printf("tk: Error - user stack trashed!\n");                            \
+      printk("tk: Error - user stack trashed!\n");                            \
       tk_exit(TK_ERR_STACK);                                                  \
    }
    
 
+void _do_trap (unsigned int num);
 #define TRAP( NUM )                                                           \
    _do_trap( NUM )
 
-//#define TK_CLI()                                                              \
-//   __asm{ BCLR PSW_IEN }                                                      \
-//   Tk_IntFlagCntr++;                                                          \   
-//
-//
-//#define TK_STI()	                                                           \
-//   Tk_IntFlagCntr--;  /*Is ok since CLI is active no one can interfere*/      \
-//   if (Tk_IntFlagCntr == 0)                                                   \
-//      __asm{ BSET PSW_IEN }
+
+
+#define OBSOLETE_TK_CLI()                                                     \
+   __asm{ BCLR PSW_IEN }                                                      \
+   Tk_IntFlagCntr++;                                                          \   
+
+
+#define OBSOLETE_TK_STI()	                                                   \
+   Tk_IntFlagCntr--;  /*Is ok since CLI is active no one can interfere*/      \
+   if (Tk_IntFlagCntr == 0)                                                   \
+      __asm{ BSET PSW_IEN }
 
 #define TK_CLI()                                                              \
    __asm{ BCLR PSW_IEN }                                                      
 
 
 
-#define TK_STI()	                                                            \
+#define TK_STI()	                                                          \
    __asm{ BSET PSW_IEN }
          
 
@@ -373,7 +381,7 @@ TBD
    if ( TCB_T.stack_crc != 0 ){                                \
       STK_CRC_CALC( TEMP );                                    \
       if ( TCB_T.stack_crc != TEMP )	{                       \
-         printf ("\ntk: Error - Thread 0x%02X \"%s\" has got a tainted stack\n",TCB_T.Thid,TCB_T.name); \
+         printk ("\ntk: Error - Thread 0x%02X \"%s\" has got a tainted stack\n",TCB_T.Thid,TCB_T.name); \
          tk_exit( TK_ERR_STKINT );                             \
       }                                                        \
    }
@@ -392,7 +400,35 @@ TBD
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.h,v $
- *  Revision 1.19  2006-03-07 08:24:12  ambrmi09
+ *  Revision 1.20  2006-03-11 14:37:48  ambrmi09
+ *  - Replaced printf with printk in in-depth parts of the kernel. This is
+ *  to make porting easier since printk can then be mapped to whatever
+ *  counsole output ability there is (including none if there isn't any).
+ *
+ *  - Conditionals for: 1) time ISR latency and 2) clock systimer faliure
+ *  introduced. This is because debugging involves stopping the program but
+ *  not the clock HW, which will trigger the "trap" as soon as resuming the
+ *  program after a BP stop (or step). I.e. inhibit those part's when
+ *  debugging (which is probably most of the time). Remeber to re-enable for
+ *  "release" version of any application.
+ *
+ *  - Working on getting rid of all the compilation warnings.
+ *
+ *  - Detected a new serious bug. If an extra malloc is not executed
+ *  *before* the first thread is created that requires a steck  (i.e. the
+ *  idle tread sice root allready has a stack), that thread will fail with
+ *  an illegal OP-code trap. This has been traced to be due to a faulty
+ *  malloc and/or possibly a memory alignement problem. The first block
+ *  allocated, will be about 6 positions to high up in the memory map, which
+ *  means that sthe total block will not really fit. If that block is the
+ *  stack of a thread, those positions will be either the context or the
+ *  return adress of that thread (which is bad). I'm concerned about not
+ *  detecting this error before, which leads me to believe that this
+ *  actually is an alignement issue in malloc and it's anly pure chance
+ *  wheather the bug will manifest or not. This is a problem related
+ *  to the Keil_XC167 target only.
+ *
+ *  Revision 1.19  2006/03/07 08:24:12  ambrmi09
  *  A very crude port for ARM is running (LPC2129) - @note THIS IS HIGHLY EXPERIMENTAL CODE
  *
  *  Revision 1.18  2006/03/05 11:11:23  ambrmi09

@@ -140,20 +140,20 @@ void p_bQf(int x,int y,unsigned int qid) {
 	BOOL rc;
 	
 	gotoxy(x,y);
-	printf("                                                               ");
+	printk("                                                               ");
 	gotoxy(x,y);
 	rc = TRUE;
    
 	if(ipc_array[qid]->token == 0)
 		return;
 	for(mark_idx=ipc_array[qid]->out_idx;mark_idx!=ipc_array[qid]->in_idx;mark_idx++,mark_idx %= MAX_BLOCKED_ON_Q) {
-		printf("%s ",ipc_array[qid]->blocked_procs[mark_idx]->name);
+		printk("%s ",ipc_array[qid]->blocked_procs[mark_idx]->name);
 		if (!(no_duplicateBlock(qid,mark_idx)))
 			rc = FALSE;
 		count++;
 	} 
-	printf("T=%d D=%d",ipc_array[qid]->token, abs(ipc_array[qid]->out_idx - ipc_array[qid]->in_idx) );
-	printf("\n");
+	printk("T=%d D=%d",ipc_array[qid]->token, abs(ipc_array[qid]->out_idx - ipc_array[qid]->in_idx) );
+	printk("\n");
 	
 	//assert(abs(ipc_array[qid]->out_idx - ipc_array[qid]->in_idx) == abs(ipc_array[qid]->token) );
 	
@@ -410,7 +410,7 @@ static unsigned long unlock_stage(
 			}
 			//assert(ipc_array[qid]->token<0);
 			if ((ipc_array[qid]->in_idx - ipc_array[qid]->out_idx) == 0) { /*ipc_array[qid]->token==0*/
-				/*printf("Hubba i örat\n");
+				/*printk("Hubba i örat\n");
 				while(1);*/
 				return(ERR_OK);
 				
@@ -605,7 +605,7 @@ static unsigned long _unlock_stage_ny(
          }
          //assert(ipc_array[qid]->token<0);
          if ((ipc_array[qid]->in_idx - ipc_array[qid]->out_idx) == 0) { /*ipc_array[qid]->token==0*/
-            /*printf("Hubba i örat\n");
+            /*printk("Hubba i örat\n");
             while(1);*/
             return(ERR_OK);
             
@@ -758,8 +758,8 @@ unsigned long q_vreceive(
 
 	/* If execution reached here it means there is a message in the queue */
 	/*gotoxy(1,20);
-	//printf("%s \n",msg_buf);
-	//printf("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);*/
+	printk("%s \n",msg_buf);
+	printk("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);*/
 	memcpy(
 		msg_buf, 
 		ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].mb,
@@ -804,7 +804,7 @@ unsigned long q_vsend(
 	ipc_array[qid]->min_idx++;
 	ipc_array[qid]->min_idx %= ipc_array[qid]->sizeof_q; 
 	//gotoxy(1,19);
-	//printf("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);
+	printk("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);
 
 	
 	rc = unlock_stage(qid);
@@ -1081,8 +1081,8 @@ unsigned long q_vreceive_ny(
 
    /* If execution reached here it means there is a message in the queue */
    /*gotoxy(1,20);
-   //printf("%s \n",msg_buf);
-   //printf("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);*/
+   printk("%s \n",msg_buf);
+   printk("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);*/
    memcpy(
       msg_buf, 
       ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].mb,
@@ -1127,7 +1127,7 @@ unsigned long q_vsend_ny(
    ipc_array[qid]->min_idx++;
    ipc_array[qid]->min_idx %= ipc_array[qid]->sizeof_q; 
    //gotoxy(1,19);
-   //printf("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);
+   printk("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);
 
    
    rc = _unlock_stage_ny(qid);
@@ -1381,7 +1381,35 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.22  2006-03-05 11:11:28  ambrmi09
+ *  Revision 1.23  2006-03-11 14:37:50  ambrmi09
+ *  - Replaced printf with printk in in-depth parts of the kernel. This is
+ *  to make porting easier since printk can then be mapped to whatever
+ *  counsole output ability there is (including none if there isn't any).
+ *
+ *  - Conditionals for: 1) time ISR latency and 2) clock systimer faliure
+ *  introduced. This is because debugging involves stopping the program but
+ *  not the clock HW, which will trigger the "trap" as soon as resuming the
+ *  program after a BP stop (or step). I.e. inhibit those part's when
+ *  debugging (which is probably most of the time). Remeber to re-enable for
+ *  "release" version of any application.
+ *
+ *  - Working on getting rid of all the compilation warnings.
+ *
+ *  - Detected a new serious bug. If an extra malloc is not executed
+ *  *before* the first thread is created that requires a steck  (i.e. the
+ *  idle tread sice root allready has a stack), that thread will fail with
+ *  an illegal OP-code trap. This has been traced to be due to a faulty
+ *  malloc and/or possibly a memory alignement problem. The first block
+ *  allocated, will be about 6 positions to high up in the memory map, which
+ *  means that sthe total block will not really fit. If that block is the
+ *  stack of a thread, those positions will be either the context or the
+ *  return adress of that thread (which is bad). I'm concerned about not
+ *  detecting this error before, which leads me to believe that this
+ *  actually is an alignement issue in malloc and it's anly pure chance
+ *  wheather the bug will manifest or not. This is a problem related
+ *  to the Keil_XC167 target only.
+ *
+ *  Revision 1.22  2006/03/05 11:11:28  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.21  2006/03/05 10:39:02  ambrmi09

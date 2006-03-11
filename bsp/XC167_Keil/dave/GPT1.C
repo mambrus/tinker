@@ -41,6 +41,18 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 #include <kernel/include/assert.h>
 #include <../bsp/XC167_Keil/tk_hwtypes_keilC166.h> //Note: This is a shaky thingy. This header must not in turn include any Keil regs.h
 
+/*! 
+If this is defied, it means that the whole program will break if
+timer interrupt is delayed for too long. Great for debugging scheduler
+critical sections protection. This is done by turning ISR's on and off
+since no other means are available (in that particular case). Still we
+do want to know that ISR are not turned of for to long, or else our
+systimer will start loosing ticks. Being a little to late is OK, since
+readout's of the time is done by combining systimer with HW 
+*/
+#define MONITOR_TISR_LATENCY 
+//#undef  MONITOR_TISR_LATENCY 
+
 /*!
 
 @name TIMECONSTANTS
@@ -520,7 +532,9 @@ void GPT1_viTmr2(void) interrupt T2INT
   pebbRest = GPT1_uwReadTmr(GPT1_TIMER_2);
   pebbRest *= -1;
 
+  #ifdef MONITOR_TISR_LATENCY
   assert(RELOADVAL > pebbRest );                    //<- Interrupt flag has been turned off for too long. Missed one whole event (at least).
+  #endif
 
   //The following row CAN actually occure. But the test should work at 
   //least for several minuts. Renable to thest your config.

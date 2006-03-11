@@ -32,7 +32,7 @@ SCHED
 @see COMPONENTS
 */
 
-/*- include files **/ 
+/*- include files **/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,6 +43,10 @@ SCHED
 #include <tk.h>
 #include <tk_hwsys.h>
 #include <../src/implement_tk.h>
+
+#ifndef printk
+#   error Tinker needs a prink to be implemented for this target
+#endif
 
 //#if !(CLK_TCK == CLOCKS_PER_SEC)
 //#error CLK_TCK == CLOCKS_PER_SEC. Target not following POSIX standard
@@ -156,7 +160,7 @@ is costly (I think)...
 coord_t lookUpTable[TK_MAX_THREADS];
 
 */
-struct tcb_t proc_stat[TK_MAX_THREADS];
+struct tcb_t proc_stat[TK_MAX_THREADS];  
 
 
 /*!
@@ -181,6 +185,7 @@ static unsigned int proc_idx;             //!< Points at the last TCB created in
 static unsigned int idle_Thid;            //!< Idle_Thid must be known, therefor public in this module (file)
 
 void *_tk_idle( void *foo ){       //!< idle loop (non public)
+   TK_NO_WARN_ARG(foo);
    while (TRUE){
       tk_yield();
    }
@@ -237,6 +242,8 @@ int *_tk_errno(){
 
 Creates the kernel. This is TinKers "init" funtion. All targets need to run
 this once, but only once.
+
+@todo <b>Figure out why the malloc(1) needs to be there.</b> I susbect eiter a byte-boundary probmem, a XC167 specific pointer prob (maybe in conjunction with the stacp pointer types), or a error in malloc itself
 */
 
 #define TSTSZ 0x10
@@ -252,8 +259,8 @@ void tk_create_kernel( void ){
    /* PLEEEEEEEEEEASE REMEBER TO UNCOMMENT THIS LATER!
    testArea = malloc(TSTSZ);
    if (strncmp(testPatt,testArea,TSTSZ) == 0){   
-      //printf("Error: Kernel running amok detected\n");
-      //printf("Broken thread was ID=%d (name=\"%s\")\n",\
+      printk("Error: Kernel running amok detected\n");
+      printk("Broken thread was ID=%d (name=\"%s\")\n",\
          active_thread,proc_stat[active_thread].name);
       memset (testArea, '\0', TSTSZ);     //Clear area then wait for reset
       tk_exit(2);
@@ -261,6 +268,12 @@ void tk_create_kernel( void ){
       strncpy(testArea,testPatt,TSTSZ);
    }
    */
+   //testArea = malloc(TSTSZ);
+   //malloc(1);
+   testArea = malloc(1);
+   testArea = malloc(1);
+   testArea = malloc(1);
+
 
    for (i=0; i<TK_MAX_THREADS; i++){
       proc_stat[i].state                        = ZOMBIE;
@@ -299,7 +312,7 @@ void tk_create_kernel( void ){
    }
    //Create a Idle thread, whoes sole purpose is to burn up time
    //when nobody else is running
-   idle_Thid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,(void*)NULL,MINIMUM_STACK_SIZE);
+   idle_Thid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,(void*)NULL,0x0600/*MINIMUM_STACK_SIZE*/);
    //IdleProc must like root, i.e. bee owned by itself
    proc_stat[proc_stat[idle_Thid].Gid].noChilds--;
    //Awkward way to say that root has created one process less than it has
@@ -324,9 +337,11 @@ unsigned int _tk_destructor( void *foo ){
    unsigned int retval;   
    GET_THREADS_RETVAL( retval );
    
+   TK_NO_WARN_ARG(foo); 
+   
    //This is critical, no more stack, will not work as is in a preemtive kernal
    #ifdef DEBUG
-   //printf("Dieing thread is returning %d\n\n",retval);
+   printk("Dieing thread is returning %d\n\n",retval);
    #endif
    tk_delete_thread(active_thread);
    tk_yield();
@@ -428,17 +443,17 @@ unsigned int tk_create_thread(
    //Error handling needs improvment (don't forget taking special care of
    //proc_idx)
    if (procs_in_use >= TK_MAX_THREADS){
-      //printf("tk: Error - Total amount of threads would exceed limit\n");
+      printk("tk: Error - Total amount of threads would exceed limit\n");
       tk_exit(1);
    }
    //Check if chosen prio is within limits
    if (prio >= TK_MAX_PRIO_LEVELS){
-      //printf("tk: Error - Chosen priority exceed bounds\n");
+      printk("tk: Error - Chosen priority exceed bounds\n");
       tk_exit(1);
    }
    //Check if there will be enough room at that prio
    if (TK_MAX_THREADS_AT_PRIO <= ( scheduleIdxs[prio].procs_at_prio ) ){
-      //printf("tk: Error - To many threads at this prio\n");
+      printk("tk: Error - To many threads at this prio\n");
       tk_exit(1);
    }
    //Find next empty slot - which is also the CREATED Thid
@@ -453,7 +468,7 @@ unsigned int tk_create_thread(
       if (strlen(name)<TK_THREAD_NAME_LEN)
          strncpy(proc_stat[proc_idx].name,name,TK_THREAD_NAME_LEN);
       else{
-         //printf("tk: Error - Thread-name to long\n");
+         printk("tk: Error - Thread-name to long\n");
          tk_exit(1);
       }
    #endif
@@ -461,7 +476,7 @@ unsigned int tk_create_thread(
    
    //Try to allocate memory for stack
    if (( STACK_PTR(proc_stat[proc_idx].stack_begin) = (char *) malloc(stack_size)) == NULL){
-       //printf("tk: Error - Can't create process (can't allocate memory for stack)\n");
+       printk("tk: Error - Can't create process (can't allocate memory for stack)\n");
        tk_exit(1);  // terminate program if out of memory
    }
 
@@ -690,7 +705,7 @@ Get the identity of the next thread to run.
 Scheduling policy is used to determine which one that would be.
 */
 unsigned int _tk_next_runable_thread(){
-   int idx,prio,cidx,midx,nbTry,loop,return_Thid,p_at_p;
+   int idx,prio,cidx,/*midx,*/nbTry,loop,return_Thid,p_at_p;
    BOOL found;
 
    return_Thid  = idle_Thid; //In case no runnable proc is found...
@@ -809,7 +824,6 @@ void tk_yield( void ){
    //(i.e. thread statuses) frozen in time.
    thread_to_run = _tk_next_runable_thread();
    _tk_context_switch_to_thread(thread_to_run,active_thread);   
-   //_tk_context_switch_to_thread(0,0);   
    
    POPALL();
    TK_STI();
@@ -848,9 +862,9 @@ entr point (critical = execution is deemed to stop).
 
 void tk_exit( int ec ) {
    if (ec==0)
-      ;//printf("tk: Program terminated normally");
+      printk("tk: Program terminated normally");
    else
-      ;//printf("tk: Warning - Program terminated with errorcode [%d]",ec);
+      printk("tk: Warning - Program terminated with errorcode [%d]",ec);
    while (1) {
       TRAP(ec);
    }
@@ -869,7 +883,7 @@ void _tk_assertfail(
    char *filestr, 
    int line
 ) {
-   //printf("tk: Error - Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line);
+   printk("tk: Error - Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line);
    tk_exit( TK_ERR_ASSERT );
 }
 /*
@@ -878,7 +892,7 @@ void _tk_assertfail(
 0x00001c78 <_tk_main+20>:  mov   r0, r3
 0x00001c7c <_tk_main+24>:  bl    0x1c44 <testcall>
    GET_SP(regval);
-*/
+*/  
 void *testcall(void *inpar ){
    return inpar;
 }
@@ -909,31 +923,24 @@ things at least:
 
 */
 void _tk_main( void ){
-/*Learning about ARM */
+/*Learning about ARM 
    unsigned int      regval; 
    char *cptr;
-/*
-   int i;
-  
-   
-   for (i=0; i<17; i++){
-      cptr = (char*)malloc(1024);
-   };
-*/
+
    testcall(regval);
    GET_SP(regval);
    GET_LR(regval);
    GET_PC(regval);
 
    
-/*Learning about ARM */
+  Learning about ARM */
 
    tk_create_kernel();
-   //printf("ANSI timing constants:\n");
+   printk("ANSI timing constants:\n");
    #if  defined( __C166__ )
-       //printf("CLK_TCK=[%ld], CLOCKS_PER_SEC=[%ld]\n",CLK_TCK, CLOCKS_PER_SEC);
+       printk("CLK_TCK=[%ld], CLOCKS_PER_SEC=[%ld]\n",CLK_TCK, CLOCKS_PER_SEC);
    #else
-       //printf("CLK_TCK=[%d], CLOCKS_PER_SEC=[%d]\n",CLK_TCK, CLOCKS_PER_SEC);
+       printk("CLK_TCK=[%d], CLOCKS_PER_SEC=[%d]\n",CLK_TCK, CLOCKS_PER_SEC);
    #endif
    #if defined(TK_COMP_KMEM) && TK_COMP_KMEM
       assert( tk_mem() == ERR_OK );
@@ -989,7 +996,7 @@ int main(int argc, char **argv){
 }
 #endif
 
-#define TK_STUBS
+//#define TK_STUBS
 #ifdef TK_STUBS
 long int stub_mickey = 0;
 /*!
@@ -998,7 +1005,7 @@ long int stub_mickey = 0;
  Since \ref clock is a esential part of the \ref SCHED internals, you need to have a stub that will do something  meantingful, so at least the dispaching will work.
 
  */
-clock_t clock(){   
+clock_t sclock(){   
 	stub_mickey++;
     //stub_mickey=0;
 	return (clock_t)stub_mickey;
@@ -1032,14 +1039,33 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.50  2006-03-07 08:24:13  ambrmi09
- *  A very crude port for ARM is running (LPC2129) - @note THIS IS HIGHLY EXPERIMENTAL CODE
+ *  Revision 1.51  2006-03-11 14:37:50  ambrmi09
+ *  - Replaced printf with printk in in-depth parts of the kernel. This is
+ *  to make porting easier since printk can then be mapped to whatever
+ *  counsole output ability there is (including none if there isn't any).
  *
- *  Revision 1.49  2006/03/05 11:11:27  ambrmi09
- *  License added (GPL).
+ *  - Conditionals for: 1) time ISR latency and 2) clock systimer faliure
+ *  introduced. This is because debugging involves stopping the program but
+ *  not the clock HW, which will trigger the "trap" as soon as resuming the
+ *  program after a BP stop (or step). I.e. inhibit those part's when
+ *  debugging (which is probably most of the time). Remeber to re-enable for
+ *  "release" version of any application.
  *
- *  Revision 1.48  2006/03/05 10:39:02  ambrmi09
- *  Code will now compile for arm7. Note compile only, not run.
+ *  - Working on getting rid of all the compilation warnings.
+ *
+ *  - Detected a new serious bug. If an extra malloc is not executed
+ *  *before* the first thread is created that requires a steck  (i.e. the
+ *  idle tread sice root allready has a stack), that thread will fail with
+ *  an illegal OP-code trap. This has been traced to be due to a faulty
+ *  malloc and/or possibly a memory alignement problem. The first block
+ *  allocated, will be about 6 positions to high up in the memory map, which
+ *  means that sthe total block will not really fit. If that block is the
+ *  stack of a thread, those positions will be either the context or the
+ *  return adress of that thread (which is bad). I'm concerned about not
+ *  detecting this error before, which leads me to believe that this
+ *  actually is an alignement issue in malloc and it's anly pure chance
+ *  wheather the bug will manifest or not. This is a problem related
+ *  to the Keil_XC167 target only.
  *
  *  Revision 1.47  2006/03/04 19:32:35  ambrmi09
  *  Modified sources to allow build GNU targets transparently.
