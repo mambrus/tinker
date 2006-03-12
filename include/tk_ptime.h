@@ -42,7 +42,7 @@ PTIMER
 /*- include files **/
 //#include <time.h>
 
-#include <tk_ipc.h> //last in error chain
+#include <tk_itc.h> //last in error chain
 
 
 /*- public definitions **/
@@ -194,7 +194,16 @@ unsigned long  tk_ptimer_sleep  ( unsigned int  tid, time_t *relTime );
  * @ingroup CVSLOG
  *
  *  $Log: tk_ptime.h,v $
- *  Revision 1.9  2006-03-05 11:11:26  ambrmi09
+ *  Revision 1.10  2006-03-12 15:08:54  ambrmi09
+ *  - Adjusted the source to accomodate the new file structure.
+ *
+ *  - All build environments uppdated and verified except BC5. For this one
+ *  we stumbled across the header-file issue that I've been fearing. Seems
+ *  we need to take care of that one after all.
+ *
+ *  @note The malloc bug still not solved.
+ *
+ *  Revision 1.9  2006/03/05 11:11:26  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.8  2006/03/02 14:05:49  ambrmi09

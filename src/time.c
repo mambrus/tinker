@@ -151,9 +151,9 @@ clock_t clock(){
 
    /*
    The following should be cought by the TISR and should never possible to happen.
-   Note kept for reference.
+   Enable if if you think you have a reason.
    */
-   #ifdef NO_SYSTIMER_WRAP_MONITOR
+   #ifndef NO_SYSTIMER_WRAP_MONITOR
    assert(HWclock_stats.perPebbles > (unsigned long)pebbles);
    #endif
 
@@ -274,7 +274,16 @@ int
 /*! 
  * @ingroup CVSLOG CVSLOG
  *  $Log: time.c,v $
- *  Revision 1.15  2006-03-11 15:11:32  ambrmi09
+ *  Revision 1.16  2006-03-12 15:08:55  ambrmi09
+ *  - Adjusted the source to accomodate the new file structure.
+ *
+ *  - All build environments uppdated and verified except BC5. For this one
+ *  we stumbled across the header-file issue that I've been fearing. Seems
+ *  we need to take care of that one after all.
+ *
+ *  @note The malloc bug still not solved.
+ *
+ *  Revision 1.15  2006/03/11 15:11:32  ambrmi09
  *  - Trimmed the monitoring contitionals concernig missed sys_mickey
  *  updates (in time.c and GPT1.C). They are now off per default (remember to
  *  reenaple in real case apps).

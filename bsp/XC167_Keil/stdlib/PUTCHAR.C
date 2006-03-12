@@ -9,8 +9,8 @@ This is a replacement file for Keils version of putchar.c
 
 /*! Stupid dave requires MAIN.H to be included before any of the other 
 dave files instead of including it in the .H files itself */
-#include <dave/MAIN.H>    
-#include <dave/ASC0.H>
+#include <../bsp/XC167_Keil/dave/MAIN.H>    
+#include <../bsp/XC167_Keil/dave/ASC0.H>
 
 #define XON  0x11
 #define XOFF 0x13
@@ -42,13 +42,40 @@ The interrupt control register us used to determine if tx has been sent.
 #define FIFO_TRANSPARENT_MODE  dev()##_TXFCON_TXTMEN  
 #define SEND_BYTE              dev()##_vSendData  
 
+long putchar_burntime(int x, int y, int z){
+   long rc;
+   rc  = 10000uL * x;
+   rc += 100uL * y;
+   rc += z;
+
+   return z;
+}
+
+unsigned int putchar_busywait( unsigned int time_ms ){
+   int k,x,y,z;
+   long rc;
+   int xwait;
+   int ywait;
+
+   xwait = time_ms / 100;
+   xwait ? ywait = time_ms / xwait : ywait = time_ms;
+   for (k=0;k<13;k++)
+      for (x=0;x<(xwait+1);x++)
+         for (y=0;y<(ywait+1);y++)
+            for (z=0;z<100;z++)
+               rc = putchar_burntime(x,y,z);
+
+   return 0;            
+}
+
+
 typedef unsigned int fsleep( unsigned int time );
 typedef fsleep *fsleep_p;
 
-extern unsigned int busywait( unsigned int time_ms );
+
 
 //fsleep_p sleepf = tk_msleep; //unsafe with printf. Same probs as with preempt. use when semaphores are working
-fsleep_p sleepf = busywait;
+fsleep_p sleepf = putchar_busywait;
 
 signed char putchar (signed char c)  {
 

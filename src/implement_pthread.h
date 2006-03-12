@@ -359,26 +359,29 @@ struct pthread_condattr_t_ {
 //#define SE_WARNING              0x02
 //#define SE_ERROR                0x03
 //
-//#define MAKE_SOFTWARE_EXCEPTION( _severity, _facility, _exception ) \
-//( (DWORD) ( ( (_severity) << 30 ) |	/* Severity code	*/ \
-//	   ( 1 << 29 )	|		/* MS=0, User=1		*/ \
-//	   ( 0 << 28 )	|		/* Reserved		*/ \
-//	   ( (_facility) << 16 ) |	/* Facility Code	*/ \
-//	   ( (_exception) <<  0 )	/* Exception Code	*/ \
-//	   ) )
-//
+
+#define MAKE_SOFTWARE_EXCEPTION( _severity, _facility, _exception ) \
+( (DWORD) ( ( (_severity) << 30 ) |	/* Severity code	*/ \
+	   ( 1 << 29 )	|		/* MS=0, User=1		*/ \
+	   ( 0 << 28 )	|		/* Reserved		*/ \
+	   ( (_facility) << 16 ) |	/* Facility Code	*/ \
+	   ( (_exception) <<  0 )	/* Exception Code	*/ \
+	   ) )
+
+
 ///*
 //* We choose one specific Facility/Error code combination to
 //* identify our software exceptions vs. WIN32 exceptions.
 //* We store our actual component and error code within
 //* the optional information array.
 //*/
-//#define EXCEPTION_PTHREAD_SERVICES	\
-//   MAKE_SOFTWARE_EXCEPTION( SE_ERROR, \
-//			      PTHREAD_SERVICES_FACILITY, \
-//			      PTHREAD_SERVICES_ERROR )
-//
-//
+/*
+#define EXCEPTION_PTHREAD_SERVICES	\
+   MAKE_SOFTWARE_EXCEPTION( SE_ERROR, \
+			      PTHREAD_SERVICES_FACILITY, \
+			      PTHREAD_SERVICES_ERROR )
+
+*/
 //#define PTHREAD_SERVICES_FACILITY		0xBAD
 //#define PTHREAD_SERVICES_ERROR			0xDEED
 //
@@ -458,19 +461,20 @@ struct pthread_condattr_t_ {
 //* in order to avoid warnings because of return type
 //*/
 //
-//#define _beginthreadex(security, \
-//		      stack_size, \
-//		      start_proc, \
-//		      arg, \
-//		      flags, \
-//		      pid) \
-//      CreateThread(security, \
-//		   stack_size, \
-//		   (LPTHREAD_START_ROUTINE) start_proc, \
-//		   arg, \
-//		   flags, \
-//		   pid)
-//
+/*
+#define _beginthreadex(security, \
+		      stack_size, \
+		      start_proc, \
+		      arg, \
+		      flags, \
+		      pid) \
+      CreateThread(security, \
+		   stack_size, \
+		   (LPTHREAD_START_ROUTINE) start_proc, \
+		   arg, \
+		   flags, \
+		   pid)
+*/
 //#define _endthreadex ExitThread
 //
 //#endif /* __CYGWIN32__ || __CYGWIN__ */
@@ -481,7 +485,16 @@ struct pthread_condattr_t_ {
  * @defgroup CVSLOG_implement_pthread_h implement_pthread_h
  * @ingroup CVSLOG
  *  $Log: implement_pthread.h,v $
- *  Revision 1.4  2006-03-05 11:11:27  ambrmi09
+ *  Revision 1.5  2006-03-12 15:08:54  ambrmi09
+ *  - Adjusted the source to accomodate the new file structure.
+ *
+ *  - All build environments uppdated and verified except BC5. For this one
+ *  we stumbled across the header-file issue that I've been fearing. Seems
+ *  we need to take care of that one after all.
+ *
+ *  @note The malloc bug still not solved.
+ *
+ *  Revision 1.4  2006/03/05 11:11:27  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.3  2006/02/22 13:05:46  ambrmi09

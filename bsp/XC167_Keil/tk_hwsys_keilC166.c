@@ -20,7 +20,7 @@
   
 
 #include "tk_hwsys_keilC166.h"
-#include <tk_ipc.h>
+#include <tk_itc.h>
 
 /*
 
@@ -101,7 +101,16 @@ void _do_trap (unsigned int num){
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.c,v $
- *  Revision 1.10  2006-03-05 11:11:23  ambrmi09
+ *  Revision 1.11  2006-03-12 15:08:53  ambrmi09
+ *  - Adjusted the source to accomodate the new file structure.
+ *
+ *  - All build environments uppdated and verified except BC5. For this one
+ *  we stumbled across the header-file issue that I've been fearing. Seems
+ *  we need to take care of that one after all.
+ *
+ *  @note The malloc bug still not solved.
+ *
+ *  Revision 1.10  2006/03/05 11:11:23  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.9  2006/02/22 13:05:45  ambrmi09

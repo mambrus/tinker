@@ -30,6 +30,11 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 
 #define MINIMUM_STACK_SIZE 0x0600  //!< TBD this @todo TBD this
 
+/*!
+How printk is implemented on this target
+*/
+#define printk printf
+
 /*
 #define TK_CLI()                          \
    asm __volatile__ (" CLI ");

@@ -173,8 +173,8 @@ allready happened.
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
    #error "HW timers not implemented for this target yet"
 #elif defined( __C166__ )
-   #include <dave/GPT1.H> 
-   #include <dave/GPT2.H>
+   #include <../bsp/XC167_Keil/dave/GPT1.H> 
+   #include <../bsp/XC167_Keil/dave/GPT2.H>
 #elif defined(__GNUC__)
    #error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"
 #else
@@ -192,7 +192,16 @@ allready happened.
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwclock.h,v $
- *  Revision 1.8  2006-03-05 11:11:28  ambrmi09
+ *  Revision 1.9  2006-03-12 15:08:56  ambrmi09
+ *  - Adjusted the source to accomodate the new file structure.
+ *
+ *  - All build environments uppdated and verified except BC5. For this one
+ *  we stumbled across the header-file issue that I've been fearing. Seems
+ *  we need to take care of that one after all.
+ *
+ *  @note The malloc bug still not solved.
+ *
+ *  Revision 1.8  2006/03/05 11:11:28  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.7  2006/02/28 13:18:20  ambrmi09

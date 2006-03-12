@@ -6,19 +6,26 @@ Target (XC167), 0x0002 // Tools: '166/167'
 Group (Dave Files)
 Group (TinKer)
 
-File 1,1,<..\dave\SSC0.C><SSC0.C> 0x0 
-File 1,1,<..\dave\ASC0.C><ASC0.C> 0x0 
-File 1,1,<..\dave\CAN.C><CAN.C> 0x0 
-File 1,1,<..\dave\GPT1.C><GPT1.C> 0x0 
-File 1,1,<..\dave\GPT2.C><GPT2.C> 0x0 
-File 1,1,<..\dave\IO.C><IO.C> 0x0 
-File 1,1,<..\dave\MAIN.C><MAIN.C> 0x0 
-File 1,1,<..\dave\ADC.C><ADC.C> 0x0 
-File 2,1,<.\src\tk_ipc.c><tk_ipc.c> 0x0 
+File 1,1,<.\bsp\XC167_Keil\dave\MAIN.C><MAIN.C> 0x0 
+File 1,1,<.\bsp\XC167_Keil\dave\ASC0.C><ASC0.C> 0x0 
+File 1,1,<.\bsp\XC167_Keil\dave\ASC1.C><ASC1.C> 0x0 
+File 1,1,<.\bsp\XC167_Keil\dave\GPT1.C><GPT1.C> 0x0 
+File 1,1,<.\bsp\XC167_Keil\dave\GPT2.C><GPT2.C> 0x0 
+File 1,1,<.\bsp\XC167_Keil\dave\IO.C><IO.C> 0x0 
 File 2,1,<.\src\tk.c><tk.c> 0x0 
 File 2,1,<.\src\time.c><time.c> 0x0 
 File 2,1,<.\bsp\XC167_Keil\tk_hwsys_keilC166.c><tk_hwsys_keilC166.c> 0x0 
 File 2,1,<.\src\tk_sysqueues.c><tk_sysqueues.c> 0x0 
+File 2,1,<.\src\errno.c><errno.c> 0x0 
+File 2,1,<.\src\mqueue.c><mqueue.c> 0x0 
+File 2,1,<.\src\pthread_sched.c><pthread_sched.c> 0x0 
+File 2,1,<.\src\pthread_sync.c><pthread_sync.c> 0x0 
+File 2,1,<.\src\semaphore.c><semaphore.c> 0x0 
+File 2,1,<.\src\tk_ansi_search.c><tk_ansi_search.c> 0x0 
+File 2,1,<.\src\tk_itc.c><tk_itc.c> 0x0 
+File 2,1,<.\src\tk_mem.c><tk_mem.c> 0x0 
+File 2,1,<.\src\tk_ptime.c><tk_ptime.c> 0x0 
+File 2,1,<.\src\tk_tick.c><tk_tick.c> 0x0 
 
 
 Options 1,0,0  // Target 'XC167'
@@ -89,7 +96,7 @@ Options 1,0,0  // Target 'XC167'
  SaveUsr=0
  Reorder=0
  cMisc (MODV2 DYNAMICUSRSTK REENTRANT SAVEUSR )
- Define (DEVICE=XC167)
+ Define (DEVICE=XC167,TK_COMP_ITC=1,TK_COMP_PTIMER=1,TK_COMP_KMEM=1,TK_COMP_PTHREAD=1,TK_COMP_POSIX_RT=1)
  Undefine ()
  INCC6 (include, ../)
  EC166 { 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }

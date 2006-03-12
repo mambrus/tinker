@@ -37,7 +37,7 @@ PTIMER
 
 /*- include files **/
 #include <tk.h>
-#include <tk_ipc.h>
+#include <tk_itc.h>
 #include <tk_sysqueues.h>
 #include <tk_ptime.h>
 #include <kernel/src/tk_hwclock.h>
@@ -62,7 +62,7 @@ PTIMER
 
 /*void insertInPendingList(ptimer_t *timer);*/
 /*void deleteFromPendingList(ptimer_t *timer);*/
-unsigned int timerdeamon(void *inpar );
+void *timerdeamon(void *inpar );
 
 
 /*- public data **/
@@ -304,7 +304,7 @@ public in a headerfile and should never be accessed from outside this module.
 issue, the solution and the quirks and considerations are described.
 
 */
-unsigned int timerdeamon(void *inpar ){
+void *timerdeamon(void *inpar ){
    unsigned long msg_buf[4];   
 
    printk("Timer deamon started. Preemtive hi-res timer events now possible\n");
@@ -439,7 +439,16 @@ digraph ptime_main {
  * @defgroup CVSLOG_tk_ptime_c tk_ptime_c
  * @ingroup CVSLOG
  *  $Log: tk_ptime.c,v $
- *  Revision 1.9  2006-03-11 14:37:50  ambrmi09
+ *  Revision 1.10  2006-03-12 15:08:56  ambrmi09
+ *  - Adjusted the source to accomodate the new file structure.
+ *
+ *  - All build environments uppdated and verified except BC5. For this one
+ *  we stumbled across the header-file issue that I've been fearing. Seems
+ *  we need to take care of that one after all.
+ *
+ *  @note The malloc bug still not solved.
+ *
+ *  Revision 1.9  2006/03/11 14:37:50  ambrmi09
  *  - Replaced printf with printk in in-depth parts of the kernel. This is
  *  to make porting easier since printk can then be mapped to whatever
  *  counsole output ability there is (including none if there isn't any).

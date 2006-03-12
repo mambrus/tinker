@@ -41,7 +41,7 @@ POSIX_RT
 #include <semaphore.h>
 #include <errno.h>
 #include <assert.h>
-#include <tk_ipc.h>
+#include <tk_itc.h>
 
 
 /*!
@@ -134,7 +134,16 @@ int sem_post (sem_t * sem){
  * @defgroup CVSLOG_semaphore_c semaphore_c
  * @ingroup CVSLOG
  *  $Log: semaphore.c,v $
- *  Revision 1.9  2006-03-05 11:11:27  ambrmi09
+ *  Revision 1.10  2006-03-12 15:08:54  ambrmi09
+ *  - Adjusted the source to accomodate the new file structure.
+ *
+ *  - All build environments uppdated and verified except BC5. For this one
+ *  we stumbled across the header-file issue that I've been fearing. Seems
+ *  we need to take care of that one after all.
+ *
+ *  @note The malloc bug still not solved.
+ *
+ *  Revision 1.9  2006/03/05 11:11:27  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.8  2006/03/02 14:05:49  ambrmi09

@@ -21,7 +21,7 @@
 
 /*- include files **/
 
-#include <tk_ipc.h>
+#include <tk_itc.h>
 #include <tk_sysqueues.h>
 
 #include <stdlib.h>
@@ -68,7 +68,16 @@ unsigned long _tk_create_system_queues( ){
  * @ingroup CVSLOG
  *
  *  $Log: tk_sysqueues.c,v $
- *  Revision 1.7  2006-03-05 11:11:28  ambrmi09
+ *  Revision 1.8  2006-03-12 15:08:56  ambrmi09
+ *  - Adjusted the source to accomodate the new file structure.
+ *
+ *  - All build environments uppdated and verified except BC5. For this one
+ *  we stumbled across the header-file issue that I've been fearing. Seems
+ *  we need to take care of that one after all.
+ *
+ *  @note The malloc bug still not solved.
+ *
+ *  Revision 1.7  2006/03/05 11:11:28  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.6  2006/02/22 13:05:47  ambrmi09

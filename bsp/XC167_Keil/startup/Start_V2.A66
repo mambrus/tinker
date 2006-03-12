@@ -1383,7 +1383,8 @@ ENDIF
 ?C_STARTUP:     LABEL   Model
 
 ;$INCLUDE (..\..\..\..\dave\Dave.asm)        ;If build by uVision
-$INCLUDE (dave\Dave.asm)                     ;If build by makefile
+;$INCLUDE (dave\Dave.asm)                     ;If build by makefile
+$INCLUDE (kernel\bsp\XC167_Keil\dave\Dave.asm)                     ;If build by makefile
 
 
 $IF (WATCHDOG = 0)

@@ -48,7 +48,7 @@ ITC
 #include <tk.h>
 #include <../src/implement_tk.h>
 #include <tk_hwsys.h>
-#include <tk_ipc.h>
+#include <tk_itc.h>
 
 #ifdef TK_COMP_ITC /* Should not test at sharp (libfile) version */
 /*- local definitions **/
@@ -1381,7 +1381,16 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.23  2006-03-11 14:37:50  ambrmi09
+ *  Revision 1.24  2006-03-12 15:08:56  ambrmi09
+ *  - Adjusted the source to accomodate the new file structure.
+ *
+ *  - All build environments uppdated and verified except BC5. For this one
+ *  we stumbled across the header-file issue that I've been fearing. Seems
+ *  we need to take care of that one after all.
+ *
+ *  @note The malloc bug still not solved.
+ *
+ *  Revision 1.23  2006/03/11 14:37:50  ambrmi09
  *  - Replaced printf with printk in in-depth parts of the kernel. This is
  *  to make porting easier since printk can then be mapped to whatever
  *  counsole output ability there is (including none if there isn't any).

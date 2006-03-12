@@ -66,7 +66,7 @@ any of them.   errno.h
 #endif
 
 #if defined(TK_COMP_ITC) && TK_COMP_ITC
-   #include <tk_ipc.h>
+   #include <tk_itc.h>
 #endif
 
 #if defined(TK_COMP_PTIME) && TK_COMP_PTIMER
@@ -126,7 +126,7 @@ extern void _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
 /*- external data **/
 
 /*- internal functions **/
-unsigned int _tk_destructor( void *foo );
+void			*_tk_destructor( void *foo );
 void			*_tk_idle( void *foo );
 
 /*- public data **/
@@ -268,12 +268,6 @@ void tk_create_kernel( void ){
       strncpy(testArea,testPatt,TSTSZ);
    }
    */
-   //testArea = malloc(TSTSZ);
-   //malloc(1);
-   testArea = malloc(1);
-   testArea = malloc(1);
-   testArea = malloc(1);
-
 
    for (i=0; i<TK_MAX_THREADS; i++){
       proc_stat[i].state                        = ZOMBIE;
@@ -333,7 +327,7 @@ void tk_create_kernel( void ){
 This function is entered as a result of a ret instruction from a thread. EAX
 is passed as the return value. Not shure if it works on every processor 
 */
-unsigned int _tk_destructor( void *foo ){
+void *_tk_destructor( void *foo ){
    unsigned int retval;   
    GET_THREADS_RETVAL( retval );
    
@@ -1039,7 +1033,16 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.51  2006-03-11 14:37:50  ambrmi09
+ *  Revision 1.52  2006-03-12 15:08:56  ambrmi09
+ *  - Adjusted the source to accomodate the new file structure.
+ *
+ *  - All build environments uppdated and verified except BC5. For this one
+ *  we stumbled across the header-file issue that I've been fearing. Seems
+ *  we need to take care of that one after all.
+ *
+ *  @note The malloc bug still not solved.
+ *
+ *  Revision 1.51  2006/03/11 14:37:50  ambrmi09
  *  - Replaced printf with printk in in-depth parts of the kernel. This is
  *  to make porting easier since printk can then be mapped to whatever
  *  counsole output ability there is (including none if there isn't any).

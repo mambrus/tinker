@@ -28,10 +28,18 @@ http://www.arm.com/miscPDFs/9658.pdf
 
 */
 
-#define MINIMUM_STACK_SIZE 0x0200  //!< TBD this @todo TBD this
-
 #ifndef TK_HWSYS_GNU_ARM_H
 #define TK_HWSYS_GNU_ARM_H
+
+
+#define MINIMUM_STACK_SIZE 0x0200  //!< TBD this @todo TBD this
+
+/*!
+How printk is implemented on this target. I.e. no ability to output on console
+
+@note macro should digest <b>all</b> arguments.
+*/
+#define printk(x) ((void)0)
 
 /*
 #define TK_CLI()                          \
