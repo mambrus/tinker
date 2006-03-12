@@ -197,7 +197,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
                                                                                                                \
    /*Cange the stack pointer to the intended one*/                                                             \
    _temp2 = (unsigned long)_oldTOS >> 16;                                                                      \
-   __asm{ mov SP,_oldTOS            }                                                                          \
+   __asm{ mov SP,_oldTOS            }   /*WILL BREAKE HERE IF MALLOC IS XHUGE BASED*/                          \
    __asm{ mov SPSEG,_temp2          }                                                                          \
                                                                                                                \
                                                                                                                \
@@ -400,7 +400,70 @@ TBD
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.h,v $
- *  Revision 1.21  2006-03-12 15:08:53  ambrmi09
+ *  Revision 1.22  2006-03-12 17:51:49  ambrmi09
+ *  <h3>This check-in is XC167 related and does not concern other
+ *  ports.</h3>
+ *
+ *  Added a padding of 6 bytes to get around the malloc bug (or what I think
+ *  is a bug in XC167 malloc). Turns out that I was wrong about the layout
+ *  of the XC167 stack mentioned a few check-in comments ago (which is a bit
+ *  funny since I defined it myself). On each "stack-blocks" last addresses
+ *  are the local data of the thread. Return addresses and such, I had moved
+ *  to a lower address. The map is as follows:
+ *
+ *  :--------------------------------------:
+ *  : <- block begin (malloced)            :
+ *  :                                      :
+ *  :                                      :
+ *  :     -^-  (grows "upwards")           :
+ *  : <- Function and ISR return addresses :
+ *  :                                      :
+ *  :                                      :
+ *  :                                      :
+ *  :     -^-  (grows "upwards")           :
+ *  : <- Local data                        :
+ *  : <- Last address of block             :
+ *  :--------------------------------------:
+ *
+ *  What worries me are mainly two things:
+ *
+ *  - Where does ISR's put it's local data (I know the DPP registers are
+ *  involved somehow). By setting breakpoint on memory access of bytes just
+ *  outside a block, I can see that the timer ISR writes something there ;(
+ *
+ *  - Could I have set the stack pointer too high up in memory. so that
+ *  local data operates outside the stack region?
+ *
+ *  I'm not sure if any of the above concerns are actually valid. I thought
+ *  I investigated this very well. And also the stack guards should catch
+ *  situations mentioned above (STKOV, STKUN). But I feel it's best to
+ *  mention it for future reference.
+ *
+ *  This does however rise the question if not thread stacks should have
+ *  their own malloc function (kalloc) with it's own distinguished memory.
+ *  It can't be kmem based though,  since thread stacks sizes can vary.
+ *  By simply duplicating malloc we gain the following benefits:
+ *
+ *  - It becomes easier to debug ISR and scheduler related issues since
+ *  other blocks don't (like queues) clobber the memory layout.
+ *
+ *  - Wild pointer operations on heap becomes less probable to corrupt
+ *  stacks threads (ATM any malloc'ed block can come in between any stack).
+ *
+ *  - In XC167 case, we're limited to a memory address range of 16K for
+ *  <b>all stacks</b>. However we have plenty more memory on the eval card
+ *  (256KB + 512KB !)
+ *
+ *  - In other processors as in XC167 there might be memory areas with
+ *  faster (or non cashable) memory. Those are perfect for stacks (the
+ *  plainer the better).
+ *
+ *  - It might be possible to implement some kind of stack starvation trap.
+ *  This would be very nice indeed since that is the single most common
+ *  error in multi-threaded applications (i.e. this has nothing to do with
+ *  the kernel itself, but is a service to aid system development).
+ *
+ *  Revision 1.21  2006/03/12 15:08:53  ambrmi09
  *  - Adjusted the source to accomodate the new file structure.
  *
  *  - All build environments uppdated and verified except BC5. For this one

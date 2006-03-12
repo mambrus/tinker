@@ -20,9 +20,18 @@
 
 #include <kernel/src/tk_tick.h>
 
+/*
+unsigned char xhuge malloc_bigpool [0x10000];
+*/
+
+unsigned char far malloc_padding [0x6];
+unsigned char far malloc_mempool [0x3FFA];
+
+//Neither of the following works
+//unsigned char xhuge malloc_mempool [0x10000];
+//unsigned char xhuge malloc_mempool [0x4000];
 //unsigned char xhuge malloc_mempool [0x1000];
-unsigned char far malloc_mempool [0x4000];
-//works not -> unsigned char xhuge malloc_mempool [0x4000];
+
 
 // USER CODE END
 
