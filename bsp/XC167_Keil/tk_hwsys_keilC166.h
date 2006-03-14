@@ -214,15 +214,10 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
                                                                                                                \
                                                                                                                \
    /*---> Compiler specific*/                                                                                  \
-   __asm{ mov R1,R0                 }    /* Temp save these.. */                                               \
-   __asm{ mov R2,DPP0               }                                                                          \
-   __asm{ mov R3,STKOV              }                                                                          \
-   __asm{ mov R4,STKUN              }                                                                          \
                                                                                                                \
    _temp2 = _stack_struct.userstack.u.offs24._offs;    /*Set up the user-stack pointer (DPP0:r0)*/             \
+   _temp2 = _temp2 - 4;                                /*Add some slack (alignement issue)*/                   \
    __asm{ mov R0,_temp2             }                  /*I.e. the pointer for the threads local data*/         \
-   _temp2 = 4;                                  /* Can't escape # (i.e. \#) in Keils compiler ;( */            \
-   __asm{ sub R0, _temp2            }           /* -- add extra magin of 4 bytes in case of alignement probs*/ \
    _temp2 = _stack_struct.userstack.u.seg24._seg;                                                              \
    __asm{ mov DPP0,_temp2           }                                                                          \
                                                                                                                \
@@ -236,10 +231,6 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
                                                                                                                \
                                                                                                                \
   PUSHALL();                          /*Push everything on the new stack, simulating a context state - MIGHT NEED OVERLOOCKING (R0 used for param pass)*/ \
-   __asm{ mov R0,R1                 } /*Restore temp saved...*/                                                \
-   __asm{ mov DPP0,R2               }                                                                          \
-   __asm{ mov STKOV,R3              }                                                                          \
-   __asm{ mov STKUN,R4              }                                                                          \
                                                                                                                \
                                                                                                                \
    _newSP = 0ul;                      /*Important, or the next assembly "cast" will fail (not clearing 16 MSB */ \
@@ -253,7 +244,6 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ mov SPSEG,_temp2          }                                                                          \
                                                                                                                \
   POPALL();   
-
 
 
 //Push & pops of all regs and flags possibly not needed  
@@ -414,7 +404,34 @@ TBD
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.h,v $
- *  Revision 1.23  2006-03-14 10:30:51  ambrmi09
+ *  Revision 1.24  2006-03-14 11:15:50  ambrmi09
+ *  tk_hwsys_keilC166.h: Removed code that was not doing it's job, and also
+ *  a bit misleading since whether it works or not in all cases depended on
+ *  how the compiler happened to compile.
+ *
+ *  __asm{ mov R1,R0                 }
+ *  __asm{ mov R2,DPP0               }
+ *  __asm{ mov R3,STKOV              }
+ *  __asm{ mov R4,STKUN              }
+ *
+ *  The above lines to store away registers and then to restore them from
+ *  the same registers was used to avoid a underflow/overflow trap while
+ *  manipulating the SP (STKOV, and SKTUN were relevant R0:DPP0 were
+ *  actually not since they were not trigger any trap and would be restored
+ *  later anyway). Simply pushing and poping doesn't work since we need to
+ *  pop after SP has been changed, we would had popped the wrong stack.
+ *
+ *  The lines are simply removed, because several of the assumed to be left
+ *  alone registers were modified by the compile (since we're mixing inline
+ *  assembly with actual c-code we have no real control about that the
+ *  compiler decides to do). If STKOV or STKUN traps does come up while
+ *  creating threads in future, we need to find another mechanism to
+ *  temporary store STKOV or STKUN <b>or to inhibit</b> traps until the end
+ *  of the whole operation.
+ *
+ *  ---------------------------------------------------------------------
+ *
+ *  Revision 1.23  2006/03/14 10:30:51  ambrmi09
  *  Patch mentioned in previous commit. It takes care of a supposed
  *  alignement problem in the user-stack that could explain why some threads
  *  seem to write a few bytes outside their stack.
