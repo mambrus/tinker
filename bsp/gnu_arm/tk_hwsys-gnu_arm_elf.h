@@ -41,6 +41,14 @@ How printk is implemented on this target. I.e. no ability to output on console
 */
 #define printk(x) ((void)0)
 
+/*!
+@name Mapping stack allocation API for this target
+*/
+//@{
+#define stalloc      malloc
+#define stalloc_free free
+//@}
+
 /*
 #define TK_CLI()                          \
    asm __volatile__ (" CLI ");

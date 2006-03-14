@@ -28,6 +28,14 @@ How printk is implemented on this target
 */
 #define printk printf
 
+/*!
+@name Mapping stack allocation API for this target
+*/
+//@{
+#define stalloc      malloc
+#define stalloc_free free
+//@}
+
 /*
 #define TK_CLI()                                                              \
    __asm{ CLI }
