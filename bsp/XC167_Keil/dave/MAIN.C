@@ -20,15 +20,15 @@
 
 #include <kernel/src/tk_tick.h>
 
-/*
-unsigned char xhuge malloc_bigpool [0x10000];
-*/
 
-unsigned char far malloc_padding [0x6];
-unsigned char far malloc_mempool [0x3FFA];
+//unsigned char xhuge malloc_bigpool [0x10000];
+
+
+unsigned char far stalloc_padding [0x6]; 
+unsigned char far stalloc_mempool [0x1FFA];
 
 //Neither of the following works
-//unsigned char xhuge malloc_mempool [0x10000];
+unsigned char far malloc_mempool [0x2000];
 //unsigned char xhuge malloc_mempool [0x4000];
 //unsigned char xhuge malloc_mempool [0x1000];
 
@@ -68,6 +68,9 @@ Bus arbitration enabled
 #include <errno.h>
 #include <time.h> 
 #include <assert.h>
+#include "../stalloc.h"
+
+
 
 
 #pragma code
@@ -442,6 +445,7 @@ void main(void)
   // USER CODE BEGIN (Main,2)  
   
    init_mempool (&malloc_mempool, sizeof(malloc_mempool));
+   stalloc_init_mempool (&stalloc_mempool, sizeof(stalloc_mempool));
 
 
       //Below is not needed anymore, better workaround made (including *.asm in start.a66 and using another symbol for PHE1 that was generated correctlly)

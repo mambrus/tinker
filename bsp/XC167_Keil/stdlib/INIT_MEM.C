@@ -31,7 +31,7 @@
 #include <stdlib.h>
 
 #if defined (XMEM)
-  #message "Target __FILE__ was compiled with define XMEM"  
+  #message "Target __FILE__ was compiled with define XMEM"
   #define MTYP          xhuge
   #define init_mempool  xinit_mempool
   #define calloc        xcalloc
