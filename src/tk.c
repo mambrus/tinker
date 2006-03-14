@@ -386,7 +386,7 @@ int tk_delete_thread(
       scheduleIdxs[Prio].curr_idx = 0;
    }
    //Make it final
-   free( STACK_PTR(proc_stat[Thid].stack_begin) );
+   stalloc_free( STACK_PTR(proc_stat[Thid].stack_begin) );
    proc_stat[Thid].isInit = FALSE;
    return(TK_OK);
 }
@@ -469,7 +469,7 @@ unsigned int tk_create_thread(
    proc_stat[proc_idx].name[TK_THREAD_NAME_LEN] = 0; //Terminate string just in case it's needed. Note, there is one extra byte so indexing like this is OK.
    
    //Try to allocate memory for stack
-   if (( STACK_PTR(proc_stat[proc_idx].stack_begin) = (char *) malloc(stack_size)) == NULL){
+   if (( STACK_PTR(proc_stat[proc_idx].stack_begin) = (char *) stalloc(stack_size)) == NULL){
        printk("tk: Error - Can't create process (can't allocate memory for stack)\n");
        tk_exit(1);  // terminate program if out of memory
    }
@@ -853,7 +853,6 @@ In case of en error, this function also acts as a critical error-handler
 entr point (critical = execution is deemed to stop).
 
 */
-
 void tk_exit( int ec ) {
    if (ec==0)
       printk("tk: Program terminated normally");
@@ -1033,7 +1032,24 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.52  2006-03-12 15:08:56  ambrmi09
+ *  Revision 1.53  2006-03-14 10:23:19  ambrmi09
+ *  Dedicated package "stack malloc" for XC167 added (see \ref
+ *  STALLOC). This nice little package helped me find a new bug that not yet
+ *  had shown itself. For some reason, some threads (actually only the \ref
+ *  idle thread, but I suspect the problem is general) wrote outside their
+ *  top stack boundary. I still don't know why, but it can only be one of
+ *  two reasons:
+ *
+ *  - Alignment problem (a patch fixing that is already implemented)
+ *  - The compiler makes some assumptions about its local data (i.e. data on
+ *  stack, but in C166 lingo this is called user stack).
+ *
+ *  Keep eyes open for the second one since it's very hard to verify and/or
+ *  prove. \ref INTEGRITY_CERTIFY_STACK should be put back in business (was
+ *  temporary removed due to implementation problems and performance
+ *  issues).
+ *
+ *  Revision 1.52  2006/03/12 15:08:56  ambrmi09
  *  - Adjusted the source to accomodate the new file structure.
  *
  *  - All build environments uppdated and verified except BC5. For this one
