@@ -115,6 +115,19 @@ How printk is implemented on this target
 */
 #define printk printf
 
+/*!
+How stack malloc operations are implemented
+*/
+
+#include <../bsp/XC167_Keil/stalloc.h>
+
+/*
+void *stalloc (TLEN size);
+void stalloc_free (void *memp);
+void stalloc_init_mempool (void MTYP *pool, TLEN size);
+*/
+
+
 /*
 #include <dave/MAIN.H>
 sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
@@ -184,7 +197,6 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ pop  R0                      }                                                                      \
    __asm{ pop  PSW                     }                                                                      \
    
-
 #define PREP_TOS( _oldTOS, _newSP, _temp1, _temp2, _stack_struct )                                             \
    PUSHALL();                           /*Push everything for later*/                                          \
    _stack_struct.userstack.linear = _stack_struct.userstack.linear + _stack_struct.usr_stack_size;             \
@@ -202,13 +214,15 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
                                                                                                                \
                                                                                                                \
    /*---> Compiler specific*/                                                                                  \
-   __asm{ mov R1,R0                 }                                                                          \
+   __asm{ mov R1,R0                 }    /* Temp save these.. */                                               \
    __asm{ mov R2,DPP0               }                                                                          \
    __asm{ mov R3,STKOV              }                                                                          \
    __asm{ mov R4,STKUN              }                                                                          \
                                                                                                                \
-   _temp2 = _stack_struct.userstack.u.offs24._offs;                                                            \
-   __asm{ mov R0,_temp2             }                                                                          \
+   _temp2 = _stack_struct.userstack.u.offs24._offs;    /*Set up the user-stack pointer (DPP0:r0)*/             \
+   __asm{ mov R0,_temp2             }                  /*I.e. the pointer for the threads local data*/         \
+   _temp2 = 4;                                  /* Can't escape # (i.e. \#) in Keils compiler ;( */            \
+   __asm{ sub R0, _temp2            }           /* -- add extra magin of 4 bytes in case of alignement probs*/ \
    _temp2 = _stack_struct.userstack.u.seg24._seg;                                                              \
    __asm{ mov DPP0,_temp2           }                                                                          \
                                                                                                                \
@@ -222,7 +236,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
                                                                                                                \
                                                                                                                \
   PUSHALL();                          /*Push everything on the new stack, simulating a context state - MIGHT NEED OVERLOOCKING (R0 used for param pass)*/ \
-   __asm{ mov R0,R1                 }                                                                          \
+   __asm{ mov R0,R1                 } /*Restore temp saved...*/                                                \
    __asm{ mov DPP0,R2               }                                                                          \
    __asm{ mov STKOV,R3              }                                                                          \
    __asm{ mov STKUN,R4              }                                                                          \
@@ -400,7 +414,12 @@ TBD
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.h,v $
- *  Revision 1.22  2006-03-12 17:51:49  ambrmi09
+ *  Revision 1.23  2006-03-14 10:30:51  ambrmi09
+ *  Patch mentioned in previous commit. It takes care of a supposed
+ *  alignement problem in the user-stack that could explain why some threads
+ *  seem to write a few bytes outside their stack.
+ *
+ *  Revision 1.22  2006/03/12 17:51:49  ambrmi09
  *  <h3>This check-in is XC167 related and does not concern other
  *  ports.</h3>
  *
