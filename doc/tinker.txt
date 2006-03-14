@@ -164,6 +164,13 @@ digraph components {
         http://en.wikipedia.org/wiki/GPL
         http://linux.bkbits.net:8080/linux-2.4/anno/COPYING@1.3?nav=index.html%7Csrc/
 
+        <h2>Target notes</h2>
+        <h3>Keil XC167</h3>
+        http://www.keil.com/support/docs/691.htm
+        http://www.keil.com/support/man/docs/a166/a166_st_assume.htm
+        http://www.keil.com/support/man/docs/c166/c166_le_extreguse.htm  <-- important info
+        http://www.keil.com/support/man/docs/l166/l166_dppuse.htm
+
 
    */
 
