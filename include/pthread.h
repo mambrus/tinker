@@ -100,6 +100,22 @@ int pthread_join     (pthread_t, void**);
 int pthread_detach   (pthread_t);
 
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+@name Creation and destruction of this component
+
+Use these functions only at boot, and shut-down.
+
+@see COMPONENTS
+*/
+//@{
+
+unsigned long tk_pthread_sched( void );
+unsigned long tk_pthread_sched_destruct( void );
+unsigned long tk_pthread_sync( void );
+unsigned long tk_pthread_sync_destruct( void );
+
+//@}
+
 
 
 /*
@@ -741,21 +757,6 @@ extern void _pthread_cleanup_pop_restore (struct _pthread_cleanup_buffer *__buff
 //extern void pthread_kill_other_threads_np (void);
 //
 
-/*!
-@name Creation and destruction of this component
-
-Use these functions only at boot, and shut-down.
-
-@see COMPONENTS
-*/
-//@{
-
-unsigned long tk_pthread_sched( void );
-unsigned long tk_pthread_sched_destruct( void );
-unsigned long tk_pthread_sync( void );
-unsigned long tk_pthread_sync_destruct( void );
-
-//@}
 
 
 
@@ -800,7 +801,10 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.10  2006-03-17 12:20:02  ambrmi09
+ *  Revision 1.11  2006-03-17 14:18:42  ambrmi09
+ *  Finalized pThreads and RT gueues for GNU build-chain
+ *
+ *  Revision 1.10  2006/03/17 12:20:02  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now

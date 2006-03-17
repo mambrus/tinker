@@ -62,7 +62,7 @@ POSIX_RT
    #include <sys/errno.h>
 #else   //Embedded TinKer config
    #include <errno.h>
-   #include <kernel/src/tk_ansi.h>         //Normally qsort is part of stdlib. But on embedded tool-chains this is often missing.   
+   #include <../src/tk_ansi.h>         //Normally qsort is part of stdlib. But on embedded tool-chains this is often missing.   
    #define  PATH_MAX    24   
 #endif
 
@@ -705,7 +705,10 @@ Good references about the API:
  * @defgroup CVSLOG_mqueue_c mqueue_c
  * @ingroup CVSLOG
  *  $Log: mqueue.c,v $
- *  Revision 1.13  2006-03-17 12:20:03  ambrmi09
+ *  Revision 1.14  2006-03-17 14:18:42  ambrmi09
+ *  Finalized pThreads and RT gueues for GNU build-chain
+ *
+ *  Revision 1.13  2006/03/17 12:20:03  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now

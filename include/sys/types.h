@@ -47,6 +47,23 @@ kernel_reimpl_ansi.
 #ifndef SYS_TYPES_H_TK
 #define SYS_TYPES_H_TK
 
+#define pthread_t 		tk_pthread_t
+#define pthread_attr_t_ 	tk_pthread_attr_t_
+#define pthread_once_t_ 	tk_pthread_once_t_
+#define pthread_key_t_ 		tk_pthread_key_t_
+#define pthread_mutex_t_ 	tk_pthread_mutex_t_
+#define pthread_mutexattr_t_ 	tk_pthread_mutexattr_t_
+#define pthread_cond_t_ 	tk_pthread_cond_t_
+#define pthread_condattr_t_ 	tk_pthread_condattr_t_
+
+
+#define pthread_attr_t	 	tk_pthread_attr_t
+#define pthread_once_t 		tk_pthread_once_t
+#define pthread_key_t 		tk_pthread_key_t
+#define pthread_mutex_t 	tk_pthread_mutex_t
+#define pthread_mutexattr_t 	tk_pthread_mutexattr_t
+#define pthread_cond_t 		tk_pthread_cond_t
+#define pthread_condattr_t	tk_pthread_condattr_t
 
 #if !defined (__GNUC__)
    /*!
@@ -54,20 +71,20 @@ kernel_reimpl_ansi.
    system, this is equivalent to unsigned int.
    */
    typedef unsigned int mode_t;
-
+#endif   //defined (_GNU_)
 
 
    //typedef struct pthread_t_ *pthread_t; //No way I'm going to return a pointer to anything for this!
    typedef unsigned int pthread_t;
-   typedef struct pthread_attr_t_ *pthread_attr_t;
-   typedef struct pthread_once_t_ pthread_once_t;
-   typedef struct pthread_key_t_ *pthread_key_t;
-   typedef struct pthread_mutex_t_ *pthread_mutex_t;
-   typedef struct pthread_mutexattr_t_ *pthread_mutexattr_t;
-   typedef struct pthread_cond_t_ *pthread_cond_t;
-   typedef struct pthread_condattr_t_ *pthread_condattr_t;
+   typedef struct pthread_attr_t_ 	*pthread_attr_t;
+   typedef struct pthread_once_t_ 	pthread_once_t;
+   typedef struct pthread_key_t_ 	*pthread_key_t;
+   typedef struct pthread_mutex_t_ 	*pthread_mutex_t;
+   typedef struct pthread_mutexattr_t_ 	*pthread_mutexattr_t;
+   typedef struct pthread_cond_t_ 	*pthread_cond_t;
+   typedef struct pthread_condattr_t_ 	*pthread_condattr_t;
 
-#endif   //defined (_GNU_)
+
 
 #endif //SYS_TYPES_H
 
@@ -76,7 +93,10 @@ kernel_reimpl_ansi.
  * @defgroup CVSLOG_types_h types_h
  * @ingroup CVSLOG
  *  $Log: types.h,v $
- *  Revision 1.5  2006-03-05 11:11:26  ambrmi09
+ *  Revision 1.6  2006-03-17 14:18:42  ambrmi09
+ *  Finalized pThreads and RT gueues for GNU build-chain
+ *
+ *  Revision 1.5  2006/03/05 11:11:26  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.4  2006/03/02 14:05:49  ambrmi09
