@@ -93,7 +93,7 @@ How printk is implemented on this target
 //function enters as a result of a ret instruction. EAX is passed
 //as the return value. Not shure if it works on every processor
 
-#define GET_THREADS_RETVAL( THRETVAL )                                                                         \
+#define GET_THREADS_RETVAL( THRETVAL, TEMP )                                                                   \
    __asm{ mov THRETVAL,EAX             }
 
 #define PUSHALL()  \

@@ -333,7 +333,7 @@ void *timerdeamon(void *inpar ){
          break;
       default:
          printk("tk_ptime: Error - we really need to polish the error handling...\n");
-         tk_exit(1);
+         tk_exit(TC_UNKNOWN);
       };
 
    }
@@ -439,7 +439,40 @@ digraph ptime_main {
  * @defgroup CVSLOG_tk_ptime_c tk_ptime_c
  * @ingroup CVSLOG
  *  $Log: tk_ptime.c,v $
- *  Revision 1.10  2006-03-12 15:08:56  ambrmi09
+ *  Revision 1.11  2006-03-17 12:20:05  ambrmi09
+ *  Major uppdate (5 days hard work)
+ *
+ *  - Finally tied up all loose ends in the concept. Threads are now
+ *  joinable
+ *
+ *  - Corrected one error: compacting scheduele while cancelling a
+ *  threads
+ *
+ *  - Several new API, mainly concerned with cancelation (corrsp pThread
+ *  also)
+ *
+ *  - Found a nasty bug while creating threads in threads for XC167. TOS is
+ *  really a patchy solution ;( This one had to do with the compiler
+ *  being fooled by the inline assembly and optimized something that was not
+ *  optimizable (saving stack segment got wacked).
+ *
+ *  - Designed a concurrent qsort test-app. This is good for showing
+ *  boss-worker model. Number of threads recoed on XC167 was 50 and on MSVS
+ *  more than 150! Interesting to notice was that TinKer creation and
+ *  cancelation for threads was much faster than Windows own (20-30 times
+ *  faster).
+ *
+ *  - A MSVC workspace for pThreads-Win32. Good for testing apps
+ *  transparency.
+ *
+ *  - Increased memory on XC167 (phyCore HW). now 32k for stacks and 16k for
+ *  malloc. We still lack RAM that is not deployed (pHycore has
+ *  128k + 256k physical RAM memory i think). Maximum for
+ *  stack is 64k however (type of pointers determine this). If memory is
+ *  increased further, we get a TRAP_B saying bad memory interface. Typical
+ *  error for config memory issues in DaVe.
+ *
+ *  Revision 1.10  2006/03/12 15:08:56  ambrmi09
  *  - Adjusted the source to accomodate the new file structure.
  *
  *  - All build environments uppdated and verified except BC5. For this one

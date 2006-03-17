@@ -170,6 +170,15 @@ digraph components {
         http://www.keil.com/support/man/docs/a166/a166_st_assume.htm
         http://www.keil.com/support/man/docs/c166/c166_le_extreguse.htm  <-- important info
         http://www.keil.com/support/man/docs/l166/l166_dppuse.htm
+        http://www.keil.com/support/man/docs/c166/c166_le_extmacros.htm
+        <h4>Calling convention</h4>
+        http://www.keil.com/support/man/docs/c166/c166_le_retvals.htm
+        http://www.keil.com/support/man/docs/c166/c166_ap_funcparam.htm
+
+        <h3>MSVC</h3>
+        http://msdn2.microsoft.com/en-us/library/k1a8ss06(VS.80).aspx
+        http://msdn2.microsoft.com/en-us/library/fcatwy09(VS.80).aspx
+        http://msdn2.microsoft.com/en-us/library/5ekezyy2(VS.80).aspx
 
 
    */

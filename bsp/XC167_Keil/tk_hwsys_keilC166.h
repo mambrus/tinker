@@ -201,11 +201,18 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    PUSHALL();                           /*Push everything for later*/                                          \
    _stack_struct.userstack.linear = _stack_struct.userstack.linear + _stack_struct.usr_stack_size;             \
    /*Store the current SP for later*/                                                                          \
+   _temp1 ^= _temp1;\
    __asm{ mov _temp1,SPSEG          }                                                                          \
-   _temp2 = (unsigned long)_temp1;                                                                             \
-   _temp2 <<= 16;                                                                                              \
+   _temp2 = _temp1 << 16;                                                                                      \
    __asm{ mov _temp1,SP             }                                                                          \
    _temp1 = _temp2 + _temp1;                                                                                   \
+                                                                                                               \
+   /*A patchy way to get input parameter in place*/                                                            \
+   _temp2 = (unsigned long)inpar;  /*Assume input par is larger then near* */                                  \
+   __asm{ mov R8,_temp2             }                                                                          \
+   _temp2 = _temp2 >> 16;                                                                                      \
+   __asm{ mov R9,_temp2             }                                                                          \
+                                                                                                               \
                                                                                                                \
    /*Cange the stack pointer to the intended one*/                                                             \
    _temp2 = (unsigned long)_oldTOS >> 16;                                                                      \
@@ -214,6 +221,10 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
                                                                                                                \
                                                                                                                \
    /*---> Compiler specific*/                                                                                  \
+   __asm{ mov R1,R0                 }    /* Temp save these.. */                                               \
+   __asm{ mov R2,DPP0               }                                                                          \
+   __asm{ mov R3,STKOV              }                                                                          \
+   __asm{ mov R4,STKUN              }                                                                          \
                                                                                                                \
    _temp2 = _stack_struct.userstack.u.offs24._offs;    /*Set up the user-stack pointer (DPP0:r0)*/             \
    _temp2 = _temp2 - 4;                                /*Add some slack (alignement issue)*/                   \
@@ -231,6 +242,10 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
                                                                                                                \
                                                                                                                \
   PUSHALL();                          /*Push everything on the new stack, simulating a context state - MIGHT NEED OVERLOOCKING (R0 used for param pass)*/ \
+   __asm{ mov R0,R1                 } /*Restore temp saved...*/                                                \
+   __asm{ mov DPP0,R2               }                                                                          \
+   __asm{ mov STKOV,R3              }                                                                          \
+   __asm{ mov STKUN,R4              }                                                                          \
                                                                                                                \
                                                                                                                \
    _newSP = 0ul;                      /*Important, or the next assembly "cast" will fail (not clearing 16 MSB */ \
@@ -261,13 +276,14 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ mov SPSEG,TEMP              }                                                                       \
    POPALL();                                                                                                  \
 
-#define GET_THREADS_RETVAL( THRETVAL )                                                                        \
+#define GET_THREADS_RETVAL( THRETVAL, TEMP  )                                                                 \
+   __asm{ mov THRETVAL, R4 }                                                                                  \
+   __asm{ mov TEMP, R5 }                                                                                      \
+   THRETVAL = (TEMP<<16) + THRETVAL;
 
 #define STACK_PTR( ADDR )                                                                                     \
    ((char *)ADDR.systemstack.linear)
    
-   
-
 
 //#include <tk_itc.h>  //< will create stupid errors
 
@@ -404,7 +420,40 @@ TBD
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.h,v $
- *  Revision 1.24  2006-03-14 11:15:50  ambrmi09
+ *  Revision 1.25  2006-03-17 12:20:00  ambrmi09
+ *  Major uppdate (5 days hard work)
+ *
+ *  - Finally tied up all loose ends in the concept. Threads are now
+ *  joinable
+ *
+ *  - Corrected one error: compacting scheduele while cancelling a
+ *  threads
+ *
+ *  - Several new API, mainly concerned with cancelation (corrsp pThread
+ *  also)
+ *
+ *  - Found a nasty bug while creating threads in threads for XC167. TOS is
+ *  really a patchy solution ;( This one had to do with the compiler
+ *  being fooled by the inline assembly and optimized something that was not
+ *  optimizable (saving stack segment got wacked).
+ *
+ *  - Designed a concurrent qsort test-app. This is good for showing
+ *  boss-worker model. Number of threads recoed on XC167 was 50 and on MSVS
+ *  more than 150! Interesting to notice was that TinKer creation and
+ *  cancelation for threads was much faster than Windows own (20-30 times
+ *  faster).
+ *
+ *  - A MSVC workspace for pThreads-Win32. Good for testing apps
+ *  transparency.
+ *
+ *  - Increased memory on XC167 (phyCore HW). now 32k for stacks and 16k for
+ *  malloc. We still lack RAM that is not deployed (pHycore has
+ *  128k + 256k physical RAM memory i think). Maximum for
+ *  stack is 64k however (type of pointers determine this). If memory is
+ *  increased further, we get a TRAP_B saying bad memory interface. Typical
+ *  error for config memory issues in DaVe.
+ *
+ *  Revision 1.24  2006/03/14 11:15:50  ambrmi09
  *  tk_hwsys_keilC166.h: Removed code that was not doing it's job, and also
  *  a bit misleading since whether it works or not in all cases depended on
  *  how the compiler happened to compile.

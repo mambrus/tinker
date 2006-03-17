@@ -36,7 +36,7 @@
 
 #include <kernel/src/implement_tk.h>
 
-extern unsigned int theSchedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
+extern thid_t theSchedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
 extern struct tcb_t proc_stat[TK_MAX_THREADS];
 extern struct stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
 
@@ -131,27 +131,27 @@ static const char * trapinfo[17]={
 
 
 static const char * kerneltraps[]={
-/*none*/ "TK_NOERR  - TinKer Termination without any errors\n",
+/*none*/ "TK_NOERR        - TinKer Termination without any errors\n",
 
-/* 0*/   "TBD       - TinKer error TBD\n",
-/* 2*/   "ASSERT    - Assertion failed. See earlier text output for more info\n",
-/* 2*/   "TBD       - TinKer error TBD\n",
-/* 3*/   "TBD       - TinKer error TBD\n",
+/* 0*/   "MAX_THREADS     - Total amount of threads would exceed limit\n",
+/* 2*/   "ASSERT          - Assertion failed. See earlier text output for more info\n",
+/* 2*/   "MAX_PRIO_LEVELS - Chosen priority too high\n",
+/* 3*/   "TBD             - TinKer error TBD (bit 3)\n",
 
-/* 4*/   "STACK     - User stack out of bounds\n",
-/* 5*/   "STKINT    - Stack integrity faliure detected\n",
-/* 6*/   "TBD       - TinKer error TBD\n",
-/* 7*/   "TBD       - TinKer error TBD\n",
+/* 4*/   "STACK           - User stack out of bounds\n",
+/* 5*/   "STKINT          - Stack integrity faliure detected\n",
+/* 6*/   "THREADS_AT_PRIO - To many threads at this prio\n",
+/* 7*/   "AMOK            - Kernel running amok detected\n",
 
-/* 8*/   "TBD       - TinKer error TBD\n",
-/* 9*/   "TBD       - TinKer error TBD\n",
-/*10*/   "TBD       - TinKer error TBD\n",
-/*11*/   "TBD       - TinKer error TBD\n",
+/* 8*/   "NAME_LEN        - Thread-name to long\n",
+/* 9*/   "NOMEM           - No memory left for allocation\n",
+/*10*/   "TBD             - TinKer error TBD (bit 10)\n",
+/*11*/   "TBD             - TinKer error TBD (bit 11)\n",
 
-/*12*/   "TBD       - TinKer error TBD\n",
-/*13*/   "TBD       - TinKer error TBD\n",
-/*14*/   "TBD       - TinKer error TBD\n",
-/*15*/   "TBD       - TinKer error TBD\n"
+/*12*/   "TBD             - TinKer error TBD  (bit 12)\n",
+/*13*/   "TBD             - TinKer error TBD  (bit 13)\n",
+/*14*/   "ERR_HW          - Some HW driver detected a fatal error\n",
+/*15*/   "UNKNOWN         - Unknown (or undefined) termination reason\n"
 };
  
 
@@ -355,8 +355,8 @@ void printtrap(
             tcb = &proc_stat[tid];
         
             if ( 
-               (  (iprio || idx) && tid && (tcb->isInit == TRUE) ) ||
-               ( !(iprio || idx) && (tcb->isInit == TRUE) )
+               (  (iprio || idx) && tid && (tcb->valid == TRUE) ) ||
+               ( !(iprio || idx) && (tcb->valid == TRUE) )
             ){
                safeprint(&i2shex(tid)[2]);             safeprint(" ");  //! Tid that schedule says it has
                safeprint(&i2shex(tcb->Thid)[2]);       safeprint(" ");  //!< unsigned int / Process ID and Parent ID (Gid)
@@ -369,11 +369,14 @@ void printtrap(
                      safeprint(">RDY ");
                   else
                      safeprint(" RDY ");
-               }else if (tcb->state == ZOMBIE)
-                  safeprint(" ZOMB"); 
-               else{
-                  safeprint(" _");
-            
+               }else{
+			      safeprint(" ");
+
+                  if (tcb->state & ____Z___)
+                     safeprint("Z");
+                  else
+                     safeprint("_");
+
                   if (tcb->state & _____Q__)
                      safeprint("Q");
                   else
@@ -577,7 +580,40 @@ void user_trap (void) interrupt 0x0D  {
  * @defgroup CVSLOG_TRAPS_C TRAPS_C
  * @ingroup CVSLOG
  *  $Log: TRAPS.C,v $
- *  Revision 1.15  2006-02-25 14:44:29  ambrmi09
+ *  Revision 1.16  2006-03-17 12:20:01  ambrmi09
+ *  Major uppdate (5 days hard work)
+ *
+ *  - Finally tied up all loose ends in the concept. Threads are now
+ *  joinable
+ *
+ *  - Corrected one error: compacting scheduele while cancelling a
+ *  threads
+ *
+ *  - Several new API, mainly concerned with cancelation (corrsp pThread
+ *  also)
+ *
+ *  - Found a nasty bug while creating threads in threads for XC167. TOS is
+ *  really a patchy solution ;( This one had to do with the compiler
+ *  being fooled by the inline assembly and optimized something that was not
+ *  optimizable (saving stack segment got wacked).
+ *
+ *  - Designed a concurrent qsort test-app. This is good for showing
+ *  boss-worker model. Number of threads recoed on XC167 was 50 and on MSVS
+ *  more than 150! Interesting to notice was that TinKer creation and
+ *  cancelation for threads was much faster than Windows own (20-30 times
+ *  faster).
+ *
+ *  - A MSVC workspace for pThreads-Win32. Good for testing apps
+ *  transparency.
+ *
+ *  - Increased memory on XC167 (phyCore HW). now 32k for stacks and 16k for
+ *  malloc. We still lack RAM that is not deployed (pHycore has
+ *  128k + 256k physical RAM memory i think). Maximum for
+ *  stack is 64k however (type of pointers determine this). If memory is
+ *  increased further, we get a TRAP_B saying bad memory interface. Typical
+ *  error for config memory issues in DaVe.
+ *
+ *  Revision 1.15  2006/02/25 14:44:29  ambrmi09
  *  Found the nasty \ref BUG_000_001. Solution is robust but potentially degrades
  *  tinkers timing presition.
  *

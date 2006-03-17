@@ -30,9 +30,9 @@ This is the common header file for \ref STALLOC
 #define ST_MTYP           huge
 #define ST_NULL           ((void ST_MTYP*)0)
 
-void *stalloc ( stsize_t size);
-void stalloc_free (void ST_MTYP* memp);
-void stalloc_init_mempool (void ST_MTYP *pool, stsize_t size);
+void *stalloc             ( stsize_t size );
+void stalloc_free         ( void ST_MTYP* memp) ;
+void stalloc_init_mempool ( void ST_MTYP *pool, stsize_t size );
 
 #endif //STALLOCK_H
 

@@ -95,7 +95,9 @@ int pthread_once (
 );
 
 
-int pthread_cancel (pthread_t __thread);
+int pthread_cancel   (pthread_t);
+int pthread_join     (pthread_t, void**);
+int pthread_detach   (pthread_t);
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
@@ -798,7 +800,40 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.9  2006-03-11 14:37:48  ambrmi09
+ *  Revision 1.10  2006-03-17 12:20:02  ambrmi09
+ *  Major uppdate (5 days hard work)
+ *
+ *  - Finally tied up all loose ends in the concept. Threads are now
+ *  joinable
+ *
+ *  - Corrected one error: compacting scheduele while cancelling a
+ *  threads
+ *
+ *  - Several new API, mainly concerned with cancelation (corrsp pThread
+ *  also)
+ *
+ *  - Found a nasty bug while creating threads in threads for XC167. TOS is
+ *  really a patchy solution ;( This one had to do with the compiler
+ *  being fooled by the inline assembly and optimized something that was not
+ *  optimizable (saving stack segment got wacked).
+ *
+ *  - Designed a concurrent qsort test-app. This is good for showing
+ *  boss-worker model. Number of threads recoed on XC167 was 50 and on MSVS
+ *  more than 150! Interesting to notice was that TinKer creation and
+ *  cancelation for threads was much faster than Windows own (20-30 times
+ *  faster).
+ *
+ *  - A MSVC workspace for pThreads-Win32. Good for testing apps
+ *  transparency.
+ *
+ *  - Increased memory on XC167 (phyCore HW). now 32k for stacks and 16k for
+ *  malloc. We still lack RAM that is not deployed (pHycore has
+ *  128k + 256k physical RAM memory i think). Maximum for
+ *  stack is 64k however (type of pointers determine this). If memory is
+ *  increased further, we get a TRAP_B saying bad memory interface. Typical
+ *  error for config memory issues in DaVe.
+ *
+ *  Revision 1.9  2006/03/11 14:37:48  ambrmi09
  *  - Replaced printf with printk in in-depth parts of the kernel. This is
  *  to make porting easier since printk can then be mapped to whatever
  *  counsole output ability there is (including none if there isn't any).

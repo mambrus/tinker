@@ -29,12 +29,17 @@ This comonent is not selectable as the others normally are
 For in-depth discussions about this component, see \ref
 SCHED
 
+@note (Very old note, probably ridiculous now) Allocate at least 2k stack if 
+you use printf in thread else 64bytes is probably sufficient.
+
+
 @see COMPONENTS
 */
 
  
 #ifndef TK_H
 #define TK_H
+#define TINKER
 
 /*- include files **/
 #include <stddef.h>
@@ -74,9 +79,10 @@ Modify these constants to get a kernel of desired size/speed ratio
 @note </b>Do not change these if using pre-built kernel as lib</b>
 */
 //@{
-#define TK_MAX_THREADS           10    //!< Maximum number of threads kernel can handle
+#define TK_MAX_THREADS           /*98*/50    //!< Maximum number of threads kernel can handle
 #define TK_MAX_PRIO_LEVELS       0x10  //!< Maximum number of priority levels. @todo fix this, Idle needs to bee last in last prio( needs one extra )
-#define TK_MAX_THREADS_AT_PRIO   0x0A  //!< Maximum number of threads at a priority at any one time
+//#define TK_MAX_THREADS_AT_PRIO  0x0A  //!< Maximum number of threads at a priority at any one time
+#define TK_MAX_THREADS_AT_PRIO   TK_MAX_THREADS  //!< Maximum number of threads at a priority at any one time
 #define TK_THREAD_NAME_LEN       0x17  //!< Number of characters (at most) in the TCB identifying the thread. @note If this is zero, which is valid, no human readable info about the thread is stored @note A size of 4 bytes is what used to be standard in pSos
 //@}
 
@@ -94,9 +100,15 @@ Modify these constants to get a kernel of desired size/speed ratio
 #   define TK_NORMAL_STACK_SIZE     0x1200 //!< @note Whats normal or reasonable differs between architectures. 
 
 #else  //Embedded cases
-#	define TK_NORMAL_STACK_SIZE     0x600 //!< @note Whats normal or reasonable differs between architectures.    
+//#	define TK_NORMAL_STACK_SIZE     0x600 //!< @note Whats normal or reasonable differs between architectures.   
+#	define TK_NORMAL_STACK_SIZE     0x200 //!< @note Whats normal or reasonable differs between architectures.     
 
 #endif
+
+//Figure out how to do the following some other time...
+//#if ( TK_MAX_THREADS * TK_NORMAL_STACK_SIZE > SIZEOF_STACKPOOL )
+//# error YOU HAVE TOO LITTLE MEMORY FOR THE NUMBER OF THREADS YOU HAVE DEFINED
+//#endif
 
 
 /*!
@@ -138,7 +150,7 @@ TK_COMP_ITC=1,TK_COMP_PTIMER=1,TK_COMP_KMEM=1,TK_COMP_PTHREAD=1,TK_COMP_POSIX_RT
 //Kernel termination codes (bit adressable) - 
 
 /*!
-@name Kernel termination codes (bit addressable
+@name Kernel termination Trap Codes (bit addressable)
 
 When TinKer itself dies (i.e. exits), it will do so using a exit code
 telling about the reason of the exit.
@@ -146,27 +158,27 @@ telling about the reason of the exit.
 @note Per \b kernel and \b not per \b thread codes
 */
 //@{
-#define TK_NOERR           0x0000   //!< Termination without errors
+#define TC_NOERR           0x0000   //!< Termination without errors
 
-#define TK_ERR_1           0x0001
-#define TK_ERR_ASSERT      0x0002   //!< Assertion failed
-#define TK_ERR_3           0x0004
-#define TK_ERR_4           0x0008
+#define TC_MAX_THREADS     0x0001   //!< Total amount of threads would exceed limit
+#define TC_ERR_ASSERT      0x0002   //!< Assertion failed
+#define TC_MAX_PRIO_LEVELS 0x0004   //!< Chosen priority too high
+#define TC_ERR_4           0x0008
 
-#define TK_ERR_STACK       0x0010   //!< Stack out of bounds check faliure
-#define TK_ERR_STKINT      0x0020   //!< Stack integrity faliure detected
-#define TK_ERR_7           0x0040
-#define TK_ERR_8           0x0080
+#define TC_ERR_STACK       0x0010   //!< Stack out of bounds check faliure
+#define TC_ERR_STKINT      0x0020   //!< Stack integrity faliure detected
+#define TC_THREADS_AT_PRIO 0x0040   //!< To many threads at this prio
+#define TC_AMOK            0x0080   //!< Kernel running amok detected
 
-#define TK_ERR_9           0x0100
-#define TK_ERR_10          0x0200
-#define TK_ERR_11          0x0400
-#define TK_ERR_12          0x0800
+#define TC_NAME_LEN        0x0100   //!< Thread-name to long
+#define TC_NOMEM           0x0200   //!< No memory left for allocation
+#define TC_ERR_11          0x0400
+#define TC_ERR_12          0x0800
 
-#define TK_ERR_13          0x1000
-#define TK_ERR_14          0x2000
-#define TK_ERR_15          0x4000
-#define TK_ERR_16          0x8000
+#define TC_ERR_13          0x1000
+#define TC_ERR_14          0x2000
+#define TC_ERR_HW          0x4000   //!< Some HW driver detected a fatal error
+#define TC_UNKNOWN         0x8000   //!< Unknown (or undefined) termination reason
 //@}
 
 typedef enum{FALSE,TRUE}BOOL;
@@ -175,6 +187,11 @@ typedef start_func_ft   *start_func_f;
 
 typedef void init_func_ft(void *);
 typedef init_func_ft   *init_func_f;
+
+typedef int tin_t;      //!< A tinker        ID
+typedef tin_t thid_t;   //!< A tinker thread ID
+typedef tin_t titc_t;   //!< A tinker ITC    ID
+typedef tin_t titi_t;   //!< A tinker pTimer ID
 
 
 /*- default settings **/
@@ -191,9 +208,9 @@ void           _tk_assertfail(    /* emulates __assertfail */
 );
 
 struct tcb_t  *_tk_current_tcb( void );
-struct tcb_t  *_tk_specific_tcb( unsigned int id );
+struct tcb_t  *_tk_specific_tcb( thid_t id );
 int           *_tk_errno();  
-void           _tk_context_switch_to_thread(unsigned int RID,unsigned int SID);
+void           _tk_context_switch_to_thread(thid_t RID,thid_t SID);
 void           _tk_main( void );
 
 
@@ -205,23 +222,22 @@ extern int Tk_IntFlagCntr;
 /*- public functions **/
 
 
-int            tk_delete_thread(unsigned int PID);
-
-unsigned int   tk_create_thread(
-   char          *name,
-   unsigned int   prio,
-   start_func_f   start_func,
-   void          *inpar,
-   size_t         stack_size
-);
-//Allocate at least 2k stack if you use printf in thread
-//else 64bytes is probably sufficent.
+int            tk_delete_thread(thid_t PID);
+thid_t         tk_create_thread(
+                  char          *name,
+                  unsigned int   prio,
+                  start_func_f   start_func,
+                  void          *inpar,
+                  size_t         stack_size
+               );
+int            tk_join(thid_t , void **);
+int            tk_detach( thid_t );
 void           tk_create_kernel( void );
 void           tk_delete_kernel( void );
 void           tk_yield( void );
 void           tk_exit( int ec );
 void           tk_msleep( unsigned int time_ms );
-unsigned int   tk_thread_id( void );            
+thid_t         tk_thread_id( void );            
 
 extern void    root( void ); /*! supplied by \b YOU - constitutes the root thread function*/
 
@@ -235,7 +251,40 @@ extern void    root( void ); /*! supplied by \b YOU - constitutes the root threa
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.35  2006-03-11 14:37:48  ambrmi09
+ *  Revision 1.36  2006-03-17 12:20:03  ambrmi09
+ *  Major uppdate (5 days hard work)
+ *
+ *  - Finally tied up all loose ends in the concept. Threads are now
+ *  joinable
+ *
+ *  - Corrected one error: compacting scheduele while cancelling a
+ *  threads
+ *
+ *  - Several new API, mainly concerned with cancelation (corrsp pThread
+ *  also)
+ *
+ *  - Found a nasty bug while creating threads in threads for XC167. TOS is
+ *  really a patchy solution ;( This one had to do with the compiler
+ *  being fooled by the inline assembly and optimized something that was not
+ *  optimizable (saving stack segment got wacked).
+ *
+ *  - Designed a concurrent qsort test-app. This is good for showing
+ *  boss-worker model. Number of threads recoed on XC167 was 50 and on MSVS
+ *  more than 150! Interesting to notice was that TinKer creation and
+ *  cancelation for threads was much faster than Windows own (20-30 times
+ *  faster).
+ *
+ *  - A MSVC workspace for pThreads-Win32. Good for testing apps
+ *  transparency.
+ *
+ *  - Increased memory on XC167 (phyCore HW). now 32k for stacks and 16k for
+ *  malloc. We still lack RAM that is not deployed (pHycore has
+ *  128k + 256k physical RAM memory i think). Maximum for
+ *  stack is 64k however (type of pointers determine this). If memory is
+ *  increased further, we get a TRAP_B saying bad memory interface. Typical
+ *  error for config memory issues in DaVe.
+ *
+ *  Revision 1.35  2006/03/11 14:37:48  ambrmi09
  *  - Replaced printf with printk in in-depth parts of the kernel. This is
  *  to make porting easier since printk can then be mapped to whatever
  *  counsole output ability there is (including none if there isn't any).

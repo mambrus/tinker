@@ -20,17 +20,18 @@
 
 #include <kernel/src/tk_tick.h>
 
+unsigned char huge stalloc_padding [0x6];      //Important! don't remove this harmless little padding
 
-//unsigned char xhuge malloc_bigpool [0x10000];
+//unsigned char huge stalloc_mempool [0x1FFA]; //8k
+//unsigned char huge stalloc_mempool [0x3FFA]; //16k
+  unsigned char huge stalloc_mempool [0x7FFA]; //32k for threads stacks (MAX 64k)
 
 
-unsigned char far stalloc_padding [0x6]; 
-unsigned char far stalloc_mempool [0x1FFA];
 
-//Neither of the following works
-unsigned char far malloc_mempool [0x2000];
-//unsigned char xhuge malloc_mempool [0x4000];
-//unsigned char xhuge malloc_mempool [0x1000];
+//unsigned char xhuge malloc_mempool [0x02000];
+  unsigned char xhuge malloc_mempool [0x04000];  //<! 16k for normal mallocs
+//unsigned char xhuge malloc_mempool [0x1FFF0];  //<! 128k
+
 
 
 // USER CODE END

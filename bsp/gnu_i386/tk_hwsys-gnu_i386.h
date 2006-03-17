@@ -112,7 +112,7 @@ How printk is implemented on this target
 //as the return value. Not shure if it works on every processor
 
 
-#define GET_THREADS_RETVAL( THRETVAL )    \
+#define GET_THREADS_RETVAL( THRETVAL, TEMP )  \
    asm __volatile__ (                     \
       "nop\n\t"                           \
       : "=a" (THRETVAL)                   \

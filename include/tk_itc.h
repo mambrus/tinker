@@ -122,10 +122,16 @@ typedef enum{
 @brief Content of fixed-length queues. 
 
 Use fixed length queues to send scalars (i.e. integers, enums e.t.a.).
+
 @note that the size is limited and should be equal to the largest scalar
 your system will support. 
 */
-typedef char q_t[4];
+#if 1       /*Strict pSos*/
+   typedef unsigned long  q_t[4];
+#else
+   typedef char q_t[4];
+#endif
+
 
 /*
 @bried Block to to handle messages of vaiable length
@@ -397,7 +403,40 @@ unsigned long sm_v_ny(
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.18  2006-03-11 14:37:48  ambrmi09
+ *  Revision 1.19  2006-03-17 12:20:03  ambrmi09
+ *  Major uppdate (5 days hard work)
+ *
+ *  - Finally tied up all loose ends in the concept. Threads are now
+ *  joinable
+ *
+ *  - Corrected one error: compacting scheduele while cancelling a
+ *  threads
+ *
+ *  - Several new API, mainly concerned with cancelation (corrsp pThread
+ *  also)
+ *
+ *  - Found a nasty bug while creating threads in threads for XC167. TOS is
+ *  really a patchy solution ;( This one had to do with the compiler
+ *  being fooled by the inline assembly and optimized something that was not
+ *  optimizable (saving stack segment got wacked).
+ *
+ *  - Designed a concurrent qsort test-app. This is good for showing
+ *  boss-worker model. Number of threads recoed on XC167 was 50 and on MSVS
+ *  more than 150! Interesting to notice was that TinKer creation and
+ *  cancelation for threads was much faster than Windows own (20-30 times
+ *  faster).
+ *
+ *  - A MSVC workspace for pThreads-Win32. Good for testing apps
+ *  transparency.
+ *
+ *  - Increased memory on XC167 (phyCore HW). now 32k for stacks and 16k for
+ *  malloc. We still lack RAM that is not deployed (pHycore has
+ *  128k + 256k physical RAM memory i think). Maximum for
+ *  stack is 64k however (type of pointers determine this). If memory is
+ *  increased further, we get a TRAP_B saying bad memory interface. Typical
+ *  error for config memory issues in DaVe.
+ *
+ *  Revision 1.18  2006/03/11 14:37:48  ambrmi09
  *  - Replaced printf with printk in in-depth parts of the kernel. This is
  *  to make porting easier since printk can then be mapped to whatever
  *  counsole output ability there is (including none if there isn't any).

@@ -252,7 +252,7 @@ void tk_yield( void ){
 
 
 //TBD
-#define GET_THREADS_RETVAL( THRETVAL )    \
+#define GET_THREADS_RETVAL( THRETVAL, TEMP ) \
    asm __volatile__ (                     \
       "nop"                               \
    );
