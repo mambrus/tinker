@@ -207,8 +207,8 @@ void           _tk_assertfail(    /* emulates __assertfail */
    int line
 );
 
-struct tcb_t  *_tk_current_tcb( void );
-struct tcb_t  *_tk_specific_tcb( thid_t id );
+struct tcb_t_ *_tk_current_tcb( void );
+struct tcb_t_ *_tk_specific_tcb( thid_t id );
 int           *_tk_errno();  
 void           _tk_context_switch_to_thread(thid_t RID,thid_t SID);
 void           _tk_main( void );
@@ -251,7 +251,10 @@ extern int     root( void ); /*! supplied by \b YOU - constitutes the root threa
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.37  2006-03-19 12:44:35  ambrmi09
+ *  Revision 1.38  2006-03-19 22:57:54  ambrmi09
+ *  First naive implementation of a pthread mutex
+ *
+ *  Revision 1.37  2006/03/19 12:44:35  ambrmi09
  *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
  *  without one single warning (yay!). Be aware that ther was a lot of
  *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...

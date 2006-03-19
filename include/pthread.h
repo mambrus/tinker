@@ -46,6 +46,74 @@ PTHREAD
 #  define main(x,y) root() 
 #endif
 
+/*!
+@name Predefined mutexes. Exists somewhere (but can't be by a header)
+*/
+//@{
+/*
+extern pthread_mutex_t pthread_recursive_mutex_initializer;
+extern pthread_mutex_t pthread_normal_mutex_initializer;
+extern pthread_mutex_t pthread_errorcheck_mutex_initializer;
+extern pthread_mutex_t pthread_errorcheck_mutex_initializer;
+*/
+//@}
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+#define _PTHREAD_MUTEXATTR_DEFAULT {0}
+#define _PTHREAD_BLOCKED_INIT {0}
+#define _PTHREADS_MAX_BLOCKED TK_MAX_THREADS
+
+
+#define PTHREAD_MUTEX_INITIALIZER { \
+   NULL,                            \
+   _PTHREAD_BLOCKED_INIT,           \
+   _PTHREAD_MUTEXATTR_DEFAULT       \
+}
+//------1---------2---------3---------4---------5---------6---------7---------8
+
+/*!
+A list of blocked threads. This is to speed up release (instead of letting the dispatcher finding who should be released).
+
+Currently inplemented as a table.
+
+@note The table has to come last in the struct for static initialization to work properly.
+*/
+typedef struct _pthread_blocked_t_{
+   int numb;
+   pthread_t thread[_PTHREADS_MAX_BLOCKED ];
+}_pthread_blocked_t;
+
+/*!
+TBD
+ 
+@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutex_t.html
+*/                      
+struct pthread_mutex_t_ {
+   pthread_t            owner;    //!< Who (i.e. which thread) has claimed ownership of this mutex
+   _pthread_blocked_t   blocked;  //!< Information about blocked threads
+   pthread_mutexattr_t  attr;     //!< Attributes of this mutex   
+};
+
+/*!
+TBD
+ 
+@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutexattr_t.html
+*/
+
+struct pthread_mutexattr_t_ {
+   int TBD_THIS_STRUCT;
+};
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+
+
+/*!
+Describes the thread attributes. It should be considered an opaque
+record, the names of the fields can change anytime. Use the appropriate
+functions to set the thread attributes.
+ 
+@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_attr_t.html
+*/
 
 /*! 
 @brief Once Key
@@ -66,6 +134,8 @@ struct pthread_once_t_ {
   long started;             /*!< First thread to increment this value
                                  to zero executes the user function */
 };
+
+
 
 int pthread_create_named_np (
    pthread_t               *thread,
@@ -103,6 +173,45 @@ int pthread_once (
 int pthread_cancel   (pthread_t);
 int pthread_join     (pthread_t, void**);
 int pthread_detach   (pthread_t);
+
+
+
+/*!
+@name Mutex creation destruction
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_init.html
+*/
+//@{
+int pthread_mutex_init (pthread_mutex_t *mutex,
+       const pthread_mutexattr_t *attr);
+int pthread_mutex_destroy(pthread_mutex_t *mutex);
+//@}
+/*!
+@name Mutex usage
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_lock.html
+*/
+//@{
+int pthread_mutex_trylock (pthread_mutex_t *__mutex);
+int pthread_mutex_lock (pthread_mutex_t *__mutex);
+int pthread_mutex_unlock (pthread_mutex_t *__mutex);
+//@}
+
+/*!
+@name Mutex "advanced realtime" usage
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_timedlock.html
+*/
+//@{
+int pthread_mutex_timedlock(pthread_mutex_t *mutex,
+       const struct timespec *abs_timeout);
+//@}
+
+/*
+int pthread_mutexattr_init (pthread_mutexattr_t *__attr);
+int pthread_mutexattr_destroy (pthread_mutexattr_t *__attr);
+int pthread_mutexattr_getpshared (__const pthread_mutexattr_t *
+int pthread_mutexattr_setpshared (pthread_mutexattr_t *__attr,
+int pthread_mutexattr_settype (pthread_mutexattr_t *__attr, int __kind)
+int pthread_mutexattr_gettype (__const pthread_mutexattr_t *__restrict
+*/
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -806,7 +915,10 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.12  2006-03-19 12:44:35  ambrmi09
+ *  Revision 1.13  2006-03-19 22:57:53  ambrmi09
+ *  First naive implementation of a pthread mutex
+ *
+ *  Revision 1.12  2006/03/19 12:44:35  ambrmi09
  *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
  *  without one single warning (yay!). Be aware that ther was a lot of
  *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...

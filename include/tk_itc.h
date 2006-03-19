@@ -116,7 +116,7 @@ typedef enum{
    SEM,       //!< The primitive is a semaphore (i.e. a counting mutex)
    S_QUEUE,   //!< The primitive is a normal queue (fix-length data)
    V_QUEUE    //!< The primitive is a variable data-length queue (data is of variable length)
-}t_ipctype;
+}itc_set_t;
 
 /*!
 @brief Content of fixed-length queues. 
@@ -149,7 +149,7 @@ typedef struct{
 
 Control block for the primitive synchronization mechanism
 */
-typedef struct {
+typedef struct itc_t_{
     char            name[4];            /*!< @brief Queue name */
     int token;                          /*!< @brief Messages os tokens. 
                                              If = 0, no blocked, no messages   
@@ -158,8 +158,8 @@ typedef struct {
     unsigned long   flags;              /*!< @brief Attributes */
     unsigned long   sizeof_q;           /*!< @brief Size in indexes */
     unsigned long   maxSizeof_m;        /*!< @brief Max size of message (This is stupid ,pSos)*/ 
-    t_ipctype       b_type;             /*!< @brief Determines what kind of primitive this block handles.*/ 
-    struct tcb_t**  blocked_procs;      /*!< @brief List of blocked_procs[MAX_BLOCKED_ON_Q];*/
+    itc_set_t       b_type;             /*!< @brief Determines what kind of primitive this block handles.*/ 
+    struct tcb_t_** blocked_procs;      /*!< @brief List of blocked_procs[MAX_BLOCKED_ON_Q];*/
     unsigned long   in_idx;             /*!< @brief Input index for the blocked proc fifo */
     unsigned long   out_idx;            /*!< @brief Output index for the blocked proc fifo */
     unsigned long   min_idx;            /*!< @brief Input index for the blocked message fifo */
@@ -172,7 +172,7 @@ typedef struct {
        q_t *q;              /*!< @brief Data with fixed-lengt messages  */
        qv_t *qv;            /*!< @brief Data with fixed-lengt with messages of variable length */
     }m;                     
-}t_ipc;
+}itc_t;
 /* default settings */
 
 /*- external functions **/
@@ -406,7 +406,10 @@ unsigned long sm_v_ny(
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.20  2006-03-19 12:44:36  ambrmi09
+ *  Revision 1.21  2006-03-19 22:57:54  ambrmi09
+ *  First naive implementation of a pthread mutex
+ *
+ *  Revision 1.20  2006/03/19 12:44:36  ambrmi09
  *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
  *  without one single warning (yay!). Be aware that ther was a lot of
  *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...

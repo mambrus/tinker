@@ -70,8 +70,13 @@ typedef enum {
 }PROCSTATE;
 
 /*!
-@brief Defines on what the threads is blocked. 
+@brief Defines what the threads is blocked on. 
 Defines on what the threads is blocked. 
+
+Note that the Q means it's blocked on a entity else than internal \ref
+SCHED, which means that it's blocked on a synch entity of some kind.
+
+I.e. anything else than another thread, cancelation or native timeout.
 */
 typedef enum{TERM=1,SLEEP=2,QUEUE=4,ZOMBI=8}STATEBITS;
 
@@ -79,7 +84,52 @@ typedef enum{TERM=1,SLEEP=2,QUEUE=4,ZOMBI=8}STATEBITS;
 @brief Wake-up events. 
 Wake-up events (i.e. last reason to go ready)
 */
-typedef enum{E_CHILDDEATH, E_TIMER, E_ITC, E_ITC2}wakeE_t;
+typedef enum{E_NONE, E_CHILDDEATH, E_TIMER, E_ITC, E_ITC2}wakeE_t;
+
+/*
+If PROCSTATE has Q flag set, bOnID in \ref tk_tcb_t will contain
+information about any of the following synch entities:
+ - TK_ITC entities
+   - TK semaphore
+   - TK queue
+   - TK vqueue 
+
+ - Pthread entities
+   - Mutexes    
+   - Conditional variables 
+   - Keys 
+   
+ - POSIX 1b
+   - Semaphores
+   
+ - Ptimer
+*/
+typedef enum {
+   BON_SCHED=0,        //!< Either other thread or self (native timer)
+   BON_ITC,            //!< Any of the native ITC entities
+   BON_MUTEX,          //!< Pthread mutex
+   BON_CON_VAR,        //!< Pthread conditional variable
+   BON_KEY,            //!< Pthread key
+   BON_SEMAPHORE,      //!< POSIX 1b semaphore
+   BON_PTIMER          //!< pTimer 
+}bon_sel_t; 
+
+/*!
+Information about what the thread is blocked on
+
+@note TinKer \ref SCHED doesn't activly use this info. It is for other blocking
+packages so that they can have their own "place holder" in the TCB.
+
+*/
+typedef struct bon_t_ {
+   bon_sel_t                  kind;
+   union {
+      struct tcb_t_           *tcb;
+      struct itc_t_           *itc;
+      struct pthread_mutex_t_ *mutex;
+   }entity;   
+}bon_t;
+
 
 /*!
 Thread control block (TCB). This structure contains all
@@ -93,13 +143,13 @@ like the C166 family, this is a much more complex structure.
 @todo Insert a compile time chet that prevents number of threads to be larger than MAX_UNT/2 (i.e. negative int)
 */
 
-typedef struct tcb_t{
+typedef struct tcb_t_{
    thid_t         Thid,Gid;            //!< Process ID and Parent ID (Gid). A Gid of -1 would indicate a detached (parent-less) thread
    int            noChilds;            //!< Numb of procs this has created
    char           name[TK_THREAD_NAME_LEN+1]; //!< Name of the thread (+ 1 extra for byte terminating zero)
    BOOL           valid;               //!< This TCB is active and contains valid info about a thread.
    PROCSTATE      state;               //!< State of the process
-   tin_t          bOnId;               //!< The ID of the \b main entity this thread is blocked on (either other threads-ID or ITC or ptimer-ID). If serveral entities are reason for blocking, ontly the main entity will be mentioned here.
+   bon_t          bOnId;               //!< The ID of the \b main entity this thread is blocked on (either other threads-ID or ITC or ptimer-ID). If serveral entities are reason for blocking, ontly the main entity will be mentioned here.
    int            _errno_;             //!< Support of per thread errno
    stack_t        stack_begin;         //!< First address of stack memory
    stack_t        curr_sp;             //!< Current stackpointer of this thread
@@ -133,7 +183,10 @@ typedef struct stat_t{
  * @defgroup CVSLOG_implement_tk_h implement_tk_h
  * @ingroup CVSLOG
  *  $Log: implement_tk.h,v $
- *  Revision 1.6  2006-03-19 12:44:36  ambrmi09
+ *  Revision 1.7  2006-03-19 22:57:54  ambrmi09
+ *  First naive implementation of a pthread mutex
+ *
+ *  Revision 1.6  2006/03/19 12:44:36  ambrmi09
  *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
  *  without one single warning (yay!). Be aware that ther was a lot of
  *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...

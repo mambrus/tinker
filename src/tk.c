@@ -163,7 +163,7 @@ is costly (I think)...
 coord_t lookUpTable[TK_MAX_THREADS];
 
 */
-struct tcb_t proc_stat[TK_MAX_THREADS];  
+struct tcb_t_ proc_stat[TK_MAX_THREADS];  
 
 
 /*!
@@ -276,9 +276,10 @@ void tk_create_kernel( void ){
 
    for (i=0; i<TK_MAX_THREADS; i++){
       proc_stat[i].state                        = ZOMBI;
-      proc_stat[i].bOnId                        = -1;
+      proc_stat[i].bOnId.kind                   = BON_SCHED; 
+      proc_stat[i].bOnId.entity.tcb             = NULL;
       proc_stat[i].wakeuptime                   = 0;
-      proc_stat[i].valid                       = FALSE;
+      proc_stat[i].valid                        = FALSE;
       proc_stat[i].name[TK_THREAD_NAME_LEN]     = 0;
       proc_stat[i].Gid                          = 0;
       proc_stat[i].Thid                         = 0;
@@ -557,20 +558,21 @@ thid_t tk_create_thread(
 
    REINIT_STACKADDR( proc_stat[proc_idx].stack_begin, stack_size );
    
-   proc_stat[proc_idx].valid       = TRUE;
-   proc_stat[proc_idx].state        = READY;
-   proc_stat[proc_idx].bOnId        = -1;
-   proc_stat[proc_idx].Thid         = proc_idx;    //for future compability with lage Thid:s
-   proc_stat[proc_idx].Gid          = active_thread; //Owned by..   
-   proc_stat[proc_idx].noChilds     = 0;
-   proc_stat[proc_idx]._errno_      = 0;
-   proc_stat[proc_idx].stack_size   = stack_size;
-   proc_stat[proc_idx].Prio         = prio;
-   proc_stat[proc_idx].Idx          = slot_idx;
-   proc_stat[proc_idx].stack_crc    = 0;
+   proc_stat[proc_idx].valid              = TRUE;
+   proc_stat[proc_idx].state              = READY;
+   proc_stat[proc_idx].bOnId.kind         = BON_SCHED;
+   proc_stat[proc_idx].bOnId.entity.tcb   = NULL;
+   proc_stat[proc_idx].Thid               = proc_idx;    //for future compability with lage Thid:s
+   proc_stat[proc_idx].Gid                = active_thread; //Owned by..   
+   proc_stat[proc_idx].noChilds           = 0;
+   proc_stat[proc_idx]._errno_            = 0;
+   proc_stat[proc_idx].stack_size         = stack_size;
+   proc_stat[proc_idx].Prio               = prio;
+   proc_stat[proc_idx].Idx                = slot_idx;
+   proc_stat[proc_idx].stack_crc          = 0;
 
-   proc_stat[proc_idx].wakeupEvent  = 0;
-   proc_stat[proc_idx].retval       = inpar;  //This is convention and covers a special case
+   proc_stat[proc_idx].wakeupEvent        = 0;
+   proc_stat[proc_idx].retval             = inpar;  //This is convention and covers a special case
    /*
    proc_stat[proc_idx].start_funct  = f;
    proc_stat[proc_idx].init_funct   = NULL;
@@ -646,7 +648,8 @@ int tk_join(thid_t PID, void ** value_ptr){
 
    }else{
       //prepare to block   
-      proc_stat[active_thread].bOnId = PID;
+      proc_stat[active_thread].bOnId.kind       = BON_SCHED;
+      proc_stat[active_thread].bOnId.entity.tcb = &proc_stat[PID];
       proc_stat[active_thread].state |= TERM;
       tk_yield();  //Will block
       assert(proc_stat[active_thread].wakeupEvent == E_CHILDDEATH);
@@ -931,9 +934,21 @@ int _tk_try_detach_parent(
    
                   
    //If waiting for me (not my bro or sis) death, unblock the parent. (i.e. parent executed a tk_join)
-   if ((proc_stat[proc_stat[thid].Gid].state & TERM) && proc_stat[proc_stat[thid].Gid].bOnId == thid ){
+   if (
+      (proc_stat[proc_stat[thid].Gid].state & TERM) && 
+      proc_stat[proc_stat[thid].Gid].bOnId.entity.tcb == &proc_stat[thid] )
+   {
       proc_stat[proc_stat[thid].Gid].state &= ~_______T; //Release the waiting parent
       proc_stat[proc_stat[thid].Gid].wakeupEvent = E_CHILDDEATH;
+      //Special case, if both ___S_ and ____T (i.e. timeoutable join)
+      if (proc_stat[proc_stat[thid].Gid].state == READY) { //What must be left is __S_
+         proc_stat[proc_stat[thid].Gid].bOnId.entity.tcb = NULL;
+         proc_stat[proc_stat[thid].Gid].bOnId.kind       = BON_SCHED;
+      }else{
+         proc_stat[proc_stat[thid].Gid].bOnId.entity.tcb = &proc_stat[thid];
+         proc_stat[proc_stat[thid].Gid].bOnId.kind       = BON_SCHED;
+      }
+
       succeded_unblocking_parent = TRUE;
       //We are likelly to get out of context before the parent can read our retval. Therefore make an
       //active copy to the parent's retval instead. The parent will know of this case and use that one 
@@ -1293,7 +1308,10 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.55  2006-03-19 12:44:36  ambrmi09
+ *  Revision 1.56  2006-03-19 22:57:55  ambrmi09
+ *  First naive implementation of a pthread mutex
+ *
+ *  Revision 1.55  2006/03/19 12:44:36  ambrmi09
  *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
  *  without one single warning (yay!). Be aware that ther was a lot of
  *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...

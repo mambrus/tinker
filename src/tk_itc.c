@@ -69,7 +69,7 @@ ITC
 
 /*- internal functions **/
 static void removeBlocked(
-	t_ipc *queue_p, 
+	itc_t *queue_p, 
 	unsigned int idx);
 static unsigned int findNextEmpySlot( 
 	void );
@@ -89,7 +89,7 @@ static unsigned long uintDiff(
 /*! 
 contains pointers to queue structs 			
 */
-static t_ipc *ipc_array[MAX_NUM_Q];	
+static itc_t *ipc_array[MAX_NUM_Q];	
 
 /*! 
 points to the most resently created ITC object
@@ -212,7 +212,7 @@ Helperfunction. In case ITC blocked function is released by
 it needs to bee removed so that the blocked list doesen't
 get full.
 */
-static void removeBlocked(t_ipc *queue_p, unsigned int idx) {
+static void removeBlocked(itc_t *queue_p, unsigned int idx) {
 	unsigned int cp_idx;
 	unsigned int in_idx;
 	
@@ -1007,7 +1007,7 @@ unsigned long sm_create(
 		if (rc==ERR_OBJFULL) {
 		   return(rc);	
 		}						
-	}else if ((ipc_array[ipc_idx] = (t_ipc*)malloc(sizeof(t_ipc)) ) == NULL) {
+	}else if ((ipc_array[ipc_idx] = (itc_t*)malloc(sizeof(itc_t)) ) == NULL) {
 		return(ERR_NOMEM);
 	/* Allocate memory for pointertable of tk_tcb_t pointers */
 	}else if ((ipc_array[ipc_idx]->blocked_procs = (tk_tcb_t**)malloc(MAX_BLOCKED_ON_Q * sizeof(tk_tcb_t*)) ) == NULL) {
@@ -1381,7 +1381,7 @@ unsigned long sm_create_ny(
       if (rc==ERR_OBJFULL) {
          return(rc); 
       }                 
-   }else if ((ipc_array[ipc_idx] = (t_ipc*)malloc(sizeof(t_ipc)) ) == NULL) {
+   }else if ((ipc_array[ipc_idx] = (itc_t*)malloc(sizeof(itc_t)) ) == NULL) {
       return(ERR_NOMEM);
    /* Allocate memory for pointertable of tk_tcb_t pointers */
    }else if ((ipc_array[ipc_idx]->blocked_procs = (tk_tcb_t**)malloc(MAX_BLOCKED_ON_Q * sizeof(tk_tcb_t*)) ) == NULL) {
@@ -1530,7 +1530,10 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.25  2006-03-19 12:44:37  ambrmi09
+ *  Revision 1.26  2006-03-19 22:57:55  ambrmi09
+ *  First naive implementation of a pthread mutex
+ *
+ *  Revision 1.25  2006/03/19 12:44:37  ambrmi09
  *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
  *  without one single warning (yay!). Be aware that ther was a lot of
  *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...

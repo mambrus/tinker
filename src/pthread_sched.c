@@ -82,7 +82,7 @@ int pthread_create_named_np (
    char                    *threadName
 ){
    thid_t thid;
-   struct tcb_t *tk_tcb;
+   struct tcb_t_ *tk_tcb;
    
    if (attr != NULL){           
       thid = tk_create_thread(
@@ -106,7 +106,7 @@ int pthread_create_named_np (
       );
    };
    //Types are the same, but avoid warnings
-   *thread=(pthread_t)thid;
+   *thread=(pthread_t)_tk_specific_tcb(thid);
       
    return 0;
 }
@@ -115,13 +115,13 @@ int pthread_join (
    pthread_t               thread,
    void**                  arg_return
 ){
-   return tk_join((tin_t)thread,arg_return);
+   return tk_join(thread->Thid,arg_return);
 }
 
 int pthread_detach (
    pthread_t               thread
 ){
-   return tk_detach((tin_t)thread);
+   return tk_detach(thread->Thid);
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -142,7 +142,7 @@ kernel or in reference based \ref pthread_t kernel.
 @see http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/pthread_equal.3.html#//apple_ref/doc/man/3/pthread_equal
 */
 pthread_t pthread_self (void){
-   return (pthread_t)tk_thread_id();
+   return _tk_current_tcb();
 }
 
 /*!
@@ -226,7 +226,10 @@ int pthread_cancel (pthread_t thread){
 /*! 
  * @ingroup CVSLOG 
  *  $Log: pthread_sched.c,v $
- *  Revision 1.10  2006-03-19 12:44:36  ambrmi09
+ *  Revision 1.11  2006-03-19 22:57:54  ambrmi09
+ *  First naive implementation of a pthread mutex
+ *
+ *  Revision 1.10  2006/03/19 12:44:36  ambrmi09
  *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
  *  without one single warning (yay!). Be aware that ther was a lot of
  *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...

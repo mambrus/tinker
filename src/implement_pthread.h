@@ -54,9 +54,6 @@ PTHREAD
 #ifndef _IMPLEMENT_PTHREAD_H
 #define _IMPLEMENT_PTHREAD_H
 
-#endif /* _IMPLEMENT_PTHREAD_H */
-
-
 /*!
 @brief Tinker ID mapping.
 
@@ -102,18 +99,23 @@ TBD
  
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutex_t.html
 */                      
+/*
 struct pthread_mutex_t_ {
-   int TBD_THIS_STRUCT;
+   pthread_t          owner;      //!< Who (i.e. which thread) has claimed ownership of this mutex
+   _pthread_blocked_t blockers;   //!< Information about blocked threads
+   pthread_mutexattr_t  attrb;    //!< Attributes of this mutex   
 };
-
+*/
 /*!
 TBD
  
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutexattr_t.html
 */
+/*
 struct pthread_mutexattr_t_ {
    int TBD_THIS_STRUCT;
 };
+*/
 
 /*!
 TBD
@@ -479,13 +481,16 @@ struct pthread_condattr_t_ {
 //
 //#endif /* __CYGWIN32__ || __CYGWIN__ */
 
-
+#endif /* _IMPLEMENT_PTHREAD_H */
 
 /*!
  * @defgroup CVSLOG_implement_pthread_h implement_pthread_h
  * @ingroup CVSLOG
  *  $Log: implement_pthread.h,v $
- *  Revision 1.7  2006-03-19 12:44:36  ambrmi09
+ *  Revision 1.8  2006-03-19 22:57:54  ambrmi09
+ *  First naive implementation of a pthread mutex
+ *
+ *  Revision 1.7  2006/03/19 12:44:36  ambrmi09
  *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
  *  without one single warning (yay!). Be aware that ther was a lot of
  *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...

@@ -37,7 +37,7 @@
 #include <kernel/src/implement_tk.h>
 
 extern thid_t theSchedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
-extern struct tcb_t proc_stat[TK_MAX_THREADS];
+extern struct tcb_t_ proc_stat[TK_MAX_THREADS];
 extern struct stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
 
 
@@ -264,7 +264,7 @@ void printtrap(
    unsigned int  mask;
    unsigned int  tid;
    unsigned int  iprio,idx;
-   struct tcb_t *tcb;
+   struct tcb_t_ *tcb;
    bit oIEN;
    struct timespec uptime;
    int rc;
@@ -580,7 +580,10 @@ void user_trap (void) interrupt 0x0D  {
  * @defgroup CVSLOG_TRAPS_C TRAPS_C
  * @ingroup CVSLOG
  *  $Log: TRAPS.C,v $
- *  Revision 1.16  2006-03-17 12:20:01  ambrmi09
+ *  Revision 1.17  2006-03-19 22:57:53  ambrmi09
+ *  First naive implementation of a pthread mutex
+ *
+ *  Revision 1.16  2006/03/17 12:20:01  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now
