@@ -166,8 +166,7 @@ int pthread_equal(pthread_t t1, pthread_t t2){
 int pthread_once (
    pthread_once_t          *once_control,
    void (*init_routine) (void)
-){
-   struct tcb_t  *tcb;
+){   
    int            need2run = 0;
    unsigned long  rc = ERR_OK;
    
@@ -202,9 +201,12 @@ int pthread_once (
    
    return 0;
 }
-
+/*!
+@todo: Very stubbed. Make this more complient!
+*/
 int pthread_cancel (pthread_t thread){
    assert ( tk_delete_thread((thid_t)thread) == TK_OK );
+   return 0;
 }
 
 
@@ -224,7 +226,12 @@ int pthread_cancel (pthread_t thread){
 /*! 
  * @ingroup CVSLOG 
  *  $Log: pthread_sched.c,v $
- *  Revision 1.9  2006-03-17 12:20:03  ambrmi09
+ *  Revision 1.10  2006-03-19 12:44:36  ambrmi09
+ *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
+ *  without one single warning (yay!). Be aware that ther was a lot of
+ *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
+ *
+ *  Revision 1.9  2006/03/17 12:20:03  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now

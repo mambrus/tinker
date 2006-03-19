@@ -84,6 +84,7 @@ any of them.   errno.h
       #error Component POSIX_RT is dependant of ITC
    #endif
    #include <pthread.h>
+   #undef main
 #endif
 
 #if defined(TK_COMP_POSIX_RT) && TK_COMP_POSIX_RT
@@ -253,6 +254,8 @@ static const char testPatt[TSTSZ] = "TinKer is king!";
 void tk_create_kernel( void ){
    int i,j;
    char *testArea;
+
+   TK_NO_WARN_ARG(testArea);
    
    /*
    Detect if a kernel is running amok.    
@@ -381,7 +384,7 @@ void *_tk_destructor( void *foo ){
    
    
    proc_stat[active_thread].state  = ZOMBI;
-   proc_stat[active_thread].retval = des_retval;
+   proc_stat[active_thread].retval = (void*)des_retval;
    _tk_detach_children(active_thread); 
    
    /*Finalize the destruction*/
@@ -460,6 +463,7 @@ int tk_detach(
       return EINVAL;
       
    _tk_try_detach_parent(Thid, TRUE); //forcefully detach
+   return 0;
 }
 
 
@@ -596,7 +600,7 @@ thid_t tk_create_thread(
    *(unsigned int*)v_p = (unsigned int)inpar;
 
    f_p = (start_func_f *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0x8];
-   *f_p = (start_func_f *)_tk_destructor;
+   *f_p = _tk_destructor;
 
    f_p = (start_func_f *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0xC];
    *f_p = f;
@@ -1251,7 +1255,7 @@ int main(int argc, char **argv){
 long int stub_mickey = 0;
 /*!
  When involved with porting, the \ref clock function is most often on implemented, wrong or just stubbed. 
- 
+  
  Since \ref clock is a esential part of the \ref SCHED internals, you need to have a stub that will do something  meantingful, so at least the dispaching will work.
 
  */
@@ -1289,7 +1293,12 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.54  2006-03-17 12:20:04  ambrmi09
+ *  Revision 1.55  2006-03-19 12:44:36  ambrmi09
+ *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
+ *  without one single warning (yay!). Be aware that ther was a lot of
+ *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
+ *
+ *  Revision 1.54  2006/03/17 12:20:04  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now

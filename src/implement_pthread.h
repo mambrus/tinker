@@ -101,7 +101,7 @@ struct pthread_key_t_ {
 TBD
  
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutex_t.html
-*/
+*/                      
 struct pthread_mutex_t_ {
    int TBD_THIS_STRUCT;
 };
@@ -485,7 +485,12 @@ struct pthread_condattr_t_ {
  * @defgroup CVSLOG_implement_pthread_h implement_pthread_h
  * @ingroup CVSLOG
  *  $Log: implement_pthread.h,v $
- *  Revision 1.6  2006-03-17 12:20:03  ambrmi09
+ *  Revision 1.7  2006-03-19 12:44:36  ambrmi09
+ *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
+ *  without one single warning (yay!). Be aware that ther was a lot of
+ *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
+ *
+ *  Revision 1.6  2006/03/17 12:20:03  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now

@@ -239,7 +239,7 @@ void           tk_exit( int ec );
 void           tk_msleep( unsigned int time_ms );
 thid_t         tk_thread_id( void );            
 
-extern void    root( void ); /*! supplied by \b YOU - constitutes the root thread function*/
+extern int     root( void ); /*! supplied by \b YOU - constitutes the root thread function*/
 
 /*- private functions **/
 
@@ -251,7 +251,12 @@ extern void    root( void ); /*! supplied by \b YOU - constitutes the root threa
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.36  2006-03-17 12:20:03  ambrmi09
+ *  Revision 1.37  2006-03-19 12:44:35  ambrmi09
+ *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
+ *  without one single warning (yay!). Be aware that ther was a lot of
+ *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
+ *
+ *  Revision 1.36  2006/03/17 12:20:03  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now

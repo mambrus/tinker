@@ -45,12 +45,14 @@ ITC
 
 #define NOTDEBUG_WITH_CURSES  //!< Visual "debugging" for queue operations if disabled
 
+
 #include <tk.h>
 #include <../src/implement_tk.h>
 #include <tk_hwsys.h>
 #include <tk_itc.h>
 
-#ifdef TK_COMP_ITC /* Should not test at sharp (libfile) version */
+/* You should not test at sharp (libfile) version*/
+#ifdef TK_COMP_ITC 
 /*- local definitions **/
 
 #ifdef NOTDEBUG_WITH_CURSES
@@ -84,8 +86,15 @@ static unsigned long uintDiff(
 /*- public data **/
 
 /*- private data **/
-static t_ipc *ipc_array[MAX_NUM_Q];	/* contains pointers to queue structs 			*/
-static ipc_idx;						/* points to the most resently created ITC object*/
+/*! 
+contains pointers to queue structs 			
+*/
+static t_ipc *ipc_array[MAX_NUM_Q];	
+
+/*! 
+points to the most resently created ITC object
+*/
+static ipc_idx;						
 
 /*- private functions **/
 /*******************************************************************************
@@ -93,13 +102,18 @@ static ipc_idx;						/* points to the most resently created ITC object*/
  ******************************************************************************/
 
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 int proveConcistency(unsigned int qid) {
 /* 	Se if you can find exactly as many blocked processes between out and in
 	as there are tokens. */
 	unsigned int in = ipc_array[qid]->in_idx;
 	unsigned int out = ipc_array[qid]->out_idx;
 	unsigned int count = 0;
-	int i;
+	unsigned int i;
 	
 	if (ipc_array[qid]->token > 0)
 		return(TRUE);
@@ -109,16 +123,21 @@ int proveConcistency(unsigned int qid) {
 			ipc_array[qid]->blocked_procs[i]->state & _____Q__ ||
 			ipc_array[qid]->blocked_procs[i]->state == READY
 		)
-				count++;
+      count++;
 	}
 	
-	if (count != abs(ipc_array[qid]->token))
+	if (count != (unsigned int)( abs(ipc_array[qid]->token) ) )
 		return(FALSE);
 	return(TRUE);	
 }
 
 #ifndef NOTDEBUG_WITH_CURSES
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 int no_duplicateBlock(unsigned int qid, unsigned int mark) {
 	tk_tcb_t *checkProc,*refProc = ipc_array[qid]->blocked_procs[mark];
 	unsigned int in = ipc_array[qid]->in_idx;
@@ -134,6 +153,11 @@ int no_duplicateBlock(unsigned int qid, unsigned int mark) {
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 void p_bQf(int x,int y,unsigned int qid) {
 	
 	unsigned int mark_idx,count = 0;	
@@ -165,46 +189,29 @@ void p_bQf(int x,int y,unsigned int qid) {
 /*******************************************************************************
  * Local helper functions
  ******************************************************************************/
- /******************************************************************************
- *  FUNCTION NAME: uintDiff
- *
- *  PARAMETERS:
- *		x1, the integer suppused to be the lowest
- *		x2, the integer supposed to be the highest
- *		max, wrapparound value
- *
- *  DESCRIPTION:
- *		Calculates the diff between 2 integers taking in account wrapparound
- *		effect. Tested and works fine.
- *		
- *  RETURNS:
- *		diff
- *****************************************************************************/
+
 //------1---------2---------3---------4---------5---------6---------7---------8 
+/*!
+Calculates the diff between 2 integers taking in account wrapparound
+effect. Tested and works fine.
+
+\reurns diff
+*/
 unsigned long uintDiff(
-	unsigned long x1, 
-	unsigned long x2, 
-	unsigned long max ) 
-{
+	unsigned long x1,       //!< x1, the integer suppused to be the lowest
+	unsigned long x2,       //!< x2, the integer supposed to be the highest
+	unsigned long max       //!< max value (wrapparound value)
+) {
 	return( x1 <= x2 ? x2-x1 : max - x1 + x2);
 }
 
-/*
- ** removeBlocked
- *
- *  FILENAME: D:\users\Mickey\projs\TinKer\tkos\tk_ipc.c
- *
- *  PARAMETERS:
- *
- *  DESCRIPTION: Helperfunction. In case ITC blocked function is released by 
- *               it needs to bee removed so that the blocked list doesen't
- *               get full.
- *
- *  RETURNS:
- *
- */
 
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Helperfunction. In case ITC blocked function is released by 
+it needs to bee removed so that the blocked list doesen't
+get full.
+*/
 static void removeBlocked(t_ipc *queue_p, unsigned int idx) {
 	unsigned int cp_idx;
 	unsigned int in_idx;
@@ -251,6 +258,11 @@ static void removeBlocked(t_ipc *queue_p, unsigned int idx) {
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 static unsigned int findNextEmpySlot() {
 	unsigned int seekcounter = 0;
 	
@@ -273,6 +285,11 @@ static unsigned int findNextEmpySlot() {
  *
  *****************************************************************************/
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 static unsigned long lock_stage(
 	unsigned long qid, 
 	unsigned long timeout) 
@@ -382,6 +399,11 @@ static unsigned long lock_stage(
  *
  *****************************************************************************/
 //------1---------2---------3---------4---------5---------6---------7---------8 
+/*!
+Doc TBD
+
+@todo documet this
+*/
 static unsigned long unlock_stage(
 	unsigned long qid) 
 {	
@@ -468,6 +490,11 @@ static unsigned long unlock_stage(
  *
  *****************************************************************************/
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 static unsigned long _lock_stage_ny(
    unsigned long qid, 
    unsigned long timeout) 
@@ -577,6 +604,11 @@ static unsigned long _lock_stage_ny(
  *
  *****************************************************************************/
 //------1---------2---------3---------4---------5---------6---------7---------8 
+/*!
+Doc TBD
+
+@todo documet this
+*/
 static unsigned long _unlock_stage_ny(
    unsigned long qid) 
 {  
@@ -656,6 +688,11 @@ static unsigned long _unlock_stage_ny(
  * Public functions
  ************************************************************************************************************ */
 //------1---------2---------3---------4---------5---------6---------7---------8 
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long tk_itc( void ){
     
     unsigned int i;
@@ -668,6 +705,11 @@ unsigned long tk_itc( void ){
    return ERR_OK;    	
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long tk_itc_destruct( void ){
 	unsigned long i,j; 
 	
@@ -689,6 +731,11 @@ unsigned long tk_itc_destruct( void ){
    return ERR_OK;
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_vcreate(
    char name[4],            
    unsigned long flags,     
@@ -715,6 +762,11 @@ unsigned long q_vcreate(
 	return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_vdelete(
 	unsigned long qid       /* id */
 ) {
@@ -729,6 +781,11 @@ unsigned long q_vdelete(
 	return (rc);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_vreceive(
 	unsigned long qid,      
 	unsigned long flags,    
@@ -774,6 +831,11 @@ unsigned long q_vreceive(
 	return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_vsend(
 	unsigned long qid,      
 	void *msg_buf,
@@ -787,7 +849,7 @@ unsigned long q_vsend(
 	if (ipc_array[qid]->b_type != V_QUEUE )
 		return(ERR_OBJTYPE);
 	if (ipc_array[qid]->token > 0)
-		if (!(ipc_array[qid]->token < ipc_array[qid]->sizeof_q))
+		if (!(ipc_array[qid]->token < (int)ipc_array[qid]->sizeof_q))  //Cast on the right side is important
 			return(ERR_FULL);
 		
 	
@@ -815,6 +877,11 @@ unsigned long q_vsend(
 	return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_create(
    char name[4],         
    unsigned long count,  
@@ -839,6 +906,11 @@ unsigned long q_create(
 	return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_delete(
 	unsigned long qid       /* id */
 ) {
@@ -849,6 +921,11 @@ unsigned long q_delete(
 	return (rc);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_receive(
 	unsigned long qid,      
 	unsigned long flags,    
@@ -879,6 +956,11 @@ unsigned long q_receive(
 	return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_send(
 	unsigned long qid,      
 	unsigned long msg_buf[4]
@@ -891,7 +973,7 @@ unsigned long q_send(
 	if (ipc_array[qid]->b_type != S_QUEUE )
 		return(ERR_OBJTYPE);
 	if (ipc_array[qid]->token > 0)
-		if (!(ipc_array[qid]->token < ipc_array[qid]->sizeof_q))
+		if (!(ipc_array[qid]->token < (int)ipc_array[qid]->sizeof_q)) //Cast on the right side is important
 			return(ERR_FULL);
 		
 	
@@ -908,6 +990,11 @@ unsigned long q_send(
 	return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long sm_create(
 	char name[4],           
 	unsigned long count,    
@@ -944,10 +1031,14 @@ unsigned long sm_create(
 	return (ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long sm_delete(
 	unsigned long qid       /* id */
 ) {
-	unsigned int i;																		  
 	/* Check if ITC exists */
 	/* Check if anyone is blocked (those are not freed but zombified)*/
 	free(ipc_array[qid]->blocked_procs);
@@ -1012,6 +1103,11 @@ unsigned long sm_v(			   /* sm_send or sm_put */
    
  ******************************************************************************/
 //------1---------2---------3---------4---------5---------6---------7---------8 
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_vcreate_ny(
    char name[4],         
    unsigned long flags,  
@@ -1038,6 +1134,11 @@ unsigned long q_vcreate_ny(
    return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_vdelete_ny(
    unsigned long qid       /* id */
 ) {
@@ -1052,6 +1153,11 @@ unsigned long q_vdelete_ny(
    return (rc);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_vreceive_ny(
    unsigned long qid,      
    unsigned long flags,    
@@ -1097,6 +1203,11 @@ unsigned long q_vreceive_ny(
    return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_vsend_ny(
    unsigned long qid,      
    void *msg_buf,
@@ -1110,7 +1221,7 @@ unsigned long q_vsend_ny(
    if (ipc_array[qid]->b_type != V_QUEUE )
       return(ERR_OBJTYPE);
    if (ipc_array[qid]->token > 0)
-      if (!(ipc_array[qid]->token < ipc_array[qid]->sizeof_q))
+      if (!(ipc_array[qid]->token < (int)ipc_array[qid]->sizeof_q)) //Cast on the right side is important
          return(ERR_FULL);
       
    
@@ -1138,6 +1249,11 @@ unsigned long q_vsend_ny(
    return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_create_ny(
    char name[4],         
    unsigned long count,  
@@ -1162,6 +1278,11 @@ unsigned long q_create_ny(
    return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_delete_ny(
    unsigned long qid       /* id */
 ) {
@@ -1172,6 +1293,11 @@ unsigned long q_delete_ny(
    return (rc);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_receive_ny(
    unsigned long qid,      
    unsigned long flags,    
@@ -1202,6 +1328,11 @@ unsigned long q_receive_ny(
    return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long q_send_ny(
    unsigned long qid,      
    unsigned long msg_buf[4]
@@ -1215,7 +1346,7 @@ unsigned long q_send_ny(
    if (ipc_array[qid]->b_type != S_QUEUE )
       { return(ERR_OBJTYPE); TK_STI(); }
    if (ipc_array[qid]->token > 0)
-      if (!(ipc_array[qid]->token < ipc_array[qid]->sizeof_q))
+      if (!(ipc_array[qid]->token < (int)ipc_array[qid]->sizeof_q)) //Cast on the right side is important
          { return(ERR_FULL); TK_STI(); }
       
    
@@ -1233,6 +1364,11 @@ unsigned long q_send_ny(
    return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long sm_create_ny(	  
    char name[4],           
    unsigned long count,    
@@ -1269,10 +1405,14 @@ unsigned long sm_create_ny(
    return (ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long sm_delete_ny(
    unsigned long qid       /* id */
 ) {
-   unsigned int i;                                                        
    /* Check if ITC exists */
    /* Check if anyone is blocked (those are not freed but zombified)*/
    free(ipc_array[qid]->blocked_procs);
@@ -1281,6 +1421,11 @@ unsigned long sm_delete_ny(
    return (ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long sm_p_ny(        /* sm_receive or sm_get */
    unsigned long qid,         /* id */
    unsigned long flags,       /* attrib */
@@ -1301,6 +1446,11 @@ unsigned long sm_p_ny(        /* sm_receive or sm_get */
    return(rc);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+Doc TBD
+
+@todo documet this
+*/
 unsigned long sm_v_ny(  /* sm_send or sm_put */
    unsigned long qid    /* id */
 ) {
@@ -1319,7 +1469,6 @@ unsigned long sm_v_ny(  /* sm_send or sm_put */
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 #endif
-
 
 /** @defgroup ITC ITC: Native Inter-thread Communication
 @ingroup COMPONENTS
@@ -1381,7 +1530,12 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.24  2006-03-12 15:08:56  ambrmi09
+ *  Revision 1.25  2006-03-19 12:44:37  ambrmi09
+ *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
+ *  without one single warning (yay!). Be aware that ther was a lot of
+ *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
+ *
+ *  Revision 1.24  2006/03/12 15:08:56  ambrmi09
  *  - Adjusted the source to accomodate the new file structure.
  *
  *  - All build environments uppdated and verified except BC5. For this one

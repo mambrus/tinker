@@ -44,7 +44,7 @@ ITC
 #define MAX_BLOCKED_ON_Q    TK_MAX_THREADS   /*!< Max num of proces blocked on queue or sem*/
 #define MAX_NUM_Q       	50  /*!< Max num of semaphores OR queues (i.e. primitives) in total*/
 
-/*!<
+/*!
 @brief Never timeout blocking. I.e. block \e "for-ever"
 
 We can use the value as a special case, because timeout of zero is not
@@ -133,8 +133,10 @@ your system will support.
 #endif
 
 
-/*
-@bried Block to to handle messages of vaiable length
+/*!
+@brief Block to to handle messages of vaiable length
+
+Block to to handle messages of vaiable length
 */
 typedef struct{
     void *mb;                   /*!< @brief The variable length message, 
@@ -142,8 +144,10 @@ typedef struct{
     unsigned long s;            /*!< @brief The size of the message */
 }qv_t;
 
-/*
-@bried Control block for the primitive synchronization mechanism
+/*!
+@brief Control block for the primitive synchronization mechanism
+
+Control block for the primitive synchronization mechanism
 */
 typedef struct {
     char            name[4];            /*!< @brief Queue name */
@@ -231,9 +235,8 @@ unsigned long  tk_itc_destruct( void );
 
 
 
-
 /*!
-@name Normal versions of the \ITC API
+@name Normal versions of the \ref ITC API
 
 Normal version of the \ref ITC API
 
@@ -315,7 +318,7 @@ unsigned long sm_v(         /*!< <b> sm_send or sm_put                  </b> */
 
 
 /*!
-@name Non-yield versions of the \ITC API
+@name Non-yield versions of the \ref ITC API
 
 Non-yield versions of the same API - to be used by ISRs or in PREEPTABLE
 versions of kernel
@@ -403,7 +406,12 @@ unsigned long sm_v_ny(
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.19  2006-03-17 12:20:03  ambrmi09
+ *  Revision 1.20  2006-03-19 12:44:36  ambrmi09
+ *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
+ *  without one single warning (yay!). Be aware that ther was a lot of
+ *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
+ *
+ *  Revision 1.19  2006/03/17 12:20:03  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now

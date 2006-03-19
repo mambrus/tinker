@@ -154,8 +154,8 @@ exactly as if it would be a variable, but it's not.
 
 
 
-//#if !defined(__GNUC__) && !( defined(_WIN32) || defined(_MSC_VER))
-#if !defined(__GNUC__)
+#if !defined(__GNUC__) && !( defined(_WIN32) || defined(_MSC_VER))
+//#if !defined(__GNUC__)
 #include <tk_mem.h>  //Last in error chain 
 /*!
 To make life easier and not to have to trim every tiny errorcode, all
@@ -348,8 +348,49 @@ ANSI_ENUM_ENOMEDIUM        , //!< @brief \ref ENOMEDIUM
 ANSI_ENUM_EMEDIUMTYPE        //!< @brief \ref ANSI_ENUM_EMEDIUMTYPE
 }; 
 
-
-
+//#if defined(_WIN32) &&  defined(_MSC_VER)
+/* MSVC defined allready
+EPERM
+ENOENT
+ESRCH
+EINTR
+EIO
+ENXIO
+E2BIG
+ENOEXEC
+EBADF
+ECHILD
+EDEADLK
+ENOMEM
+EACCES
+EFAULT
+EBUSY
+EEXIST
+EXDEV
+ENODEV
+ENOTDIR
+EISDIR
+EINVAL
+EMFILE
+ENFILE
+ENOTTY
+EFBIG
+ENOSPC
+ESPIPE
+EROFS
+EMLINK
+EPIPE
+EDOM
+ERANGE
+EAGAIN
+ENAMETOOLONG
+ENOTEMPTY
+ENOLCK
+ENOSYS
+EILSEQ
+EDEADLOCK
+EMSGSIZE
+*/
 
 
 #define  EPERM ANSI_ENUM_EPERM /*!<
@@ -1035,7 +1076,12 @@ TBD
  * @defgroup CVSLOG_errno_h errno_h
  * @ingroup CVSLOG
  *  $Log: errno.h,v $
- *  Revision 1.10  2006-03-05 11:11:24  ambrmi09
+ *  Revision 1.11  2006-03-19 12:44:35  ambrmi09
+ *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
+ *  without one single warning (yay!). Be aware that ther was a lot of
+ *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
+ *
+ *  Revision 1.10  2006/03/05 11:11:24  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.9  2006/03/04 14:28:44  ambrmi09

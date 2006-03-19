@@ -220,7 +220,7 @@ void perror (const char *message){
 char * strerror (int errnum){
    char *ptr;
 
-   ptr = error_srings[errnum];
+   ptr = (char *)(error_srings[errnum]);
    return ptr;
 }
 
@@ -230,7 +230,12 @@ char * strerror (int errnum){
  *  @defgroup CVSLOG_errno_c errno_c
  *  @ingroup CVSLOG
  *  $Log: errno.c,v $
- *  Revision 1.4  2006-03-07 08:24:13  ambrmi09
+ *  Revision 1.5  2006-03-19 12:44:36  ambrmi09
+ *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
+ *  without one single warning (yay!). Be aware that ther was a lot of
+ *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
+ *
+ *  Revision 1.4  2006/03/07 08:24:13  ambrmi09
  *  A very crude port for ARM is running (LPC2129) - @note THIS IS HIGHLY EXPERIMENTAL CODE
  *
  *  Revision 1.3  2006/03/05 11:11:27  ambrmi09

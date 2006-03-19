@@ -184,7 +184,7 @@ digraph components {
    */
 
 
-http://catb.org/~esr/jargon/html/index.html
+
     /** @defgroup PACKAGES PACKAGES: Code "glue" packages
     @ingroup TinKer
         @ref main

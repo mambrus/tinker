@@ -130,7 +130,7 @@ threads stack so that the stack follows two requirements:<br><br>
 
 1. The return adress shall be the start adress of the threads function
 
-2. The stack shall follow the same rules as PUSALL and POPALL, i.e it should
+2. The stack shall follow the same rules as PUSHALL and POPALL, i.e it should
 follow the rule that the top of the stack should be the same as when an
 interrupt has occured.
 
@@ -140,11 +140,11 @@ is to have these variables in the code segment (i.e. globally declared).
 
 */
 #define PREP_TOS(                                                             \
-   _oldTOS, //!< in:  The newly created stacks start adress                   \
-   _newSP,  //!< out: The resulting SP. I.e. (char*)(TSP1+lengt-tos_data)     \
-   _temp1,  //!< Temporary stackpointer for internal manipulations            \   
-   _temp2,  //!< Extra variable for internal stuff (not needed by all targets)\ 
-   _stack_struct //!< Some targets need to manipulate the TCB stack struct    \
+   _oldTOS, /*< in:  The newly created stacks start adress */                 \
+   _newSP,  /*!< out: The resulting SP. I.e. (char*)(TSP1+lengt-tos_data)*/   \
+   _temp1,  /*!< Temporary stackpointer for internal manipulations*/          \
+   _temp2,  /*!< Extra variable for internal stuff (not needed by all targets)*/\ 
+   _stack_struct /*!< Some targets need to manipulate the TCB stack struct*/  \
 )
 
 
@@ -161,8 +161,8 @@ saved in the threads TCB to be used when it's time to revive it.
 */
    
 #define PUSH_CPU_GETCUR_STACK(                                                \
-   TSP1,    //!< The resultin SP                                              \
-   TEMP     //!< Extra variable for internal stuff (not needed by all targets)\ 
+   TSP1,    /*!< The resultin SP                                              */\
+   TEMP     /*!< Extra variable for internal stuff (not needed by all targets)*/\ 
 )  
 
 /**
@@ -359,7 +359,12 @@ cases might want to replace this with a NOP.
  * @defgroup CVSLOG_tk_hwsys_h tk_hwsys_h
  * @ingroup CVSLOG
  *  $Log: tk_hwsys.h,v $
- *  Revision 1.18  2006-03-11 14:37:48  ambrmi09
+ *  Revision 1.19  2006-03-19 12:44:36  ambrmi09
+ *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
+ *  without one single warning (yay!). Be aware that ther was a lot of
+ *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
+ *
+ *  Revision 1.18  2006/03/11 14:37:48  ambrmi09
  *  - Replaced printf with printk in in-depth parts of the kernel. This is
  *  to make porting easier since printk can then be mapped to whatever
  *  counsole output ability there is (including none if there isn't any).

@@ -42,6 +42,11 @@ PTHREAD
 #include <sys/types.h>
 #include <tk.h>
 
+#if defined(TINKER)
+#  define main(x,y) root() 
+#endif
+
+
 /*! 
 @brief Once Key
 
@@ -801,7 +806,12 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.11  2006-03-17 14:18:42  ambrmi09
+ *  Revision 1.12  2006-03-19 12:44:35  ambrmi09
+ *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
+ *  without one single warning (yay!). Be aware that ther was a lot of
+ *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
+ *
+ *  Revision 1.11  2006/03/17 14:18:42  ambrmi09
  *  Finalized pThreads and RT gueues for GNU build-chain
  *
  *  Revision 1.10  2006/03/17 12:20:02  ambrmi09

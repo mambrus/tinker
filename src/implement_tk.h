@@ -42,7 +42,7 @@ SCHED
 Defines the threads status (bit addressable)
 	- ___T = TERM  = Process is waiting for one or more children to terminate
 	- __S_ = SLEEP = Process is blocked on timer (sleeping)
-	- _Q__ = QUEUE = Process is blocked on queue or semaphore
+	- _Q__ = QUEUE = Process is blocked on \b any kind of syncronisation primitive. I.e. semaphore, mutex, queue, pthread conditional variable e.t.a.
    - Z___ = ZOMBI = Process is but waiting for cleanup operation (usually idle) to renove it
    
 @note the convenient naming. This is very practical when debugging the
@@ -133,7 +133,12 @@ typedef struct stat_t{
  * @defgroup CVSLOG_implement_tk_h implement_tk_h
  * @ingroup CVSLOG
  *  $Log: implement_tk.h,v $
- *  Revision 1.5  2006-03-17 12:20:03  ambrmi09
+ *  Revision 1.6  2006-03-19 12:44:36  ambrmi09
+ *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
+ *  without one single warning (yay!). Be aware that ther was a lot of
+ *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
+ *
+ *  Revision 1.5  2006/03/17 12:20:03  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now
