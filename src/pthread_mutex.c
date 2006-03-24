@@ -52,6 +52,9 @@ int pthread_mutex_init (
    const pthread_mutexattr_t *attr
 ){
    assert (mutex->valid);
+   assert("Not implemented yet" == 0); 
+   _PTHREAD_NO_WARN_VAR(mutex);
+   _PTHREAD_NO_WARN_VAR(attr);
    return 0;
 }
 
@@ -61,6 +64,8 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_destroy.ht
 */
 int pthread_mutex_destroy(pthread_mutex_t *mutex){
    assert (mutex->valid);
+   assert("Not implemented yet" == 0); 
+   _PTHREAD_NO_WARN_VAR(mutex);
    return 0;
 }
 
@@ -71,6 +76,8 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_trylock.ht
 */
 int pthread_mutex_trylock (pthread_mutex_t *mutex){
    assert (mutex->valid);
+   assert("Not implemented yet" == 0);
+   _PTHREAD_NO_WARN_VAR(mutex); 
    return 0;
 }
 
@@ -81,7 +88,7 @@ int pthread_mutex_lock (pthread_mutex_t *mutex){
 
    assert (mutex->valid);
    if ( _mutex_lock_primitive(mutex) ) //State in schedule has changed. Let dispatcher determine who should really run
-      tk_yield();
+      pthread_yield();
    
    return 0;
 }
@@ -93,7 +100,7 @@ int pthread_mutex_unlock (pthread_mutex_t *mutex){
 
    assert (mutex->valid);
    if ( _mutex_unlock_primitive(mutex, BSINGLE) ) //State in schedule has changed. Let dispatcher determine who should really run
-      tk_yield();
+      pthread_yield();
 
    return 0;
 }
@@ -108,7 +115,10 @@ int pthread_mutex_timedlock(
    pthread_mutex_t *mutex,
    const struct timespec *abs_timeout
 ){
-  assert (mutex->valid);
+   assert (mutex->valid);
+   assert("Not implemented yet" == 0);
+   _PTHREAD_NO_WARN_VAR(mutex);
+   _PTHREAD_NO_WARN_VAR(abs_timeout); 
    return 0;
 }
 
@@ -119,7 +129,10 @@ int pthread_mutex_timedlock(
  *  @defgroup CVSLOG_pthread_mutex_c pthread_mutex_c
  *  @ingroup CVSLOG
  *  $Log: pthread_mutex.c,v $
- *  Revision 1.2  2006-03-24 17:40:19  ambrmi09
+ *  Revision 1.3  2006-03-24 18:23:43  ambrmi09
+ *  Another turn of cosmetics
+ *
+ *  Revision 1.2  2006/03/24 17:40:19  ambrmi09
  *  Cosmetic details
  *
  *  Revision 1.1  2006/03/24 11:22:56  ambrmi09

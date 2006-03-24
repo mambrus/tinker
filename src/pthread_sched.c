@@ -156,7 +156,7 @@ Compare thread id's with each other.
 @see pthread_self
 */
 int pthread_equal(pthread_t t1, pthread_t t2){
-   return (t1 == t2);
+   return (t1->Thid == t2->Thid);
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -209,6 +209,9 @@ int pthread_cancel (pthread_t thread){
    return 0;
 }
 
+/*!
+@todo: Very stubbed. Make this more complient!
+*/
 int pthread_yield    (void){
    tk_yield();
    return 0;
@@ -219,11 +222,12 @@ int pthread_yield    (void){
 */
 int pthread_setschedparam (
    pthread_t thread,
-	int policy,
+   int policy,
    const struct sched_param *param
 ){
    int y = 0;
    y = tk_change_prio(thread->Thid, param->sched_priority);
+   _PTHREAD_NO_WARN_VAR(policy); 
 
    if (y)
       tk_yield();
@@ -233,10 +237,11 @@ int pthread_setschedparam (
 
 int pthread_getschedparam (
    pthread_t thread,
-	int *policy,
-	struct sched_param *param)
+   int *policy,
+   struct sched_param *param)
 {
    param->sched_priority = thread->Prio;
+   _PTHREAD_NO_WARN_VAR(policy); 
    return 0;
 }
 
@@ -258,7 +263,10 @@ int pthread_getschedparam (
  *  @defgroup CVSLOG_pthread_sched_c pthread_sched_c
  *  @ingroup CVSLOG 
  *  $Log: pthread_sched.c,v $
- *  Revision 1.12  2006-03-24 11:22:56  ambrmi09
+ *  Revision 1.13  2006-03-24 18:23:44  ambrmi09
+ *  Another turn of cosmetics
+ *
+ *  Revision 1.12  2006/03/24 11:22:56  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

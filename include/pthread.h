@@ -51,6 +51,7 @@ PTHREAD
 #define SCHED_RR    2
 
 #define _PTHREAD_PRIOS 0x10  //!< Match this with TK_MAX_PRIO_LEVELS. Intentionally not set equal sice some static arrays init needs adjustment. see \ref PTHREAD_RWLOCK_INITIALIZER
+#define _PTHREAD_NO_WARN_VAR(x) ((void)x)  //!< Used in stibbed functions to avoid lots of warnings
 
 #if (TK_MAX_PRIO_LEVELS != _PTHREAD_PRIOS)
 #  error You need to adjust the _PTHREAD_PRIOS *AND* initializers for arrays depending on this
@@ -1047,7 +1048,10 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.15  2006-03-24 17:40:18  ambrmi09
+ *  Revision 1.16  2006-03-24 18:23:43  ambrmi09
+ *  Another turn of cosmetics
+ *
+ *  Revision 1.15  2006/03/24 17:40:18  ambrmi09
  *  Cosmetic details
  *
  *  Revision 1.14  2006/03/24 11:22:54  ambrmi09

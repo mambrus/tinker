@@ -48,6 +48,9 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_cond_init.html
 @todo Stubbed. Impl TBD
 */
 int pthread_cond_init (pthread_cond_t * __cond, const pthread_condattr_t *attr){
+   assert("Not implemented yet" == 0); 
+   _PTHREAD_NO_WARN_VAR(__cond);
+   _PTHREAD_NO_WARN_VAR(attr);
    return 0;
 }
 
@@ -58,6 +61,8 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_cond_destroy.htm
 */
 int pthread_cond_destroy (pthread_cond_t *__cond){
    assert (__cond->valid);
+   assert("Not implemented yet" == 0);
+   _PTHREAD_NO_WARN_VAR(__cond); 
    return 0;
 }
 
@@ -149,6 +154,10 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_cond_timedwait.h
 */
 int pthread_cond_timedwait (pthread_cond_t * __cond, pthread_mutex_t *mutex, const struct timespec *abstime){
    assert (__cond->valid);
+   assert("Not implemented yet" == 0);
+   _PTHREAD_NO_WARN_VAR(__cond);
+   _PTHREAD_NO_WARN_VAR(mutex); 
+   _PTHREAD_NO_WARN_VAR(abstime); 
    return 0;
 }
 
@@ -159,7 +168,10 @@ int pthread_cond_timedwait (pthread_cond_t * __cond, pthread_mutex_t *mutex, con
  *  @defgroup CVSLOG_pthread_cond_c pthread_cond_c
  *  @ingroup CVSLOG
  *  $Log: pthread_cond.c,v $
- *  Revision 1.2  2006-03-24 17:40:19  ambrmi09
+ *  Revision 1.3  2006-03-24 18:23:43  ambrmi09
+ *  Another turn of cosmetics
+ *
+ *  Revision 1.2  2006/03/24 17:40:19  ambrmi09
  *  Cosmetic details
  *
  *  Revision 1.1  2006/03/24 11:22:56  ambrmi09

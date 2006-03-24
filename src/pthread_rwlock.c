@@ -189,6 +189,9 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_init.html
 @todo Stubbed. Impl TBD
 */
 int pthread_rwlock_init (pthread_rwlock_t *__rwlock, const pthread_rwlockattr_t *attr){
+   assert("Not implemented yet" == 0); 
+   _PTHREAD_NO_WARN_VAR(__rwlock);
+   _PTHREAD_NO_WARN_VAR(attr);
    return 0;
 }
 
@@ -199,6 +202,8 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_destroy.h
 */
 int pthread_rwlock_destroy (pthread_rwlock_t *__rwlock){
    assert (__rwlock->valid);
+   assert("Not implemented yet" == 0);
+   _PTHREAD_NO_WARN_VAR(__rwlock); 
    return 0;
 }
 
@@ -209,6 +214,7 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_tryrdlock
 */
 int pthread_rwlock_tryrdlock (pthread_rwlock_t *__rwlock){
    assert("Not implemented yet" == NULL);
+   _PTHREAD_NO_WARN_VAR(__rwlock);
    assert (__rwlock->valid);
    return 0;
 }
@@ -221,6 +227,8 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_timedrdlo
 */
 int pthread_rwlock_timedrdlock (pthread_rwlock_t * __rwlock, const struct timespec *abs_timeout){
    assert("Not implemented yet" == NULL);
+   _PTHREAD_NO_WARN_VAR(__rwlock);
+   _PTHREAD_NO_WARN_VAR(abs_timeout);
    assert (__rwlock->valid);
    return 0;
 }
@@ -234,6 +242,7 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_wrlock.ht
 */
 int pthread_rwlock_trywrlock (pthread_rwlock_t *__rwlock){
    assert("Not implemented yet" == NULL);
+   _PTHREAD_NO_WARN_VAR(__rwlock);
    assert (__rwlock->valid);
    return 0;
 }
@@ -246,6 +255,8 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_timedwrlo
 */
 int pthread_rwlock_timedwrlock (pthread_rwlock_t * __rwlock, const struct timespec *abs_timeout){
    assert("Not implemented yet" == NULL);
+   _PTHREAD_NO_WARN_VAR(__rwlock);
+   _PTHREAD_NO_WARN_VAR(abs_timeout);
    assert (__rwlock->valid);
    return 0;
 }
@@ -257,7 +268,10 @@ int pthread_rwlock_timedwrlock (pthread_rwlock_t * __rwlock, const struct timesp
  *  @defgroup CVSLOG_pthread_rwlock_c pthread_rwlock_c
  *  @ingroup CVSLOG
  *  $Log: pthread_rwlock.c,v $
- *  Revision 1.2  2006-03-24 17:40:19  ambrmi09
+ *  Revision 1.3  2006-03-24 18:23:44  ambrmi09
+ *  Another turn of cosmetics
+ *
+ *  Revision 1.2  2006/03/24 17:40:19  ambrmi09
  *  Cosmetic details
  *
  *  Revision 1.1  2006/03/24 11:22:56  ambrmi09

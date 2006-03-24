@@ -49,6 +49,7 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_condattr_init.ht
 */
 int pthread_condattr_init (pthread_condattr_t *__attr){
    assert("Not implemented yet" == 0); 
+   _PTHREAD_NO_WARN_VAR(__attr);
    return 0;
 }
 
@@ -59,6 +60,7 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_condattr_destroy
 */
 int pthread_condattr_destroy (pthread_condattr_t *__attr){
    assert("Not implemented yet" == 0); 
+   _PTHREAD_NO_WARN_VAR(__attr);
    return 0;
 }
 
@@ -72,7 +74,10 @@ int pthread_condattr_destroy (pthread_condattr_t *__attr){
  *  @defgroup CVSLOG_pthread_attr_cond_c pthread_attr_cond_c
  *  @ingroup CVSLOG
  *  $Log: pthread_attr_cond.c,v $
- *  Revision 1.2  2006-03-24 17:40:19  ambrmi09
+ *  Revision 1.3  2006-03-24 18:23:43  ambrmi09
+ *  Another turn of cosmetics
+ *
+ *  Revision 1.2  2006/03/24 17:40:19  ambrmi09
  *  Cosmetic details
  *
  *  Revision 1.1  2006/03/24 11:22:55  ambrmi09

@@ -51,6 +51,12 @@ unsigned long tk_pthread_sync_destruct( void ){
    return ERR_OK;
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+The mutex lock primitive.
+
+This function will change the state in the scheduler, but it will not yield. 
+Instead it returns a \b recommendation to yield or not.
+*/
 int _mutex_lock_primitive (pthread_mutex_t *mutex){
    int rc = 0;
    
@@ -69,11 +75,17 @@ int _mutex_lock_primitive (pthread_mutex_t *mutex){
       mutex->blocked.thread[mutex->blocked.numb] = self;
       mutex->blocked.numb++;
 
-      rc = 1;  //Schedule state has chanced, yield recomended      
+      rc = 1;  //Schedule state has chanced, yield recommended      
    }
    return rc;
 }
 
+/*!
+The mutex unlock primitive.
+
+This function will change the state in the scheduler, but it will not yield. 
+Instead it returns a \b recommendation to yield or not.
+*/
 int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast){
    int rc = 0;
    pthread_t self = pthread_self();
@@ -153,12 +165,16 @@ Syncronisation between threads, i.e.
 <p><b>Go gack to</b> \ref COMPONENTS</p>
 
 */
+
   
 /*!
  *  @defgroup CVSLOG_pthread_sync_c pthread_sync_c
  *  @ingroup CVSLOG
  *  $Log: pthread_sync.c,v $
- *  Revision 1.7  2006-03-24 11:22:56  ambrmi09
+ *  Revision 1.8  2006-03-24 18:23:45  ambrmi09
+ *  Another turn of cosmetics
+ *
+ *  Revision 1.7  2006/03/24 11:22:56  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *
