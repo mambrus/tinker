@@ -209,6 +209,37 @@ int pthread_cancel (pthread_t thread){
    return 0;
 }
 
+int pthread_yield    (void){
+   tk_yield();
+   return 0;
+}
+
+/*!
+@todo: tinker tcb needs a policy field. policy not handled.
+*/
+int pthread_setschedparam (
+   pthread_t thread,
+	int policy,
+   const struct sched_param *param
+){
+   int y = 0;
+   y = tk_change_prio(thread->Thid, param->sched_priority);
+
+   if (y)
+      tk_yield();
+   
+   return 0;
+}
+
+int pthread_getschedparam (
+   pthread_t thread,
+	int *policy,
+	struct sched_param *param)
+{
+   param->sched_priority = thread->Prio;
+   return 0;
+}
+
 
 
 /** @defgroup PTHREAD_SCHED PTHREAD_SCHED: POSIX 1003.1c API - scheduling
@@ -223,10 +254,15 @@ int pthread_cancel (pthread_t thread){
 */
 
   
-/*! 
- * @ingroup CVSLOG 
+/*!
+ *  @defgroup CVSLOG_pthread_sched_c pthread_sched_c
+ *  @ingroup CVSLOG 
  *  $Log: pthread_sched.c,v $
- *  Revision 1.11  2006-03-19 22:57:54  ambrmi09
+ *  Revision 1.12  2006-03-24 11:22:56  ambrmi09
+ *  - pThreads RW locks implemented (rough aproach - no usage error detection)
+ *  - restructuring of the pThread src-files
+ *
+ *  Revision 1.11  2006/03/19 22:57:54  ambrmi09
  *  First naive implementation of a pthread mutex
  *
  *  Revision 1.10  2006/03/19 12:44:36  ambrmi09

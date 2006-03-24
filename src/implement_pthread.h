@@ -94,46 +94,15 @@ struct pthread_key_t_ {
    int TBD_THIS_STRUCT;
 };
 
-/*!
-TBD
- 
-@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutex_t.html
-*/                      
-/*
-struct pthread_mutex_t_ {
-   pthread_t          owner;      //!< Who (i.e. which thread) has claimed ownership of this mutex
-   _pthread_blocked_t blockers;   //!< Information about blocked threads
-   pthread_mutexattr_t  attrb;    //!< Attributes of this mutex   
-};
-*/
-/*!
-TBD
- 
-@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutexattr_t.html
-*/
-/*
-struct pthread_mutexattr_t_ {
-   int TBD_THIS_STRUCT;
-};
-*/
+typedef enum {BSINGLE=0, BCAST}bcast_t;
 
-/*!
-TBD
- 
-@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_cond_t.html
-*/
-struct pthread_cond_t_ {
-   int TBD_THIS_STRUCT;
-};
+int _mutex_lock_primitive (pthread_mutex_t *mutex);
+int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 
-/*!
-TBD
- 
-@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_condattr_t.html
-*/
-struct pthread_condattr_t_ {
-   int TBD_THIS_STRUCT;
-};
+
+
+
+
 
 
 
@@ -487,7 +456,11 @@ struct pthread_condattr_t_ {
  * @defgroup CVSLOG_implement_pthread_h implement_pthread_h
  * @ingroup CVSLOG
  *  $Log: implement_pthread.h,v $
- *  Revision 1.8  2006-03-19 22:57:54  ambrmi09
+ *  Revision 1.9  2006-03-24 11:22:55  ambrmi09
+ *  - pThreads RW locks implemented (rough aproach - no usage error detection)
+ *  - restructuring of the pThread src-files
+ *
+ *  Revision 1.8  2006/03/19 22:57:54  ambrmi09
  *  First naive implementation of a pthread mutex
  *
  *  Revision 1.7  2006/03/19 12:44:36  ambrmi09

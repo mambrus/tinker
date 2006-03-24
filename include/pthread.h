@@ -46,35 +46,80 @@ PTHREAD
 #  define main(x,y) root() 
 #endif
 
-/*!
-@name Predefined mutexes. Exists somewhere (but can't be by a header)
-*/
-//@{
-/*
-extern pthread_mutex_t pthread_recursive_mutex_initializer;
-extern pthread_mutex_t pthread_normal_mutex_initializer;
-extern pthread_mutex_t pthread_errorcheck_mutex_initializer;
-extern pthread_mutex_t pthread_errorcheck_mutex_initializer;
-*/
-//@}
+#define SCHED_OTHER 0    //!< not used by tinker
+#define SCHED_FIFO  1
+#define SCHED_RR    2
+
+#define _PTHREAD_PRIOS 0x10  //!< Match this with TK_MAX_PRIO_LEVELS. Intentionally not set equal sice some static arrays init needs adjustment. see \ref PTHREAD_RWLOCK_INITIALIZER
+
+#if (TK_MAX_PRIO_LEVELS != _PTHREAD_PRIOS)
+#  error You need to adjust the _PTHREAD_PRIOS *AND* initializers for arrays depending on this
+#endif
+
+typedef enum {
+   _PBON_NOLINK=0,      //!< Blocked on mutex
+   _PBON_CONDVAR,       //!< Blocked on a conditional
+   _PBON_RWLOCK,        //!< Blocked on a RW lock
+}pbon_kind_t; 
+
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-#define _PTHREAD_MUTEXATTR_DEFAULT {0}
 #define _PTHREAD_BLOCKED_INIT {0}
 #define _PTHREADS_MAX_BLOCKED TK_MAX_THREADS
-
+//------1---------2---------3---------4---------5---------6---------7---------8
+#define _PTHREAD_MUTEXATTR_DEFAULT {0,1}
 
 #define PTHREAD_MUTEX_INITIALIZER { \
    NULL,                            \
    _PTHREAD_BLOCKED_INIT,           \
-   _PTHREAD_MUTEXATTR_DEFAULT       \
+   _PBON_NOLINK,                    \
+   NULL,                            \
+   _PTHREAD_MUTEXATTR_DEFAULT,      \
+   1                                \
+}
+
+#define PTHREAD_CV_MUTEX_INITIALIZER { \
+   (pthread_t)1,/*Makes sure will block on first take. Value to low to ever be a valid adress*/ \
+   _PTHREAD_BLOCKED_INIT,           \
+   _PBON_NOLINK,                    \
+   NULL,                            \
+   _PTHREAD_MUTEXATTR_DEFAULT,      \
+   1                                \
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
+#define _PTHREAD_CONDATTR_DEFAULT {0,1}
 
+#define PTHREAD_COND_INITIALIZER {  \
+   NULL,                            \
+   PTHREAD_CV_MUTEX_INITIALIZER,    \
+   _PTHREAD_CONDATTR_DEFAULT,       \
+   1                                \
+}
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+#define _PTHREAD_RWLOCKATTR_DEFAULT {0,1}
+
+/*!
+RW lock structure static initializer
+*/
+#define PTHREAD_RWLOCK_INITIALIZER {\
+   0,                               \
+   0,                               \
+   0,                               \
+   0,                               \
+   PTHREAD_MUTEX_INITIALIZER,       \
+   PTHREAD_COND_INITIALIZER,        \
+   PTHREAD_COND_INITIALIZER,        \
+   _PTHREAD_RWLOCKATTR_DEFAULT,     \
+   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, /*Note: Needs to mach number of prios in system */\
+   1                                \
+}
+
+//------1---------2---------3---------4---------5---------6---------7---------8
 /*!
 A list of blocked threads. This is to speed up release (instead of letting the dispatcher finding who should be released).
 
-Currently inplemented as a table.
+Currently inplemented as a table. Consider this struct "opaque", i.e. implemettation might change in future.
 
 @note The table has to come last in the struct for static initialization to work properly.
 */
@@ -83,17 +128,7 @@ typedef struct _pthread_blocked_t_{
    pthread_t thread[_PTHREADS_MAX_BLOCKED ];
 }_pthread_blocked_t;
 
-/*!
-TBD
- 
-@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutex_t.html
-*/                      
-struct pthread_mutex_t_ {
-   pthread_t            owner;    //!< Who (i.e. which thread) has claimed ownership of this mutex
-   _pthread_blocked_t   blocked;  //!< Information about blocked threads
-   pthread_mutexattr_t  attr;     //!< Attributes of this mutex   
-};
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 /*!
 TBD
  
@@ -102,10 +137,83 @@ TBD
 
 struct pthread_mutexattr_t_ {
    int TBD_THIS_STRUCT;
+   int                  valid;    //!< equals 1 if been initialized (sanity check)
 };
 
+/*!
+TBD
+ 
+@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutex_t.html
+*/                      
+struct pthread_mutex_t_ {
+   pthread_t            owner;    //!< Who (i.e. which thread) has claimed ownership of this mutex
+   _pthread_blocked_t   blocked;  //!< Information about blocked threads (blocklist on this mutex)
+   pbon_kind_t          linkOf;   //!< Information about linked resource
+   union{
+      void             *dummy;
+      pthread_cond_t   *cond;
+      pthread_rwlock_t *rwl;      
+   }link;
+   pthread_mutexattr_t  attr;     //!< Attributes of this mutex   
+   int                  valid;    //!< equals 1 if been initialized (sanity check)
+};
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+TBD
+ 
+@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_condattr_t.html
+*/
+struct pthread_condattr_t_ {
+   int TBD_THIS_STRUCT;
+   int                  valid;    //!< equals 1 if been initialized (sanity check)
+};
 
+/*!
+TBD
+ 
+@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_cond_t.html
+*/
+struct pthread_cond_t_ {
+   pthread_mutex_t        *coop_mux;
+   pthread_mutex_t         cv_mux;
+   pthread_condattr_t      attr;
+   int                     valid;    //!< equals 1 if been initialized (sanity check)
+};
+//------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+TBD
+ 
+@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_condattr_t.html
+*/
+struct pthread_rwlockattr_t_{
+   int TBD_THIS_STRUCT;
+   int                  valid;    //!< equals 1 if been initialized (sanity check)
+};
+
+/*!
+TBD
+ 
+@see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_cond_t.html
+*/
+struct pthread_rwlock_t_ {
+   int                     readers_reading;
+   int                     writers_writing;
+   int                     blocked_writers;
+   int                     blocked_readers;
+   pthread_mutex_t         mx_self;
+   pthread_cond_t          readers_lock;   
+   pthread_cond_t          writers_lock;   
+   pthread_rwlockattr_t    attr;
+   int                     bwriters_prio[_PTHREAD_PRIOS];
+   int                     valid;    //!< equals 1 if been initialized (sanity check)
+};
+
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+struct sched_param {
+  int sched_priority;
+};
+//------1---------2---------3---------4---------5---------6---------7---------8
 
 /*!
 Describes the thread attributes. It should be considered an opaque
@@ -173,6 +281,36 @@ int pthread_once (
 int pthread_cancel   (pthread_t);
 int pthread_join     (pthread_t, void**);
 int pthread_detach   (pthread_t);
+int pthread_yield    (void);
+
+int pthread_setschedparam (pthread_t thread,
+			   int policy,
+			   const struct sched_param *param);
+
+int pthread_getschedparam (pthread_t thread,
+			   int *policy,
+			   struct sched_param *param);
+
+
+
+/* Attributes */
+
+int pthread_attr_init (pthread_attr_t *);
+int pthread_attr_destroy (pthread_attr_t *);
+int pthread_attr_getdetachstate (const pthread_attr_t *, int *);
+int pthread_attr_getinheritsched (const pthread_attr_t *, int *);
+int pthread_attr_getschedparam (const pthread_attr_t *, struct sched_param *);
+int pthread_attr_getschedpolicy (const pthread_attr_t *, int *);
+int pthread_attr_getscope (const pthread_attr_t *, int *);
+int pthread_attr_setdetachstate (pthread_attr_t *, int);
+int pthread_attr_setinheritsched (pthread_attr_t *, int);
+int pthread_attr_setschedparam (pthread_attr_t *, const struct sched_param *);
+int pthread_attr_setschedpolicy (pthread_attr_t *, int);
+int pthread_attr_setscope (pthread_attr_t *, int);
+int pthread_attr_getstackaddr (const pthread_attr_t *, void **);
+int pthread_attr_setstackaddr (pthread_attr_t *, void *);
+int pthread_attr_getstacksize (const pthread_attr_t *, size_t *);
+int pthread_attr_setstacksize (pthread_attr_t *, size_t);
 
 
 
@@ -214,6 +352,38 @@ int pthread_mutexattr_gettype (__const pthread_mutexattr_t *__restrict
 */
 
 //------1---------2---------3---------4---------5---------6---------7---------8
+int pthread_cond_init (pthread_cond_t * __cond, const pthread_condattr_t *attr);
+int pthread_cond_destroy (pthread_cond_t *__cond);
+int pthread_cond_signal (pthread_cond_t *__cond);
+int pthread_cond_broadcast (pthread_cond_t *__cond);
+int pthread_cond_wait (pthread_cond_t * __cond, pthread_mutex_t *mutex);
+int pthread_cond_timedwait (pthread_cond_t * __cond, pthread_mutex_t *mutex, const struct timespec *abstime);
+//------1---------2---------3---------4---------5---------6---------7---------8
+int pthread_condattr_init (pthread_condattr_t *__attr);
+int pthread_condattr_destroy (pthread_condattr_t *__attr);
+
+//->int pthread_condattr_getpshared (__const pthread_condattr_t *attr, int *pshared);
+//->int pthread_condattr_setpshared (pthread_condattr_t *__attr, int pshared);
+//------1---------2---------3---------4---------5---------6---------7---------8
+
+int pthread_rwlock_init (pthread_rwlock_t *__rwlock, const pthread_rwlockattr_t *attr);
+int pthread_rwlock_destroy (pthread_rwlock_t *__rwlock);
+int pthread_rwlock_rdlock (pthread_rwlock_t *__rwlock);
+int pthread_rwlock_tryrdlock (pthread_rwlock_t *__rwlock);
+int pthread_rwlock_timedrdlock (pthread_rwlock_t * __rwlock, const struct timespec *abs_timeout); 
+int pthread_rwlock_wrlock (pthread_rwlock_t *__rwlock);
+int pthread_rwlock_trywrlock (pthread_rwlock_t *__rwlock);
+int pthread_rwlock_timedwrlock (pthread_rwlock_t * __rwlock, const struct timespec *abs_timeout); 
+int pthread_rwlock_unlock (pthread_rwlock_t *__rwlock);
+//------1---------2---------3---------4---------5---------6---------7---------8
+int pthread_rwlockattr_init (pthread_rwlockattr_t *rwlockattr);
+int pthread_rwlockattr_destroy (pthread_rwlockattr_t *rwlockattr);
+
+//->int pthread_rwlockattr_getpshared (const pthread_rwlockattr_t *attr,int *pshared);
+//->int pthread_rwlockattr_setpshared (pthread_rwlockattr_t *attr, int pshared);
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+
 /*!
 @name Creation and destruction of this component
 
@@ -267,44 +437,6 @@ The ones not commeted out is implemented by TinKer
 // int pthread_getschedparam (pthread_t __target_thread,
 // int pthread_getconcurrency (void);
 // int pthread_setconcurrency (int __level);
-// int pthread_yield (void);
-// int pthread_mutex_init (pthread_mutex_t *__restrict __mutex,
-// int pthread_mutex_destroy (pthread_mutex_t *__mutex);
-// int pthread_mutex_trylock (pthread_mutex_t *__mutex);
-// int pthread_mutex_lock (pthread_mutex_t *__mutex);
-// int pthread_mutex_timedlock (pthread_mutex_t *__restrict __mutex,
-// int pthread_mutex_unlock (pthread_mutex_t *__mutex);
-// int pthread_mutexattr_init (pthread_mutexattr_t *__attr);
-// int pthread_mutexattr_destroy (pthread_mutexattr_t *__attr);
-// int pthread_mutexattr_getpshared (__const pthread_mutexattr_t *
-// int pthread_mutexattr_setpshared (pthread_mutexattr_t *__attr,
-// int pthread_mutexattr_settype (pthread_mutexattr_t *__attr, int __kind)
-// int pthread_mutexattr_gettype (__const pthread_mutexattr_t *__restrict
-// int pthread_cond_init (pthread_cond_t *__restrict __cond,
-// int pthread_cond_destroy (pthread_cond_t *__cond);
-// int pthread_cond_signal (pthread_cond_t *__cond);
-// int pthread_cond_broadcast (pthread_cond_t *__cond);
-// int pthread_cond_wait (pthread_cond_t *__restrict __cond,
-// int pthread_cond_timedwait (pthread_cond_t *__restrict __cond,
-// int pthread_condattr_init (pthread_condattr_t *__attr);
-// int pthread_condattr_destroy (pthread_condattr_t *__attr);
-// int pthread_condattr_getpshared (__const pthread_condattr_t *
-// int pthread_condattr_setpshared (pthread_condattr_t *__attr,
-// int pthread_rwlock_init (pthread_rwlock_t *__restrict __rwlock,
-// int pthread_rwlock_destroy (pthread_rwlock_t *__rwlock);
-// int pthread_rwlock_rdlock (pthread_rwlock_t *__rwlock);
-// int pthread_rwlock_tryrdlock (pthread_rwlock_t *__rwlock);
-// int pthread_rwlock_timedrdlock (pthread_rwlock_t *__restrict __rwlock,
-// int pthread_rwlock_wrlock (pthread_rwlock_t *__rwlock);
-// int pthread_rwlock_trywrlock (pthread_rwlock_t *__rwlock);
-// int pthread_rwlock_timedwrlock (pthread_rwlock_t *__restrict __rwlock,
-// int pthread_rwlock_unlock (pthread_rwlock_t *__rwlock);
-// int pthread_rwlockattr_init (pthread_rwlockattr_t *__attr);
-// int pthread_rwlockattr_destroy (pthread_rwlockattr_t *__attr);
-// int pthread_rwlockattr_getpshared (__const pthread_rwlockattr_t *
-// int pthread_rwlockattr_setpshared (pthread_rwlockattr_t *__attr,
-// int pthread_rwlockattr_getkind_np (__const pthread_rwlockattr_t *__attr,
-// int pthread_rwlockattr_setkind_np (pthread_rwlockattr_t *__attr,
 // int pthread_spin_init (pthread_spinlock_t *__lock, int __pshared)
 // int pthread_spin_destroy (pthread_spinlock_t *__lock);
 // int pthread_spin_lock (pthread_spinlock_t *__lock);
@@ -915,7 +1047,11 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.13  2006-03-19 22:57:53  ambrmi09
+ *  Revision 1.14  2006-03-24 11:22:54  ambrmi09
+ *  - pThreads RW locks implemented (rough aproach - no usage error detection)
+ *  - restructuring of the pThread src-files
+ *
+ *  Revision 1.13  2006/03/19 22:57:53  ambrmi09
  *  First naive implementation of a pthread mutex
  *
  *  Revision 1.12  2006/03/19 12:44:35  ambrmi09

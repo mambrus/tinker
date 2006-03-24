@@ -301,11 +301,11 @@ void _tk_initialize_system_ques( );
    __asm { mov TEMP, R0 }                                                     \
    if ( TEMP < STACK_T.userstack.u.offs24._offs + SAFEZONE ){                 \
       printk("tk: Error - user stack trashed!\n");                            \
-      tk_exit(TK_ERR_STACK);                                                  \
+      tk_exit(TC_ERR_STACK);                                                  \
    }                                                                          \
    if ( DPP0 < STACK_T.userstack.u.seg24._seg ){                              \
       printk("tk: Error - user stack trashed!\n");                            \
-      tk_exit(TK_ERR_STACK);                                                  \
+      tk_exit(TC_ERR_STACK);                                                  \
    }
    
 
@@ -420,7 +420,11 @@ TBD
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.h,v $
- *  Revision 1.25  2006-03-17 12:20:00  ambrmi09
+ *  Revision 1.26  2006-03-24 11:22:53  ambrmi09
+ *  - pThreads RW locks implemented (rough aproach - no usage error detection)
+ *  - restructuring of the pThread src-files
+ *
+ *  Revision 1.25  2006/03/17 12:20:00  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now

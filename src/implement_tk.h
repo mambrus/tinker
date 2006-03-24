@@ -107,9 +107,7 @@ information about any of the following synch entities:
 typedef enum {
    BON_SCHED=0,        //!< Either other thread or self (native timer)
    BON_ITC,            //!< Any of the native ITC entities
-   BON_MUTEX,          //!< Pthread mutex
-   BON_CON_VAR,        //!< Pthread conditional variable
-   BON_KEY,            //!< Pthread key
+   BON_PMUTEX,         //!< Pthread mutex
    BON_SEMAPHORE,      //!< POSIX 1b semaphore
    BON_PTIMER          //!< pTimer 
 }bon_sel_t; 
@@ -183,7 +181,11 @@ typedef struct stat_t{
  * @defgroup CVSLOG_implement_tk_h implement_tk_h
  * @ingroup CVSLOG
  *  $Log: implement_tk.h,v $
- *  Revision 1.7  2006-03-19 22:57:54  ambrmi09
+ *  Revision 1.8  2006-03-24 11:22:55  ambrmi09
+ *  - pThreads RW locks implemented (rough aproach - no usage error detection)
+ *  - restructuring of the pThread src-files
+ *
+ *  Revision 1.7  2006/03/19 22:57:54  ambrmi09
  *  First naive implementation of a pthread mutex
  *
  *  Revision 1.6  2006/03/19 12:44:36  ambrmi09

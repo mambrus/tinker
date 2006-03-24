@@ -22,9 +22,10 @@
 @file
 @ingroup PTHREAD_SYNC
 
-@brief POSIX 1003.1c API - Thread synchronisation
+@brief POSIX 1003.1c API - pThread low level synchronisation primitives
 
-The content of this source-file implement thread syncronisation. I.e. mutex, rw-lock e.t.a,
+The content of this source-file implement basic thread syncronisation. I.e. 
+the common mechanism used by mutex, cond-vars rw-locks e.t.a,
 
 For in-depth discussions about this component, see \ref
 PTHREAD_SYNC
@@ -41,82 +42,52 @@ PTHREAD_SYNC
 #include "implement_pthread.h"
 #include "implement_tk.h"
 
-
-/*
-static pthread_mutex_t pthread_recursive_mutex_initializer = {
-
-};
-
-static pthread_mutex_t pthread_normal_mutex_initializer = {
-   NULL,
-   {NULL,NULL,NULL},
-   NULL
-};
-
-static pthread_mutex_t pthread_errorcheck_mutex_initializer = {
-
-};
-
-static pthread_mutex_t pthread_errorcheck_mutex_initializer = {
-
-};
-*/
-
-
-unsigned long tk_pthread_sync( void ){
-   return ERR_OK;    	
-}
 //------1---------2---------3---------4---------5---------6---------7---------8
+unsigned long tk_pthread_sync( void ){
+   return ERR_OK;       
+}
+
 unsigned long tk_pthread_sync_destruct( void ){
    return ERR_OK;
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
-
-int pthread_mutex_init (
-   pthread_mutex_t *mutex,
-   const pthread_mutexattr_t *attr
-){
-   return 0;
-}
-int pthread_mutex_destroy(pthread_mutex_t *mutex){
-   return 0;
-}
-int pthread_mutex_trylock (pthread_mutex_t *mutex){
-   return 0;
-}
-int pthread_mutex_lock (pthread_mutex_t *mutex){
+int _mutex_lock_primitive (pthread_mutex_t *mutex){
+   int rc = 0;
+   
    if (mutex->owner == NULL){
       mutex->owner = pthread_self();
       mutex->blocked.numb = 0;
    }else{
       pthread_t self;
       self = pthread_self();
-      self->bOnId.kind = BON_MUTEX;
+      self->bOnId.kind = BON_PMUTEX;
       self->bOnId.entity.mutex = mutex;
       self->state |= QUEUE;
 
+      mutex->linkOf=_PBON_NOLINK;
+      mutex->link.dummy=NULL;
       mutex->blocked.thread[mutex->blocked.numb] = self;
       mutex->blocked.numb++;
 
-      tk_yield();
-      assert (self->wakeupEvent == E_ITC);
+      rc = 1;  //Schedule state has chanced, yield recomended      
    }
-   return 0;
+   return rc;
 }
-int pthread_mutex_unlock (pthread_mutex_t *mutex){
-   pthread_t self = pthread_self();
-   pthread_t newOwner;
-   unsigned prio = TK_MAX_PRIO_LEVELS;
-   int i,j;
 
+int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast){
+   int rc = 0;
+   pthread_t self = pthread_self();
+   unsigned prio = TK_MAX_PRIO_LEVELS;
+   int i;
+/*
    if ( !pthread_equal(mutex->owner,self) )
       return 1;
-
+*/
    if ( mutex->owner == NULL ){
+      //refuse to use
       assert(mutex->blocked.numb == 0);
       return 0;
    }
-
 
    if (mutex->blocked.numb == 0){
       //No one to unblock
@@ -124,42 +95,50 @@ int pthread_mutex_unlock (pthread_mutex_t *mutex){
       return 0;   
    }
    
-   for (i=0; i<mutex->blocked.numb;i++){
-      //Find the one first in order with the highest prio (PRIO then FIFO)
+   rc = 1;  //Schedule state has chanced, yield recomended      
+   //One ore more blocked, yeild recomended.
 
-      if (mutex->blocked.thread[i]->Prio < prio){
-         j = i;
-         prio = mutex->blocked.thread[i]->Prio;
+   if (bcast){
+      //Release all, let despatcher select in which order to run.
+      for (i=0; i<mutex->blocked.numb;i++){
+         mutex->blocked.thread[i]->bOnId.kind         =     BON_SCHED;
+         mutex->blocked.thread[i]->bOnId.entity.tcb   =     NULL;
+         mutex->blocked.thread[i]->state             &=    ~QUEUE;
+         mutex->blocked.thread[i]->wakeupEvent        =     E_ITC;
       }
-   
+      mutex->blocked.numb=0;
+      
+   }else{
+      pthread_t newOwner;   
+      int j;
+      
+      for (i=0; i<mutex->blocked.numb;i++){
+         //Find the one first in order with the highest prio (PRIO then FIFO)
+         if (mutex->blocked.thread[i]->Prio < prio){
+            j = i;
+            prio = mutex->blocked.thread[i]->Prio;
+         }
+      }
+      //The new owner is selected. Release him only, and adjust new mutext data.
+      mutex->owner = newOwner = mutex->blocked.thread[j];
+
+      //Compress the blocked list
+      for (i=j; i<mutex->blocked.numb; i++){
+         mutex->blocked.thread[i]=mutex->blocked.thread[i+1];
+      }
+
+      mutex->blocked.numb--;
+
+      newOwner->bOnId.kind = BON_SCHED;
+      newOwner->bOnId.entity.tcb = NULL;
+      newOwner->state &= ~QUEUE;
+      newOwner->wakeupEvent = E_ITC;
    }
-   //The new owner is selected. Release him only, and adjust new mutext data.
-   newOwner = mutex->blocked.thread[j];
 
-   mutex->owner = newOwner;
-
-   //Compress the blocked list
-   for (i=j; i<mutex->blocked.numb; i++){
-      mutex->blocked.thread[i]=mutex->blocked.thread[i+1];
-   }
-
-   mutex->blocked.numb--;
-
-   newOwner->bOnId.kind = BON_SCHED;
-   newOwner->bOnId.entity.tcb = NULL;
-   newOwner->state &= ~QUEUE;
-   newOwner->wakeupEvent = E_ITC;
-   tk_yield();
-
-   return 0;
+   return rc;
 }
-int pthread_mutex_timedlock(pthread_mutex_t *mutex,
-       const struct timespec *abs_timeout){
-   return 0;
-}
- 
 
-
+//------1---------2---------3---------4---------5---------6---------7---------8
 
 /** @defgroup PTHREAD_SYNC PTHREAD_SYNC: POSIX 1003.1c API - Thread synchronisation
 @ingroup PTHREAD
@@ -179,7 +158,11 @@ Syncronisation between threads, i.e.
  *  @defgroup CVSLOG_pthread_sync_c pthread_sync_c
  *  @ingroup CVSLOG
  *  $Log: pthread_sync.c,v $
- *  Revision 1.6  2006-03-19 22:57:54  ambrmi09
+ *  Revision 1.7  2006-03-24 11:22:56  ambrmi09
+ *  - pThreads RW locks implemented (rough aproach - no usage error detection)
+ *  - restructuring of the pThread src-files
+ *
+ *  Revision 1.6  2006/03/19 22:57:54  ambrmi09
  *  First naive implementation of a pthread mutex
  *
  *  Revision 1.5  2006/03/05 11:11:27  ambrmi09

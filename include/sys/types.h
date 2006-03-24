@@ -81,6 +81,8 @@ normal pthread names (very nifty!).
 #define pthread_mutexattr_t   tk_pthread_mutexattr_t
 #define pthread_cond_t        tk_pthread_cond_t
 #define pthread_condattr_t    tk_pthread_condattr_t
+#define pthread_rwlock_t      tk_pthread_rwlock_t
+#define pthread_rwlockattr_t  tk_pthread_rwlockattr_t
 //@}
 
 
@@ -101,11 +103,11 @@ normal pthread names (very nifty!).
    typedef struct pthread_once_t_       pthread_once_t;
    typedef struct pthread_key_t_       *pthread_key_t;
    typedef struct pthread_mutex_t_      pthread_mutex_t;
-   typedef struct pthread_mutexattr_t_ *pthread_mutexattr_t;
-   typedef struct pthread_cond_t_      *pthread_cond_t;
-   typedef struct pthread_condattr_t_  *pthread_condattr_t;
-
-
+   typedef struct pthread_mutexattr_t_  pthread_mutexattr_t;
+   typedef struct pthread_cond_t_       pthread_cond_t;
+   typedef struct pthread_condattr_t_   pthread_condattr_t;
+   typedef struct pthread_rwlock_t_     pthread_rwlock_t;
+   typedef struct pthread_rwlockattr_t_ pthread_rwlockattr_t;
 
 #endif //SYS_TYPES_H
 
@@ -114,7 +116,11 @@ normal pthread names (very nifty!).
  * @defgroup CVSLOG_types_h types_h
  * @ingroup CVSLOG
  *  $Log: types.h,v $
- *  Revision 1.7  2006-03-19 22:57:54  ambrmi09
+ *  Revision 1.8  2006-03-24 11:22:55  ambrmi09
+ *  - pThreads RW locks implemented (rough aproach - no usage error detection)
+ *  - restructuring of the pThread src-files
+ *
+ *  Revision 1.7  2006/03/19 22:57:54  ambrmi09
  *  First naive implementation of a pthread mutex
  *
  *  Revision 1.6  2006/03/17 14:18:42  ambrmi09

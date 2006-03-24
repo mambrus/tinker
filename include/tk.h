@@ -172,7 +172,7 @@ telling about the reason of the exit.
 
 #define TC_NAME_LEN        0x0100   //!< Thread-name to long
 #define TC_NOMEM           0x0200   //!< No memory left for allocation
-#define TC_ERR_11          0x0400
+#define TC_TCB_INVALID     0x0400   //!< Invalid TCB detected
 #define TC_ERR_12          0x0800
 
 #define TC_ERR_13          0x1000
@@ -237,7 +237,8 @@ void           tk_delete_kernel( void );
 void           tk_yield( void );
 void           tk_exit( int ec );
 void           tk_msleep( unsigned int time_ms );
-thid_t         tk_thread_id( void );            
+thid_t         tk_thread_id( void );
+int            tk_change_prio(thid_t tid, int newPrio);
 
 extern int     root( void ); /*! supplied by \b YOU - constitutes the root thread function*/
 
@@ -251,7 +252,11 @@ extern int     root( void ); /*! supplied by \b YOU - constitutes the root threa
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.38  2006-03-19 22:57:54  ambrmi09
+ *  Revision 1.39  2006-03-24 11:22:55  ambrmi09
+ *  - pThreads RW locks implemented (rough aproach - no usage error detection)
+ *  - restructuring of the pThread src-files
+ *
+ *  Revision 1.38  2006/03/19 22:57:54  ambrmi09
  *  First naive implementation of a pthread mutex
  *
  *  Revision 1.37  2006/03/19 12:44:35  ambrmi09

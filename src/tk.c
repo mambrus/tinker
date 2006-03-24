@@ -760,6 +760,78 @@ void tk_msleep( unsigned int time_ms ){
    tk_yield();
 }
 
+/*!
+Changes the priority of a running thread. 
+
+\returns If state is actually changed (i.e. if yield is recommended)
+*/
+int tk_change_prio(thid_t tid, int newPrio){
+   int y;
+   int oldPrio;
+   thid_t oldIdx,newIdx;
+   int error = 0;
+   int i;
+   
+   if ( proc_stat[tid].valid != TRUE){
+      printk("tk: Error - Invalid TCB detected\n");
+      error |= TC_TCB_INVALID;   
+   }       
+   
+   //Check if chosen prio is within limits
+   if (newPrio >= TK_MAX_PRIO_LEVELS){
+      printk("tk: Error - Chosen priority too high\n");
+      error |= TC_MAX_PRIO_LEVELS;   
+   }
+   //Check if there will be enough room at that prio
+   if (TK_MAX_THREADS_AT_PRIO <= ( scheduleIdxs[newPrio].procs_at_prio ) ){
+      printk("tk: Error - To many threads at this prio\n");
+      error |= TC_THREADS_AT_PRIO;   
+   }
+   if (error){
+      tk_exit(error);
+   }
+         
+   oldPrio = proc_stat[tid].Prio;
+   oldIdx =  proc_stat[tid].Idx;
+      
+   if (oldPrio == newPrio)          //No need to do anything
+      return 0;
+         
+   if (proc_stat[tid].state != READY)
+      y = 0;
+   else{
+      if (newPrio > oldPrio)          //is yield recomended after completion?
+         y = 1;
+      else if (active_thread == tid)
+         y = 1;
+      else 
+         y = 0;                       
+   }
+   
+   //Take away the process from theSchedule and compress gap at prio
+   for(i=oldIdx; i < scheduleIdxs[oldPrio].procs_at_prio; i++){
+      theSchedule[oldPrio][i] = theSchedule[oldPrio][i+1];
+      proc_stat[theSchedule[oldPrio][i]].Idx = i;
+   }
+   scheduleIdxs[oldPrio].procs_at_prio --;
+   if (scheduleIdxs[oldPrio].curr_idx >= scheduleIdxs[oldPrio].procs_at_prio){ //Uncertain about this.. Same issue in kill_thread
+      scheduleIdxs[oldPrio].curr_idx = 0;
+   }
+   
+   //Put the thread in the schedule in it's new position   
+   newIdx = scheduleIdxs[newPrio].procs_at_prio;
+   
+   theSchedule[newPrio][newIdx] = tid;
+   scheduleIdxs[newPrio].procs_at_prio++;
+   
+   //Finalize by correcting the TCB also
+   proc_stat[tid].Prio = newPrio;
+   proc_stat[tid].Idx  = newIdx;
+   
+   return y;
+   
+}
+
 
 /*!
 @brief create a "virtual" timeout event (whenever possible).
@@ -1308,7 +1380,11 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.56  2006-03-19 22:57:55  ambrmi09
+ *  Revision 1.57  2006-03-24 11:22:56  ambrmi09
+ *  - pThreads RW locks implemented (rough aproach - no usage error detection)
+ *  - restructuring of the pThread src-files
+ *
+ *  Revision 1.56  2006/03/19 22:57:55  ambrmi09
  *  First naive implementation of a pthread mutex
  *
  *  Revision 1.55  2006/03/19 12:44:36  ambrmi09

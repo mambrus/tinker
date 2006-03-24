@@ -145,7 +145,7 @@ static const char * kerneltraps[]={
 
 /* 8*/   "NAME_LEN        - Thread-name to long\n",
 /* 9*/   "NOMEM           - No memory left for allocation\n",
-/*10*/   "TBD             - TinKer error TBD (bit 10)\n",
+/*10*/   "TCB_INVALID     - Invalid TCB detected\n",
 /*11*/   "TBD             - TinKer error TBD (bit 11)\n",
 
 /*12*/   "TBD             - TinKer error TBD  (bit 12)\n",
@@ -580,7 +580,11 @@ void user_trap (void) interrupt 0x0D  {
  * @defgroup CVSLOG_TRAPS_C TRAPS_C
  * @ingroup CVSLOG
  *  $Log: TRAPS.C,v $
- *  Revision 1.17  2006-03-19 22:57:53  ambrmi09
+ *  Revision 1.18  2006-03-24 11:22:54  ambrmi09
+ *  - pThreads RW locks implemented (rough aproach - no usage error detection)
+ *  - restructuring of the pThread src-files
+ *
+ *  Revision 1.17  2006/03/19 22:57:53  ambrmi09
  *  First naive implementation of a pthread mutex
  *
  *  Revision 1.16  2006/03/17 12:20:01  ambrmi09
