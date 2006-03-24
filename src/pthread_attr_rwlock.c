@@ -43,6 +43,8 @@ PTHREAD_SYNC
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_init.html
+
 @todo Stubbed. Impl TBD
 */
 int pthread_rwlockattr_init (pthread_rwlockattr_t *__attr){      
@@ -51,6 +53,8 @@ int pthread_rwlockattr_init (pthread_rwlockattr_t *__attr){
 
 
 /*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_init.html
+
 @todo Stubbed. Impl TBD
 */
 int pthread_rwlockattr_destroy (pthread_rwlockattr_t *__attr){   
@@ -69,7 +73,10 @@ int pthread_rwlockattr_destroy (pthread_rwlockattr_t *__attr){
  *  @defgroup CVSLOG_pthread_attr_rwlock_c pthread_attr_rwlock_c
  *  @ingroup CVSLOG
  *  $Log: pthread_attr_rwlock.c,v $
- *  Revision 1.1  2006-03-24 11:22:56  ambrmi09
+ *  Revision 1.2  2006-03-24 17:40:19  ambrmi09
+ *  Cosmetic details
+ *
+ *  Revision 1.1  2006/03/24 11:22:56  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

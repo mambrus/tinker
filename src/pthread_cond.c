@@ -42,15 +42,30 @@ PTHREAD_SYNC
 
 
 //------1---------2---------3---------4---------5---------6---------7---------8
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_cond_init.html
+
+@todo Stubbed. Impl TBD
+*/
 int pthread_cond_init (pthread_cond_t * __cond, const pthread_condattr_t *attr){
    return 0;
 }
 
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_cond_destroy.html
+
+@todo Stubbed. Impl TBD
+*/
 int pthread_cond_destroy (pthread_cond_t *__cond){
    assert (__cond->valid);
    return 0;
 }
 
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_cond_signal.html
+
+@note BIG FAT NOTE. 1) If not taken yet = recursive. 2) Several listeners = release all => logic handled by phread_condval_attribute (TBD)
+*/
 int pthread_cond_signal (pthread_cond_t *__cond){
    int y;
 
@@ -77,6 +92,9 @@ int pthread_cond_signal (pthread_cond_t *__cond){
    return 0;
 }
 
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_cond_broadcast.html
+*/
 int pthread_cond_broadcast (pthread_cond_t *__cond){
    int y1,y2;
 
@@ -102,6 +120,9 @@ int pthread_cond_broadcast (pthread_cond_t *__cond){
    return 0;
 }
 
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_cond_wait.html
+*/
 int pthread_cond_wait (pthread_cond_t * __cond, pthread_mutex_t *mutex){
    int y;
    
@@ -121,7 +142,11 @@ int pthread_cond_wait (pthread_cond_t * __cond, pthread_mutex_t *mutex){
    return 0;
 }
 
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_cond_timedwait.html
 
+@todo Stubbed. Impl TBD
+*/
 int pthread_cond_timedwait (pthread_cond_t * __cond, pthread_mutex_t *mutex, const struct timespec *abstime){
    assert (__cond->valid);
    return 0;
@@ -134,7 +159,10 @@ int pthread_cond_timedwait (pthread_cond_t * __cond, pthread_mutex_t *mutex, con
  *  @defgroup CVSLOG_pthread_cond_c pthread_cond_c
  *  @ingroup CVSLOG
  *  $Log: pthread_cond.c,v $
- *  Revision 1.1  2006-03-24 11:22:56  ambrmi09
+ *  Revision 1.2  2006-03-24 17:40:19  ambrmi09
+ *  Cosmetic details
+ *
+ *  Revision 1.1  2006/03/24 11:22:56  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

@@ -59,7 +59,7 @@ PTHREAD
 typedef enum {
    _PBON_NOLINK=0,      //!< Blocked on mutex
    _PBON_CONDVAR,       //!< Blocked on a conditional
-   _PBON_RWLOCK,        //!< Blocked on a RW lock
+   _PBON_RWLOCK         //!< Blocked on a RW lock
 }pbon_kind_t; 
 
 
@@ -1047,7 +1047,10 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.14  2006-03-24 11:22:54  ambrmi09
+ *  Revision 1.15  2006-03-24 17:40:18  ambrmi09
+ *  Cosmetic details
+ *
+ *  Revision 1.14  2006/03/24 11:22:54  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

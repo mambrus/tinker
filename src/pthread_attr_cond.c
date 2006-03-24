@@ -42,8 +42,25 @@ PTHREAD_SYNC
 
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-int pthread_condattr_init (pthread_condattr_t *__attr){assert("Not implemented yet" == 0); return 0;}
-int pthread_condattr_destroy (pthread_condattr_t *__attr){assert("Not implemented yet" == 0); return 0;}
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_condattr_init.html
+
+@todo Stubbed. Impl TBD
+*/
+int pthread_condattr_init (pthread_condattr_t *__attr){
+   assert("Not implemented yet" == 0); 
+   return 0;
+}
+
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_condattr_destroy.html
+
+@todo Stubbed. Impl TBD
+*/
+int pthread_condattr_destroy (pthread_condattr_t *__attr){
+   assert("Not implemented yet" == 0); 
+   return 0;
+}
 
 //->int pthread_condattr_getpshared (__const pthread_condattr_t *attr, int *pshared);
 //->int pthread_condattr_setpshared (pthread_condattr_t *__attr, int pshared);
@@ -55,7 +72,10 @@ int pthread_condattr_destroy (pthread_condattr_t *__attr){assert("Not implemente
  *  @defgroup CVSLOG_pthread_attr_cond_c pthread_attr_cond_c
  *  @ingroup CVSLOG
  *  $Log: pthread_attr_cond.c,v $
- *  Revision 1.1  2006-03-24 11:22:55  ambrmi09
+ *  Revision 1.2  2006-03-24 17:40:19  ambrmi09
+ *  Cosmetic details
+ *
+ *  Revision 1.1  2006/03/24 11:22:55  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

@@ -43,8 +43,25 @@ PTHREAD_SYNC
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-int pthread_mutexattr_init (pthread_mutexattr_t *__attr){assert("Not implemented yet" == 0); return 0;}
-int pthread_mutexattr_destroy (pthread_mutexattr_t *__attr){assert("Not implemented yet" == 0); return 0;}
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutexattr_init.html
+
+@todo Stubbed. Impl TBD
+*/
+int pthread_mutexattr_init (pthread_mutexattr_t *__attr){
+   assert("Not implemented yet" == 0); 
+   return 0;
+}
+
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutexattr_destroy.html
+
+@todo Stubbed. Impl TBD
+*/
+int pthread_mutexattr_destroy (pthread_mutexattr_t *__attr){
+   assert("Not implemented yet" == 0); 
+   return 0;
+}
 /*
 int pthread_mutexattr_getpshared (__const pthread_mutexattr_t *
 int pthread_mutexattr_setpshared (pthread_mutexattr_t *__attr,
@@ -59,7 +76,10 @@ int pthread_mutexattr_gettype (__const pthread_mutexattr_t *__restrict
  *  @defgroup CVSLOG_pthread_attr_mutex_c pthread_attr_mutex_c
  *  @ingroup CVSLOG
  *  $Log: pthread_attr_mutex.c,v $
- *  Revision 1.1  2006-03-24 11:22:56  ambrmi09
+ *  Revision 1.2  2006-03-24 17:40:19  ambrmi09
+ *  Cosmetic details
+ *
+ *  Revision 1.1  2006/03/24 11:22:56  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

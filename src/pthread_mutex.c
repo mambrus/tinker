@@ -43,6 +43,10 @@ PTHREAD_SYNC
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_init.html
+@todo Stubbed. Impl TBD
+*/
 int pthread_mutex_init (
    pthread_mutex_t *mutex,
    const pthread_mutexattr_t *attr
@@ -51,16 +55,28 @@ int pthread_mutex_init (
    return 0;
 }
 
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_destroy.html
+@todo Stubbed. Impl TBD
+*/
 int pthread_mutex_destroy(pthread_mutex_t *mutex){
    assert (mutex->valid);
    return 0;
 }
 
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_trylock.html
+
+@todo Stubbed. Impl TBD
+*/
 int pthread_mutex_trylock (pthread_mutex_t *mutex){
    assert (mutex->valid);
    return 0;
 }
 
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_lock.html
+*/
 int pthread_mutex_lock (pthread_mutex_t *mutex){
 
    assert (mutex->valid);
@@ -70,6 +86,9 @@ int pthread_mutex_lock (pthread_mutex_t *mutex){
    return 0;
 }
 
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_unlock.html
+*/
 int pthread_mutex_unlock (pthread_mutex_t *mutex){
 
    assert (mutex->valid);
@@ -80,6 +99,11 @@ int pthread_mutex_unlock (pthread_mutex_t *mutex){
 }
 
 
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_timedlock.html
+
+@todo Stubbed. Impl TBD
+*/
 int pthread_mutex_timedlock(
    pthread_mutex_t *mutex,
    const struct timespec *abs_timeout
@@ -95,7 +119,10 @@ int pthread_mutex_timedlock(
  *  @defgroup CVSLOG_pthread_mutex_c pthread_mutex_c
  *  @ingroup CVSLOG
  *  $Log: pthread_mutex.c,v $
- *  Revision 1.1  2006-03-24 11:22:56  ambrmi09
+ *  Revision 1.2  2006-03-24 17:40:19  ambrmi09
+ *  Cosmetic details
+ *
+ *  Revision 1.1  2006/03/24 11:22:56  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

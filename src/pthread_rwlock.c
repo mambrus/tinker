@@ -30,6 +30,9 @@ This is a text-book implementation of pThreads RW locks
 standard. Please make sure that you will not get into portability problems 
 if you plan to any older implementation of the library later.
 
+The RWL implementation is based entirely on cond vars and mutexes and is 
+actual not dependant of TinKer. 
+
 For in-depth discussions about this component, see \ref
 PTHREAD_SYNC
 
@@ -48,7 +51,7 @@ PTHREAD_SYNC
 //------1---------2---------3---------4---------5---------6---------7---------8
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
-
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_rdlock.html
 */
 int pthread_rwlock_rdlock (pthread_rwlock_t *__rwlock){
    int blocked_writers_granted = 0;
@@ -89,7 +92,7 @@ int pthread_rwlock_rdlock (pthread_rwlock_t *__rwlock){
 }
 
 /*!
-
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_wrlock.html
 */
 int pthread_rwlock_wrlock (pthread_rwlock_t *__rwlock){
    assert (__rwlock->valid);
@@ -112,7 +115,7 @@ int pthread_rwlock_wrlock (pthread_rwlock_t *__rwlock){
 }
 
 /*!
-
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_unlock.html
 */
 int pthread_rwlock_unlock (pthread_rwlock_t *__rwlock){
    int blocked_writers_granted = 0;
@@ -181,6 +184,8 @@ int pthread_rwlock_unlock (pthread_rwlock_t *__rwlock){
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 /*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_init.html
+
 @todo Stubbed. Impl TBD
 */
 int pthread_rwlock_init (pthread_rwlock_t *__rwlock, const pthread_rwlockattr_t *attr){
@@ -188,6 +193,8 @@ int pthread_rwlock_init (pthread_rwlock_t *__rwlock, const pthread_rwlockattr_t 
 }
 
 /*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_destroy.html
+
 @todo Stubbed. Impl TBD
 */
 int pthread_rwlock_destroy (pthread_rwlock_t *__rwlock){
@@ -196,6 +203,8 @@ int pthread_rwlock_destroy (pthread_rwlock_t *__rwlock){
 }
 
 /*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_tryrdlock.html
+
 @todo Stubbed. Impl TBD
 */
 int pthread_rwlock_tryrdlock (pthread_rwlock_t *__rwlock){
@@ -206,6 +215,8 @@ int pthread_rwlock_tryrdlock (pthread_rwlock_t *__rwlock){
 
 
 /*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_timedrdlock.html
+
 @todo Stubbed. Impl TBD
 */
 int pthread_rwlock_timedrdlock (pthread_rwlock_t * __rwlock, const struct timespec *abs_timeout){
@@ -217,6 +228,8 @@ int pthread_rwlock_timedrdlock (pthread_rwlock_t * __rwlock, const struct timesp
  
 
 /*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_wrlock.html
+
 @todo Stubbed. Impl TBD
 */
 int pthread_rwlock_trywrlock (pthread_rwlock_t *__rwlock){
@@ -227,6 +240,8 @@ int pthread_rwlock_trywrlock (pthread_rwlock_t *__rwlock){
 
 
 /*!
+http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_timedwrlock.html
+
 @todo Stubbed. Impl TBD
 */
 int pthread_rwlock_timedwrlock (pthread_rwlock_t * __rwlock, const struct timespec *abs_timeout){
@@ -242,7 +257,10 @@ int pthread_rwlock_timedwrlock (pthread_rwlock_t * __rwlock, const struct timesp
  *  @defgroup CVSLOG_pthread_rwlock_c pthread_rwlock_c
  *  @ingroup CVSLOG
  *  $Log: pthread_rwlock.c,v $
- *  Revision 1.1  2006-03-24 11:22:56  ambrmi09
+ *  Revision 1.2  2006-03-24 17:40:19  ambrmi09
+ *  Cosmetic details
+ *
+ *  Revision 1.1  2006/03/24 11:22:56  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

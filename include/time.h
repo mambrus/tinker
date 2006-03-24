@@ -91,6 +91,18 @@ void timespec2fmttime_np( struct fmttime *totime, const struct timespec *fromtim
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
+
+/*! 
+Wrapper macro until \ref PTIMER is ready
+*/
+#define sleep(t) ( tk_msleep( t * 1000 ) )
+
+/*!
+Wrapper macro until \ref PTIMER is ready
+*/
+#define usleep(t) ( tk_msleep( (unsigned long)t / 1000ul ) )
+
+
 #if !defined (__GNUC__)
 
    #ifndef CLOCKS_PER_SEC
@@ -107,17 +119,7 @@ void timespec2fmttime_np( struct fmttime *totime, const struct timespec *fromtim
    #define CLK_TCK CLOCKS_PER_SEC
    #endif
 
-   /*! 
-   Wrapper macro until \ref PTIMER is ready
-   */
-   #define sleep(t) ( tk_msleep( t * 1000 ) )
-
-   /*!
-   Wrapper macro until \ref PTIMER is ready
-   */
-   #define usleep(t) ( tk_msleep( t / 1000 ) )
-
-
+ 
    #ifndef clock_t
    /*!
    A clock entity is supposed to mean some sort of system ticks (i.e.
@@ -334,7 +336,10 @@ void timespec2fmttime_np( struct fmttime *totime, const struct timespec *fromtim
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.23  2006-03-05 11:11:24  ambrmi09
+ *  Revision 1.24  2006-03-24 17:40:18  ambrmi09
+ *  Cosmetic details
+ *
+ *  Revision 1.23  2006/03/05 11:11:24  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.22  2006/03/04 14:28:44  ambrmi09
