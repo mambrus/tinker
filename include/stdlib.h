@@ -71,8 +71,13 @@ should not use this type. Instead you should define your own. If you do,
 you will \b only be able to port your application to GNU operating
 systems and tools.
 
+---
+
+@note That __GNUC__ is defined on a Cygwin target, but 
+comparison_fn_t is not still.
+
 */
-#if !defined (__GNUC__) || !defined(__USE_GNU)
+#if !defined (__GNUC__) || defined(__CYGWIN32__)  || defined(__CYGWIN__)
 typedef int comparison_fn_t (  
    const void *L,  //!< <em>"Leftmost"</em> element to compare with
    const void *R   //!< <em>"Rightmost"</em> element to compare with
@@ -124,10 +129,7 @@ int  _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );
  * @defgroup CVSLOG_stdlib_h stdlib_h
  * @ingroup CVSLOG
  *  $Log: stdlib.h,v $
- *  Revision 1.2  2006-03-27 13:04:17  ambrmi09
- *  Minor build tuning
- *
- *  Revision 1.1  2006/03/27 13:40:15  ambrmi09
+ *  Revision 1.1  2006-03-27 13:40:15  ambrmi09
  *  As part of the preparation for the first release, code has been cleaned up a little
  *  and project has been checked that it will build on all it's intended targets.
  *

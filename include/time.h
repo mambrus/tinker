@@ -57,6 +57,9 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#Sleeping
 #ifndef TIME_H_TK
 #define TIME_H_TK
 
+#define clock tk_clock   //!< The undefine last is the real re-router
+#define time  tk_time
+
 //#include <limits.h> //<! Information about integers max and min values
 //#include <stdint.h> //<! Fixed bitsize type definitions
 
@@ -220,7 +223,7 @@ Wrapper macro until \ref PTIMER is ready
 
    int settimeofday (const struct timeval *tp, const struct timezone *tzp);
 
-   #if USE_TINKER_TIME_F
+//   #if USE_TINKER_TIME_F
    /*!
    The time function returns the current calendar time as a value of type
    time_t. If the argument result is not a null pointer, the calendar time
@@ -230,7 +233,7 @@ Wrapper macro until \ref PTIMER is ready
    @see http://www.gnu.org/software/libc/manual/html_mono/libc.html#Simple%20Calendar%20Time
    */
    time_t time (time_t *result);
-   #endif
+//   #endif
 
 
    /*!
@@ -304,9 +307,9 @@ Wrapper macro until \ref PTIMER is ready
       (t1 - t0)
    #endif   
 
-   #if USE_TINKER_CLOCK_F
+//   #if USE_TINKER_CLOCK_F
    clock_t clock();
-   #endif
+//   #endif
 
    /*
    Confusion regarding this...
@@ -329,6 +332,12 @@ Wrapper macro until \ref PTIMER is ready
 //------1---------2---------3---------4---------5---------6---------7---------8
 #endif //!defined (__GNUC__)
 
+
+#if !defined(__C166__)
+#undef clock
+#undef time
+#endif
+
 #endif /*time_h_tk*/
 
   
@@ -336,7 +345,17 @@ Wrapper macro until \ref PTIMER is ready
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.24  2006-03-24 17:40:18  ambrmi09
+ *  Revision 1.25  2006-03-27 13:40:15  ambrmi09
+ *  As part of the preparation for the first release, code has been cleaned up a little
+ *  and project has been checked that it will build on all it's intended targets.
+ *
+ *  Problems that remained had to do the ANSI wrapping.
+ *
+ *  Some modifications were neserary to make the BC5 build, but the result is cleaner
+ *  and more consistent with the rest of the wrapping. As a consequence, stdlib.h was
+ *  introduced.
+ *
+ *  Revision 1.24  2006/03/24 17:40:18  ambrmi09
  *  Cosmetic details
  *
  *  Revision 1.23  2006/03/05 11:11:24  ambrmi09

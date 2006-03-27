@@ -66,6 +66,8 @@ POSIX_RT
    #define  PATH_MAX    24   
 #endif
 
+#define _MQ_NO_WARN_VAR(x) ((void)x)  //!< Used silence warnings about unused variables
+
 
 
 /*****************************************************************************
@@ -153,7 +155,7 @@ int mq_close(
    mqd_t                 mq
 ){
    pthread_once(&mq_once, initialize);
-   _PTHREAD_NO_WARN_VAR(mq);
+   _MQ_NO_WARN_VAR(mq);
    assert(sem_wait(&poolAccessSem) == 0);
    
    assert(sem_post(&poolAccessSem) == 0);
@@ -171,8 +173,8 @@ int mq_getattr(
    struct mq_attr      *attrbuf
 ){
    pthread_once(&mq_once, initialize);
-   _PTHREAD_NO_WARN_VAR(mq);
-   _PTHREAD_NO_WARN_VAR(attrbuf);
+   _MQ_NO_WARN_VAR(mq);
+   _MQ_NO_WARN_VAR(attrbuf);
    assert(sem_wait(&poolAccessSem) == 0);
    /*Find next empy slot in qPool*/
    
@@ -197,7 +199,7 @@ mqd_t mq_open(
    int                   dId;   /* descriptor */
    
    pthread_once(&mq_once, initialize);
-   _PTHREAD_NO_WARN_VAR(mode);
+   _MQ_NO_WARN_VAR(mode);
    
    assert(sem_wait(&poolAccessSem) == 0);
    
@@ -447,9 +449,9 @@ int mq_setattr(
    struct mq_attr       *old_attrs
 ){
    pthread_once(&mq_once, initialize);
-   _PTHREAD_NO_WARN_VAR(mqdes);
-   _PTHREAD_NO_WARN_VAR(new_attrs);
-   _PTHREAD_NO_WARN_VAR(old_attrs);
+   _MQ_NO_WARN_VAR(mqdes);
+   _MQ_NO_WARN_VAR(new_attrs);
+   _MQ_NO_WARN_VAR(old_attrs);
    assert(sem_wait(&poolAccessSem) == 0);
    
    assert(sem_post(&poolAccessSem) == 0);
@@ -666,7 +668,7 @@ Just a stub to get test-code through compiler. Should be easy enoygh to implemen
 int mq_unlink(
    const char *mq_name
 ){
-   _PTHREAD_NO_WARN_VAR(mq_name);
+   _MQ_NO_WARN_VAR(mq_name);
    return 0;
 }
 
@@ -713,7 +715,17 @@ Good references about the API:
  * @defgroup CVSLOG_mqueue_c mqueue_c
  * @ingroup CVSLOG
  *  $Log: mqueue.c,v $
- *  Revision 1.15  2006-03-24 18:23:43  ambrmi09
+ *  Revision 1.16  2006-03-27 13:40:15  ambrmi09
+ *  As part of the preparation for the first release, code has been cleaned up a little
+ *  and project has been checked that it will build on all it's intended targets.
+ *
+ *  Problems that remained had to do the ANSI wrapping.
+ *
+ *  Some modifications were neserary to make the BC5 build, but the result is cleaner
+ *  and more consistent with the rest of the wrapping. As a consequence, stdlib.h was
+ *  introduced.
+ *
+ *  Revision 1.15  2006/03/24 18:23:43  ambrmi09
  *  Another turn of cosmetics
  *
  *  Revision 1.14  2006/03/17 14:18:42  ambrmi09

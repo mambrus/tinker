@@ -64,7 +64,7 @@ Bus arbitration enabled
 
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
+#include <stdlib.h>  //init_mempool is defined here. Something is fishy though...
 #include <tk.h>            
 #include <errno.h>
 #include <time.h> 

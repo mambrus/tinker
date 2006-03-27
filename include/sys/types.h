@@ -109,14 +109,24 @@ normal pthread names (very nifty!).
    typedef struct pthread_rwlock_t_     pthread_rwlock_t;
    typedef struct pthread_rwlockattr_t_ pthread_rwlockattr_t;
 
-#endif //SYS_TYPES_H
+#endif //SYS_TYPES_H_TK
 
 
 /*!
  * @defgroup CVSLOG_types_h types_h
  * @ingroup CVSLOG
  *  $Log: types.h,v $
- *  Revision 1.8  2006-03-24 11:22:55  ambrmi09
+ *  Revision 1.9  2006-03-27 13:40:15  ambrmi09
+ *  As part of the preparation for the first release, code has been cleaned up a little
+ *  and project has been checked that it will build on all it's intended targets.
+ *
+ *  Problems that remained had to do the ANSI wrapping.
+ *
+ *  Some modifications were neserary to make the BC5 build, but the result is cleaner
+ *  and more consistent with the rest of the wrapping. As a consequence, stdlib.h was
+ *  introduced.
+ *
+ *  Revision 1.8  2006/03/24 11:22:55  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

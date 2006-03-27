@@ -26,6 +26,13 @@
 
 This is the common headerfile for all ANSI re-implementations
 
+Most of this file is obsolete now. It was thought to be a common wrapper
+for all the ANSI wrapping needs (functions and types). It was soon discovered 
+that this would be a mess beyond sanity. All the wrapping is now maintained 
+in the each TinKer corresponding header-file.
+
+The file is kept never the less for the time being.
+
 For in-depth discussions about re-implementing ANSI functions, see \ref
 kernel_reimpl_ansi
 
@@ -35,145 +42,6 @@ kernel_reimpl_ansi
 
 #ifndef TK_ANSI_H
 #define TK_ANSI_H
-
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <tk.h>
-#include <stddef.h>  //Needed for size_t
-
-#ifndef COMPARISON_FN_T 
-/*!
-A comparison funtion definition that ANSI search & sort funtions use.
-It's return value is supposed to have the same meaning as for strcmp
-
-@return \f$ = \cases{ 0, & if L = R \cr <0 , & if L < R \cr >0, & if L > R } \f$
-
-
-@return  0 if eq, 
-@return <0 if L<R 
-@return >0 if L>R 
-
-GNU reference: @see http://www.gnu.org/software/libc/manual/html_mono/libc.html#Comparison%20Functions
-*/
-typedef int comparison_fn_t (  
-   const void *L,  //!< <em>"Leftmost"</em> element to compare with
-   const void *R   //!< <em>"Rightmost"</em> element to compare with
-);
-
-#endif
-
-
-/*!
-@name CONDITIONALS
-
-These macro's define whether a certain re-implemented ANSI function
-should be part of the TinKer binary or not.
-
-*/
-
-//@{
-
-#define TK_NEEDS_QSORT
-#define TK_NEEDS_BSEARCH
-#define TK_NEEDS_PRINTF
-
-
-//@}
-
-#define APP_NEEDS_INTERNALS /*!< Define this conditional if you want access to the
-                                 internal functions this module has */
-
-
-
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-#ifndef YES
-#define YES 1
-#endif
-
-#ifndef NO
-#define NO 0
-#endif
-
-/*
-Define which functions must be supplied by TinKer
-@note You can omitt those that woulöd render no
-*/
-
-#if defined(_WIN32) &&  defined(_MSC_VER)
-   #define __TINKER_TIME_F        NO
-   #define __TINKER_CLOCK_F       NO
-
-#elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
-   #define __TINKER_TIME_F        NO
-   #define __TINKER_CLOCK_F       NO
-
-#elif defined( __C166__ )
-   #define __TINKER_TIME_F        YES
-   #define __TINKER_CLOCK_F       YES
-
-#elif defined(__CYGWIN32__)  || defined(__CYGWIN__)
-   //Not needed to "fine tune" - handled much more corse grained (since GNU headers always include all we need anyway)
-#elif defined(__GNUC__)
-   //Not needed to "fine tune" - handled much more corse grained (since GNU headers always include all we need anyway)
-#else
-   #error "Can\'t determine the target for the TINKER kernel"
-#endif
-
-//Some preprocessors need the following "wrapping" also
-
-#define USE_TINKER_TIME_F       (defined(__TINKER_TIME_F)     && __TINKER_TIME_F)
-#define USE_TINKER_CLOCK_F      (defined(__TINKER_CLOCK_F)    && __TINKER_CLOCK_F)
-
-
-
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-#if defined(__cplusplus)
-
-extern "C"
-{
-#endif
-
-
-   #if defined(TK_NEEDS_QSORT)
-      #define qsort tk_qsort
-      #if defined(_WIN32) &&  defined(_MSC_VER)
-         void __cdecl qsort ( void *, size_t , size_t , comparison_fn_t );         
-      #else
-         void         qsort ( void *, size_t , size_t , comparison_fn_t );         
-      #endif
-   #endif
-
-
-   #if defined(TK_NEEDS_BSEARCH)
-      #define bsearch tk_bsearch
-      #if defined(_WIN32) &&  defined(_MSC_VER)
-         void * __cdecl bsearch ( const void *, const void *, size_t , size_t , comparison_fn_t );
-      #else
-         void *         bsearch ( const void *, const void *, size_t , size_t , comparison_fn_t );
-      #endif
-   
-   #endif
-
-   #if defined(APP_NEEDS_INTERNALS)
-
-      #if defined(_WIN32) &&  defined(_MSC_VER)
-            void __cdecl _tk_quicksort ( void *, int, int, int, comparison_fn_t );
-            int  __cdecl _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );
-
-      #else
-            void         _tk_quicksort ( void *, int, int, int, comparison_fn_t );
-            int          _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );      
-      #endif
-   #endif
-
-
-#if defined(__cplusplus)
-}
-#endif
-
-
 
 
 #endif //TK_ANSI_H
@@ -185,14 +53,20 @@ extern "C"
 @ingroup PACKAGES 
 @brief Files containing re-emplemented ANSI functions
 
-The files in this Doxygen "module" are involved one way or the other
-with reimplemtation of various ANSI functions, defines e.t.a. The
-"stuff" we're talking about is what is normally part of stdlib (i.e.
-what stdlib.h defines).
+The files in this package are involved one way or the other
+with reimplemtation of various ANSI functions, defines and types. The
+"stuff" we're talking about is what is normally part of stdlib and that
+needs to be either \b implemented (because if you use too-chain for
+small embedded targets, lot's of staff is simply missing) or \b
+redefined (because for some reason or the other we have to use a TinKer
+version of the particular function/type). I.e. the things you'll
+find in this package is what what is normally defined in stdlib.h,
+sys/types.h time.h e.t.a. AND that is needed (note, not every single
+header file is wrapped - only those really needed).
 
 @section Intro 
-In case you do have a corresponding function, you don't
-want to have both. Because of that each function is conditionally
+In case you do have a corresponding function in your tool-chain, you
+don't want to have both. Because of that each function is conditionally
 compiled and you have to explicitly set each definition. This way when
 you port for a new target (assuming no conditionals have been set by you
 yet), you will know if a function is supported or not since the linker
@@ -327,7 +201,17 @@ cartful!
  * @defgroup CVSLOG_tk_ansi_h tk_ansi_h
  * @ingroup CVSLOG
  *  $Log: tk_ansi.h,v $
- *  Revision 1.12  2006-03-05 11:11:27  ambrmi09
+ *  Revision 1.13  2006-03-27 13:40:15  ambrmi09
+ *  As part of the preparation for the first release, code has been cleaned up a little
+ *  and project has been checked that it will build on all it's intended targets.
+ *
+ *  Problems that remained had to do the ANSI wrapping.
+ *
+ *  Some modifications were neserary to make the BC5 build, but the result is cleaner
+ *  and more consistent with the rest of the wrapping. As a consequence, stdlib.h was
+ *  introduced.
+ *
+ *  Revision 1.12  2006/03/05 11:11:27  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.11  2006/03/04 14:28:44  ambrmi09

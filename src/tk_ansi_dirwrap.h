@@ -54,7 +54,7 @@ kernel_reimpl_ansi
    #define CHAINPATH C:/BC5/INCLUDE
 
 #elif defined( __C166__ )
-   #define CHAINPATH C:\Program Files\Keil\C166\BIN
+   #define CHAINPATH C:\Program Files\Keil\C166\INC
 
 #elif defined(__GNUC__) /*|| defined(__CYGWIN32__)  || defined(__CYGWIN__)*/
    #ifndef CHAINPATH
@@ -81,7 +81,17 @@ kernel_reimpl_ansi
  * @ingroup CVSLOG
  *
  *  $Log: tk_ansi_dirwrap.h,v $
- *  Revision 1.5  2006-03-05 11:11:27  ambrmi09
+ *  Revision 1.6  2006-03-27 13:40:15  ambrmi09
+ *  As part of the preparation for the first release, code has been cleaned up a little
+ *  and project has been checked that it will build on all it's intended targets.
+ *
+ *  Problems that remained had to do the ANSI wrapping.
+ *
+ *  Some modifications were neserary to make the BC5 build, but the result is cleaner
+ *  and more consistent with the rest of the wrapping. As a consequence, stdlib.h was
+ *  introduced.
+ *
+ *  Revision 1.5  2006/03/05 11:11:27  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.4  2006/03/04 19:32:35  ambrmi09

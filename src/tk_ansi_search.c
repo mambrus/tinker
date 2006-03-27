@@ -36,7 +36,9 @@ kernel_reimpl_ansi
 */
 #include "tk_ansi.h"
 #include <string.h>
+#include <stdlib.h>
 #define MAX_SORT_ELEMENT_SIZE 255  //!< Limitation of each sorting elements size
+
 
 /*
 #if !defined(APP_NEEDS_INTERNALS)
@@ -303,7 +305,7 @@ int _tk_bsearch (
    }
 }
 
-#if defined(TK_NEEDS_QSORT)
+#ifdef TINKER_SEARCH_SORT
 /*!
 @brief ANSI qsort 
 
@@ -347,9 +349,7 @@ void qsort (
    qsort_depth = 0;
    _tk_quicksort(array,0,count-1,size,compare);
 }
-#endif
 
-#if defined(TK_NEEDS_BSEARCH)
 /*!
 @brief ANSI bsearch
 
@@ -447,7 +447,17 @@ void *bsearch (
  * @defgroup CVSLOG_tk_search_c tk_search_c
  * @ingroup CVSLOG
  *  $Log: tk_ansi_search.c,v $
- *  Revision 1.7  2006-03-05 11:11:27  ambrmi09
+ *  Revision 1.8  2006-03-27 13:40:15  ambrmi09
+ *  As part of the preparation for the first release, code has been cleaned up a little
+ *  and project has been checked that it will build on all it's intended targets.
+ *
+ *  Problems that remained had to do the ANSI wrapping.
+ *
+ *  Some modifications were neserary to make the BC5 build, but the result is cleaner
+ *  and more consistent with the rest of the wrapping. As a consequence, stdlib.h was
+ *  introduced.
+ *
+ *  Revision 1.7  2006/03/05 11:11:27  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.6  2006/02/22 13:05:47  ambrmi09
