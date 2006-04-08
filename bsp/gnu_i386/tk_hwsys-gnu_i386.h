@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -28,12 +28,12 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #ifndef TK_HWSYS_GNU_i386_H
 #define TK_HWSYS_GNU_i386_H
 
-#define MINIMUM_STACK_SIZE 0x0600  //!< TBD this @todo TBD this
+#define EXTRA_MARGIN 20                //<! Define SP this below the theoretical top (some compilers require it)
 
 /*!
 How printk is implemented on this target
 */
-#define printk printf
+#define printk(x) printf x
 
 /*!
 @name Mapping stack allocation API for this target
@@ -111,6 +111,20 @@ How printk is implemented on this target
 //function enters as a result of a ret instruction. EAX is passed
 //as the return value. Not shure if it works on every processor
 
+#define CHANGE_STACK( TSP1, TEMP )        \
+   asm __volatile__ (                     \
+      " movl %%ebx, %%esp"                \
+      : /*no output*/                     \
+      : "b" (TSP1)                        \
+   );  /*Note, no clobber (intentional)*/ 
+
+
+#define INIT_SP( _stack_SP, _stack_begin )\
+   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; 					\
+   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;  \
+
+//Does nothing on this port
+#define BIND_STACK( _stack_struct, _temp2 )     
 
 #define GET_THREADS_RETVAL( THRETVAL, TEMP )  \
    asm __volatile__ (                     \

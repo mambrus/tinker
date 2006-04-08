@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -101,7 +101,13 @@ void _do_trap (unsigned int num){
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.c,v $
- *  Revision 1.11  2006-03-12 15:08:53  ambrmi09
+ *  Revision 1.12  2006-04-08 10:15:51  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.11.2.1  2006/04/03 20:07:21  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.11  2006/03/12 15:08:53  ambrmi09
  *  - Adjusted the source to accomodate the new file structure.
  *
  *  - All build environments uppdated and verified except BC5. For this one

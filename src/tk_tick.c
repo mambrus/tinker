@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -153,7 +153,7 @@ void getnanouptime (
    tk_armHWclock(         CLK1 );
 
    if ((HWclock_stats.res > 16) && (HWclock_stats.freq_hz < 1000000)) {
-      printk("tk: to high resolution HW clock. TinKer can't handle this ATM \n");
+      printk(("tk: to high resolution HW clock. TinKer can't handle this ATM \n"));
       tk_exit(TC_ERR_HW);
    }
    #endif
@@ -199,7 +199,34 @@ void getnanouptime (
  * @ingroup CVSLOG
  *
  *  $Log: tk_tick.c,v $
- *  Revision 1.16  2006-03-17 12:20:05  ambrmi09
+ *  Revision 1.17  2006-04-08 10:16:03  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.16.2.2  2006/04/03 20:07:30  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.16.2.1  2006/04/03 15:21:49  ambrmi09
+ *  All targets updated with the new thread-starter (alternative 2).
+ *
+ *  This alternative has one weakness (explained elsewhere togeather
+ *  with alternative 1), but so far it's the only one that will compile
+ *  and function equally among all 4 (very different) compilers currently
+ *  tested against: GCC, MSVC, BC5 and Keil.
+ *
+ *  If nothing else turns up, I'm willing to overcome the drawback (it's
+ *  quite handleable) because it *truly* takes away a lot of pain with
+ *  porting.
+ *
+ *  The ARM port (architecture level) is than's to this now fully operational
+ *  without the r13 hack in the context switch. This includes thread
+ *  cancellation and thread argument passing (which were not functioning in
+ *  the old port).
+ *
+ *  If this revised code proves itself (i.e. no surprises turns up) then
+ *  TinKer can be considered "almost ported" to any HW target that GCC is
+ *  ported for :D (/cheers)
+ *
+ *  Revision 1.16  2006/03/17 12:20:05  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now

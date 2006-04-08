@@ -18,7 +18,7 @@
 
 // USER CODE BEGIN (MAIN_General,1)
 
-#include <kernel/src/tk_tick.h>
+#include <../src/tk_tick.h>
 
 unsigned char huge stalloc_padding [0x6];      //Important! don't remove this harmless little padding
 
@@ -65,7 +65,8 @@ Bus arbitration enabled
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>  //init_mempool is defined here. Something is fishy though...
-#include <tk.h>            
+#include <tk.h>
+#include <../src/implement_tk.h>            
 #include <errno.h>
 #include <time.h> 
 #include <assert.h>

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -1076,7 +1076,13 @@ TBD
  * @defgroup CVSLOG_errno_h errno_h
  * @ingroup CVSLOG
  *  $Log: errno.h,v $
- *  Revision 1.11  2006-03-19 12:44:35  ambrmi09
+ *  Revision 1.12  2006-04-08 10:15:57  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.11.2.1  2006/04/03 20:07:22  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.11  2006/03/19 12:44:35  ambrmi09
  *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
  *  without one single warning (yay!). Be aware that ther was a lot of
  *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...

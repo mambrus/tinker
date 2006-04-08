@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -149,8 +149,8 @@ typedef struct tcb_t_{
    PROCSTATE      state;               //!< State of the process
    bon_t          bOnId;               //!< The ID of the \b main entity this thread is blocked on (either other threads-ID or ITC or ptimer-ID). If serveral entities are reason for blocking, ontly the main entity will be mentioned here.
    int            _errno_;             //!< Support of per thread errno
-   stack_t        stack_begin;         //!< First address of stack memory
-   stack_t        curr_sp;             //!< Current stackpointer of this thread
+   stack_t        stack_begin;         //!< First address of stack memory       (This value will be static during execution)
+   stack_t        curr_sp;             //!< Current stackpointer of this thread (This value will vary during execution)
    size_t         stack_size;          //!< Size of stack
    unsigned long  stack_crc;           //!< Control value of integrity check
    clock_t        wakeuptime;          //!< When to wake up if sleeping
@@ -171,6 +171,19 @@ typedef struct stat_t{
    unsigned short curr_idx;
 }prio_stat_t;
 
+//------1---------2---------3---------4---------5---------6---------7---------8
+struct tcb_t_ *_tk_current_tcb( void );
+struct tcb_t_ *_tk_specific_tcb( thid_t id );
+void           _tk_main( void );
+//------1---------2---------3---------4---------5---------6---------7---------8
+
+
+/*- public data **/
+
+/*- private data **/
+extern int Tk_IntFlagCntr;
+
+
 
 
 
@@ -181,7 +194,17 @@ typedef struct stat_t{
  * @defgroup CVSLOG_implement_tk_h implement_tk_h
  * @ingroup CVSLOG
  *  $Log: implement_tk.h,v $
- *  Revision 1.8  2006-03-24 11:22:55  ambrmi09
+ *  Revision 1.9  2006-04-08 10:16:00  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.8.2.2  2006/04/03 20:07:26  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.8.2.1  2006/03/30 10:52:20  ambrmi09
+ *  First version of new threadstarter. It seems very promising. A *lot* of
+ *  awfull pain concerning different targets has the potential to go away.
+ *
+ *  Revision 1.8  2006/03/24 11:22:55  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

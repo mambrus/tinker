@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -168,7 +168,13 @@ int pthread_cond_timedwait (pthread_cond_t * __cond, pthread_mutex_t *mutex, con
  *  @defgroup CVSLOG_pthread_cond_c pthread_cond_c
  *  @ingroup CVSLOG
  *  $Log: pthread_cond.c,v $
- *  Revision 1.3  2006-03-24 18:23:43  ambrmi09
+ *  Revision 1.4  2006-04-08 10:16:01  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.3.2.1  2006/04/03 20:07:27  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.3  2006/03/24 18:23:43  ambrmi09
  *  Another turn of cosmetics
  *
  *  Revision 1.2  2006/03/24 17:40:19  ambrmi09

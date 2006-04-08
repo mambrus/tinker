@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -164,7 +164,13 @@ int mq_unlink(
  * @defgroup CVSLOG_mqueue_h mqueue_h
  * @ingroup CVSLOG
  *  $Log: mqueue.h,v $
- *  Revision 1.7  2006-03-17 12:20:02  ambrmi09
+ *  Revision 1.8  2006-04-08 10:15:57  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.7.2.1  2006/04/03 20:07:22  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.7  2006/03/17 12:20:02  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now

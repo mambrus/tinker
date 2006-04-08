@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -45,12 +45,28 @@ crash.
 
 @brief Defines the least amount of stack you can use
 
-
 Never go below this. In fact, don't even come close. Remeber ISR might put return 
 adresses at your threads stack whithout your explicit control.
 
+@note The idle thread uses this stacksize. Remebber that this thread will be the 
+most likely to be in use when interrupts happen. You don't want to make the size 
+too small.
+
 */
-#define MINIMUM_STACK_SIZE 0
+#define TK_MINIMUM_STACK_SIZE 0
+
+/*
+@ingroup kernel_internals
+
+@brief Defines a normal stack size
+
+Thread with this stack size should be able to handle printf
+
+@note What's normal or reasonable differs between architectures. 
+
+*/
+#define TK_NORMAL_STACK_SIZE 0
+
 
 /**
 @ingroup kernel_internals
@@ -124,6 +140,7 @@ finished.
 @ingroup kernel_internals
         
 @brief Prepares Top Of Stack
+@obsolete
 
 Use this macro to set up a initil stack content on a <B>newly</B> created
 threads stack so that the stack follows two requirements:<br><br>
@@ -359,7 +376,20 @@ cases might want to replace this with a NOP.
  * @defgroup CVSLOG_tk_hwsys_h tk_hwsys_h
  * @ingroup CVSLOG
  *  $Log: tk_hwsys.h,v $
- *  Revision 1.19  2006-03-19 12:44:36  ambrmi09
+ *  Revision 1.20  2006-04-08 10:15:58  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.19.2.2  2006/04/03 20:07:23  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.19.2.1  2006/03/31 17:42:56  ambrmi09
+ *  Second idea for the new thread starter. This one plays nice with several
+ *  more compilers beacuse of it's balances call-stack. It's not as
+ *  beautiful as the former one IMO, but GNU is a pain in the but
+ *  with it's call-stack optimizations (and decorations doesn't seem to work
+ *  for Cygwin GCC ).
+ *
+ *  Revision 1.19  2006/03/19 12:44:36  ambrmi09
  *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
  *  without one single warning (yay!). Be aware that ther was a lot of
  *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...

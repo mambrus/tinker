@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -224,7 +224,7 @@ typedef struct {
 
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-
+extern void _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
 #endif
 
 
@@ -234,7 +234,17 @@ typedef struct {
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwtypes_keilC166.h,v $
- *  Revision 1.6  2006-03-05 11:11:23  ambrmi09
+ *  Revision 1.7  2006-04-08 10:15:51  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.6.2.2  2006/04/03 20:07:21  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.6.2.1  2006/03/30 10:52:18  ambrmi09
+ *  First version of new threadstarter. It seems very promising. A *lot* of
+ *  awfull pain concerning different targets has the potential to go away.
+ *
+ *  Revision 1.6  2006/03/05 11:11:23  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.5  2006/02/22 13:05:45  ambrmi09

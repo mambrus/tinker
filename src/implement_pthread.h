@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -456,7 +456,13 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
  * @defgroup CVSLOG_implement_pthread_h implement_pthread_h
  * @ingroup CVSLOG
  *  $Log: implement_pthread.h,v $
- *  Revision 1.9  2006-03-24 11:22:55  ambrmi09
+ *  Revision 1.10  2006-04-08 10:15:59  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.9.2.1  2006/04/03 20:07:25  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.9  2006/03/24 11:22:55  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

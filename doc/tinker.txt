@@ -180,6 +180,11 @@ digraph components {
         http://msdn2.microsoft.com/en-us/library/fcatwy09(VS.80).aspx
         http://msdn2.microsoft.com/en-us/library/5ekezyy2(VS.80).aspx
 
+        <h3>libc porting issues</h3>
+		http://www.redhat.com/docs/manuals/gnupro/GNUPro-Toolkit-99r1/pdf/1_start.pdf (page 94)
+		http://www.redhat.com/docs/manuals/gnupro/
+
+
 
    */
 

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -307,10 +307,10 @@ issue, the solution and the quirks and considerations are described.
 void *timerdeamon(void *inpar ){
    unsigned long msg_buf[4];   
 
-   printk("Timer deamon started. Preemtive hi-res timer events now possible\n");
+   printk(("Timer deamon started. Preemtive hi-res timer events now possible\n"));
    while (1){
       q_receive(tk_sys_queues[Q_HW_TIMER_EVENT],WAIT,0,msg_buf);
-      printk("Timer deamon: %d\n",msg_buf[THWP_EVENT_ID]);
+      printk(("Timer deamon: %d\n",msg_buf[THWP_EVENT_ID]));
       /*
       THWP_EVENT_ID
       THWP_TIMER_ID                                      
@@ -332,7 +332,7 @@ void *timerdeamon(void *inpar ){
       case ET_CANCELLED: 
          break;
       default:
-         printk("tk_ptime: Error - we really need to polish the error handling...\n");
+         printk(("tk_ptime: Error - we really need to polish the error handling...\n"));
          tk_exit(TC_UNKNOWN);
       };
 
@@ -439,7 +439,34 @@ digraph ptime_main {
  * @defgroup CVSLOG_tk_ptime_c tk_ptime_c
  * @ingroup CVSLOG
  *  $Log: tk_ptime.c,v $
- *  Revision 1.11  2006-03-17 12:20:05  ambrmi09
+ *  Revision 1.12  2006-04-08 10:16:03  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.11.2.2  2006/04/03 20:07:30  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.11.2.1  2006/04/03 15:21:48  ambrmi09
+ *  All targets updated with the new thread-starter (alternative 2).
+ *
+ *  This alternative has one weakness (explained elsewhere togeather
+ *  with alternative 1), but so far it's the only one that will compile
+ *  and function equally among all 4 (very different) compilers currently
+ *  tested against: GCC, MSVC, BC5 and Keil.
+ *
+ *  If nothing else turns up, I'm willing to overcome the drawback (it's
+ *  quite handleable) because it *truly* takes away a lot of pain with
+ *  porting.
+ *
+ *  The ARM port (architecture level) is than's to this now fully operational
+ *  without the r13 hack in the context switch. This includes thread
+ *  cancellation and thread argument passing (which were not functioning in
+ *  the old port).
+ *
+ *  If this revised code proves itself (i.e. no surprises turns up) then
+ *  TinKer can be considered "almost ported" to any HW target that GCC is
+ *  ported for :D (/cheers)
+ *
+ *  Revision 1.11  2006/03/17 12:20:05  ambrmi09
  *  Major uppdate (5 days hard work)
  *
  *  - Finally tied up all loose ends in the concept. Threads are now

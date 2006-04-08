@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -86,7 +86,13 @@
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwtypes.h,v $
- *  Revision 1.9  2006-03-05 11:11:25  ambrmi09
+ *  Revision 1.10  2006-04-08 10:15:58  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.9.2.1  2006/04/03 20:07:24  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.9  2006/03/05 11:11:25  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.8  2006/03/04 19:32:34  ambrmi09

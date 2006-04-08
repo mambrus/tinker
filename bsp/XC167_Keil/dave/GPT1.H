@@ -18,7 +18,7 @@
 //****************************************************************************
 
 // USER CODE BEGIN (GPT1_Header,1)
-#include <kernel/src/tk_hwclock.h>
+#include <../src/tk_hwclock.h>
 
 /*
 Note TinKer has choosen (atm) to work with only one pcysical timer as it's CLK1. 

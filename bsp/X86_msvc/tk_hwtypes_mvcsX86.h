@@ -6,7 +6,7 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.2 $
+ *  Current $Revision: 1.3 $
  *
  *******************************************************************/
   
@@ -32,6 +32,7 @@ typedef struct{
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
+
 #endif
 
 
@@ -41,7 +42,14 @@ typedef struct{
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwtypes_mvcsX86.h,v $
- *  Revision 1.2  2006-02-28 11:50:06  ambrmi09
+ *  Revision 1.3  2006-04-08 10:15:50  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.2.2.1  2006/03/30 10:52:18  ambrmi09
+ *  First version of new threadstarter. It seems very promising. A *lot* of
+ *  awfull pain concerning different targets has the potential to go away.
+ *
+ *  Revision 1.2  2006/02/28 11:50:06  ambrmi09
  *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
  *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
  *  - Started experimenting with a indlude filename macro, that has the

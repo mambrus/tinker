@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -1048,7 +1048,13 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.16  2006-03-24 18:23:43  ambrmi09
+ *  Revision 1.17  2006-04-08 10:15:57  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.16.2.1  2006/04/03 20:07:22  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.16  2006/03/24 18:23:43  ambrmi09
  *  Another turn of cosmetics
  *
  *  Revision 1.15  2006/03/24 17:40:18  ambrmi09

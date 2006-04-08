@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -155,7 +155,13 @@ void           tk_mem_free    ( heapid_t, void* );
  * @defgroup CVSLOG_tk_mem_h tk_mem_h
  * @ingroup CVSLOG
  *  $Log: tk_mem.h,v $
- *  Revision 1.9  2006-03-05 11:11:26  ambrmi09
+ *  Revision 1.10  2006-04-08 10:15:58  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.9.2.1  2006/04/03 20:07:24  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.9  2006/03/05 11:11:26  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.8  2006/03/02 14:05:49  ambrmi09

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -377,7 +377,13 @@ both of these functions.
  * @defgroup CVSLOG_tk_mem_c tk_mem_c
  * @ingroup CVSLOG
  *  $Log: tk_mem.c,v $
- *  Revision 1.6  2006-03-05 11:11:28  ambrmi09
+ *  Revision 1.7  2006-04-08 10:16:03  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.6.2.1  2006/04/03 20:07:30  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.6  2006/03/05 11:11:28  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.5  2006/02/22 13:05:47  ambrmi09

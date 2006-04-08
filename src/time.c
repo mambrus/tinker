@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -271,10 +271,24 @@ int
    
    
   
-/*! 
- * @ingroup CVSLOG CVSLOG
+
+/*!
+ * @defgroup CVSLOG_time_c time_c
+ * @ingroup CVSLOG
  *  $Log: time.c,v $
- *  Revision 1.16  2006-03-12 15:08:55  ambrmi09
+ *  Revision 1.17  2006-04-08 10:16:02  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.16.2.2  2006/04/07 12:10:07  ambrmi09
+ *  Skeleton for handling syscalls using the ARM Angel interface in place
+ *
+ *  Basic terminal I/O for gnu_arm (LPC2129) - only output so far (input requires
+ *  blocking).
+ *
+ *  Revision 1.16.2.1  2006/04/03 20:07:28  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.16  2006/03/12 15:08:55  ambrmi09
  *  - Adjusted the source to accomodate the new file structure.
  *
  *  - All build environments uppdated and verified except BC5. For this one

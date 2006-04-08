@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -49,8 +49,11 @@
 #endif
 */
 
+#if (TK_HOWTO_ASSERT == TK_FNK_RENAMED)
+#undef assert
+#endif 
 
-#if   !defined (assert)
+#if   !defined (assert) 
 /*!
 The assert macro. 
 
@@ -65,7 +68,34 @@ The assert macro.
  * @defgroup CVSLOG_assert_h assert_h
  * @ingroup CVSLOG
  *  $Log: assert.h,v $
- *  Revision 1.9  2006-03-07 08:24:13  ambrmi09
+ *  Revision 1.10  2006-04-08 10:15:57  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.9.2.2  2006/04/03 20:07:22  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.9.2.1  2006/04/03 15:21:47  ambrmi09
+ *  All targets updated with the new thread-starter (alternative 2).
+ *
+ *  This alternative has one weakness (explained elsewhere togeather
+ *  with alternative 1), but so far it's the only one that will compile
+ *  and function equally among all 4 (very different) compilers currently
+ *  tested against: GCC, MSVC, BC5 and Keil.
+ *
+ *  If nothing else turns up, I'm willing to overcome the drawback (it's
+ *  quite handleable) because it *truly* takes away a lot of pain with
+ *  porting.
+ *
+ *  The ARM port (architecture level) is than's to this now fully operational
+ *  without the r13 hack in the context switch. This includes thread
+ *  cancellation and thread argument passing (which were not functioning in
+ *  the old port).
+ *
+ *  If this revised code proves itself (i.e. no surprises turns up) then
+ *  TinKer can be considered "almost ported" to any HW target that GCC is
+ *  ported for :D (/cheers)
+ *
+ *  Revision 1.9  2006/03/07 08:24:13  ambrmi09
  *  A very crude port for ARM is running (LPC2129) - @note THIS IS HIGHLY EXPERIMENTAL CODE
  *
  *  Revision 1.8  2006/03/05 11:11:24  ambrmi09

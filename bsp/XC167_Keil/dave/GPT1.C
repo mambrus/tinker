@@ -38,7 +38,7 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 
 // USER CODE BEGIN (GPT1_General,2)
 
-#include <kernel/include/assert.h>
+#include <assert.h>
 #include <../bsp/XC167_Keil/tk_hwtypes_keilC166.h> //Note: This is a shaky thingy. This header must not in turn include any Keil regs.h
 
 /*! 

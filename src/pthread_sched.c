@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -205,7 +205,7 @@ int pthread_once (
 @todo: Very stubbed. Make this more complient!
 */
 int pthread_cancel (pthread_t thread){
-   assert ( tk_delete_thread((thid_t)thread) == TK_OK );
+   assert ( tk_delete_thread(thread->Thid) == TK_OK );
    return 0;
 }
 
@@ -263,7 +263,17 @@ int pthread_getschedparam (
  *  @defgroup CVSLOG_pthread_sched_c pthread_sched_c
  *  @ingroup CVSLOG 
  *  $Log: pthread_sched.c,v $
- *  Revision 1.13  2006-03-24 18:23:44  ambrmi09
+ *  Revision 1.14  2006-04-08 10:16:01  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.13.2.2  2006/04/03 20:07:27  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.13.2.1  2006/03/30 10:52:20  ambrmi09
+ *  First version of new threadstarter. It seems very promising. A *lot* of
+ *  awfull pain concerning different targets has the potential to go away.
+ *
+ *  Revision 1.13  2006/03/24 18:23:44  ambrmi09
  *  Another turn of cosmetics
  *
  *  Revision 1.12  2006/03/24 11:22:56  ambrmi09

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -41,8 +41,25 @@ ITC
 #include <tk.h>
 
 /*- local definitions **/
+
+#ifdef __doxygen__
+#error This section should never be enabled for a normal build
+/*!
+@name ITC trimming constants
+
+@note
+Only information about these defines are here. The true defines are
+in each targets corresponding tk_tuning.h.
+
+@warning </b>Do not change these if using pre-built kernel as lib</b>
+*/
+//@{
 #define MAX_BLOCKED_ON_Q    TK_MAX_THREADS   /*!< Max num of proces blocked on queue or sem*/
 #define MAX_NUM_Q       	50  /*!< Max num of semaphores OR queues (i.e. primitives) in total*/
+//@}
+#endif
+
+
 
 /*!
 @brief Never timeout blocking. I.e. block \e "for-ever"
@@ -406,7 +423,34 @@ unsigned long sm_v_ny(
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.21  2006-03-19 22:57:54  ambrmi09
+ *  Revision 1.22  2006-04-08 10:15:58  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.21.2.2  2006/04/03 20:07:24  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.21.2.1  2006/04/03 15:21:47  ambrmi09
+ *  All targets updated with the new thread-starter (alternative 2).
+ *
+ *  This alternative has one weakness (explained elsewhere togeather
+ *  with alternative 1), but so far it's the only one that will compile
+ *  and function equally among all 4 (very different) compilers currently
+ *  tested against: GCC, MSVC, BC5 and Keil.
+ *
+ *  If nothing else turns up, I'm willing to overcome the drawback (it's
+ *  quite handleable) because it *truly* takes away a lot of pain with
+ *  porting.
+ *
+ *  The ARM port (architecture level) is than's to this now fully operational
+ *  without the r13 hack in the context switch. This includes thread
+ *  cancellation and thread argument passing (which were not functioning in
+ *  the old port).
+ *
+ *  If this revised code proves itself (i.e. no surprises turns up) then
+ *  TinKer can be considered "almost ported" to any HW target that GCC is
+ *  ported for :D (/cheers)
+ *
+ *  Revision 1.21  2006/03/19 22:57:54  ambrmi09
  *  First naive implementation of a pthread mutex
  *
  *  Revision 1.20  2006/03/19 12:44:36  ambrmi09

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -72,23 +72,6 @@ http://www.keil.com/support/man/docs/c166/c166_reentrant.htm
 
 #include <stddef.h>
 
-#define SAFEZONE        0x40
-/*!
-Defines where the userstack is within the mallocated area. The system
-stack will be on highest addresand the user stack will be below that.
-
-Read ratio as x:y or user_size/system_size
-*/
-#define USR_SYS_RATIO 2
-
-//Note that system stack has to fit even after usr_stack has been subtracted
-//With a rato of 2 this will give a stack size for sys_stack of 64
-
-#define minimum_system_stack_size  0xC0
-//#define MINIMUM_STACK_SIZE ((minimum_system_stack_size + 1)*USR_SYS_RATIO) + SAFEZONE)
-#define MINIMUM_STACK_SIZE 0x0600  //!< TBD this @todo TBD this
-
-
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
@@ -113,7 +96,7 @@ device must follow Keils predifined devices, which you can find as files in the 
 /*!
 How printk is implemented on this target
 */
-#define printk printf
+#define printk(x) printf x
 
 /*!
 How stack malloc operations are implemented
@@ -196,96 +179,53 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ pop  R1                      }                                                                      \
    __asm{ pop  R0                      }                                                                      \
    __asm{ pop  PSW                     }                                                                      \
-   
-#define PREP_TOS( _oldTOS, _newSP, _temp1, _temp2, _stack_struct )                                             \
-   PUSHALL();                           /*Push everything for later*/                                          \
-   _stack_struct.userstack.linear = _stack_struct.userstack.linear + _stack_struct.usr_stack_size;             \
-   /*Store the current SP for later*/                                                                          \
-   _temp1 ^= _temp1;\
-   __asm{ mov _temp1,SPSEG          }                                                                          \
-   _temp2 = _temp1 << 16;                                                                                      \
-   __asm{ mov _temp1,SP             }                                                                          \
-   _temp1 = _temp2 + _temp1;                                                                                   \
-                                                                                                               \
-   /*A patchy way to get input parameter in place*/                                                            \
-   _temp2 = (unsigned long)inpar;  /*Assume input par is larger then near* */                                  \
-   __asm{ mov R8,_temp2             }                                                                          \
-   _temp2 = _temp2 >> 16;                                                                                      \
-   __asm{ mov R9,_temp2             }                                                                          \
-                                                                                                               \
-                                                                                                               \
-   /*Cange the stack pointer to the intended one*/                                                             \
-   _temp2 = (unsigned long)_oldTOS >> 16;                                                                      \
-   __asm{ mov SP,_oldTOS            }   /*WILL BREAKE HERE IF MALLOC IS XHUGE BASED*/                          \
-   __asm{ mov SPSEG,_temp2          }                                                                          \
-                                                                                                               \
-                                                                                                               \
-   /*---> Compiler specific*/                                                                                  \
-   __asm{ mov R1,R0                 }    /* Temp save these.. */                                               \
-   __asm{ mov R2,DPP0               }                                                                          \
-   __asm{ mov R3,STKOV              }                                                                          \
-   __asm{ mov R4,STKUN              }                                                                          \
-                                                                                                               \
-   _temp2 = _stack_struct.userstack.u.offs24._offs;    /*Set up the user-stack pointer (DPP0:r0)*/             \
-   _temp2 = _temp2 - 4;                                /*Add some slack (alignement issue)*/                   \
-   __asm{ mov R0,_temp2             }                  /*I.e. the pointer for the threads local data*/         \
-   _temp2 = _stack_struct.userstack.u.seg24._seg;                                                              \
-   __asm{ mov DPP0,_temp2           }                                                                          \
-                                                                                                               \
-   _temp2 = _stack_struct.systemstack.reg._SP /*+ 0xA0*/;                                                      \
-   __asm{ mov STKOV,_temp2          }                                                                          \
-   _temp2 = _stack_struct.systemstack.reg._SP + _stack_struct.sys_stack_size;                                  \
-   __asm{ mov STKUN,_temp2          }                                                                          \
-                                                                                                               \
-                                                                                                               \
-   /*<--- Compiler specific*/                                                                                  \
-                                                                                                               \
-                                                                                                               \
-  PUSHALL();                          /*Push everything on the new stack, simulating a context state - MIGHT NEED OVERLOOCKING (R0 used for param pass)*/ \
-   __asm{ mov R0,R1                 } /*Restore temp saved...*/                                                \
-   __asm{ mov DPP0,R2               }                                                                          \
-   __asm{ mov STKOV,R3              }                                                                          \
-   __asm{ mov STKUN,R4              }                                                                          \
-                                                                                                               \
-                                                                                                               \
-   _newSP = 0ul;                      /*Important, or the next assembly "cast" will fail (not clearing 16 MSB */ \
-   __asm{ mov _newSP,SP             } /*The current SP is now the new _newSP, save it.      */                 \
-   _newSP = ((unsigned long)SPSEG<<16) + (unsigned long)_newSP;                    /*  This value will then be copied into the TCB    */                  \
-                                                                                                               \
-                                                                                                               \
-   /*Restore the old stack pointer and CPU conten so that we can continue, */                                  \
-   _temp2 = (unsigned long)_temp1 >> 16;                                                                       \
-   __asm{ mov SP,_temp1             }                                                                          \
-   __asm{ mov SPSEG,_temp2          }                                                                          \
-                                                                                                               \
-  POPALL();   
 
 
-//Push & pops of all regs and flags possibly not needed  
-   
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                                                   \
    PUSHALL()                                                                                                  \
-   __asm{ mov TSP1,SPSEG              }                                                                       \
-   TEMP = (unsigned long)TSP1 << 16;                                                                          \
-   __asm{ mov TSP1,SP                 }                                                                       \
-   TSP1 = TEMP + (unsigned long)TSP1;                                                                         \
+   TEMP = 0ul;                      /*Important, or the next assembly "cast" will fail (not clearing 16 MSB */ \
+   __asm{ mov TEMP,SP             } /*The current SP is now the new _newSP, save it.      */                  \
+   TSP1 = ((unsigned long)SPSEG<<16) + (unsigned long)TEMP; /*  This value will then be copied into the TCB    */ 
+
   
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )                                                                    \
    TEMP = (unsigned long)TSP1 >> 16;                                                                          \
    __asm{ mov SP,TSP1                 }                                                                       \
    __asm{ mov SPSEG,TEMP              }                                                                       \
    POPALL();                                                                                                  \
+   
+#define CHANGE_STACK( TSP1, TEMP )                                                                            \
+   TEMP = (unsigned long)TSP1 >> 16;                                                                          \
+   __asm{ mov SP,TSP1                 }                                                                       \
+   __asm{ mov SPSEG,TEMP              }
+   
+#define INIT_SP( _stack_SP, _stack_begin )                                                                  \
+   _stack_SP.usr_stack_size      = _stack_begin.usr_stack_size;                                             \
+   _stack_SP.userstack.linear    = _stack_begin.userstack.linear   + _stack_begin.usr_stack_size;           \
+   _stack_SP.sys_stack_size      = _stack_begin.sys_stack_size;                                             \
+   _stack_SP.systemstack.linear  = _stack_begin.systemstack.linear + _stack_begin.sys_stack_size;           \
 
-#define GET_THREADS_RETVAL( THRETVAL, TEMP  )                                                                 \
-   __asm{ mov THRETVAL, R4 }                                                                                  \
-   __asm{ mov TEMP, R5 }                                                                                      \
+#define BIND_STACK( _stack_struct, _temp2 )                                                                 \
+   _temp2 = _stack_struct.userstack.u.offs24._offs;    /*Set up the user-stack pointer (DPP0:r0)*/          \
+   _temp2 = _temp2 - 4;                                /*Add some slack (alignement issue)*/                \
+   __asm{ mov R0,_temp2             }                  /*I.e. the pointer for the threads local data*/      \
+   _temp2 = _stack_struct.userstack.u.seg24._seg;                                                           \
+   __asm{ mov DPP0,_temp2           }                                                                       \
+                                                                                                            \
+   _temp2 = _stack_struct.systemstack.reg._SP + 4 /*Note: had to add a few bytes (not good really)*/;       \
+   __asm{ mov STKOV,_temp2          }                                                                       \
+   _temp2 = _stack_struct.systemstack.reg._SP + _stack_struct.sys_stack_size;                               \
+   __asm{ mov STKUN,_temp2          }                                                                       \
+                                                                                                            \
+      
+#define GET_THREADS_RETVAL( THRETVAL, TEMP  )                                                               \
+   __asm{ mov THRETVAL, R4 }                                                                                \
+   __asm{ mov TEMP, R5 }                                                                                    \
    THRETVAL = (TEMP<<16) + THRETVAL;
 
-#define STACK_PTR( ADDR )                                                                                     \
+#define STACK_PTR( ADDR )                                                                                   \
    ((char *)ADDR.systemstack.linear)
-   
 
-//#include <tk_itc.h>  //< will create stupid errors
 
 extern unsigned long Q_ASC0;
 void _tk_initialize_system_ques( );
@@ -300,11 +240,11 @@ void _tk_initialize_system_ques( );
 #define TRY_CATCH_STACK_ERROR( STACK_T, TEMP )                                \
    __asm { mov TEMP, R0 }                                                     \
    if ( TEMP < STACK_T.userstack.u.offs24._offs + SAFEZONE ){                 \
-      printk("tk: Error - user stack trashed!\n");                            \
+      printk(("tk: Error - user stack trashed!\n"));                            \
       tk_exit(TC_ERR_STACK);                                                  \
    }                                                                          \
    if ( DPP0 < STACK_T.userstack.u.seg24._seg ){                              \
-      printk("tk: Error - user stack trashed!\n");                            \
+      printk(("tk: Error - user stack trashed!\n"));                            \
       tk_exit(TC_ERR_STACK);                                                  \
    }
    
@@ -317,18 +257,16 @@ void _do_trap (unsigned int num);
 
 #define OBSOLETE_TK_CLI()                                                     \
    __asm{ BCLR PSW_IEN }                                                      \
-   Tk_IntFlagCntr++;                                                          \   
+   Tk_IntFlagCntr++;                                                          \
 
 
-#define OBSOLETE_TK_STI()	                                                   \
+#define OBSOLETE_TK_STI()	                                                  \
    Tk_IntFlagCntr--;  /*Is ok since CLI is active no one can interfere*/      \
    if (Tk_IntFlagCntr == 0)                                                   \
       __asm{ BSET PSW_IEN }
 
 #define TK_CLI()                                                              \
    __asm{ BCLR PSW_IEN }                                                      
-
-
 
 #define TK_STI()	                                                          \
    __asm{ BSET PSW_IEN }
@@ -420,7 +358,45 @@ TBD
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwsys_keilC166.h,v $
- *  Revision 1.26  2006-03-24 11:22:53  ambrmi09
+ *  Revision 1.27  2006-04-08 10:15:51  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.26.2.4  2006/04/03 20:07:21  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.26.2.3  2006/04/03 15:21:45  ambrmi09
+ *  All targets updated with the new thread-starter (alternative 2).
+ *
+ *  This alternative has one weakness (explained elsewhere togeather
+ *  with alternative 1), but so far it's the only one that will compile
+ *  and function equally among all 4 (very different) compilers currently
+ *  tested against: GCC, MSVC, BC5 and Keil.
+ *
+ *  If nothing else turns up, I'm willing to overcome the drawback (it's
+ *  quite handleable) because it *truly* takes away a lot of pain with
+ *  porting.
+ *
+ *  The ARM port (architecture level) is than's to this now fully operational
+ *  without the r13 hack in the context switch. This includes thread
+ *  cancellation and thread argument passing (which were not functioning in
+ *  the old port).
+ *
+ *  If this revised code proves itself (i.e. no surprises turns up) then
+ *  TinKer can be considered "almost ported" to any HW target that GCC is
+ *  ported for :D (/cheers)
+ *
+ *  Revision 1.26.2.2  2006/03/31 17:42:55  ambrmi09
+ *  Second idea for the new thread starter. This one plays nice with several
+ *  more compilers beacuse of it's balances call-stack. It's not as
+ *  beautiful as the former one IMO, but GNU is a pain in the but
+ *  with it's call-stack optimizations (and decorations doesn't seem to work
+ *  for Cygwin GCC ).
+ *
+ *  Revision 1.26.2.1  2006/03/30 10:52:18  ambrmi09
+ *  First version of new threadstarter. It seems very promising. A *lot* of
+ *  awfull pain concerning different targets has the potential to go away.
+ *
+ *  Revision 1.26  2006/03/24 11:22:53  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

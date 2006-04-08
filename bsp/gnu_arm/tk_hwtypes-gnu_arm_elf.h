@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -49,7 +49,13 @@ typedef struct{
  * @ingroup CVSLOG
  *
  *  $Log: tk_hwtypes-gnu_arm_elf.h,v $
- *  Revision 1.2  2006-03-05 11:11:24  ambrmi09
+ *  Revision 1.3  2006-04-08 10:15:55  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.2.2.1  2006/04/03 20:07:22  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.2  2006/03/05 11:11:24  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.1  2006/03/04 19:31:01  ambrmi09

@@ -358,7 +358,7 @@ void ASC0_viRx(void) interrupt ASC0_RINT
   // USER CODE BEGIN (Rx,2)
    cbuff[0] = ASC0_uwGetData();
    q_send_ny(tk_sys_queues[Q_SERIAL_0_I],cbuff);         
-   tk_yield_event(); 
+   tk_yield_event();  
 
   // USER CODE END
 

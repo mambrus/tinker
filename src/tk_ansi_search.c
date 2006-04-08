@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -447,7 +447,13 @@ void *bsearch (
  * @defgroup CVSLOG_tk_search_c tk_search_c
  * @ingroup CVSLOG
  *  $Log: tk_ansi_search.c,v $
- *  Revision 1.8  2006-03-27 13:40:15  ambrmi09
+ *  Revision 1.9  2006-04-08 10:16:02  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.8.2.1  2006/04/03 20:07:29  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.8  2006/03/27 13:40:15  ambrmi09
  *  As part of the preparation for the first release, code has been cleaned up a little
  *  and project has been checked that it will build on all it's intended targets.
  *

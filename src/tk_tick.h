@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -226,7 +226,13 @@ void getnanouptime (
  * @ingroup CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.21  2006-03-05 11:11:28  ambrmi09
+ *  Revision 1.22  2006-04-08 10:16:04  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.21.2.1  2006/04/03 20:07:31  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.21  2006/03/05 11:11:28  ambrmi09
  *  License added (GPL).
  *
  *  Revision 1.20  2006/02/28 18:16:55  ambrmi09

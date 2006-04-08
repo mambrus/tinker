@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -333,7 +333,7 @@ Wrapper macro until \ref PTIMER is ready
 #endif //!defined (__GNUC__)
 
 
-#if !defined(__C166__)
+#if !defined(__C166__)  
 #undef clock
 #undef time
 #endif
@@ -345,7 +345,34 @@ Wrapper macro until \ref PTIMER is ready
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.25  2006-03-27 13:40:15  ambrmi09
+ *  Revision 1.26  2006-04-08 10:15:58  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.25.2.2  2006/04/03 20:07:23  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.25.2.1  2006/04/03 15:21:47  ambrmi09
+ *  All targets updated with the new thread-starter (alternative 2).
+ *
+ *  This alternative has one weakness (explained elsewhere togeather
+ *  with alternative 1), but so far it's the only one that will compile
+ *  and function equally among all 4 (very different) compilers currently
+ *  tested against: GCC, MSVC, BC5 and Keil.
+ *
+ *  If nothing else turns up, I'm willing to overcome the drawback (it's
+ *  quite handleable) because it *truly* takes away a lot of pain with
+ *  porting.
+ *
+ *  The ARM port (architecture level) is than's to this now fully operational
+ *  without the r13 hack in the context switch. This includes thread
+ *  cancellation and thread argument passing (which were not functioning in
+ *  the old port).
+ *
+ *  If this revised code proves itself (i.e. no surprises turns up) then
+ *  TinKer can be considered "almost ported" to any HW target that GCC is
+ *  ported for :D (/cheers)
+ *
+ *  Revision 1.25  2006/03/27 13:40:15  ambrmi09
  *  As part of the preparation for the first release, code has been cleaned up a little
  *  and project has been checked that it will build on all it's intended targets.
  *

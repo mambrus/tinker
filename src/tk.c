@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  * 
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,9 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
   
-/*!
-@file
-@ingroup SCHED
+/*! 
+@file 
+@ingroup SCHED    
 
 @brief Tinker inner-most \e"guts"
 
@@ -42,15 +42,13 @@ SCHED
 
 #include <tk.h>
 #include <tk_hwsys.h>
+#include <tk_tuning.h>	 //?
 #include <../src/implement_tk.h>
 
 #ifndef printk
 #   error Tinker needs a prink to be implemented for this target
 #endif
 
-//#if !(CLK_TCK == CLOCKS_PER_SEC)
-//#error CLK_TCK == CLOCKS_PER_SEC. Target not following POSIX standard
-//#endif
 
 /*!
 @name \COMPONENTS headerfiles
@@ -58,7 +56,7 @@ SCHED
 Included conditionally to avoid complication if work is in progress in
 any of them.   errno.h
 
-@see COMPONENTS
+@see COMPONENTS 
 */
 //@{
 #if defined(TK_COMP_KMEM) && TK_COMP_KMEM
@@ -107,46 +105,34 @@ any of them.   errno.h
 
 
 
-
-/*- local definitions **/
-/*
-#if defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
-   #define tk_clock()  (clock() * 10)
+#if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
+#  define tk_clock()  clock_stubbed()   
 #else
-   #define tk_clock()  clock()
+#  define tk_clock()  clock()   
 #endif
-*/
-#define tk_clock()  clock()
-
-/* default settings */
-
-/*- external functions **/
-//Temporary - is not portable
-extern void _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
-
-/*- external data **/
 
 /*- internal functions **/
-void *_tk_destructor( void *foo );
+void *_tk_destructor( void *retval );
 void *_tk_idle( void *foo );
 void  _tk_detach_children(thid_t thid);
 int   _tk_try_detach_parent( thid_t, int);
+
+void _tk_context_switch_to_thread(                             thid_t,thid_t);   
+void _tk_half_switch             (                             thid_t,thid_t);   
+void _tk_constructor             (start_func_f, void*, thid_t               );   
+void _tk_construct_thread_scope  (start_func_f, void*, thid_t               );   
+
 
 /*- public data **/
 
  /*- private data **/
 
-int Tk_IntFlagCntr;
+int Tk_IntFlagCntr;  /*!< Consider making this obsolete. Counting CLI/STI is dangerours anyway*/
 
 /*- public functions **/
 
 /*- private functions **/
 
-
-#define DEBUG
-#ifdef DEBUG
-#define static
-#endif
 
 /*!
 @brief The main storage of all TCB
@@ -162,8 +148,12 @@ is costly (I think)...
 
 coord_t lookUpTable[TK_MAX_THREADS];
 
+@todo Make this static (non available directly by others. Fore useing API 
+(additional needed to be implemented). Important for preemtable mode that 
+components use acces functions instead (locking issue).
+
 */
-struct tcb_t_ proc_stat[TK_MAX_THREADS];  
+       struct tcb_t_ proc_stat[TK_MAX_THREADS];  
 
 
 /*!
@@ -177,9 +167,26 @@ Matrix layout
 - First index (X) is the priority
 - Second index (Y) is a list of treads at that priority (in various states, i.e. both "running", "blocked" and whatnot). 
 
+
+@todo Make this static (non available directly by others. Fore useing API 
+(additional needed to be implemented). Important for preemtable mode that 
+components use acces functions instead (locking issue).
+
 */
-static thid_t theSchedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
-static struct stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
+       thid_t theSchedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
+       
+/*!
+A index to the schedule. Contains information about how many threads are in 
+the schedule at each lvl and which index is currently executing (important 
+for load balancing and RR)
+
+@todo Make this static (non available directly by others. Fore useing API 
+(additional needed to be implemented). Important for preemtable mode that 
+components use acces functions instead (locking issue).
+
+*/       
+       struct stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
+
 
 static thid_t active_thread;        //!< Deliberatlly left uninitialized to support post mortem analysis
 static thid_t thread_to_run   = 0;
@@ -264,8 +271,8 @@ void tk_create_kernel( void ){
    /* PLEEEEEEEEEEASE REMEBER TO UNCOMMENT THIS LATER!
    testArea = malloc(TSTSZ);
    if (strncmp(testPatt,testArea,TSTSZ) == 0){   
-      printk("Error: Kernel running amok detected\n");
-      printk("Broken thread was ID=%d (name=\"%s\")\n",\
+      printk(("Error: Kernel running amok detected\n"));
+      printk(("Broken thread was ID=%d (name=\"%s\"))\n",\
          active_thread,proc_stat[active_thread].name);
       memset (testArea, '\0', TSTSZ);     //Clear area then wait for reset
       tk_exit(TC_AMOK);
@@ -316,7 +323,7 @@ void tk_create_kernel( void ){
    }
    //Create a Idle thread, whoes sole purpose is to burn up time
    //when nobody else is running
-   idle_Thid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,(void*)NULL,0x0600/*MINIMUM_STACK_SIZE*/);
+   idle_Thid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,(void*)NULL,TK_MINIMUM_STACK_SIZE);
    //IdleProc must like root, i.e. bee owned by itself
    proc_stat[proc_stat[idle_Thid].Gid].noChilds--;
    //Awkward way to say that root has created one process less than it has
@@ -332,8 +339,6 @@ void tk_create_kernel( void ){
    theScedule[TK_MAX_PRIO_LEVELS - 1][0]=idle_Thid;
    */ /* NOT NEEDED, DONE ALREADY */
 }
-unsigned long des_retval;   
-unsigned long des_temp;
 
 /*!
 
@@ -363,29 +368,17 @@ This seemingly complicated process of dieing has it's reasons:
      
 In either case, this is more complicated. But also much more robust.
         
-
-@todo We need to figure out another way to do prepare TOS. Getting all this 
-right for each target is a real pain in the a**.
-
 */
 
-#if defined(_WIN32) &&  defined(_MSC_VER)
-__declspec(naked) void   * _tk_destructor( void *foo ){
-#else
-void *_tk_destructor( void *foo ){
-#endif
-   GET_THREADS_RETVAL( des_retval, des_temp );
-   
-   TK_NO_WARN_ARG(foo); 
-   
-   
+void *_tk_destructor( void *retval ){
+
    #ifdef DEBUG
-   //printk("Dieing thread [id=%d] is returning! Return value is: 0x%lX\n\n",active_thread,des_retval);  
+   //printk(("Dieing thread [id=%d] is returning! Return value is: 0x%lX\n\n",active_thread,retval));  
    #endif
    
    
    proc_stat[active_thread].state  = ZOMBI;
-   proc_stat[active_thread].retval = (void*)des_retval;
+   proc_stat[active_thread].retval = (void*)retval;
    _tk_detach_children(active_thread); 
    
    /*Finalize the destruction*/
@@ -395,7 +388,7 @@ void *_tk_destructor( void *foo ){
    while (TRUE){
       tk_msleep(1000);
       #ifdef DEBUG
-      printk("Dead thread [id=%d] still waiting for Nirvana! \n",active_thread);
+      printk(("Dead thread [id=%d] still waiting for Nirvana! \n",active_thread));
       #endif
    }
    //return(0);
@@ -438,7 +431,7 @@ int tk_delete_thread(
          proc_stat[theSchedule[Prio][i]].Idx = i;
       }
       //#if DEBUG
-      // not needed, could cause problems if procs last..
+      // not needed, could cause problems if procs last.. 
       //theSchedule[Prio][i] = 0;
       //#endif
       //Take away the process fom scheduleIdxs
@@ -467,20 +460,6 @@ int tk_detach(
    return 0;
 }
 
-
-/*
-Storage variable - to be used in macros manipulating stacks. These can't be on 
-the local stack since we are manipulateing that.
-*/
-
-static char *ct_oldTOS;    //!< will contain old top of stack adress
-static char *ct_newSP;     //!< new stack-pointer. Is a return value storage from macro
-//static char *ct_temp1;     //!< fony temporary stackpointer used in the process of setting TOS
-static unsigned long ct_temp1;  //!< fony temporary stackpointer used in the process of setting TOS
-static unsigned long ct_temp2;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
-static unsigned int ct_temp3;   //!< Extra storage. 
-static stack_t ct_stack_struct; //!< Will be changed in macro. Never use outside of it (don't trust it)
-
 /*!
 @ingroup kernel
 
@@ -504,9 +483,6 @@ thid_t tk_create_thread(
 ){
    //where in theScheduler to put thread id
    thid_t   slot_idx = scheduleIdxs[prio].procs_at_prio;
-   start_func_f  *f_p;
-   void          *v_p;
-   size_t         real_stack_size;
    unsigned int   error = 0;
    #ifdef DEBUG
    unsigned int   i;
@@ -515,17 +491,17 @@ thid_t tk_create_thread(
    //Error handling needs improvment (don't forget taking special care of
    //proc_idx)
    if (procs_in_use >= TK_MAX_THREADS){
-      printk("tk: Error - Total amount of threads would exceed limit\n");
+      printk(("tk: Error - Total amount of threads would exceed limit\n"));
       error |= TC_MAX_THREADS;   
    }
    //Check if chosen prio is within limits
    if (prio >= TK_MAX_PRIO_LEVELS){
-      printk("tk: Error - Chosen priority too high\n");
+      printk(("tk: Error - Chosen priority too high\n"));
       error |= TC_MAX_PRIO_LEVELS;   
    }
    //Check if there will be enough room at that prio
    if (TK_MAX_THREADS_AT_PRIO <= ( scheduleIdxs[prio].procs_at_prio ) ){
-      printk("tk: Error - To many threads at this prio\n");
+      printk(("tk: Error - To many threads at this prio\n"));
       error |= TC_THREADS_AT_PRIO;   
    }
    if (error){
@@ -544,7 +520,7 @@ thid_t tk_create_thread(
       if (strlen(name)<TK_THREAD_NAME_LEN)
          strncpy(proc_stat[proc_idx].name,name,TK_THREAD_NAME_LEN);
       else{
-         printk("tk: Error - Thread-name to long\n");
+         printk(("tk: Error - Thread-name to long\n"));
          tk_exit(TC_NAME_LEN);
       }
    #endif
@@ -552,7 +528,7 @@ thid_t tk_create_thread(
    
    //Try to allocate memory for stack
    if (( STACK_PTR(proc_stat[proc_idx].stack_begin) = (char *) stalloc(stack_size)) == NULL){
-       printk("tk: Error - Can't create process (can't allocate memory for stack)\n");
+       printk(("tk: Error - Can't create process (can't allocate memory for stack)\n"));
        tk_exit(TC_NOMEM);  // terminate program if out of memory
    }
 
@@ -586,41 +562,9 @@ thid_t tk_create_thread(
    for (i=0;i<stack_size;i++)
       STACK_PTR(proc_stat[proc_idx].stack_begin)[i] = (unsigned char)proc_idx;
    #endif
-   //Here's the secret.
-   //preparing the stack  
-   //=============================
-   //#0x4=inpar (fony pushed param)    //The stack looks like calling schedule
-   //return adress to "_tk_destructor"     //from function _tk_destructor
-   //#4=return adress (which is also calling adress of function thread)
-   //#4=EBP
-   //#0x4=pushf
-   //#0x20=pusha 
+
+   _tk_construct_thread_scope( f, inpar, proc_idx );
    
-   real_stack_size = REAL_STACK_SIZE(proc_stat[proc_idx].stack_begin);
-
-   v_p = (void *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0x4];
-   *(unsigned int*)v_p = (unsigned int)inpar;
-
-   f_p = (start_func_f *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0x8];
-   *f_p = _tk_destructor;
-
-   f_p = (start_func_f *)&STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0xC];
-   *f_p = f;
-
-   ct_oldTOS = &STACK_PTR(proc_stat[proc_idx].stack_begin)[real_stack_size - 0xC];
-   ct_stack_struct = proc_stat[proc_idx].stack_begin;
-
-   //MARKALL();
-   
-   PREP_TOS( ct_oldTOS, ct_newSP, ct_temp1, ct_temp2, ct_stack_struct );
-    //#pragma src
-    //#pragma asm                                                                                                 
-   //   MOV R1,R5                                                                                                
-    //#pragma endasm  
-
-   //Assign the stackpointer to top of stack
-   //proc_stat[proc_idx].sp = &proc_stat[proc_idx].stack[stack_size - 0x34];
-   STACK_PTR(proc_stat[proc_idx].curr_sp) = ct_newSP;
    //Put process in scedule - assume tight tight schedule
    theSchedule[prio][slot_idx] = proc_idx;
    //Increase the amount of procs at same prio
@@ -742,7 +686,7 @@ void tk_msleep( unsigned int time_ms ){
    clock_t act_time_us; 
    clock_t wkp_time_us;
    unsigned long in_us;
-   unsigned long clk_sek = CLK_TCK; 
+   //unsigned long clk_sek = CLK_TCK; 
    //unsigned long clk_sek = CLOCKS_PER_SEC;
    
    in_us = time_ms * 1000uL;   
@@ -773,18 +717,18 @@ int tk_change_prio(thid_t tid, int newPrio){
    int i;
    
    if ( proc_stat[tid].valid != TRUE){
-      printk("tk: Error - Invalid TCB detected\n");
+      printk(("tk: Error - Invalid TCB detected\n"));
       error |= TC_TCB_INVALID;   
    }       
    
    //Check if chosen prio is within limits
    if (newPrio >= TK_MAX_PRIO_LEVELS){
-      printk("tk: Error - Chosen priority too high\n");
+      printk(("tk: Error - Chosen priority too high\n"));
       error |= TC_MAX_PRIO_LEVELS;   
    }
    //Check if there will be enough room at that prio
    if (TK_MAX_THREADS_AT_PRIO <= ( scheduleIdxs[newPrio].procs_at_prio ) ){
-      printk("tk: Error - To many threads at this prio\n");
+      printk(("tk: Error - To many threads at this prio\n"));
       error |= TC_THREADS_AT_PRIO;   
    }
    if (error){
@@ -1095,30 +1039,159 @@ TRY_CATCH_STACK_ERROR)
 
 @see TRY_CATCH_STACK_ERROR
 
+
+@warning <b>Has static variables (very much non-reentrant and thread un-safe)</b>
+
 */
-static char *cswTSP;          //!< fony temporary stackpointer used in the process of setting TOS
-static unsigned int cswTEMP;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
-static unsigned int cswTEMP2; //!< Extra storage.
 
 void _tk_context_switch_to_thread(
-   thid_t RID,                //!< Thread ID to switch to
-   thid_t SID                 /*!< Thread ID to switch from. I.e. 
-                                         current thread ID to put away in TCB*/
+   thid_t         RID,        //!< Thread ID to switch to
+   thid_t         SID         /*!< Thread ID to switch from. I.e. 
+                                   current thread ID to put away in TCB*/
 ){
+   static char *cswTSP;          //!< fony temporary stackpointer used in the process of setting TOS
+   static unsigned int cswTEMP;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
+   static unsigned int cswTEMP2; //!< Extra storage.
+
+   TK_NO_WARN_ARG(cswTEMP);
+   TK_NO_WARN_ARG(cswTEMP2);
+
    //TRY_CATCH_STACK_ERROR( proc_stat[SID].stack_begin, cswTEMP2 );
    //INTEGRITY_CERTIFY_STACK( proc_stat[SID], cswTEMP2 ); //Certify the stack we're leaving from
-
    
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );
 
    STACK_PTR( proc_stat[SID].curr_sp ) = cswTSP;
    
-   cswTSP = STACK_PTR( proc_stat[RID].curr_sp );
-   active_thread=RID;
+   cswTSP = STACK_PTR( proc_stat[RID].curr_sp ); 
 
+   active_thread=RID;
    CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );
    //TRY_CATCH_STACK_INTEGRITY_VIOLATION( proc_stat[active_thread], cswTEMP2 ); //Check integrity is OK before running 
 }
+
+void _tk_half_switch (
+   thid_t         RID,        //!< Thread ID to switch to
+   thid_t         SID         /*!< Thread ID to switch from. I.e. 
+                                   current thread ID to put away in TCB*/
+){
+   static char *cswTSP;          //!< fony temporary stackpointer used in the process of setting TOS
+   static unsigned int cswTEMP;  //!< Extra storage. For some targets used to manipulate segment part of stackpointers
+   static unsigned int cswTEMP2; //!< Extra storage.
+
+   TK_NO_WARN_ARG(cswTEMP);
+   TK_NO_WARN_ARG(cswTEMP2);
+
+
+   //TRY_CATCH_STACK_ERROR( proc_stat[SID].stack_begin, cswTEMP2 );
+   //INTEGRITY_CERTIFY_STACK( proc_stat[SID], cswTEMP2 ); //Certify the stack we're leaving from
+   
+   PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );
+
+   STACK_PTR( proc_stat[SID].curr_sp ) = cswTSP;
+   
+   cswTSP = STACK_PTR( proc_stat[SID].curr_sp );
+
+   active_thread=RID;
+   CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );
+   //TRY_CATCH_STACK_INTEGRITY_VIOLATION( proc_stat[active_thread], cswTEMP2 ); //Check integrity is OK before running 
+}
+
+
+/*!
+@brief Runs \b before threads entry function, but \b in the threads scope
+
+*/   
+
+void _tk_constructor(
+   start_func_f   f,        //!< Start function, i.e. the treads entry point.
+   void          *inpar,    //!< Any variable or value to start of with
+   thid_t         id        //!< The ID (needed to relate to the correct TCB)
+){
+   void *retval;   
+
+   //When we reach here, the "scope" is actally in place, 
+   //but we don't want to run the tread yet.
+   //Instead we start by "context" switching back to the
+   //thread that created us.
+   
+   //_tk_context_switch_to_thread(active_thread, id); //Note both arguments *seems* wrong (but they are correct).
+   //When the above function returns - it will return to the caller *and not to us* (important)
+
+   tk_yield();
+   
+   //Reaching the next line means we're been contended back here by the dispatcher. 
+   //The thread is now operating in its proper scope.
+   retval = f(inpar);
+   
+   //The thread has given up life - call it's destructor to release it's resources (i.e. begin cancelation)
+   _tk_destructor(retval);
+   
+}
+
+/*!
+@warning <b>Has static variables (very much non-reentrant and thread un-safe)</b>
+
+*/   
+void _tk_construct_thread_scope(
+   start_func_f   f,        //!< Start function, i.e. the treads entry point.
+   void          *inpar,    //!< Any variable or value to start of with
+   thid_t         id        //!< The ID (needed to relate to the correct TCB)
+){
+   //We're going to operate on a different stack, so we need 
+   //to store away the arguments somewhere guaranteed not to 
+   //be on any stack (needed so that we can reach their contents).
+   static  start_func_f   t_f;
+   static  void          *t_inpar;
+   static  thid_t         t_id;     
+   
+   //Some other code segmented temp variables needed by the macros
+   static char *aSP;          
+   static unsigned int TEMP;  
+   static stack_t SPS; 
+
+   TK_NO_WARN_ARG(TEMP);
+
+   t_f       = f;
+   t_inpar   = inpar;
+   t_id      = id;     
+   
+   //Set initial value of the SP in TCB (does not affect register SP)
+   INIT_SP(
+      proc_stat[t_id].curr_sp, 
+      proc_stat[t_id].stack_begin
+   );
+
+   //The following variable is used by the BIND_STACK macro.
+   //Some targets use intirect adressing using the same registers we're 
+   //manipulating and cant access complex structures without them. Therfoe
+   //keep the following  access simple by using a copy stored in the code seg.
+   //(Note: stack_t is a form of pointer that is used to refer to the physical stack)
+   SPS = proc_stat[t_id].curr_sp;     
+      
+   PUSHALL();              // <--       // Make sure CPU context is ok
+   _tk_half_switch(t_id, active_thread);
+   
+   if (active_thread != t_id){      
+      POPALL();            // <--      // ...since we're comming back via 
+      return;                          // another function (might not be using
+                                       // exactlly the same regs, base-
+                                       // pointers e.t.a.      
+   }
+   
+   //Do the acual stack change (CPU register level)
+   aSP = STACK_PTR( proc_stat[t_id].curr_sp );
+   CHANGE_STACK( aSP, TEMP );
+      
+   //Some targets need a certain binding of the stack until we can use a single
+   //value to access the whole stack (single value = the key to the whole = i.e.
+   //the curren SP register value).   
+   BIND_STACK( SPS, TEMP );
+   
+   _tk_constructor(t_f, t_inpar, t_id);
+
+}
+
 
 /*!
 Dispatch or yield to another thread that has more "right" to run.
@@ -1158,7 +1231,7 @@ void tk_yield( void ){
    TK_CLI();   
    PUSHALL();   
    TK_STI();
-   
+
    _tk_wakeup_timedout_threads();
    
    TK_CLI();
@@ -1166,7 +1239,9 @@ void tk_yield( void ){
    //Do not premit interrupts between the following two. Proc statuses 
    //(i.e. thread statuses) frozen in time.
    thread_to_run = _tk_next_runable_thread();
-   _tk_context_switch_to_thread(thread_to_run,active_thread);   
+   _tk_context_switch_to_thread(
+      thread_to_run,active_thread
+   );   
    
    POPALL();
    TK_STI();
@@ -1187,7 +1262,9 @@ void tk_yield_event( void ){
    TK_CLI();
    PUSHALL();
    thread_to_run = _tk_next_runable_thread();
-   _tk_context_switch_to_thread(thread_to_run,active_thread);   
+   _tk_context_switch_to_thread(
+      thread_to_run,active_thread
+   );   
    POPALL();
    TK_STI();
 }
@@ -1204,9 +1281,9 @@ entr point (critical = execution is deemed to stop).
 */
 void tk_exit( int ec ) {
    if (ec==0)
-      printk("tk: Program terminated normally");
+      printk(("tk: Program terminated normally"));
    else
-      printk("tk: Warning - Program terminated with errorcode [%d]",ec);
+      printk(("tk: Warning - Program terminated with errorcode [%d]",ec));
    while (1) {
       TRAP(ec);
    }
@@ -1220,37 +1297,15 @@ explicitlly. Typically the assert macro will be defined to call this function
 on targets that do not have assert implemented by TinKer.
 
 */
-void _tk_assertfail(
+void _tk_assertfail(  
    char *assertstr, 
    char *filestr, 
    int line
 ) {
-   printk("tk: Error - Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line);
+   printk(("tk: Error - Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line));
    tk_exit( TC_ERR_ASSERT );
 }
-/*
-   testcall(regval);
-0x00001c74 <_tk_main+16>:  ldr   r3, [r11, #-20]
-0x00001c78 <_tk_main+20>:  mov   r0, r3
-0x00001c7c <_tk_main+24>:  bl    0x1c44 <testcall>
-   GET_SP(regval);
-*/  
-void *testcall(void *inpar ){
-   return inpar;
-}
-/*
-void *testcall(void *inpar ){
-0x00001c44 <testcall>:    mov   r12, sp
-0x00001c48 <testcall+4>:  stmdb sp!, {r11, r12, lr, pc}
-0x00001c4c <testcall+8>:  sub   r11, r12, #4 ; 0x4
-0x00001c50 <testcall+12>: sub   sp, sp, #4   ; 0x4
-0x00001c54 <testcall+16>: str   r0, [r11, #-16]
-   return inpar;
-0x00001c58 <testcall+20>: ldr   r3, [r11, #-16]
-}
-0x00001c5c <testcall+24>: mov   r0, r3
-0x00001c60 <testcall+28>: ldmia sp, {r3, r11, sp, pc}
-*/
+
 
 /*!
 @ingroup kernel_glue
@@ -1265,24 +1320,16 @@ things at least:
 
 */
 void _tk_main( void ){
-/*Learning about ARM 
-   unsigned int      regval; 
-   char *cptr;
-
-   testcall(regval);
-   GET_SP(regval);
-   GET_LR(regval);
-   GET_PC(regval);
-
-   
-  Learning about ARM */
-
+   tk_bsp_sysinit();
+//   printk(("BSP initialized\n"));
    tk_create_kernel();
-   printk("ANSI timing constants:\n");
+//   printk((stderr,"TinKer kernel created\n"));
+   
+   printk(("ANSI timing constants:\n"));
    #if  defined( __C166__ )
-       printk("CLK_TCK=[%ld], CLOCKS_PER_SEC=[%ld]\n",CLK_TCK, CLOCKS_PER_SEC);
+       printk(("CLK_TCK=[%ld], CLOCKS_PER_SEC=[%ld]\n",CLK_TCK, CLOCKS_PER_SEC));
    #else
-       printk("CLK_TCK=[%d], CLOCKS_PER_SEC=[%d]\n",CLK_TCK, CLOCKS_PER_SEC);
+       printk(("CLK_TCK=[%d], CLOCKS_PER_SEC=[%d]\n",CLK_TCK, CLOCKS_PER_SEC));
    #endif
    #if defined(TK_COMP_KMEM) && TK_COMP_KMEM
       assert( tk_mem() == ERR_OK );
@@ -1290,7 +1337,7 @@ void _tk_main( void ){
    
    #if defined(TK_COMP_ITC) && TK_COMP_ITC
       assert( tk_itc() == ERR_OK );
-      assert(_tk_create_system_queues( ) == 0);
+/*TBD*/      assert(_tk_create_system_queues( ) == 0);
       #if defined(TK_COMP_PTIMER) && TK_COMP_PTIMER
          assert( tk_ptime() == ERR_OK );
       #endif
@@ -1337,31 +1384,6 @@ int main(int argc, char **argv){
 }
 #endif
 
-//#define TK_STUBS
-#ifdef TK_STUBS
-long int stub_mickey = 0;
-/*!
- When involved with porting, the \ref clock function is most often on implemented, wrong or just stubbed. 
-  
- Since \ref clock is a esential part of the \ref SCHED internals, you need to have a stub that will do something  meantingful, so at least the dispaching will work.
-
- */
-clock_t sclock(){   
-   stub_mickey++;
-    //stub_mickey=0;
-   return (clock_t)stub_mickey;
-}
-#endif //TK_STUBS
-
-/*
-void Test_scheduler( void ){
-   while (TRUE){
-      _tk_context_switch_to_thread(T1,ROOT);
-      _tk_context_switch_to_thread(T2,ROOT);
-      _tk_context_switch_to_thread(T3,ROOT);
-   }
-}
-*/
 
 /** @defgroup SCHED SCHED: TinKer scheduler
 @ingroup COMPONENTS
@@ -1380,7 +1402,62 @@ void Test_scheduler( void ){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.57  2006-03-24 11:22:56  ambrmi09
+ *  Revision 1.58  2006-04-08 10:16:02  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.57.2.7  2006/04/07 12:10:07  ambrmi09
+ *  Skeleton for handling syscalls using the ARM Angel interface in place
+ *
+ *  Basic terminal I/O for gnu_arm (LPC2129) - only output so far (input requires
+ *  blocking).
+ *
+ *  Revision 1.57.2.6  2006/04/06 09:01:56  ambrmi09
+ *  Safety commit due to change of local sandbox FS type (had files checked out
+ *  while changing the type - not to be recommended).
+ *
+ *  Revision 1.57.2.5  2006/04/03 20:07:28  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.57.2.4  2006/04/03 15:21:47  ambrmi09
+ *  All targets updated with the new thread-starter (alternative 2).
+ *
+ *  This alternative has one weakness (explained elsewhere togeather
+ *  with alternative 1), but so far it's the only one that will compile
+ *  and function equally among all 4 (very different) compilers currently
+ *  tested against: GCC, MSVC, BC5 and Keil.
+ *
+ *  If nothing else turns up, I'm willing to overcome the drawback (it's
+ *  quite handleable) because it *truly* takes away a lot of pain with
+ *  porting.
+ *
+ *  The ARM port (architecture level) is than's to this now fully operational
+ *  without the r13 hack in the context switch. This includes thread
+ *  cancellation and thread argument passing (which were not functioning in
+ *  the old port).
+ *
+ *  If this revised code proves itself (i.e. no surprises turns up) then
+ *  TinKer can be considered "almost ported" to any HW target that GCC is
+ *  ported for :D (/cheers)
+ *
+ *  Revision 1.57.2.3  2006/03/31 17:42:56  ambrmi09
+ *  Second idea for the new thread starter. This one plays nice with several
+ *  more compilers beacuse of it's balances call-stack. It's not as
+ *  beautiful as the former one IMO, but GNU is a pain in the but
+ *  with it's call-stack optimizations (and decorations doesn't seem to work
+ *  for Cygwin GCC ).
+ *
+ *  Revision 1.57.2.2  2006/03/30 15:39:28  ambrmi09
+ *  Tres amigos (the magic function) needs to have equally balanced stack-usages.
+ *
+ *  This is among others, the same number and types of variables.
+ *
+ *  Be aware that optimization might play us a trick here in future.
+ *
+ *  Revision 1.57.2.1  2006/03/30 10:52:20  ambrmi09
+ *  First version of new threadstarter. It seems very promising. A *lot* of
+ *  awfull pain concerning different targets has the potential to go away.
+ *
+ *  Revision 1.57  2006/03/24 11:22:56  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

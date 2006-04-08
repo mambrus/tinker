@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -20,7 +20,7 @@
    
 /*!
 @file
-@ingroup SCHED
+@ingroup SCHED 
 
 @brief Tinker inner-most \e"guts"
 
@@ -45,6 +45,7 @@ you use printf in thread else 64bytes is probably sufficient.
 #include <stddef.h>
 #include <time.h>
 #include <tk_hwtypes.h>   //should be OK now
+#include <tk_tuning.h>      //Tuning constants for size and number or resources
 
 
 enum SCHED_ERROR_CODES{
@@ -64,46 +65,38 @@ compiler output and make you less observant of truly dangerous warnings.
 */
 #define TK_NO_WARN_ARG(x) ((void)x)  
 
+#ifdef __doxygen__
+#error This section should never be enabled for a normal build
 /*!
-@name Kernel trimming constants
+@name SCHED trimming constants
 
-@note 
+@note
+Only information about these defines are here. The true defines are
+in each targets corresponding tk_tuning.h.
+
 - TK_MAX_THREADS_AT_PRIO should be at least as big as TK_MAX_THREADS
 - TK_MAX_THREADS is the big memory hog. It determines the pool size
 - More or less TK_MAX_PRIO_LEVELS doesn't make that much difference in
   memory usage, but keep it low anyway. It's doubtful if it makes sense 
   to have a lot of priority levels anyway.
 
-Modify these constants to get a kernel of desired size/speed ratio
+  Modify these constants to get a kernel of desired size/speed ratio
 
-@note </b>Do not change these if using pre-built kernel as lib</b>
+@warning </b>Do not change these if using pre-built kernel as lib</b>
 */
 //@{
-#define TK_MAX_THREADS           /*98*/50    //!< Maximum number of threads kernel can handle
+#define TK_MAX_THREADS           50    //!< Maximum number of threads kernel can handle
 #define TK_MAX_PRIO_LEVELS       0x10  //!< Maximum number of priority levels. @todo fix this, Idle needs to bee last in last prio( needs one extra )
-//#define TK_MAX_THREADS_AT_PRIO  0x0A  //!< Maximum number of threads at a priority at any one time
 #define TK_MAX_THREADS_AT_PRIO   TK_MAX_THREADS  //!< Maximum number of threads at a priority at any one time
 #define TK_THREAD_NAME_LEN       0x17  //!< Number of characters (at most) in the TCB identifying the thread. @note If this is zero, which is valid, no human readable info about the thread is stored @note A size of 4 bytes is what used to be standard in pSos
 //@}
+#endif
 
 
 //Some defines for the logic
 #define YES                      1
 #define NO                       0
 
-#if      defined(__CYGWIN32__)  || defined(__CYGWIN__)
-#   define TK_NORMAL_STACK_SIZE     0xD000 //!< @note Cygwin needs a humongus stack
-
-#elif    defined(__GNUC__)      || defined(__USE_GNU)   || \
-         defined(_WIN32)        || defined(__BORLANDC__) || defined(__BCPLUSPLUS__) 
-
-#   define TK_NORMAL_STACK_SIZE     0x1200 //!< @note Whats normal or reasonable differs between architectures. 
-
-#else  //Embedded cases
-//#	define TK_NORMAL_STACK_SIZE     0x600 //!< @note Whats normal or reasonable differs between architectures.   
-#	define TK_NORMAL_STACK_SIZE     0x200 //!< @note Whats normal or reasonable differs between architectures.     
-
-#endif
 
 //Figure out how to do the following some other time...
 //#if ( TK_MAX_THREADS * TK_NORMAL_STACK_SIZE > SIZEOF_STACKPOOL )
@@ -200,28 +193,8 @@ typedef tin_t titi_t;   //!< A tinker pTimer ID
 
 /*- external data **/
 
-/*- internal functions **/
-void           _tk_assertfail(    /* emulates __assertfail */
-   char *assertstr, 
-   char *filestr, 
-   int line
-);
-
-struct tcb_t_ *_tk_current_tcb( void );
-struct tcb_t_ *_tk_specific_tcb( thid_t id );
-int           *_tk_errno();  
-void           _tk_context_switch_to_thread(thid_t RID,thid_t SID);
-void           _tk_main( void );
-
-
-/*- public data **/
-
-/*- private data **/
-extern int Tk_IntFlagCntr;
-
-/*- public functions **/
-
-
+//*- public functions **/
+//------1---------2---------3---------4---------5---------6---------7---------8
 int            tk_delete_thread(thid_t PID);
 thid_t         tk_create_thread(
                   char          *name,
@@ -235,12 +208,25 @@ int            tk_detach( thid_t );
 void           tk_create_kernel( void );
 void           tk_delete_kernel( void );
 void           tk_yield( void );
+void           tk_yield_event( void );
 void           tk_exit( int ec );
 void           tk_msleep( unsigned int time_ms );
 thid_t         tk_thread_id( void );
 int            tk_change_prio(thid_t tid, int newPrio);
 
-extern int     root( void ); /*! supplied by \b YOU - constitutes the root thread function*/
+/*! Function supplied by \b YOU - constitutes the root thread function*/
+extern int     root( void ); 
+
+/*! Function supplied by \b YOU - initialize the BSP used by your sys-calls*/
+extern int     tk_bsp_sysinit(void);
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+// The following are rerouted by bacros, so they need to be public. Don't use 
+// in appl. code
+
+void           _tk_assertfail( char *assertstr, char *filestr, int line );
+int           *_tk_errno();
+//------1---------2---------3---------4---------5---------6---------7---------8
 
 /*- private functions **/
 
@@ -252,7 +238,55 @@ extern int     root( void ); /*! supplied by \b YOU - constitutes the root threa
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.39  2006-03-24 11:22:55  ambrmi09
+ *  Revision 1.40  2006-04-08 10:15:58  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.39.2.6  2006/04/07 12:10:07  ambrmi09
+ *  Skeleton for handling syscalls using the ARM Angel interface in place
+ *
+ *  Basic terminal I/O for gnu_arm (LPC2129) - only output so far (input requires
+ *  blocking).
+ *
+ *  Revision 1.39.2.5  2006/04/06 09:01:56  ambrmi09
+ *  Safety commit due to change of local sandbox FS type (had files checked out
+ *  while changing the type - not to be recommended).
+ *
+ *  Revision 1.39.2.4  2006/04/03 20:07:23  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.39.2.3  2006/04/03 15:21:47  ambrmi09
+ *  All targets updated with the new thread-starter (alternative 2).
+ *
+ *  This alternative has one weakness (explained elsewhere togeather
+ *  with alternative 1), but so far it's the only one that will compile
+ *  and function equally among all 4 (very different) compilers currently
+ *  tested against: GCC, MSVC, BC5 and Keil.
+ *
+ *  If nothing else turns up, I'm willing to overcome the drawback (it's
+ *  quite handleable) because it *truly* takes away a lot of pain with
+ *  porting.
+ *
+ *  The ARM port (architecture level) is than's to this now fully operational
+ *  without the r13 hack in the context switch. This includes thread
+ *  cancellation and thread argument passing (which were not functioning in
+ *  the old port).
+ *
+ *  If this revised code proves itself (i.e. no surprises turns up) then
+ *  TinKer can be considered "almost ported" to any HW target that GCC is
+ *  ported for :D (/cheers)
+ *
+ *  Revision 1.39.2.2  2006/03/31 17:42:56  ambrmi09
+ *  Second idea for the new thread starter. This one plays nice with several
+ *  more compilers beacuse of it's balances call-stack. It's not as
+ *  beautiful as the former one IMO, but GNU is a pain in the but
+ *  with it's call-stack optimizations (and decorations doesn't seem to work
+ *  for Cygwin GCC ).
+ *
+ *  Revision 1.39.2.1  2006/03/30 10:52:20  ambrmi09
+ *  First version of new threadstarter. It seems very promising. A *lot* of
+ *  awfull pain concerning different targets has the potential to go away.
+ *
+ *  Revision 1.39  2006/03/24 11:22:55  ambrmi09
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *

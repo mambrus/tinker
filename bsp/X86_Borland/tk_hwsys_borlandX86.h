@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -21,12 +21,11 @@
 #ifndef TK_HWSYS_BORLANDX86_H
 #define TK_HWSYS_BORLANDX86_H
 
-#define MINIMUM_STACK_SIZE 0x0600  //!< TBD this @todo TBD this
 
 /*!
 How printk is implemented on this target
 */
-#define printk printf
+#define printk(x) printf x
 
 /*!
 @name Mapping stack allocation API for this target
@@ -53,32 +52,6 @@ How printk is implemented on this target
    ( TCB.stack_size ) 
    
 
-#define PREP_TOS( _oldTOS, _newSP, _temp1, _temp2, _stack_struct )                                             \
-                                                                                                               \
-    __asm{ pushfd                       } /*Save CPU states affected so that we migth continue*/               \
-    __asm{ pushad                       }                                                                      \
-    __asm{ mov _temp1,esp               } /*Cange the stack pointer to the actual one*/                        \
-    __asm{ mov esp,_oldTOS              }                                                                      \
-                                                                                                               \
-    /*---> Compiler specific*/                                                                                 \
-                                                                                                               \
-    __asm{ push        ebp              }                                                                      \
-                                                                                                               \
-    /*<--- Compiler specific*/                                                                                 \
-                                                                                                               \
-                                                                                                               \
-    __asm{ pushfd                       }/*Part of the stack content our kernel expects to find on the stack*/ \
-    __asm{ pushad                       }                                                                      \
-                                                                                                               \
-    __asm{ mov _newSP,esp               } /*The current SP is now the new _newSP, save it..     */             \
-    __asm{ mov esp,_temp1               } /*Restore the stack pointer so that we can continue*/                \
-                                                                                                               \
-    __asm{ popad                        } /*Restore the CPU to the state befor this process was invoked*/      \
-    __asm{ popfd                        }
-    
-
-
-
 //Push & pops of all regs and flags possibly not needed
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                                                    \
     __asm{ pushfd                       }                                                                      \
@@ -89,6 +62,17 @@ How printk is implemented on this target
     __asm{ mov esp,TSP1                 }                                                                      \
     __asm{ popad                        }                                                                      \
     __asm{ popfd                        }
+
+#define CHANGE_STACK( TSP1, TEMP )                                                                             \
+    __asm{ mov esp,TSP1                 }
+
+#define INIT_SP( _stack_SP, _stack_begin )                                                                     \
+   _stack_SP.stack_size = _stack_begin.stack_size;                                                             \
+   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size;                                           \
+
+//Does nothing on this port
+#define BIND_STACK( _stack_struct, _temp2 )     
+
 
 //function enters as a result of a ret instruction. EAX is passed
 //as the return value. Not shure if it works on every processor

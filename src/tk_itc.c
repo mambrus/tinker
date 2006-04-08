@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michale Ambrus                                  *
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -43,7 +43,11 @@ ITC
 #include <assert.h>
 #include <time.h>
 
-#define NOTDEBUG_WITH_CURSES  //!< Visual "debugging" for queue operations if disabled
+#define NOTDEBUG_WITH_CURSES  //!< Visual "debugging" for queue operations if disabled 
+
+#if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
+#define clock clock_stubbed
+#endif
 
 
 #include <tk.h>
@@ -164,20 +168,20 @@ void p_bQf(int x,int y,unsigned int qid) {
 	BOOL rc;
 	
 	gotoxy(x,y);
-	printk("                                                               ");
+	printk(("                                                               "));
 	gotoxy(x,y);
 	rc = TRUE;
    
 	if(ipc_array[qid]->token == 0)
 		return;
 	for(mark_idx=ipc_array[qid]->out_idx;mark_idx!=ipc_array[qid]->in_idx;mark_idx++,mark_idx %= MAX_BLOCKED_ON_Q) {
-		printk("%s ",ipc_array[qid]->blocked_procs[mark_idx]->name);
+		printk(("%s ",ipc_array[qid]->blocked_procs[mark_idx]->name));
 		if (!(no_duplicateBlock(qid,mark_idx)))
 			rc = FALSE;
 		count++;
 	} 
-	printk("T=%d D=%d",ipc_array[qid]->token, abs(ipc_array[qid]->out_idx - ipc_array[qid]->in_idx) );
-	printk("\n");
+	printk(("T=%d D=%d",ipc_array[qid]->token, abs(ipc_array[qid]->out_idx - ipc_array[qid]->in_idx)) );
+	printk(("\n"));
 	
 	//assert(abs(ipc_array[qid]->out_idx - ipc_array[qid]->in_idx) == abs(ipc_array[qid]->token) );
 	
@@ -432,7 +436,7 @@ static unsigned long unlock_stage(
 			}
 			//assert(ipc_array[qid]->token<0);
 			if ((ipc_array[qid]->in_idx - ipc_array[qid]->out_idx) == 0) { /*ipc_array[qid]->token==0*/
-				/*printk("Hubba i örat\n");
+				/*printk(("Hubba i örat\n"));
 				while(1);*/
 				return(ERR_OK);
 				
@@ -637,7 +641,7 @@ static unsigned long _unlock_stage_ny(
          }
          //assert(ipc_array[qid]->token<0);
          if ((ipc_array[qid]->in_idx - ipc_array[qid]->out_idx) == 0) { /*ipc_array[qid]->token==0*/
-            /*printk("Hubba i örat\n");
+            /*printk(("Hubba i örat\n"));
             while(1);*/
             return(ERR_OK);
             
@@ -815,8 +819,8 @@ unsigned long q_vreceive(
 
 	/* If execution reached here it means there is a message in the queue */
 	/*gotoxy(1,20);
-	printk("%s \n",msg_buf);
-	printk("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);*/
+	printk(("%s \n",msg_buf));
+	printk(("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb));*/
 	memcpy(
 		msg_buf, 
 		ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].mb,
@@ -866,7 +870,7 @@ unsigned long q_vsend(
 	ipc_array[qid]->min_idx++;
 	ipc_array[qid]->min_idx %= ipc_array[qid]->sizeof_q; 
 	//gotoxy(1,19);
-	printk("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);
+	printk(("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb));
 
 	
 	rc = unlock_stage(qid);
@@ -1187,8 +1191,8 @@ unsigned long q_vreceive_ny(
 
    /* If execution reached here it means there is a message in the queue */
    /*gotoxy(1,20);
-   printk("%s \n",msg_buf);
-   printk("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);*/
+   printk(("%s \n",msg_buf));
+   printk(("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb));*/
    memcpy(
       msg_buf, 
       ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].mb,
@@ -1238,7 +1242,7 @@ unsigned long q_vsend_ny(
    ipc_array[qid]->min_idx++;
    ipc_array[qid]->min_idx %= ipc_array[qid]->sizeof_q; 
    //gotoxy(1,19);
-   printk("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb);
+   printk(("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb));
 
    
    rc = _unlock_stage_ny(qid);
@@ -1530,7 +1534,34 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.26  2006-03-19 22:57:55  ambrmi09
+ *  Revision 1.27  2006-04-08 10:16:03  ambrmi09
+ *  Merged with branch newThreadstarter (as of 060408)
+ *
+ *  Revision 1.26.2.2  2006/04/03 20:07:29  ambrmi09
+ *  Minor cosmetic change
+ *
+ *  Revision 1.26.2.1  2006/04/03 15:21:48  ambrmi09
+ *  All targets updated with the new thread-starter (alternative 2).
+ *
+ *  This alternative has one weakness (explained elsewhere togeather
+ *  with alternative 1), but so far it's the only one that will compile
+ *  and function equally among all 4 (very different) compilers currently
+ *  tested against: GCC, MSVC, BC5 and Keil.
+ *
+ *  If nothing else turns up, I'm willing to overcome the drawback (it's
+ *  quite handleable) because it *truly* takes away a lot of pain with
+ *  porting.
+ *
+ *  The ARM port (architecture level) is than's to this now fully operational
+ *  without the r13 hack in the context switch. This includes thread
+ *  cancellation and thread argument passing (which were not functioning in
+ *  the old port).
+ *
+ *  If this revised code proves itself (i.e. no surprises turns up) then
+ *  TinKer can be considered "almost ported" to any HW target that GCC is
+ *  ported for :D (/cheers)
+ *
+ *  Revision 1.26  2006/03/19 22:57:55  ambrmi09
  *  First naive implementation of a pthread mutex
  *
  *  Revision 1.25  2006/03/19 12:44:37  ambrmi09
