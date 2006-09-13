@@ -91,7 +91,9 @@ void Angel_Handler( void )
 //   case AngelSWI_Reason_TmpNam          :break;
 //   case AngelSWI_Reason_Remove          :break;
 //   case AngelSWI_Reason_Rename          :break;
-//   case AngelSWI_Reason_Clock           :break;
+     case AngelSWI_Reason_Clock           :
+        *value = bsp_Clock();
+        break;
 //   case AngelSWI_Reason_Time            :break;
 //   case AngelSWI_Reason_System          :break;
 //   case AngelSWI_Reason_Errno           :break;
@@ -111,7 +113,10 @@ void Angel_Handler( void )
  * @defgroup CVSLOG_tk_angel_c tk_angel_c
  * @ingroup CVSLOG
  *  $Log: tk_angel.c,v $
- *  Revision 1.2  2006-04-08 10:15:55  ambrmi09
+ *  Revision 1.3  2006-09-13 18:29:30  ambrmi09
+ *  Commited needed in repocitory
+ *
+ *  Revision 1.2  2006/04/08 10:15:55  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.1.2.1  2006/04/07 12:10:06  ambrmi09
@@ -121,7 +126,5 @@ void Angel_Handler( void )
  *  blocking).
  *
  */
- 
- 
 
- 
+

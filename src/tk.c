@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2006 by Michael Ambrus                                  * 
- *   michael.ambrus@maquet.com                                             *
+ *   michael.ambrus@maquet.com                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -1279,7 +1279,7 @@ In case of en error, this function also acts as a critical error-handler
 entr point (critical = execution is deemed to stop).
 
 */
-void tk_exit( int ec ) {
+void tk_exit( int ec ) { 
    if (ec==0)
       printk(("tk: Program terminated normally"));
    else
@@ -1320,10 +1320,11 @@ things at least:
 
 */
 void _tk_main( void ){
-   tk_bsp_sysinit();
-//   printk(("BSP initialized\n"));
+   tk_bsp_sysinit();      //For emulation targets, this is ment to be nothing 
+   printk(("BSP initialized\n"));
+
    tk_create_kernel();
-//   printk((stderr,"TinKer kernel created\n"));
+   printk((stderr,"TinKer kernel created\n"));
    
    printk(("ANSI timing constants:\n"));
    #if  defined( __C166__ )
@@ -1402,7 +1403,10 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.58  2006-04-08 10:16:02  ambrmi09
+ *  Revision 1.59  2006-09-13 18:29:31  ambrmi09
+ *  Commited needed in repocitory
+ *
+ *  Revision 1.58  2006/04/08 10:16:02  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.57.2.7  2006/04/07 12:10:07  ambrmi09

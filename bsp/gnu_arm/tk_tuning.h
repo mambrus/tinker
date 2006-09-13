@@ -45,7 +45,8 @@
 */  
 
 #define TK_HOWTO_MALLOC 		TK_FNK_ORIGINAL
-#define TK_HOWTO_CLOCK  		TK_FNK_STUBBED
+//#define TK_HOWTO_CLOCK  		TK_FNK_STUBBED
+#define TK_HOWTO_CLOCK  		TK_FNK_ORIGINAL
 #define TK_HOWTO_PRINTK 		TK_FNK_RENAMED
 #define TK_HOWTO_ASSERT 		TK_FNK_RENAMED      
 
@@ -57,7 +58,10 @@
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $
- *  Revision 1.2  2006-04-08 10:15:55  ambrmi09
+ *  Revision 1.3  2006-09-13 18:29:30  ambrmi09
+ *  Commited needed in repocitory
+ *
+ *  Revision 1.2  2006/04/08 10:15:55  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.1.2.4  2006/04/06 09:01:55  ambrmi09

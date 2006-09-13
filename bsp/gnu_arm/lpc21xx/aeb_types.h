@@ -1,6 +1,6 @@
 // AEB Types
 // mtrojer@arrownordic.com
-// $Id: aeb_types.h,v 1.2 2006-04-08 10:15:56 ambrmi09 Exp $
+// $Id: aeb_types.h,v 1.3 2006-09-13 18:29:31 ambrmi09 Exp $
 
 #ifndef __AEB_TYPES_H
 #define __AEB_TYPES_H

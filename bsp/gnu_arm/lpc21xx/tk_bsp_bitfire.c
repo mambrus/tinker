@@ -28,14 +28,17 @@
 
 #include "../tk_bsp.h"
 #include "../tk_systimer.h"
+#include <../src/tk_tick.h>
 
 #include "lpc2129_uart.h"
 #include "lpc2129_uart_polled.h"
 #include "lpc2129_vic.h"
 #include "lpc21xx.h"
 
+
 #include <string.h>
 #include <assert.h>
+#include <time.h>
 
 
 static uart_control uc0;
@@ -97,7 +100,23 @@ int bsp_FLen            (/*TBD*/){}
 int bsp_TmpNam          (/*TBD*/){}
 int bsp_Remove          (/*TBD*/){}
 int bsp_Rename          (/*TBD*/){}
-int bsp_Clock           (/*TBD*/){}
+
+/* 
+ This function needs working. Amon others we need to read mickeys/mackes 
+ several times to detect is IRQ has happened betweeb while reading the first
+ and second part (potential wrap-around).
+*/
+
+int bsp_Clock           (){
+	unsigned int TuS_low  = sys_mickey;           //Low  32 bit uS worth value
+	long long    TuS_high = sys_mackey;           //High 32 bit uS worth value
+	unsigned int cratio = MICKEYS_PER_SEC/CLOCKS_PER_SEC;
+	
+	long long Tcl = ((TuS_high << 32) + TuS_low ) / cratio;
+	
+	return Tcl; //Trunc it on purpose (best we can do anyway)	
+}
+
 int bsp_Time            (/*TBD*/){}
 int bsp_System          (/*TBD*/){}
 int bsp_Errno           (/*TBD*/){}
@@ -114,6 +133,8 @@ int bsp_ReportException (/*TBD*/){}
  
  */
 int tk_bsp_sysinit        (void){   
+   
+   vic_global_enable_int();
    
    {  // Set up the terminal IO      
       extern void    initialise_monitor_handles _PARAMS ((void));
@@ -154,7 +175,10 @@ int tk_bsp_sysinit        (void){
  * @defgroup CVSLOG_tk_bsp_bitfire.c tk_bsp_bitfire.c
  * @ingroup CVSLOG
  *  $Log: tk_bsp_bitfire.c,v $
- *  Revision 1.2  2006-04-08 10:15:56  ambrmi09
+ *  Revision 1.3  2006-09-13 18:29:31  ambrmi09
+ *  Commited needed in repocitory
+ *
+ *  Revision 1.2  2006/04/08 10:15:56  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.1.2.2  2006/04/08 09:59:02  ambrmi09
@@ -167,3 +191,4 @@ int tk_bsp_sysinit        (void){
  *  blocking).
  *
  */
+

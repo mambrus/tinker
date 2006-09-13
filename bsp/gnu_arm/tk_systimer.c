@@ -27,23 +27,37 @@
  @note that initialization and setup is handled by board specific code.
   
  */
+
+#if !defined(BOARD)
+#error BOARD needs to be defined
+#endif 
+
+#if (BOARD == BITFIRE)
+#include "lpc21xx/lpc21xx.h"
+#include "lpc21xx/lpc21xx_bits.h"
+#endif
  
-#define TICK_OWNER         //!< systimer data resides in this oject module
+#define TICK_OWNER         //!< By defining this, tell systimer data to reside in this oject module
 #include <../src/tk_tick.h>
 
 #include "tk_systimer.h"
 
 void systimer_Handler( void )
 {
-   TIMER0_IR   = BIT( IR_MR0 );  //Command: Reset interrupt (not the counter thoug, that one is allready reseted)
+   TIMER0_IR   |=  BIT( IR_MR0 );  //Reset interrupt, command to Timer HW
    _tk_tick_advance_mS(PERT); 
+   VICVectAddr = 0x0;              //Interrupt complete (tell interrup controller)
 }
+
 
 /*!
  * @defgroup CVSLOG_tk_systimer_c tk_systimer_c
  * @ingroup CVSLOG
  *  $Log: tk_systimer.c,v $
- *  Revision 1.2  2006-04-08 10:15:55  ambrmi09
+ *  Revision 1.3  2006-09-13 18:29:30  ambrmi09
+ *  Commited needed in repocitory
+ *
+ *  Revision 1.2  2006/04/08 10:15:55  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.1.2.1  2006/04/08 10:06:25  ambrmi09
@@ -51,7 +65,4 @@ void systimer_Handler( void )
  *
  *
  */
- 
- 
 
- 

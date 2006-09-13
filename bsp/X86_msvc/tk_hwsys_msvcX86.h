@@ -7,6 +7,11 @@ How printk is implemented on this target
 #define printk(x) printf x
 
 /*!
+How initializing the BSP is done on this target (Only needed for bare bone targets).
+*/
+#define tk_bsp_sysinit() ((void*)0)
+
+/*!
 @name Mapping stack allocation API for this target
 */
 //@{

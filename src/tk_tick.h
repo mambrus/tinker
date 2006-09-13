@@ -22,6 +22,20 @@
 #ifndef TK_TICK_H
 #define TK_TICK_H
 
+#include <time.h>
+
+#if defined (__GNUC__)
+#include <sys/time.h>
+#endif
+
+/*! 
+One mickey is \b always 1 uS worth no matter actual resolution which gives a 
+frequency in ticks per second of 1000000 (i.e. the same as  CLOCKS_PER_SEC 
+on true POSIX targets).
+
+*/
+#define MICKEYS_PER_SEC 1000000uL
+
 #if defined(__C166__)
    #define MEMTYPE idata
 #else
@@ -111,112 +125,13 @@ while operated on:
       sys_mickey+=ADV(advance);              \
    }
 
-/*!
-Update sytem tick.
 
-Call this from your timer ISR.
-
-Usable for systems where <b>100kHz</b> interrupt frequency is suitable
-
-@see _tk_tick_100uS()
-@see _tk_tick_1mS()
-*/
-#define _tk_tick_10uS()               \
-  sys_mickey+=10;                     \
-                                      \
-  if (!sys_mickey){                   \
-    sys_mackey++;                     \
-  }
-
-
-
-/*!
-Update sytem tick.
-
-Call this from your timer ISR.
-
-Usable for systems where <b>1kHz</b> interrupt frequency is suitable. This will give the 
-highest possible relulution for tinker since 1 sys_mickey is equal to 100uS.
-
-@see _tk_tick_1mS() 
-@see _tk_tick_10uS()
-@see _tk_tick_1mS()
-@see _tk_tick_PC()
-*/
-#define _tk_tick_100us()              \
-  sys_mickey++;                       \
-                                      \
-  if (!sys_mickey){                   \
-    sys_mackey++;                     \
-  }
-
-
-/*!
-Update sytem tick.
-
-Call this from your timer ISR.
-
-Usable for systems where <b>1KHz</b> interrupt frequency is suitable
-
-@see _tk_tick_10uS()
-@see _tk_tick_100uS()
-@see _tk_tick_1mS()
-@see _tk_tick_PC()
-*/
-#define _tk_tick_1mS()                \
-  sys_mickey++;                       \
-                                      \
-  if (!sys_mickey){                   \
-    sys_mackey++;                     \
-  }
-
-
-/*!
-Update sytem tick.
-
-Call this from your timer ISR.
-
-Usable for systems where <b>100Hz</b> interrupt frequency is suitable (slow system)
-
-@see _tk_tick_10uS()
-@see _tk_tick_100uS()
-@see _tk_tick_1mS()
-@see _tk_tick_PC()
-*/
-#define _tk_tick_10mS()               \
-  sys_mickey+=10;                     \
-                                      \
-  if (!sys_mickey){                   \
-    sys_mackey++;                     \
-  }
-
-
-/*!
-Update sytem tick.
-
-Call this from your timer ISR.
-
-Usable for systems where <b>18.2Hz</b> interrupt frequency is suitable (PC system)
-
-@see _tk_tick_10uS()
-@see _tk_tick_100uS()
-@see _tk_tick_1mS()
-@see _tk_tick_10mS()
-*/
-#define _tk_tick_PC()                 \
-  sys_mickey+=10;                     \
-                                      \
-  if (!sys_mickey){                   \
-    sys_mackey++;                     \
-  }
-
+void getnanouptime (
+   struct timespec *tp  
+);
 
 #endif
 
-
-void getnanouptime (
-   struct timespec *tp
-);
 
 
   
@@ -226,7 +141,10 @@ void getnanouptime (
  * @ingroup CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.22  2006-04-08 10:16:04  ambrmi09
+ *  Revision 1.23  2006-09-13 18:29:32  ambrmi09
+ *  Commited needed in repocitory
+ *
+ *  Revision 1.22  2006/04/08 10:16:04  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.21.2.1  2006/04/03 20:07:31  ambrmi09

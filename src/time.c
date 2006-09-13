@@ -103,12 +103,13 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#CPU%20Time
 use that module instead.
 
 Implementation in principle the same as \ref getnanouptime
-   
+
+@todo check the "(TICK_PER_CLK * sys_mickey);  // This *HAS* to ne wrong" thingy
    
 */
 clock_t clock(){   
    #if !defined (USE_HW_CLOCK)
-   return (TICK_PER_CLK * sys_mickey);
+   return (TICK_PER_CLK * sys_mickey);  // This *HAS* to ne wrong
    #else
    signed int        	pebbles,p2;  // Remainig value in HWclock register
    unsigned long        uS;       // Time passed since last update of tick expressed in uS.
@@ -276,7 +277,10 @@ int
  * @defgroup CVSLOG_time_c time_c
  * @ingroup CVSLOG
  *  $Log: time.c,v $
- *  Revision 1.17  2006-04-08 10:16:02  ambrmi09
+ *  Revision 1.18  2006-09-13 18:29:31  ambrmi09
+ *  Commited needed in repocitory
+ *
+ *  Revision 1.17  2006/04/08 10:16:02  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.16.2.2  2006/04/07 12:10:07  ambrmi09

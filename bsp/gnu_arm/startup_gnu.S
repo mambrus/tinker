@@ -225,14 +225,14 @@ SWI_Addr:       .word   SWI_Handler
 PAbt_Addr:      .word   PAbt_Handler
 DAbt_Addr:      .word   DAbt_Handler
                 .word   0                      /* Reserved Address */
-#IRQ_Addr:      .word   IRQ_Handler            /* Obsoleted by M.A. */
+IRQ_Addr:      .word   IRQ_Handler            /* Obsoleted by M.A. */
 FIQ_Addr:       .word   FIQ_Handler
 
 Undef_Handler:  B       Undef_Handler
 SWI_Handler:    B       Angel_Handler
 PAbt_Handler:   B       PAbt_Handler
 DAbt_Handler:   B       DAbt_Handler
-#IRQ_Handler:    B       IRQ_Handler           /* Obsoleted by M.A. */
+IRQ_Handler:    B       IRQ_Handler           /* Obsoleted by M.A. */
 FIQ_Handler:    B       FIQ_Handler
 
 

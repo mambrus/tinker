@@ -34,6 +34,18 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 How printk is implemented on this target
 */
 #define printk(x) printf x
+//Following would be prefered for Linux since GDB for linux works in buffered mode. 
+//But this causes a compilation error in tk.c (as an example) and i would like to keep 
+//the syntax simple
+//#define printk(x) printf x; fflush(stdout);
+
+/*!
+How initializing the BSP is done on this target (Only needed for bare bone targets).
+In this case, the kernal is intended to run under Linux and no special case has been handled
+for bare-bone systems (since we have no port it yet/ever).
+*/
+#define tk_bsp_sysinit() ((void*)0)
+
 
 /*!
 @name Mapping stack allocation API for this target

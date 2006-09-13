@@ -19,7 +19,7 @@
  ***************************************************************************/
  
 /*!
-@brief Definitions of board sys-calls
+@brief Definitions of board sys-calls 
  
 Definitions of the board sys-calls. Redefine each for a certain board+uC
 combo. 
@@ -27,7 +27,8 @@ combo.
 @note use the definitions as a template for your own fnkn mappings
 */
 
-#define BOARD BITFIRE 
+#ifndef TK_BSP_H
+#define TK_BSP_H
 
 #if !defined(BOARD)
 #error BOARD needs to be defined
@@ -81,14 +82,17 @@ int bsp_HeapInfo        (/*TBD*/);
 int bsp_EnterSVC        (/*TBD*/);
 int bsp_ReportException (/*TBD*/);
 //int tk_bsp_sysinit      (void);
-                           
-                           
+
+#endif  //TK_BSP_H
 
 /*!
  * @defgroup CVSLOG_tk_bsp_h tk_bsp_h
  * @ingroup CVSLOG
  *  $Log: tk_bsp.h,v $
- *  Revision 1.2  2006-04-08 10:15:55  ambrmi09
+ *  Revision 1.3  2006-09-13 18:29:30  ambrmi09
+ *  Commited needed in repocitory
+ *
+ *  Revision 1.2  2006/04/08 10:15:55  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.1.2.1  2006/04/07 12:10:06  ambrmi09
@@ -98,6 +102,4 @@ int bsp_ReportException (/*TBD*/);
  *  blocking).
  *
  */
- 
- 
  

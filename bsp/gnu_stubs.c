@@ -35,6 +35,7 @@ properly implement (since there are neither less nor more of them).
 */
 
 #include <errno.h>
+#include <time.h>    
 
 /**
 _exit
@@ -263,7 +264,7 @@ int write(int file, char *ptr, int len){
 	for (todo = 0; todo < len; todo++) {
 	   //writechar(*ptr++);
 	}
-	return len;
+	return len;     
 }
 
 /*! 
@@ -271,7 +272,10 @@ int write(int file, char *ptr, int len){
  * @ingroup CVSLOG
  *
  *  $Log: gnu_stubs.c,v $
- *  Revision 1.2  2006-04-08 10:15:50  ambrmi09
+ *  Revision 1.3  2006-09-13 18:29:30  ambrmi09
+ *  Commited needed in repocitory
+ *
+ *  Revision 1.2  2006/04/08 10:15:50  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.1.2.5  2006/04/08 09:59:00  ambrmi09
@@ -312,5 +316,4 @@ int write(int file, char *ptr, int len){
  *  ported for :D (/cheers)
  *
  */
- 
- 
+
