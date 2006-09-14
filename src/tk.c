@@ -1280,10 +1280,11 @@ entr point (critical = execution is deemed to stop).
 
 */
 void tk_exit( int ec ) { 
-   if (ec==0)
+   if (ec==0){
       printk(("tk: Program terminated normally"));
-   else
+   } else {
       printk(("tk: Warning - Program terminated with errorcode [%d]",ec));
+   }
    while (1) {
       TRAP(ec);
    }
@@ -1324,7 +1325,7 @@ void _tk_main( void ){
    printk(("BSP initialized\n"));
 
    tk_create_kernel();
-   printk((stderr,"TinKer kernel created\n"));
+   printk(("TinKer kernel created\n"));
    
    printk(("ANSI timing constants:\n"));
    #if  defined( __C166__ )
@@ -1403,7 +1404,12 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.59  2006-09-13 18:29:31  ambrmi09
+ *  Revision 1.60  2006-09-14 10:09:08  ambrmi09
+ *  Tuneup for Linux GDB console to output when supposed to. Varidiac function
+ *  that fails when called from other thread than root added as example
+ *  (invalidated).
+ *
+ *  Revision 1.59  2006/09/13 18:29:31  ambrmi09
  *  Commited needed in repocitory
  *
  *  Revision 1.58  2006/04/08 10:16:02  ambrmi09

@@ -37,6 +37,55 @@ properly implement (since there are neither less nor more of them).
 #include <errno.h>
 #include <time.h>    
 
+/* The below code is useless. va_ macros seem to operate on the user stack no matter what the stack pointer is set to */
+/* Code is kept (but invalidated ) as a reminder to this problem */
+
+/*
+#include <stdio.h>
+#include <stdarg.h>
+#include <tk.h>
+#include <../src/implement_tk.h>
+
+#define MAX_STRINGS 255
+#define MAX_STRLEN  255
+
+char mystr_buff[MAX_STRINGS][MAX_STRLEN];
+#include <string.h>
+char argbuff[MAX_STRLEN];
+
+int cidx = 0;
+int lidx = 0;
+
+int bsp_printf(char *formatstr, ...){
+	va_list ap;
+	int rc,i;
+	tk_tcb_t *curr_tcb = _tk_current_tcb();
+	
+	va_start(ap, formatstr);
+	memcpy(argbuff,ap,255);
+	va_end(ap);
+	rc = sprintf(mystr_buff[cidx],formatstr,argbuff);
+	cidx = (cidx+1) % MAX_STRINGS; 
+	
+	
+	if ( (curr_tcb->Thid) == 0 ){
+		for (i=lidx; lidx != cidx; lidx = (lidx+1) % MAX_STRINGS ){
+			printf("%s",mystr_buff[lidx]);
+		}      
+		fflush(stdout);
+	}else{
+		return 0;
+	}
+	return rc;
+}
+*/
+
+//The following is a fix. It seems that GCC (libc?) prior to GCC 3.3.4 doesnt have this
+//This might need further investigating
+#ifndef caddr_t
+#define caddr_t unsigned long
+#endif
+
 /**
 _exit
 The _exit function is the primitive used for process termination by exit. It 
@@ -46,7 +95,7 @@ The _exit function is the primitive for causing a process to terminate with
 status status. Calling this function does not execute cleanup functions 
 registered with atexit or on_exit.  
 
-Exits a program without cleaning up files. If your system doesn’t provide this
+Exits a program without cleaning up files. If your system doesnï¿½t provide this
 routine, it is best to avoid linking with subroutines that require it (such as exit or
 system).
 */
@@ -230,7 +279,7 @@ int times(struct tms *buf){
 
 /**
 unlink
-Remove a file’s directory entry. Minimal implementation is shown in the
+Remove a fileï¿½s directory entry. Minimal implementation is shown in the
 following example.
 */
 int unlink(char *name){
@@ -272,7 +321,12 @@ int write(int file, char *ptr, int len){
  * @ingroup CVSLOG
  *
  *  $Log: gnu_stubs.c,v $
- *  Revision 1.3  2006-09-13 18:29:30  ambrmi09
+ *  Revision 1.4  2006-09-14 10:09:07  ambrmi09
+ *  Tuneup for Linux GDB console to output when supposed to. Varidiac function
+ *  that fails when called from other thread than root added as example
+ *  (invalidated).
+ *
+ *  Revision 1.3  2006/09/13 18:29:30  ambrmi09
  *  Commited needed in repocitory
  *
  *  Revision 1.2  2006/04/08 10:15:50  ambrmi09

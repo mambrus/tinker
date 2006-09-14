@@ -30,14 +30,17 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 
 #define EXTRA_MARGIN 20                //<! Define SP this below the theoretical top (some compilers require it)
 
+int bsp_printf(char *formatstr, ...);
 /*!
-How printk is implemented on this target
+How printk is implemented on this target. Alternate between the two followin. printf is prefered, but it sometimes doesnt work under Linux GDB
 */
+//#define printk(x) bsp_printf x
 #define printk(x) printf x
-//Following would be prefered for Linux since GDB for linux works in buffered mode. 
-//But this causes a compilation error in tk.c (as an example) and i would like to keep 
-//the syntax simple
-//#define printk(x) printf x; fflush(stdout);
+
+//The following variant is prefered for Linux while running inde GDB since GDB for linux works in buffered mode. 
+//But this causes a compilation error if macro is used an unscopyed 'if' statement before the 'case' 
+
+#define printk(x) { printf x; fflush(stdout); }
 
 /*!
 How initializing the BSP is done on this target (Only needed for bare bone targets).
