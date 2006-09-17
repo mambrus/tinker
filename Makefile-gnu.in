@@ -1,24 +1,24 @@
-CC             = arm-elf-gcc
-LD             = arm-elf-ld
-AR             = arm-elf-ar
-OBJCOPY        = arm-elf-objcopy
-OBJDUMP        = arm-elf-objdump
-VERSION        = 0.0.2
+CC             = @CC@
+LD             = @LD@
+AR             = @AR@
+OBJCOPY        = @OBJCOPY@
+OBJDUMP        = @OBJDUMP@
+VERSION        = @VERSION@
 
 #Do not accept default autoconf CFLAGS. Tinker will not run with them (not on ARM tdmi at leat)
-#CFLAGS         = -g -O2
+#CFLAGS         = @CFLAGS@
 
-GCC_PATH       = /skiff/bin/arm-elf-gcc
-CANONICAL_HOST = arm-elf
-XCOMPILE       = 1
+GCC_PATH       = @GCC_PATH@
+CANONICAL_HOST = @CANONICAL_HOST@
+XCOMPILE       = @XCOMPILE@
 
-TOOLDIR = $(subst /bin/arm-elf-gcc,,$(GCC_PATH))
+TOOLDIR = $(subst /bin/@CC@,,$(GCC_PATH))
 
 
 ifeq ($(XCOMPILE),1)
    BOARD  := BITFIRE
-   ABI    := $(shell echo arm-elf | sed -e s/.*-//)
-   ARCH   := $(shell echo arm-elf | sed -e s/-.*//)
+   ABI    := $(shell echo @CANONICAL_HOST@ | sed -e s/.*-//)
+   ARCH   := $(shell echo @CANONICAL_HOST@ | sed -e s/-.*//)
    CFLAGS := $(CFLAGS) -DDEBUG -DBOARD=$(BOARD) -DABI=_$(ABI) -DARCH=_$(ARCH) 
    CFLAGS := $(CFLAGS) -mcpu=arm7tdmi -g -gstabs -D RUN_FROM_ROM -D GCC_ARM7 
    CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(CANONICAL_HOST)/include -I include

@@ -1,0 +1,37 @@
+AC_INIT(src/tk.c)
+AC_CONFIG_HEADER(include/config.h)
+
+dnl Find and set the C compiler
+AC_PROG_CC
+AC_LANG_C
+
+dnl What is this?
+AC_PROG_MAKE_SET 
+
+AC_HEADER_STDC
+AC_CHECK_FUNCS(clock)
+
+VERSION="0.0.2"
+AC_SUBST(VERSION)
+
+
+AC_CHECK_TOOL([LD],      [ld],      [:])
+AC_CHECK_TOOL([AR],      [ar],      [:])
+AC_CHECK_TOOL([OBJCOPY], [objcopy], [:])
+AC_CHECK_TOOL([OBJDUMP], [objdump], [:])
+AC_PATH_TOOL([GCC_PATH], [gcc],     [:])
+
+
+if test $cross_compiling == yes; then
+   XCOMPILE=1
+else
+   XCOMPILE=0
+fi
+AC_SUBST(XCOMPILE)
+
+CANONICAL_HOST=$host
+AC_SUBST(CANONICAL_HOST)
+
+
+dnl Read Makefile.in and config.h.in, Write Makefile and config.h
+AC_OUTPUT(Makefile-gnu)
