@@ -44,7 +44,7 @@ AC_SUBST(XCOMPILE)
 AC_SUBST(ARCH)
 AC_SUBST(ABI)
 
-GCC_VERSION=$($CC -v 2>&1 | grep version | sed -e 's/gcc version //' | cut -f1 -d " ")
+GCC_VERSION=$($CC -v 2>&1 | grep 'gcc version' | sed -e 's/gcc version //' | cut -f1 -d " ")
 AC_SUBST(GCC_VERSION)
 
 dnl Do not accept default autoconf CFLAGS. Tinker will not run with them (not on ARM tdmi at leat)

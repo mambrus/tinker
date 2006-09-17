@@ -7,15 +7,15 @@ OBJDUMP        = objdump
 VERSION        = 0.1.0
 CFLAGS         = 
 LDFLAGS        = 
-LIBS           = -lgcc_s 
+LIBS           = 
 LIBOBJS        = 
-GCC_PATH       = /usr/local/bin/gcc
+GCC_PATH       = /usr/bin/gcc
 CANONICAL_HOST = 
 XCOMPILE       = 0
 ARCH           = i386
 ABI            = 
-TOOLDIR        = /usr/local
-GCC_VERSION    = 3.3.4
+TOOLDIR        = /usr
+GCC_VERSION    = 3.4.4
 
 .PHONY: all info depend link clean rebuild flashit console
 
