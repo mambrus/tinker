@@ -1,66 +1,45 @@
-OUTFILENAME    = lib/libtinker.a
-CC             = gcc
-LD             = ld
-AR             = ar
-OBJCOPY        = objcopy
-OBJDUMP        = objdump
-VERSION        = 0.1.0
-CFLAGS         = 
-LDFLAGS        = 
-LIBS           = -lgcc_s 
-LIBOBJS        = 
-GCC_PATH       = /usr/local/bin/gcc
-CANONICAL_HOST = 
-XCOMPILE       = 0
-ARCH           = i386
-ABI            = 
-TOOLDIR        = /usr/local
-GCC_VERSION    = 3.3.4
+OUTFILENAME    = ../../../lib/lib@PACKAGE_NAME@.a
+CC             = @CC@
+LD             = @LD@
+AR             = @AR@
+OBJCOPY        = @OBJCOPY@
+OBJDUMP        = @OBJDUMP@
+VERSION        = @PACKAGE_VERSION@
+CFLAGS         = @CFLAGS@
+LDFLAGS        = @LDFLAGS@
+LIBS           = @LIBS@
+GCC_PATH       = @GCC_PATH@
+CANONICAL_HOST = @CANONICAL_HOST@
+XCOMPILE       = @XCOMPILE@
+ARCH           = @ARCH@
+ABI            = @ABI@
+TOOLDIR        = @TOOLDIR@
+GCC_VERSION    = @GCC_VERSION@
 
 .PHONY: all info depend link clean rebuild flashit console
 
-
-LIBOBJS_LIST   = $(patsubst %,-l%,$(LIBOBJS))
 
 ifeq ($(XCOMPILE),1)
    BOARD  := BITFIRE
    CFLAGS := $(CFLAGS) -DDEBUG -DBOARD=$(BOARD) -DABI=_$(ABI) -DARCH=_$(ARCH) 
    CFLAGS := $(CFLAGS) -mcpu=arm7tdmi -g -gstabs -D RUN_FROM_ROM -D GCC_ARM7 
    CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(CANONICAL_HOST)/include 
-   CFLAGS := $(CFLAGS) -I include
-   
-   LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
-   
-   LDFLAGS := $(LDFLAGS) -nodefaultlibs
-   LDFLAGS := $(LDFLAGS) -nostdlib
+   CFLAGS := $(CFLAGS) -I ./ -I ../ -I ../../../include/
 
-else
-   CFLAGS := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=_$(ARCH) -DDEBUG 
-   CFLAGS := $(CFLAGS) -Wall -I include
    LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
    
-   #On GCC 3.3.4 (SuSe 9.2) not having this flag will produce a link error to 
-   #libgcc_s.a
    LDFLAGS := $(LDFLAGS) -nodefaultlibs
-   
-   #On GCC 3.3.4 (SuSe 9.2) not having this flag will produce a link error  
-   #when linking final application saying multiple symbols (stdlib) are defined
    LDFLAGS := $(LDFLAGS) -nostdlib
-endif   
+else
+   $(error This package is ONLY supposed to be part of a x-compile)
+endif
 
 #-------1---------2---------3---------4---------5---------6---------7---------8
-ALL_C :=                             \
-   src/tk.c                          \
-   src/tk_itc.c                      \
-   src/tk_sysqueues.c                \
-
-CFLAGS   := $(CFLAGS)                        \
-   -DTK_COMP_ITC=1                           \
-   -DTK_COMP_PTIMER=0                        \
-   -DTK_COMP_KMEM=0                          \
-   -DTK_COMP_PTHREAD=0                       \
-   -DTK_COMP_POSIX_RT=0
-   
+ALL_C :=                   \
+   tk_bsp_bitfire.c  		\
+   lpc2129_uart_polled.c   \
+   lpc2129_vic.c           \
+   lpc2129_systimer.c
 
 ALL_COBJS:=$(patsubst %.c, %.o, $(ALL_C))
 ALL_CDEPS:=$(patsubst %.c, %.d, $(ALL_C))
@@ -73,7 +52,7 @@ FOUND_CDEPS:= $(shell find . -name "*.d")
 
 all: $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) $(OUTFILENAME)
 	@echo "======================================================"
-	@echo "<<- Target [tinker] built! ->>"
+	@echo "<<- Target [@PACKAGE_NAME@] built! ->>"
 	@echo "======================================================"
 
 info: 
@@ -93,7 +72,7 @@ info:
 clean: 
 	rm -f $(ALL_COBJS) $(ALL_AOBJS) $(ALL_CDEPS) libtinker.a
 	@echo "======================================================"
-	@echo "<<- Target [tinker] cleaned! ->>"
+	@echo "<<- Target [@PACKAGE_NAME@] cleaned! ->>"
 	@echo "======================================================"
 
 

@@ -1,43 +1,58 @@
+OUTFILENAME    = lib/lib@PACKAGE_NAME@.a
 CC             = @CC@
 LD             = @LD@
 AR             = @AR@
 OBJCOPY        = @OBJCOPY@
 OBJDUMP        = @OBJDUMP@
-VERSION        = @VERSION@
-
-#Do not accept default autoconf CFLAGS. Tinker will not run with them (not on ARM tdmi at leat)
-#CFLAGS         = @CFLAGS@
-
+VERSION        = @PACKAGE_VERSION@
+CFLAGS         = @CFLAGS@
+LDFLAGS        = @LDFLAGS@
+LIBS           = @LIBS@
+LIBOBJS        = @LIBOBJS@
 GCC_PATH       = @GCC_PATH@
 CANONICAL_HOST = @CANONICAL_HOST@
 XCOMPILE       = @XCOMPILE@
+ARCH           = @ARCH@
+ABI            = @ABI@
+TOOLDIR        = @TOOLDIR@
+GCC_VERSION    = @GCC_VERSION@
 
-TOOLDIR = $(subst /bin/@CC@,,$(GCC_PATH))
+.PHONY: all info depend link clean rebuild flashit console
 
+
+LIBOBJS_LIST   = $(patsubst %,-l%,$(LIBOBJS))
 
 ifeq ($(XCOMPILE),1)
    BOARD  := BITFIRE
-   ABI    := $(shell echo @CANONICAL_HOST@ | sed -e s/.*-//)
-   ARCH   := $(shell echo @CANONICAL_HOST@ | sed -e s/-.*//)
    CFLAGS := $(CFLAGS) -DDEBUG -DBOARD=$(BOARD) -DABI=_$(ABI) -DARCH=_$(ARCH) 
    CFLAGS := $(CFLAGS) -mcpu=arm7tdmi -g -gstabs -D RUN_FROM_ROM -D GCC_ARM7 
-   CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(CANONICAL_HOST)/include -I include
+   CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(CANONICAL_HOST)/include 
+   CFLAGS := $(CFLAGS) -I include
+   
+   LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
+   
+   LDFLAGS := $(LDFLAGS) -nodefaultlibs
+   LDFLAGS := $(LDFLAGS) -nostdlib
+
 else
-   ABI   :=
-   ARCH  := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
-   CFLAGS := CFLAGS   := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=_$(ARCH) -DDEBUG -Wall -I include
+   CFLAGS := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=_$(ARCH) -DDEBUG 
+   CFLAGS := $(CFLAGS) -Wall -I include
+   LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
+   
+   #On GCC 3.3.4 (SuSe 9.2) not having this flag will produce a link error to 
+   #libgcc_s.a
+   LDFLAGS := $(LDFLAGS) -nodefaultlibs
+   
+   #On GCC 3.3.4 (SuSe 9.2) not having this flag will produce a link error  
+   #when linking final application saying multiple symbols (stdlib) are defined
+   LDFLAGS := $(LDFLAGS) -nostdlib
 endif   
 
-
-#Either one, but not both of the following two
-#ALL_LIBS:= kernel/TinKer_$(CPU_T).LIB
 #-------1---------2---------3---------4---------5---------6---------7---------8
-ALL_TINKERS_C :=                            \
+ALL_C :=                             \
    src/tk.c                          \
    src/tk_itc.c                      \
    src/tk_sysqueues.c                \
-   bsp/tk_stubs.c                    \
-   bsp/gnu_stubs.c                   \
 
 CFLAGS   := $(CFLAGS)                        \
    -DTK_COMP_ITC=1                           \
@@ -46,27 +61,7 @@ CFLAGS   := $(CFLAGS)                        \
    -DTK_COMP_PTHREAD=0                       \
    -DTK_COMP_POSIX_RT=0
    
-#Start - Not so nice
-#-------------------
-ifdef XCOMPILE
-   ALL_TINKERS_C := $(ALL_TINKERS_C)               			\
-      bsp/gnu_arm/tk_angel.c                			         \
-      bsp/gnu_arm/tk_systimer.c                             \
-      bsp/gnu_arm/lpc21xx/tk_bsp_bitfire.c  			         \
-      bsp/gnu_arm/lpc21xx/lpc2129_uart_polled.c             \
-      bsp/gnu_arm/lpc21xx/lpc2129_vic.c                     \
-      bsp/gnu_arm/lpc21xx/lpc2129_systimer.c
-      
-#   ALL_ASM       := bsp/gnu_arm/startup_gnu.s
-else
 
-endif
-
-#End - Not so nice
-#-------------------
-
-ALL_C:= $(ALL_TINKERS_C)   
-   
 ALL_COBJS:=$(patsubst %.c, %.o, $(ALL_C))
 ALL_CDEPS:=$(patsubst %.c, %.d, $(ALL_C))
 
@@ -74,22 +69,21 @@ ALL_AOBJS:=$(patsubst %.s, %.ao, $(ALL_ASM))
 
 
 FOUND_CDEPS:= $(shell find . -name "*.d")
-ifneq ($(FOUND_CDEPS), )
-   include $(FOUND_CDEPS)
-endif      
-
 #-------1---------2---------3---------4---------5---------6---------7---------8
 
-all: $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) libtinker.a
+all: $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) $(OUTFILENAME)
 	@echo "======================================================"
-	@echo "<<- Target \"all\" for [$(THIS_MODULE)] built! ->>"
+	@echo "<<- Target [@PACKAGE_NAME@] built! ->>"
 	@echo "======================================================"
 
 info: 
 	@echo "======================================================"
-	@echo $(OUTNAME) " <cc> " $(CC)
+	@echo [$(OUTFILENAME)] " <cc> " $(CC)
 	@echo "======================================================"
 	@echo $(FOUND_CDEPS)
+	@echo "======================================================"
+	@echo "======================================================"
+	@echo $(ALL_CDEPS)
 	@echo "======================================================"
 	@echo "======================================================"
 	@echo $(ALL_COBJS)
@@ -99,10 +93,10 @@ info:
 clean: 
 	rm -f $(ALL_COBJS) $(ALL_AOBJS) $(ALL_CDEPS) libtinker.a
 	@echo "======================================================"
-	@echo "<<- Target cleaned! ->>"
+	@echo "<<- Target [@PACKAGE_NAME@] cleaned! ->>"
 	@echo "======================================================"
 
-   
+
 %.d: %.c
 	@echo =d2========================================================
 	echo $*
@@ -112,16 +106,20 @@ clean:
 	@sed  -e 's,\(.*\):,$*.o: $@,' > $@ < temp
 	@echo
 
-%.o: %.d Makefile-gnu Makefile
+%.o: %.d Makefile-gnu
 	@echo =o2========================================================
 	$(CC) -c $(CFLAGS) ${@:o=c} -o $@
 	@echo
-   
-%.ao: %.s Makefile-gnu Makefile
+
+%.ao: %.s Makefile-gnu
 	@echo =a2========================================================
 	$(CC) -c $(CFLAGS) ${@:ao=s} -o $@
 	@echo
 
-libtinker.a: $(ALL_COBJS) $(ALL_AOBJS) 
-	$(CC) $(CFLAGS) -Xlinker --relocatable -DVERSION=\"$(VERSION)\" $(ALL_COBJS) $(ALL_AOBJS) -o libtinker.a
+$(OUTFILENAME): $(ALL_COBJS) $(ALL_AOBJS) 
+	@echo =LINK======================================================
+	$(CC) $(CFLAGS) $(LDFLAGS) -DVERSION=\"$(VERSION)\" $(ALL_COBJS) $(ALL_AOBJS) -o $(OUTFILENAME)
 
+ifneq ($(FOUND_CDEPS), )
+   include $(FOUND_CDEPS)
+endif      
