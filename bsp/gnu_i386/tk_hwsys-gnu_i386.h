@@ -164,7 +164,7 @@ for bare-bone systems (since we have no port it yet/ever).
 
 //Allready a char', no need to do handle in any special way.
 #define STACK_PTR( ADDR ) \
-   ((char *)ADDR.tstack)
+   (ADDR.tstack)
 
 //Not needed to do anything really. But just in case, follow the new convention 
 #define REINIT_STACKADDR( ADDR, size ) \
