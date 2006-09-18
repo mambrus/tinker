@@ -1,4 +1,7 @@
 KILEFILE:=PCM_ST10.Uv2
+SUB_MODS:=bsp
+SUB_MODS_CONFIGURE := $(patsubst %, make configure -C %;, $(SUB_MODS))
+.PHONY: configure
 
 RLPTH:=../../
 
@@ -68,4 +71,9 @@ Common/Traps.obj: Common/Traps.d
 
 
 include $(FOUND_CDEPS)
+
+configure:
+	autoconf
+	$(SUB_MODS_CONFIGURE)
+
 # DO NOT DELETE

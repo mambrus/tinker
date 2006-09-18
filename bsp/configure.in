@@ -1,4 +1,5 @@
 AC_INIT(bsp,[0.0.2])
+AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
 
 dnl Probably works with much older, but tested at this one
 AC_PREREQ([2.59])
@@ -22,6 +23,7 @@ AC_PATH_TOOL([GCC_PATH], [gcc],     [:])
 
 CANONICAL_HOST=$host
 AC_SUBST(CANONICAL_HOST)
+AC_ARG_VAR(BOARD, [Selects which board to build TinKer BSP for (See top level configure for more details])
 
 TOOLDIR=$(echo $GCC_PATH | sed -e "s/\/bin\/$CC//")
 AC_SUBST(TOOLDIR)

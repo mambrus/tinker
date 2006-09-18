@@ -1,26 +1,15 @@
-AC_INIT(tinker, [0.1.0])
+AC_INIT(bsp_i386,[0.0.0])
 AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
-
-dnl Probably works with much older, but tested at this one
 AC_PREREQ([2.59])
-AC_CONFIG_HEADER(include/config.h)
 
 dnl Find and set the C compiler
 AC_PROG_CC
 AC_LANG_C
 
-dnl What is this?
 AC_PROG_MAKE_SET 
 
 AC_HEADER_STDC
 AC_CHECK_FUNCS(clock)
-AC_CHECK_FUNCS(puts)
-#AC_LIBOBJ([puts])
-#AC_LIBOBJ([clock])
-
-
-dnl Check for broken compiler setup
-AC_HAVE_LIBRARY(gcc_s)
 
 
 AC_CHECK_TOOL([LD],      [ld],      [:])
@@ -55,7 +44,7 @@ AC_SUBST(XCOMPILE)
 AC_SUBST(ARCH)
 AC_SUBST(ABI)
 
-GCC_VERSION=$($CC -v 2>&1 | grep 'gcc version' | sed -e 's/gcc version //' | cut -f1 -d " ")
+GCC_VERSION=$($CC -v 2>&1 | grep version | sed -e 's/gcc version //' | cut -f1 -d " ")
 AC_SUBST(GCC_VERSION)
 
 dnl Do not accept default autoconf CFLAGS. Tinker will not run with them (not on ARM tdmi at leat)

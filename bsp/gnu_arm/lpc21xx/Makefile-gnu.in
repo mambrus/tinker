@@ -15,12 +15,12 @@ ARCH           = @ARCH@
 ABI            = @ABI@
 TOOLDIR        = @TOOLDIR@
 GCC_VERSION    = @GCC_VERSION@
+BOARD          = @BOARD@
 
 .PHONY: all info depend link clean rebuild flashit console
 
 
 ifeq ($(XCOMPILE),1)
-   BOARD  := BITFIRE
    CFLAGS := $(CFLAGS) -DDEBUG -DBOARD=$(BOARD) -DABI=_$(ABI) -DARCH=_$(ARCH) 
    CFLAGS := $(CFLAGS) -mcpu=arm7tdmi -g -gstabs -D RUN_FROM_ROM -D GCC_ARM7 
    CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(CANONICAL_HOST)/include 
