@@ -73,6 +73,8 @@ Common/Traps.obj: Common/Traps.d
 include $(FOUND_CDEPS)
 
 configure:
+	rm -f config.*
+	rm -f aclocal.m4 
 	autoconf
 	$(SUB_MODS_CONFIGURE)
 
