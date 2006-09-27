@@ -1,57 +1,19 @@
-AC_INIT(bsp_arm,[0.0.2])
+dnl This is the tinker/bsp/gnu_arm configure.in file.
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.59])
+#AC_INIT(startup_gnu.s)
+AC_INIT(gnu_arm, [0.1.0])
 AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
 
-dnl Probably works with much older, but tested at this one
-AC_PREREQ([2.59])
+AC_CONFIG_AUX_DIR(../..)
 
-dnl Find and set the C compiler
-AC_PROG_CC
-AC_LANG_C
+dnl The following is sadly not working properly. Use autoconf -I <dir> instead to get the aclocal.m4
+#AC_CONFIG_MACRO_DIR(../..)
 
-AC_PROG_MAKE_SET 
+AC_CONFIG_SUBDIRS([lpc21xx])
 
-AC_HEADER_STDC
-AC_CHECK_FUNCS(clock)
+sources_c="tk_angel.c tk_systimer.c"
+TINKER_CONFIGURE(../..)
 
-
-AC_CHECK_TOOL([LD],      [ld],      [:])
-AC_CHECK_TOOL([AR],      [ar],      [:])
-AC_CHECK_TOOL([OBJCOPY], [objcopy], [:])
-AC_CHECK_TOOL([OBJDUMP], [objdump], [:])
-AC_PATH_TOOL([GCC_PATH], [gcc],     [:])
-
-
-CANONICAL_HOST=$host
-AC_SUBST(CANONICAL_HOST)
-AC_ARG_VAR(BOARD, [Selects which board to build TinKer BSP for (See top level configure for more details])
-
-TOOLDIR=$(echo $GCC_PATH | sed -e "s/\/bin\/$CC//")
-AC_SUBST(TOOLDIR)
-
-if test $cross_compiling == yes; then
-   XCOMPILE=1
-   ABI=$(echo $host | sed -e s/.*-//)
-   ARCH=$(echo $host | sed -e s/-.*//)
-else
-   XCOMPILE=0
-
-   #$build, $target, host are missing in this case. Need AC_CANNONICAL_HOST but that inplies extra scripts (?)
-   #Prefered line below cant be used
-   #ARCH=$(echo $build | sed -e s/-.*//)
-
-   ARCH=$(uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
-   ABI=""
-fi
-AC_SUBST(XCOMPILE)
-AC_SUBST(ARCH)
-AC_SUBST(ABI)
-
-GCC_VERSION=$($CC -v 2>&1 | grep 'gcc version' | sed -e 's/gcc version //' | cut -f1 -d " ")
-AC_SUBST(GCC_VERSION)
-
-dnl Do not accept default autoconf CFLAGS. Tinker will not run with them (not on ARM tdmi at leat)
-CFLAGS=""
-AC_SUBST(CFLAGS)
-
-dnl Read Makefile.in and config.h.in, Write Makefile and config.h
 AC_OUTPUT(Makefile-gnu)

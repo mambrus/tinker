@@ -1,4 +1,4 @@
-OUTFILENAME    = lib/lib@PACKAGE_NAME@.a
+OUTFILENAME    = @TINKER_PATH@/lib/lib@PACKAGE_NAME@.a
 CC             = @CC@
 LD             = @LD@
 AR             = @AR@
@@ -17,17 +17,24 @@ ABI            = @ABI@
 TOOLDIR        = @TOOLDIR@
 GCC_VERSION    = @GCC_VERSION@
 BOARD          = @BOARD@
+MAKE_SUBDIRS   = @subdirs@
+TINKER_PATH    = @TINKER_PATH@
 
-.PHONY: all info depend link clean rebuild flashit console
+.PHONY: all subdirs info depend link clean rebuild flashit console
 
+MAKE_SUBDIRS_ALL := $(patsubst %, make -f Makefile-gnu all -C %;, $(MAKE_SUBDIRS))
+
+SUBLIBS   := $(patsubst %, -l%, @subdirs@)
+#SUBLIBS   := -lbsp_arm_lpc21xx -lbsp_arm -lbsp -ltinker
+LDFLAGS  := $(LDFLAGS) -L$(TINKER_PATH)/lib $(SUBLIBS)
 
 LIBOBJS_LIST   = $(patsubst %,-l%,$(LIBOBJS))
 
 ifeq ($(XCOMPILE),1)
-   CFLAGS := $(CFLAGS) -DDEBUG -DBOARD=$(BOARD) -DABI=_$(ABI) -DARCH=_$(ARCH) 
+   CFLAGS := $(CFLAGS)  -DDEBUG -DBOARD=$(BOARD) -DABI=_$(ABI) -DARCH=_$(ARCH) 
    CFLAGS := $(CFLAGS) -mcpu=arm7tdmi -g -gstabs -D RUN_FROM_ROM -D GCC_ARM7 
    CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(CANONICAL_HOST)/include 
-   CFLAGS := $(CFLAGS) -I include
+   CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include 
    
    LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
    
@@ -36,7 +43,7 @@ ifeq ($(XCOMPILE),1)
 
 else
    CFLAGS := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=_$(ARCH) -DDEBUG 
-   CFLAGS := $(CFLAGS) -Wall -I include
+   CFLAGS := $(CFLAGS) -Wall -I . -I $(TINKER_PATH)/include 
    LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
    
    #On GCC 3.3.4 (SuSe 9.2) not having this flag will produce a link error to 
@@ -49,10 +56,9 @@ else
 endif   
 
 #-------1---------2---------3---------4---------5---------6---------7---------8
-ALL_C :=                             \
-   src/tk.c                          \
-   src/tk_itc.c                      \
-   src/tk_sysqueues.c                \
+ALL_C := @ALL_C@
+ALL_ASM := @ALL_ASM@
+#-------1---------2---------3---------4---------5---------6---------7---------8
 
 CFLAGS   := $(CFLAGS)                        \
    -DTK_COMP_ITC=1                           \
@@ -71,10 +77,13 @@ ALL_AOBJS:=$(patsubst %.s, %.ao, $(ALL_ASM))
 FOUND_CDEPS:= $(shell find . -name "*.d")
 #-------1---------2---------3---------4---------5---------6---------7---------8
 
-all: $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) $(OUTFILENAME)
+all: subdirs $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) $(OUTFILENAME)
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] built! ->>"
 	@echo "======================================================"
+
+subdirs:
+	$(MAKE_SUBDIRS_ALL)
 
 info: 
 	@echo "======================================================"

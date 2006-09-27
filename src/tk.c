@@ -1379,10 +1379,49 @@ void _tk_main( void ){
  ||  defined(__BORLANDC__)    || defined(__BCPLUSPLUS__)         \
  ||  defined(__CYGWIN32__)    || defined(__CYGWIN__) || defined(__GNUC__)
  
-int main(int argc, char **argv);
-int main(int argc, char **argv){ 
+/*
+//Declaring a helper variable as (any any type of) function pointer
+//makes gdb be able to look up it's name (practical when debugging).
+void (*my_lastcall)(void);
+
+void My_syscall_mon( void *syscall ) {
+   my_lastcall = syscall;
+}
+
+int My_write(int file, char *ptr, int len){
+    int todo;
+    
+	for (todo = 0; todo < len; todo++) {
+	   //writechar(*ptr++);
+	}
+	return len;     
+}
+
+//We "know" the following functions exists. They are really function pointers
+//so we need to let the compiler know they are assignable
+extern int  (*hixs_write)(int file, char *ptr, int len);
+extern void (*hixs_syscall_mon)(void *syscall);
+*/
+
+int main(int argc, char **argv); 
+int main(int argc, char **argv){
+   /*	
+   hixs_syscall_mon   = My_syscall_mon;   
+
+   //Now test your new syscall monitor   
+   hixs_syscall_mon(main); //Short-cut call
+   _syscall_mon(main);     //Hooked call
+   //If you return from here, monitoring *should* work
+   
+   //Test overloading the _write sys-call (by overloading it's hooked fuction)
+   hixs_write=My_write;
+   
+   //The following call should now generate calls to the monitor
+   //(i.e. My_syscall_mon since we overloaded it) and to My_write    
+   printf("Hello world"); 
+   */
    _tk_main();
-   TRAP(0);
+   TRAP(0); 
 }
 #endif
 
@@ -1404,7 +1443,11 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.60  2006-09-14 10:09:08  ambrmi09
+ *  Revision 1.61  2006-09-27 13:46:26  ambrmi09
+ *  * New build system launched
+ *  * Preparation for more systems (HIXS) and targets done
+ *
+ *  Revision 1.60  2006/09/14 10:09:08  ambrmi09
  *  Tuneup for Linux GDB console to output when supposed to. Varidiac function
  *  that fails when called from other thread than root added as example
  *  (invalidated).
