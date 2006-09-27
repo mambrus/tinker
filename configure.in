@@ -1,4 +1,4 @@
-dnl This is the tinker configure.in file.
+dnl This is the kernel configure.in file.
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(kernel, [0.1.0])
@@ -6,6 +6,9 @@ AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION 
 
 dnl Probably works with much older, but tested at this one
 AC_PREREQ([2.59])
+
+TINKER_AM_PREREQ
+AC_CONFIG_AUX_DIR(.)
 
 AC_CONFIG_SUBDIRS([bsp])
 sources_c="src/tk.c src/tk_itc.c src/tk_sysqueues.c"

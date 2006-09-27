@@ -11,8 +11,10 @@ LIBS           = @LIBS@
 LIBOBJS        = @LIBOBJS@
 GCC_PATH       = @GCC_PATH@
 CANONICAL_HOST = @CANONICAL_HOST@
+ALIAS_HOST     = @host_alias@
 XCOMPILE       = @XCOMPILE@
 ARCH           = @ARCH@
+SYSTEM         = @SYSTEM@
 ABI            = @ABI@
 TOOLDIR        = @TOOLDIR@
 GCC_VERSION    = @GCC_VERSION@
@@ -33,7 +35,7 @@ LIBOBJS_LIST   = $(patsubst %,-l%,$(LIBOBJS))
 ifeq ($(XCOMPILE),1)
    CFLAGS := $(CFLAGS)  -DDEBUG -DBOARD=$(BOARD) -DABI=_$(ABI) -DARCH=_$(ARCH) 
    CFLAGS := $(CFLAGS) -mcpu=arm7tdmi -g -gstabs -D RUN_FROM_ROM -D GCC_ARM7 
-   CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(CANONICAL_HOST)/include 
+   CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(ALIAS_HOST)/include 
    CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include 
    
    LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable

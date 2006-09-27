@@ -6,6 +6,7 @@ all: configure
 
 configure:
 	rm -f config.*
+	rm -f install-sh
 	rm -rf autom4te.cache
 	rm -f Makefile-gnu.in
 	cp ../Makefile-gnu.in .

@@ -74,6 +74,7 @@ include $(FOUND_CDEPS)
 
 configure:
 	rm -f config.*
+	rm -f install-sh
 	rm -rf autom4te.cache
 	#rm -f aclocal.m4 
 	autoconf -I tinker/kernel

@@ -9,8 +9,10 @@ else
    m4_pattern_allow(AM_VERSION_LOCAL)
    m4_pattern_allow(THELINK)
 
-   dnl remove any bad link
+   dnl remove any bad links
    rm -f install-sh
+   rm -f config.sub
+   rm -f config.guess
    
    AM_VERSION_LOCAL=$(automake --version | grep 'GNU' | sed -e 's/.* //' | sed -e 's/-.*$//')
    if test -f /usr/share/automake/install-sh; then
@@ -26,6 +28,13 @@ else
    fi
    THELINK=$(ls -ald install-sh | cut -f2 -d">")
    echo "install-sh linked to $THELINK"
+   AMDIR=$(echo $THELINK | sed -e 's/install-sh$//' | sed -e 's/.$//')
+   echo "Automake data directory is $AMDIR"
+   ln -s ${AMDIR}/config.sub .
+   ln -s ${AMDIR}/config.guess .
+
+   dnl The following seems needed to reninitialize the search-patch
+   AC_CONFIG_AUX_DIR(.)
 fi
 
 ])
@@ -33,10 +42,44 @@ fi
 AC_DEFUN([TINKER_CONFIGURE],
 [
 
+TINKER_PATH=$1
+AC_SUBST(TINKER_PATH)
+
+dnl if called from kernel directory create the AM prerequisits 
+dnl All other should use AC_CONFIG_AUX_DIR
+if test $1 == "."; then
+   TINKER_AM_PREREQ
+fi
+
 dnl Find and set the C compiler
 AC_PROG_CC
 AC_PROG_CC(gcc)
 AC_LANG_C
+
+dnl Expand the canonicals
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+AC_MSG_NOTICE([Build system CPU: $build_cpu])
+AC_MSG_NOTICE([Build system vendor: $build_vendor])
+AC_MSG_NOTICE([Build system OS: $build_os])
+AC_MSG_NOTICE([Host system CPU: $host_cpu])
+AC_MSG_NOTICE([Host system vendor: $host_vendor])
+AC_MSG_NOTICE([Host system OS: $host_os])
+AC_MSG_NOTICE([Target system CPU: $target_cpu])
+AC_MSG_NOTICE([Target system vendor: $target_vendor])
+AC_MSG_NOTICE([Target system OS: $target_os])
+
+dnl Deduct the system call API based on TinKer's convention of asuming
+dnl the vendor part will tell us.
+if test $host_vendor == "unknown"; then
+   SYSTEM="default"
+else
+   SYSTEM=$host_vendor
+fi
+
+AC_SUBST(SYSTEM)
+AC_SUBST(host_alias)
 
 dnl What is this?
 AC_PROG_MAKE_SET 
@@ -60,9 +103,9 @@ AC_SUBST(BS_SUB)
 AC_SUBST(BS_VER)
 
 if test BS_MAIN == Cygwin; then
-SERIAL_PORT=COM1
+   SERIAL_PORT=COM1
 else
-SERIAL_PORT=/dev/ttyS0
+   SERIAL_PORT=/dev/ttyS0
 fi
 
 AC_SUBST(SERIAL_PORT)
@@ -105,8 +148,6 @@ dnl Do not accept default autoconf CFLAGS. Tinker will not run with them (not on
 CFLAGS=""
 AC_SUBST(CFLAGS)
 
-TINKER_AM_PREREQ
-
 AC_ARG_VAR(BOARD, [Selects which board to build TinKer BSP for. Valid values are:\n
    BITFIRE])
 
@@ -132,9 +173,6 @@ AC_PROG_INSTALL
 #       AC_CONFIG_SUBDIRS([kernel/NOBSP])
 #   esac
 #fi
-
-TINKER_PATH=$1
-AC_SUBST(TINKER_PATH)
 
 ALL_C=$sources_c
 AC_SUBST(ALL_C)
