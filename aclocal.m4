@@ -112,6 +112,7 @@ AC_SUBST(SERIAL_PORT)
 
 AC_CHECK_TOOL([LD],      [ld],      [:])
 AC_CHECK_TOOL([AR],      [ar],      [:])
+AC_CHECK_TOOL([GDB],     [gdb],     [:])
 AC_CHECK_TOOL([OBJCOPY], [objcopy], [:])
 AC_CHECK_TOOL([OBJDUMP], [objdump], [:])
 AC_PATH_TOOL([GCC_PATH], [gcc],     [:])
