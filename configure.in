@@ -15,5 +15,12 @@ sources_c="src/tk.c src/tk_itc.c src/tk_sysqueues.c"
 
 TINKER_CONFIGURE(.)
 
+dnl Create defines we expect sub-configure scripts to set
+AH_TEMPLATE([TK_SYSTEM],
+   [Defines which system (i.e. system call API) we're using])
+   
+AC_CONFIG_HEADER(include/config.h)
+
+
 dnl Read Makefile.in and config.h.in, Write Makefile and config.h
 AC_OUTPUT(Makefile-gnu)

@@ -77,7 +77,8 @@ configure:
 	rm -f install-sh
 	rm -rf autom4te.cache
 	#rm -f aclocal.m4 
-	autoconf -I tinker/kernel
+	autoheader
+	autoconf
 	#aclocal
 	$(SUB_MODS_CONFIGURE)
 

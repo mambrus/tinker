@@ -30,9 +30,23 @@ combo.
 #ifndef TK_BSP_H
 #define TK_BSP_H
 
+#include <config.h>
+
 #if !defined(BOARD)
-#error BOARD needs to be defined
+   #error BOARD needs to be defined
 #endif
+
+#if !defined(TK_SYSTEM)
+   #error System needs to be defined
+#endif
+
+// System ID definitions
+#define __SYS_ANGEL_SWI__  0
+#define __SYS_HIXS__       1
+
+// Board ID definitions
+#define BITFIRE            0
+#define lpc21xx            BITFIRE
 
 
 #if (BOARD == BITFIRE)
@@ -89,7 +103,10 @@ int bsp_ReportException (/*TBD*/);
  * @defgroup CVSLOG_tk_bsp_h tk_bsp_h
  * @ingroup CVSLOG
  *  $Log: tk_bsp.h,v $
- *  Revision 1.3  2006-09-13 18:29:30  ambrmi09
+ *  Revision 1.4  2006-09-28 17:42:44  ambrmi09
+ *  HIXS system integration for RM done. ARM now has two different system call API supported. This is mostly interesting from a transparency point of view, but also a good exersisze for bfin and ppc, which are not ported yet (since I'm not planning on implementing any other system integrations than HIXS from now on).
+ *
+ *  Revision 1.3  2006/09/13 18:29:30  ambrmi09
  *  Commited needed in repocitory
  *
  *  Revision 1.2  2006/04/08 10:15:55  ambrmi09

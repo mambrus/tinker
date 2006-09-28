@@ -46,7 +46,7 @@ SCHED
 #include <../src/implement_tk.h>
 
 #ifndef printk
-#   error Tinker needs a prink to be implemented for this target
+#   error "Tinker needs a prink to be implemented for this target"
 #endif
 
 
@@ -1443,7 +1443,10 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.61  2006-09-27 13:46:26  ambrmi09
+ *  Revision 1.62  2006-09-28 17:42:44  ambrmi09
+ *  HIXS system integration for RM done. ARM now has two different system call API supported. This is mostly interesting from a transparency point of view, but also a good exersisze for bfin and ppc, which are not ported yet (since I'm not planning on implementing any other system integrations than HIXS from now on).
+ *
+ *  Revision 1.61  2006/09/27 13:46:26  ambrmi09
  *  * New build system launched
  *  * Preparation for more systems (HIXS) and targets done
  *

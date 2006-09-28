@@ -26,6 +26,8 @@
  
  */
 
+#include <config.h>
+
 #include "../tk_bsp.h"
 #include "../tk_systimer.h"
 #include <../src/tk_tick.h>
@@ -39,6 +41,13 @@
 #include <string.h>
 #include <assert.h>
 #include <time.h>
+
+#if (TK_SYSTEM==__SYS_HIXS__)         
+   #include <sys/stat.h>
+   #include <sys/types.h>
+   #include <sys/times.h>
+   #include <sys/time.h>
+#endif
 
 
 static uart_control uc0;
@@ -102,7 +111,7 @@ int bsp_Remove          (/*TBD*/){}
 int bsp_Rename          (/*TBD*/){}
 
 /* 
- This function needs working. Amon others we need to read mickeys/mackes 
+ This function needs working. Among others we need to read mickeys/mackes 
  several times to detect is IRQ has happened betweeb while reading the first
  and second part (potential wrap-around).
 */
@@ -125,6 +134,19 @@ int bsp_HeapInfo        (/*TBD*/){}
 int bsp_EnterSVC        (/*TBD*/){}
 int bsp_ReportException (/*TBD*/){}
 
+
+int bsp_Times(struct tms *buf){
+   (*buf).tms_utime  = (clock_t)bsp_Clock();
+   buf->tms_stime  = 0;
+   buf->tms_cutime = 0;
+   buf->tms_cstime = 0;      
+}
+
+void (*bsp_syscall)(void);
+void bsp_Syscall_mon(void *hix_syscall){
+	bsp_syscall = hix_syscall;
+};         
+
 /*!
 
  @note
@@ -137,10 +159,67 @@ int tk_bsp_sysinit        (void){
    vic_global_enable_int();
    
    {  // Set up the terminal IO      
-      extern void    initialise_monitor_handles _PARAMS ((void));
+      
         
+      #if !defined(__SYS_ANGEL_SWI__)
+      #error "Sanity check"
+      #endif
+      
       //Hook up the lib (nobody else will)
-      initialise_monitor_handles();
+      #if (TK_SYSTEM==__SYS_ANGEL_SWI__)
+         extern void    initialise_monitor_handles _PARAMS ((void));
+         initialise_monitor_handles(); 
+      #elif (TK_SYSTEM==__SYS_HIXS__)         
+         #include <sys/stat.h>
+         #include <sys/types.h>
+         #include <sys/times.h>
+         #include <sys/time.h>
+         
+         extern int     (*hixs_close)        (int file);
+         extern void    (*hixs_exit)         (int status);
+         extern int     (*hixs_execve)       (char *name, char **argv, char **env);
+         extern int     (*hixs_fork)         ();
+         extern int     (*hixs_fstat)        (int file, struct stat *st);
+         extern int     (*hixs_getpid)       ();
+         extern int     (*hixs_gettimeofday) (struct timeval *tp, struct timezone *tzp);
+         extern int     (*hixs_isatty)       (int file);
+         extern int     (*hixs_kill)         (int pid, int sig);
+         extern int     (*hixs_link)         (char *old, char *new);
+         extern int     (*hixs_lseek)        (int file, int ptr, int dir);
+         extern int     (*hixs_read)         (int file, char *ptr, int len);
+         extern caddr_t (*hixs_sbrk)         (int incr);
+         extern int     (*hixs_settimeofday) (const struct timeval *tp, const struct timezone *tzp);
+         extern int     (*hixs_stat)         (char *file, struct stat *st);
+         extern int     (*hixs_times)        (struct tms *buf);
+         extern int     (*hixs_unlink)       (char *name);
+         extern int     (*hixs_wait)         (int *status);
+         extern int     (*hixs_write)        (int file, char *ptr, int len);
+         extern void    (*hixs_syscall_mon)  (void *);         
+         
+         hixs_close        = hixs_close;        
+         hixs_exit         = hixs_exit;
+         hixs_execve       = hixs_execve;
+         hixs_fork         = hixs_fork;
+         hixs_fstat        = hixs_fstat;
+         hixs_getpid       = hixs_getpid;
+         hixs_gettimeofday = hixs_gettimeofday; 
+         hixs_isatty       = hixs_isatty; 
+         hixs_kill         = hixs_kill;
+         hixs_link         = hixs_link;
+         hixs_lseek        = hixs_lseek;
+         hixs_read         = hixs_read;
+         hixs_sbrk         = hixs_sbrk;
+         hixs_settimeofday = hixs_settimeofday;
+         hixs_stat         = hixs_stat;
+         hixs_times        = bsp_Times;            // <-
+         hixs_unlink       = hixs_unlink;
+         hixs_wait         = hixs_wait;
+         hixs_write        = bsp_Write;            // <--
+         hixs_syscall_mon  = bsp_Syscall_mon;      // <--
+         
+      #else
+         #error "System either not supported or provided"
+      #endif
         
       //Initialize the UART:s for std- in/out/err
       uc0.port = 0;
@@ -175,7 +254,10 @@ int tk_bsp_sysinit        (void){
  * @defgroup CVSLOG_tk_bsp_bitfire.c tk_bsp_bitfire.c
  * @ingroup CVSLOG
  *  $Log: tk_bsp_bitfire.c,v $
- *  Revision 1.3  2006-09-13 18:29:31  ambrmi09
+ *  Revision 1.4  2006-09-28 17:42:44  ambrmi09
+ *  HIXS system integration for RM done. ARM now has two different system call API supported. This is mostly interesting from a transparency point of view, but also a good exersisze for bfin and ppc, which are not ported yet (since I'm not planning on implementing any other system integrations than HIXS from now on).
+ *
+ *  Revision 1.3  2006/09/13 18:29:31  ambrmi09
  *  Commited needed in repocitory
  *
  *  Revision 1.2  2006/04/08 10:15:56  ambrmi09

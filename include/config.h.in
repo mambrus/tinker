@@ -1,4 +1,4 @@
-/* kernel/include/config.h.in.  Generated from configure.in by autoheader.  */
+/* include/config.h.in.  Generated from configure.in by autoheader.  */
 
 /* Define to 1 if you have the `clock' function. */
 #undef HAVE_CLOCK
@@ -23,3 +23,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Defines which system (i.e. system call API) we're using */
+#undef TK_SYSTEM
