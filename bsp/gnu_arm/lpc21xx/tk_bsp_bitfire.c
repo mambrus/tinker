@@ -42,13 +42,12 @@
 #include <assert.h>
 #include <time.h>
 
-#if (TK_SYSTEM==__SYS_HIXS__)         
+#if (TK_SYSTEM==__SYS_HIXS__) || (TK_SYSTEM==__ANGEL_SWI__)
    #include <sys/stat.h>
    #include <sys/types.h>
    #include <sys/times.h>
    #include <sys/time.h>
 #endif
-
 
 static uart_control uc0;
 static uart_control uc1;
@@ -135,7 +134,7 @@ int bsp_EnterSVC        (/*TBD*/){}
 int bsp_ReportException (/*TBD*/){}
 
 
-int bsp_Times(struct tms *buf){
+clock_t bsp_Times(struct tms *buf){
    (*buf).tms_utime  = (clock_t)bsp_Clock();
    buf->tms_stime  = 0;
    buf->tms_cutime = 0;
@@ -169,12 +168,7 @@ int tk_bsp_sysinit        (void){
       #if (TK_SYSTEM==__SYS_ANGEL_SWI__)
          extern void    initialise_monitor_handles _PARAMS ((void));
          initialise_monitor_handles(); 
-      #elif (TK_SYSTEM==__SYS_HIXS__)         
-         #include <sys/stat.h>
-         #include <sys/types.h>
-         #include <sys/times.h>
-         #include <sys/time.h>
-         
+      #elif (TK_SYSTEM==__SYS_HIXS__)
          extern int     (*hixs_close)        (int file);
          extern void    (*hixs_exit)         (int status);
          extern int     (*hixs_execve)       (char *name, char **argv, char **env);
@@ -190,7 +184,7 @@ int tk_bsp_sysinit        (void){
          extern caddr_t (*hixs_sbrk)         (int incr);
          extern int     (*hixs_settimeofday) (const struct timeval *tp, const struct timezone *tzp);
          extern int     (*hixs_stat)         (char *file, struct stat *st);
-         extern int     (*hixs_times)        (struct tms *buf);
+         extern clock_t (*hixs_times)        (struct tms *buf);
          extern int     (*hixs_unlink)       (char *name);
          extern int     (*hixs_wait)         (int *status);
          extern int     (*hixs_write)        (int file, char *ptr, int len);
@@ -254,7 +248,15 @@ int tk_bsp_sysinit        (void){
  * @defgroup CVSLOG_tk_bsp_bitfire.c tk_bsp_bitfire.c
  * @ingroup CVSLOG
  *  $Log: tk_bsp_bitfire.c,v $
- *  Revision 1.4  2006-09-28 17:42:44  ambrmi09
+ *  Revision 1.5  2006-10-02 18:38:01  ambrmi09
+ *  Improved gdb-wrapper.ex to permit step into withot warning. This is
+ *  however a workaround for something that must be a bug in the cross GDB
+ *  used (target is halted at breakpoint even though GDB sends a warning).
+ *
+ *  This proves that the method is "workable", but it's a tedious work (is
+ *  it worth it?). Same method coud be used for the other spep-exec comands.
+ *
+ *  Revision 1.4  2006/09/28 17:42:44  ambrmi09
  *  HIXS system integration for RM done. ARM now has two different system call API supported. This is mostly interesting from a transparency point of view, but also a good exersisze for bfin and ppc, which are not ported yet (since I'm not planning on implementing any other system integrations than HIXS from now on).
  *
  *  Revision 1.3  2006/09/13 18:29:31  ambrmi09

@@ -104,11 +104,14 @@ AC_SUBST(BS_VER)
 
 if test BS_MAIN == Cygwin; then
    SERIAL_PORT=COM1
+   THIS_DIR=$(cygpath -u $(PWD))
 else
    SERIAL_PORT=/dev/ttyS0
+   THIS_DIR=$(pwd)
 fi
 
 AC_SUBST(SERIAL_PORT)
+AC_SUBST(THIS_DIR)
 
 AC_CHECK_TOOL([LD],      [ld],      [:])
 AC_CHECK_TOOL([AR],      [ar],      [:])

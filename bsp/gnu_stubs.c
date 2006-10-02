@@ -37,6 +37,11 @@ properly implement (since there are neither less nor more of them).
 #include <errno.h>
 #include <time.h>    
 
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/times.h>
+#include <sys/time.h>
+
 /* The below code is useless. va_ macros seem to operate on the user stack no matter what the stack pointer is set to */
 /* Code is kept (but invalidated ) as a reminder to this problem */
 
@@ -273,7 +278,7 @@ times
 Timing information for current process. Minimal implementation is shown in the
 following example.
 */
-int times(struct tms *buf){
+clock_t times(struct tms *buf){
    return -1;
 }
 
@@ -321,7 +326,15 @@ int write(int file, char *ptr, int len){
  * @ingroup CVSLOG
  *
  *  $Log: gnu_stubs.c,v $
- *  Revision 1.4  2006-09-14 10:09:07  ambrmi09
+ *  Revision 1.5  2006-10-02 18:38:01  ambrmi09
+ *  Improved gdb-wrapper.ex to permit step into withot warning. This is
+ *  however a workaround for something that must be a bug in the cross GDB
+ *  used (target is halted at breakpoint even though GDB sends a warning).
+ *
+ *  This proves that the method is "workable", but it's a tedious work (is
+ *  it worth it?). Same method coud be used for the other spep-exec comands.
+ *
+ *  Revision 1.4  2006/09/14 10:09:07  ambrmi09
  *  Tuneup for Linux GDB console to output when supposed to. Varidiac function
  *  that fails when called from other thread than root added as example
  *  (invalidated).
