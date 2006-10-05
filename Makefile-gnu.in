@@ -21,6 +21,7 @@ GCC_VERSION    = @GCC_VERSION@
 BOARD          = @BOARD@
 MAKE_SUBDIRS   = @subdirs@
 TINKER_PATH    = @TINKER_PATH@
+THIS_DIR       = @THIS_DIR@
 
 .PHONY: all subdirs info depend link clean rebuild flashit console
 
@@ -58,8 +59,12 @@ else
 endif   
 
 #-------1---------2---------3---------4---------5---------6---------7---------8
-ALL_C := @ALL_C@
-ALL_ASM := @ALL_ASM@
+ALL_C_r   := @ALL_C@
+ALL_ASM_r := @ALL_ASM@
+
+ALL_C     := $(patsubst %, ${THIS_DIR}/%, ${ALL_C_r})
+ALL_ASM   := $(patsubst %, ${THIS_DIR}/%, ${ALL_ASM_r})
+
 #-------1---------2---------3---------4---------5---------6---------7---------8
 
 CFLAGS   := $(CFLAGS)                        \
