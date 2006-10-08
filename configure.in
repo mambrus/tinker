@@ -1,7 +1,7 @@
 dnl This is the kernel configure.in file.
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(kernel, [0.1.0])
+AC_INIT(tinker, [0.1.0])
 AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
 
 dnl Probably works with much older, but tested at this one

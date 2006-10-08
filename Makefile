@@ -1,86 +1,113 @@
-KILEFILE:=PCM_ST10.Uv2
-SUB_MODS:=bsp
-SUB_MODS_CONFIGURE := $(patsubst %, make configure -C %;, $(SUB_MODS))
-.PHONY: configure
+#/***************************************************************************
+# *   Copyright (C) 2006 by Michael Ambrus                                  *
+# *   michael.ambrus@maquet.com                                             *
+# *                                                                         *
+# *   This program is free software; you can redistribute it and/or modify  *
+# *   it under the terms of the GNU General Public License as published by  *
+# *   the Free Software Foundation; either version 2 of the License, or     *
+# *   (at your option) any later version.                                   *
+# *                                                                         *
+# *   This program is distributed in the hope that it will be useful,       *
+# *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+# *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+# *   GNU General Public License for more details.                          *
+# *                                                                         *
+# *   You should have received a copy of the GNU General Public License     *
+# *   along with this program; if not, write to the                         *
+# *   Free Software Foundation, Inc.,                                       *
+# *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+# ***************************************************************************/
 
-RLPTH:=../../
+#This is the top-level generic makefile in a multi build multi system.
 
-# Defines to build with
-USR_DEFINES:=PCM,ST10
-THIS_MODULE:=pcm_st
-CPU_T:=ST10
+MODULES:=  .
+CONFMODULES:=  bsp
 
-# The final output name
-OUTNAME:=pcm_st
+THIS_MODULE=DUMMY_MODULE
+CPU_T=DUMMY_CPU_TYPE
+USR_DEFINES:=DUMMY_DEF
 
-ALL_C:= \
-../../Common/COMMONID.C \
-../../Common/COMTEXT.C \
-../../Common/Down16b/Cannode/ST10F269/DOWN.C \
-../../Common/Down16b/DOWN_TXT.C \
-../../Common/EEPROM.C \
-ADC.C \
-ADCMNG.C \
-ASC0.C \
-CAN1.C \
-CAN2.C \
-DALLAS.C \
-DEVMNG.C \
-DISPLAY.C \
-GPT2.C \
-IO.C \
-PCM.C \
-PCM_ID.C \
-PICMNG.C \
-PUMPMOD.C \
-PUMPREG.C \
-SELFTEST.C \
-SERVICE.C \
-SPECTEXT.C \
-SSC.C \
+# TOOLS could be either 'gnu' or any othe supported tool-chain.
+# If TOOLS is not set, the build system assumes each sub-module 
+# will know which tol-chain to use
 
-#Have no idea what this does.....:::---->>>>
+TOOLS := gnu
+#TOOLS := keil
 
+ifdef TOOLS
+   CLEAN_MODS      := $(patsubst %, make -f Makefile-$(TOOLS) clean -C %;, $(MODULES))
+   CLEANALL_MODS   := $(patsubst %, make -f Makefile-$(TOOLS) cleanall -C %;, $(MODULES))
+   INSTALL_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) install -C %;, $(MODULES))
+   FLASHIT_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) flashit -C %;, $(MODULES))
+   CONSOLE_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) console -C %;, $(MODULES))
+   NEXT_MAKEALL    := -f Makefile-$(TOOLS)
+else
+   CLEAN_MODS      := $(patsubst %, make clean -C %;, $(MODULES))
+   CLEANALL_MODS   := $(patsubst %, make cleanall -C %;, $(MODULES))
+   INSTALL_MODS    := $(patsubst %, make install -C %;, $(MODULES))
+   FLASHIT_MODS    := $(patsubst %, make flashit -C %;, $(MODULES))
+   CONSOLE_MODS    := $(patsubst %, make console -C %;, $(MODULES))
+   NEXT_MAKEALL    :=
+endif
 
-ALL_ASM:= \
-../../Common/Down16b/down_asm.a66 \
-Start167.a66 \
+#Note: 'make configure' always assumes a GNU (or UNIX like) build host
+CONFIGURE_MODS  := $(patsubst %, make configure -C %;, $(CONFMODULES))
 
+.PHONY: modules $(MODULES) clean cleanall configure install flashit console
 
-DOX_PROJFILE         := pcm_as.dox
-DOX_TAGFILE          := pcm_as.tag
-ADDITIONAL_TEXTFILES := pcm_as.txt
+all: modules
 
+modules: $(MODULES)
+	@echo "======================================================"
+	@echo "<<-        ALL MODULES "ALL" BUILT!                ->>"
+	@echo "======================================================"
 
+clean:
+	$(CLEAN_MODS)
+	@echo "======================================================"
+	@echo "<<-           ALL MODULES CLEANED!                 ->>"
+	@echo "======================================================"
+	
+cleanall:
+	$(CLEANALL_MODS)
+	@echo "======================================================"
+	@echo "<<-        ALL MODULES DEEP CLEANED!               ->>"
+	@echo "======================================================"	
 
-include ../../gen_prereq.mk
-include ../../gen_targets.mk
+install:
+	$(INSTALL_MODS)
+	@echo "======================================================"
+	@echo "<<-        ALL MODULES INSTALLED!                  ->>"
+	@echo "======================================================"
 
-Common/Traps.obj: Common/Traps.d
-	@echo "<<<<<<Special target>>>>>>!"
-	$(CC) ..\Common\Traps.c 'LARGE OPTIMIZE(2,SPEED) ORDER INCDIR(..\..\common\;..\Common\;..\Common\firmfunc\;..\Common\down16b\;..\Common\down16b\cannode\) MOD167 MOD167 MOD167 DEFINE(PCM,CS) PRINT(.\Traps.lst) SRC(.\Traps.asm)'
+flashit:
+	$(FLASHIT_MODS)
+	@echo "======================================================"
+	@echo "<<-         ALL MODULES: Flashed!!                 ->>"
+	@echo "======================================================"
 
-#	$(ASM) Traps.SRC $(AFLAGS) OBJECT\(../Common/Traps.obj\) EP
+console:
+	$(CONSOLE_MODS)
+	@echo "======================================================"
+	@echo "<<-         ALL MODULES: Flashed!!                 ->>"
+	@echo "======================================================"
 
-#	$(CC) ../Common/Traps.c $(CFLAGS) $(CINCLUDE) SRC\(Traps.asm\)
-
-#../COMMON/TRAPS.OBJ: ../COMMON/TRAPS.D
-#	@echo "<<<<<<Special target>>>>>>!"
-#	$(CC) ../COMMON/TRAPS.C $(CFLAGS) $(CINCLUDE) SRC\(TRAPS.asm\)
-#	$(ASM) TRAPS.asm $(AFLAGS) OBJECT\(../COMMON/TRAPS.OBJ\) EP
-
-
-include $(FOUND_CDEPS)
+$(MODULES):
+	@echo "======================================================"
+	@echo "<<-            ENTERING MODULE $@                  ->>"
+	@echo "======================================================"
+	make -k $(NEXT_MAKEALL) -C  $@
 
 configure:
 	rm -f config.*
 	rm -f install-sh
 	rm -rf autom4te.cache
 	#rm -f aclocal.m4 
-	autoheader
-	autoconf
+	autoconf -I kernel
 	#aclocal
-	$(SUB_MODS_CONFIGURE)
+	$(CONFIGURE_MODS)
+	@echo "Configure scripts created. Now run './configure [options]'. For example: "
+	@echo "./configure -C --host=arm-hixs-elf BOARD=lpc21xx"
+	@echo "==========================================================="
 
 
-# DO NOT DELETE

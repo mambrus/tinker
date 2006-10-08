@@ -27,34 +27,32 @@ example as:
  --host=arm-hixs-elf BOARD=lpx21xxx
 
 This will build several libraries in the directory ./lib/ . However, 
-only 
-the one named ./lib/tinker.a is the one you'll link against (the others 
-are intermediate libraries).
+only the one named ./lib/tinker.a is the one you'll link against (the 
+others are intermediate libraries).
 
 Note: that the vendor part is important if you intend to use HIXS. HIXS 
 is TinKer main system call interface implementation for GNU newlib.
 
 Tinker will run on targets based on the normal GNU canonical name 
-convention.
-This would imply a 2 dimensional matrix of targets. Tinger however uses 
-the 
-vendor part to point out the system (which is normally pointed out by 
-the last 
-part of the name). This is because the only "system" we care about is 
-wether to 
-use HIXS or not, and by using the vendor part we don't have to patch 
-binutils, 
-gcc nor gdb, and focus only on newlib (Newlib is BTW the library in 
-question when 
-using GNU toolchain, and *not* glibc).
+convention. This would imply a 2 dimensional matrix of targets. TinKer 
+however uses the  vendor part to point out the system (which is normally 
+pointed out by the last  part of the name). This is because the only 
+"system" we care about is wether to use HIXS or not, and by using the 
+vendor part we don't have to patch binutils, gcc nor gdb, and focus only 
+on newlib (Newlib is BTW the library in question when using GNU toolchain, 
+and *not* glibc).
 
-When you build TinKer you'll also have to consider for which hardware to 
-run it on. TinKer really doesn't care (or know), but you'll have to name 
-the BOARD option when building a cross target. The BOARD option 
-cooresponds to a subdirectory in each main target directory.
+When you build TinKer you'll also have to consider for which particular 
+hardware system to run it on (i.e. which board). TinKer really doesn't 
+care (or know), but you'll have to name the BOARD option when configuring a 
+build for a cross target. The BOARD option cooresponds to a subdirectory in 
+each main target directory. You're encouraged to add bourds of you own, this
+will not affect neither TinKer's structure or build system in any way. Just 
+add a new directory, and point it out using the BOARD option.
 
-A GNU target is named following the convention: 
+A GNU target's structure in the file system follows the convention: 
 ./bsp/gnu_<archetecture> 
+
 (The architecture implies the main architecture, i.e. variants of 
 processors following the same architecture all belong to this 
 directory.)
@@ -112,6 +110,10 @@ IAR
 
 (Should interest occur for the obsolete ports, I'll be happy to revive 
 them if someone would donate the tools.)
+
+For the GNU based targets, you should be able to build TinKer using a any 
+UNIX like build host like Linux, Cygwin (i.e. Windows) e.t.a. Note however 
+that you must have GNU based cross tool-chains installed first though.
 
 
 Enjoy!

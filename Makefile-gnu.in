@@ -23,9 +23,10 @@ MAKE_SUBDIRS   = @subdirs@
 TINKER_PATH    = @TINKER_PATH@
 THIS_DIR       = @THIS_DIR@
 
-.PHONY: all subdirs info depend link clean rebuild flashit console
+.PHONY: all subdirs info depend link clean cleanall install rebuild flashit console
 
-MAKE_SUBDIRS_ALL := $(patsubst %, make -f Makefile-gnu all -C %;, $(MAKE_SUBDIRS))
+MAKE_SUBDIRS_ALL   := $(patsubst %, make -f Makefile-gnu all -C %;, $(MAKE_SUBDIRS))
+MAKE_SUBDIRS_CLEAN := $(patsubst %, make -f Makefile-gnu clean -C %;, $(MAKE_SUBDIRS))
 
 SUBLIBS   := $(patsubst %, -l%, @subdirs@)
 #SUBLIBS   := -lbsp_arm_lpc21xx -lbsp_arm -lbsp -ltinker
@@ -61,9 +62,11 @@ endif
 #-------1---------2---------3---------4---------5---------6---------7---------8
 ALL_C_r   := @ALL_C@
 ALL_ASM_r := @ALL_ASM@
+EXTRAS_r  := @EXTRAS@
 
 ALL_C     := $(patsubst %, ${THIS_DIR}/%, ${ALL_C_r})
 ALL_ASM   := $(patsubst %, ${THIS_DIR}/%, ${ALL_ASM_r})
+EXTRAS    := $(patsubst %, ${THIS_DIR}/%, ${EXTRAS_r})
 
 #-------1---------2---------3---------4---------5---------6---------7---------8
 
@@ -84,7 +87,7 @@ ALL_AOBJS:=$(patsubst %.s, %.ao, $(ALL_ASM))
 FOUND_CDEPS:= $(shell find . -name "*.d")
 #-------1---------2---------3---------4---------5---------6---------7---------8
 
-all: subdirs $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) $(OUTFILENAME)
+all: subdirs $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) $(OUTFILENAME) $(EXTRAS)
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] built! ->>"
 	@echo "======================================================"
@@ -92,7 +95,7 @@ all: subdirs $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) $(OUTFILENAME)
 subdirs:
 	$(MAKE_SUBDIRS_ALL)
 
-info: 
+info:
 	@echo "======================================================"
 	@echo [$(OUTFILENAME)] " <cc> " $(CC)
 	@echo "======================================================"
@@ -105,13 +108,38 @@ info:
 	@echo $(ALL_COBJS)
 	@echo "======================================================"
 
-
-clean: 
-	rm -f $(ALL_COBJS) $(ALL_AOBJS) $(ALL_CDEPS) libtinker.a
+clean:
+	$(MAKE_SUBDIRS_CLEAN)
+	rm -f $(ALL_COBJS) $(ALL_AOBJS) $(ALL_CDEPS) $(OUTFILENAME) $(EXTRAS)
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] cleaned! ->>"
 	@echo "======================================================"
 
+cleanall: clean
+	rm -rf @TINKER_PATH@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
+	rm -rf @TINKER_PATH@/lib/crt*.o $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
+	rm $(TOOLDIR)/$(ALIAS_HOST)/lib/lib@PACKAGE_NAME@.a
+	@echo "======================================================"
+	@echo "<<- Target [@PACKAGE_NAME@] installation removed! ->>"
+	@echo "======================================================"
+
+install: all
+	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
+	mkdir -p $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
+	cp -dpv $(OUTFILENAME) $(TOOLDIR)/$(ALIAS_HOST)/lib/
+	cp -dpv @TINKER_PATH@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
+	cp -dpv @TINKER_PATH@/lib/crt*.o $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
+	@echo "======================================================"
+	@echo "<<- Target [@PACKAGE_NAME@] installed! ->>"
+	@echo "======================================================"
+
+%.ld:
+	@echo =LD========================================================
+	cp ${@F} $@
+
+%crt0.o: ${THIS_DIR}/startup_gnu.ao
+	@echo =CRT0========================================================
+	cp startup_gnu.ao $@
 
 %.d: %.c
 	@echo =d2========================================================
@@ -138,4 +166,4 @@ $(OUTFILENAME): $(ALL_COBJS) $(ALL_AOBJS)
 
 ifneq ($(FOUND_CDEPS), )
    include $(FOUND_CDEPS)
-endif      
+endif

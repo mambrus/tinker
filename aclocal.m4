@@ -183,4 +183,7 @@ AC_SUBST(ALL_C)
 ALL_ASM=$sources_asm
 AC_SUBST(ALL_ASM)
 
+EXTRAS=$extras
+AC_SUBST(EXTRAS)
+
 ])

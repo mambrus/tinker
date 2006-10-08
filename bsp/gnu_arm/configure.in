@@ -14,6 +14,10 @@ dnl The following is sadly not working properly. Use autoconf -I <dir> instead t
 AC_CONFIG_SUBDIRS([lpc21xx])
 
 sources_c="tk_angel.c tk_systimer.c"
+#sources_asm="startup_gnu.s"
+sources_asm=""
+extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
+
 TINKER_CONFIGURE(../..)
 
 
