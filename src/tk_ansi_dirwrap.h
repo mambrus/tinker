@@ -62,6 +62,17 @@ kernel_reimpl_ansi
       #define CHAINPATH /usr/include
    #endif
 
+//The following workaround is necessary for our BUILDCHAIN macro to work
+   #ifdef bfin
+      #warning Workaround enabled for GCC builtin macro bug: bfin
+      #undef bfin
+      #define __bfin__
+   #endif
+   #ifdef BFIN
+      #warning Workaround enabled for GCC builtin macro bug: BFIN
+      #undef BFIN
+      #define __BFIN__
+   #endif
 #else
    #error "Can\'t determine the target for the TINKER kernel"
 #endif
@@ -82,7 +93,12 @@ kernel_reimpl_ansi
  * @ingroup CVSLOG
  *
  *  $Log: tk_ansi_dirwrap.h,v $
- *  Revision 1.7  2006-04-08 10:16:02  ambrmi09
+ *  Revision 1.8  2006-10-09 17:08:06  ambrmi09
+ *  * Sceleton for bfin and powerpc now compiles.
+ *  * Refingnemen in auto-tools to build correct BSP depending on toolchain and settings
+ *  * BFIN,bfin macro work-around
+ *
+ *  Revision 1.7  2006/04/08 10:16:02  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.6.2.2  2006/04/03 20:07:29  ambrmi09

@@ -1,9 +1,9 @@
-dnl This is the tinker/bsp/gnu_arm configure.in file.
+dnl This is the tinker/bsp/gnu_bfin configure.in file.
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
 #AC_INIT(startup_gnu.s)
-AC_INIT(gnu_arm, [0.1.0])
+AC_INIT(gnu_bfin, [0.1.0])
 AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
 
 AC_CONFIG_AUX_DIR(../..)
@@ -11,25 +11,22 @@ AC_CONFIG_AUX_DIR(../..)
 dnl The following is sadly not working properly. Use autoconf -I <dir> instead to get the aclocal.m4
 #AC_CONFIG_MACRO_DIR(../..)
 
-AC_CONFIG_SUBDIRS([lpc21xx])
+#AC_CONFIG_SUBDIRS([lpc21xx])
 
-sources_c="tk_angel.c tk_systimer.c"
+sources_c="hixsys.c"
 #sources_asm="startup_gnu.s"
 sources_asm=""
-extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
+#extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
 
 TINKER_CONFIGURE(../..)
+subdirs=
+AC_SUBST(subdirs)
 
-
-#AC_DEFINE([ANGEL_SWI],0,[Default system])
-#AC_DEFINE([HIXS],0,[HIXS system])
 
 if test $SYSTEM == 'default'; then
-   AC_DEFINE([TK_SYSTEM],__SYS_ANGEL_SWI__)
+   AC_DEFINE([TK_SYSTEM],__SYS_DEFAULT__)
 elif test $SYSTEM == 'hixs'; then
    AC_DEFINE([TK_SYSTEM],__SYS_HIXS__)
-   #LDFLAGS=${TOOLDIR}/${host_alias}/lib/crt0.o
-   #AC_SUBST(LDFLAGS)
 else
    AC_MSG_ERROR([<<< Tinker does not support the system you'we chosen])
 fi

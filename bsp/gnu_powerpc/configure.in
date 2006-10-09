@@ -19,17 +19,14 @@ sources_asm=""
 #extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
 
 TINKER_CONFIGURE(../..)
+subdirs=
+AC_SUBST(subdirs)
 
-
-#AC_DEFINE([ANGEL_SWI],0,[Default system])
-#AC_DEFINE([HIXS],0,[HIXS system])
 
 if test $SYSTEM == 'default'; then
-   AC_DEFINE([TK_SYSTEM],__SYS_ANGEL_SWI__)
+   AC_DEFINE([TK_SYSTEM],__SYS_DEFAULT__)
 elif test $SYSTEM == 'hixs'; then
    AC_DEFINE([TK_SYSTEM],__SYS_HIXS__)
-   LDFLAGS=${TOOLDIR}/${host_alias}/lib/crt0.o
-   AC_SUBST(LDFLAGS)
 else
    AC_MSG_ERROR([<<< Tinker does not support the system you'we chosen])
 fi

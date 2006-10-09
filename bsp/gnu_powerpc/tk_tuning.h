@@ -17,48 +17,48 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
-/*!
-@file
-@brief stubed funtions
+  
 
-This file contains stub-functions . Use these funtions iniially in your port
-until you got working equivalents.
+//------1---------2---------3---------4---------5---------6---------7---------8
+#ifndef TK_TUNING_H
+#define TK_TUNING_H
 
-When involved with porting, the \ref clock, \ref printf and \ref malloc 
-functions are most often not implemented or wrong. 
-  
-The functions in this file are an esential part of the \ref SCHED internals, 
-you need to have atleas stub that will do something  meantingful, so that 
-the dispaching can work.
+//App & system
+#define TK_MINIMUM_STACK_SIZE 	0x0300  
+#define TK_NORMAL_STACK_SIZE  	0x0300
 
-*/
+//SCHED 
+#define TK_MAX_THREADS          10  
+#define TK_MAX_PRIO_LEVELS      4
+#define TK_MAX_THREADS_AT_PRIO  3
+#define TK_THREAD_NAME_LEN      0x17
 
-#include <time.h>
+//ITC
+#define MAX_BLOCKED_ON_Q    	TK_MAX_THREADS
+#define MAX_NUM_Q       		10
 
-#if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
-long int stub_sub_mickey = 0;
-long int stub_mickey = 0;
-/*!
-Simulates time by increasing a variable everytime function is called.
- */
-clock_t clock_stubbed(){   
-   stub_sub_mickey++;
-   if (stub_sub_mickey >=100){
-      stub_sub_mickey = 0;
-      stub_mickey++;
-   }
-   return (clock_t)stub_mickey;
-}
-#endif
+/*
+#define TK_HOWTO_MALLOC 		TK_FNK_ORIGINAL
+#define TK_HOWTO_CLOCK  		TK_FNK_STUBBED
+#define TK_HOWTO_PRINTK 		TK_FNK_VOIDED
+#define TK_HOWTO_ASSERT 		TK_FNK_RENAMED      
+*/  
+
+#define TK_HOWTO_MALLOC 		TK_FNK_ORIGINAL
+//#define TK_HOWTO_CLOCK  		TK_FNK_STUBBED
+#define TK_HOWTO_CLOCK  		TK_FNK_ORIGINAL
+#define TK_HOWTO_PRINTK 		TK_FNK_RENAMED
+#define TK_HOWTO_ASSERT 		TK_FNK_RENAMED      
 
 
+#endif  //TK_TUNING_H
+
+  
 /*! 
- * @defgroup CVSLOG_tk_stubs_c tk_stubs_c
+ * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
- *
- *  $Log: tk_stubs.c,v $
- *  Revision 1.4  2006-10-09 17:08:05  ambrmi09
+ *  $Log: tk_tuning.h,v $
+ *  Revision 1.1  2006-10-09 17:08:06  ambrmi09
  *  * Sceleton for bfin and powerpc now compiles.
  *  * Refingnemen in auto-tools to build correct BSP depending on toolchain and settings
  *  * BFIN,bfin macro work-around
@@ -66,23 +66,17 @@ clock_t clock_stubbed(){
  *  Revision 1.3  2006/09/13 18:29:30  ambrmi09
  *  Commited needed in repocitory
  *
- *  Revision 1.2  2006/04/08 10:15:50  ambrmi09
+ *  Revision 1.2  2006/04/08 10:15:55  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
- *  Revision 1.1.2.4  2006/04/07 12:10:05  ambrmi09
- *  Skeleton for handling syscalls using the ARM Angel interface in place
- *
- *  Basic terminal I/O for gnu_arm (LPC2129) - only output so far (input requires
- *  blocking).
- *
- *  Revision 1.1.2.3  2006/04/06 09:01:55  ambrmi09
+ *  Revision 1.1.2.4  2006/04/06 09:01:55  ambrmi09
  *  Safety commit due to change of local sandbox FS type (had files checked out
  *  while changing the type - not to be recommended).
  *
- *  Revision 1.1.2.2  2006/04/03 20:07:20  ambrmi09
+ *  Revision 1.1.2.3  2006/04/03 20:07:22  ambrmi09
  *  Minor cosmetic change
  *
- *  Revision 1.1.2.1  2006/04/03 15:21:43  ambrmi09
+ *  Revision 1.1.2.2  2006/04/03 15:21:46  ambrmi09
  *  All targets updated with the new thread-starter (alternative 2).
  *
  *  This alternative has one weakness (explained elsewhere togeather
@@ -103,7 +97,22 @@ clock_t clock_stubbed(){
  *  TinKer can be considered "almost ported" to any HW target that GCC is
  *  ported for :D (/cheers)
  *
- */
+ *  Revision 1.1.2.1  2006/03/31 17:42:55  ambrmi09
+ *  Second idea for the new thread starter. This one plays nice with several
+ *  more compilers beacuse of it's balances call-stack. It's not as
+ *  beautiful as the former one IMO, but GNU is a pain in the but
+ *  with it's call-stack optimizations (and decorations doesn't seem to work
+ *  for Cygwin GCC ).
+ *
+ *
+ *******************************************************************/
+
+
+
+
+
+
+
 
 
 

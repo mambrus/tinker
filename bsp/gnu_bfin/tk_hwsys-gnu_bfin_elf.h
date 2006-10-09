@@ -75,7 +75,6 @@ How printk is implemented on this target. I.e. no ability to output on console
 
 /*
 */
-
 #define PREP_TOS( _oldTOS, _newSP, _temp1, _temp2, _stack_struct )
 #define _PREP_TOS( _oldTOS, _newSP, _temp1, _temp2, _stack_struct )   \
    PUSHALL();                             \
@@ -128,7 +127,7 @@ How printk is implemented on this target. I.e. no ability to output on console
       : /**/                              \
       : "memory"                          \
    )
-  
+
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )
 #define _CHANGE_STACK_POP_CPU( TSP1, TEMP )   \
    asm __volatile__ (                     \
@@ -137,7 +136,6 @@ How printk is implemented on this target. I.e. no ability to output on console
       : "r" (TSP1)                        \
    );  /*Note, no clobber (intentional)*/ \
    POPALL();
-
 
 #define CHANGE_STACK( TSP1, TEMP )
 #define _CHANGE_STACK( TSP1, TEMP )        \
@@ -149,13 +147,11 @@ How printk is implemented on this target. I.e. no ability to output on console
 
 
 #define INIT_SP( _stack_SP, _stack_begin )\
-   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; 					\
+   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN;	\
    _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;  \
 
 //Does nothing on this port
-#define BIND_STACK( _stack_struct, _temp2 )
-
-
+#define BIND_STACK( _stack_struct, _temp2 )     
 
 
 //TBD Is this needed anymore? FIXME
@@ -192,7 +188,6 @@ How printk is implemented on this target. I.e. no ability to output on console
    exit( NUM )   
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-
 
 #endif
 

@@ -152,8 +152,20 @@ dnl Do not accept default autoconf CFLAGS. Tinker will not run with them (not on
 CFLAGS=""
 AC_SUBST(CFLAGS)
 
-AC_ARG_VAR(BOARD, [Selects which board to build TinKer BSP for. Valid values are:\n
-   BITFIRE])
+AC_ARG_VAR(BOARD, [Selects which board to build TinKer BSP for. Valid values depend on each BSP and coorespond to a sub-directory in that structure])
+
+AC_ARG_VAR(MCPU, [Sets the GCC CPU optimization switch (i.e. -mcpu=<MCPU>])
+
+if test -z $MCPU; then
+   AC_MSG_NOTICE([<<< No -mcpu optimization])
+   CPU_OPT=""
+   AC_SUBST(CPU_OPT)
+else
+   AC_MSG_NOTICE([<<< Using optimize CPU flag: -mcpu=$MCPU- ])
+   CPU_OPT="-mcpu=$MCPU"
+   AC_SUBST(CPU_OPT)
+fi
+
 
 if test $cross_compiling == yes; then
    if test -z $BOARD; then

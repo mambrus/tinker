@@ -22,6 +22,7 @@ BOARD          = @BOARD@
 MAKE_SUBDIRS   = @subdirs@
 TINKER_PATH    = @TINKER_PATH@
 THIS_DIR       = @THIS_DIR@
+CPU_OPT        = @CPU_OPT@
 
 .PHONY: all subdirs info depend link clean cleanall install rebuild flashit console
 
@@ -29,21 +30,21 @@ MAKE_SUBDIRS_ALL   := $(patsubst %, make -f Makefile-gnu all -C %;, $(MAKE_SUBDI
 MAKE_SUBDIRS_CLEAN := $(patsubst %, make -f Makefile-gnu clean -C %;, $(MAKE_SUBDIRS))
 
 SUBLIBS   := $(patsubst %, -l%, @subdirs@)
-#SUBLIBS   := -lbsp_arm_lpc21xx -lbsp_arm -lbsp -ltinker
+
 LDFLAGS  := $(LDFLAGS) -L$(TINKER_PATH)/lib $(SUBLIBS)
 
 LIBOBJS_LIST   = $(patsubst %,-l%,$(LIBOBJS))
 
 ifeq ($(XCOMPILE),1)
    CFLAGS := $(CFLAGS)  -DDEBUG -DBOARD=$(BOARD) -DABI=_$(ABI) -DARCH=_$(ARCH) 
-   CFLAGS := $(CFLAGS) -mcpu=arm7tdmi -g -gstabs -D RUN_FROM_ROM -D GCC_ARM7 
+   CFLAGS := $(CFLAGS) $(CPU_OPT) -g -gstabs -D RUN_FROM_ROM -D XXX_OBSOLETE_GCC_ARM7
    CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(ALIAS_HOST)/include 
    CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include 
    
    LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
    
    LDFLAGS := $(LDFLAGS) -nodefaultlibs
-   LDFLAGS := $(LDFLAGS) -nostdlib
+   LDFLAGS := $(LDFLAGS) -nostdlib -nostartfiles
 
 else
    CFLAGS := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=_$(ARCH) -DDEBUG 
@@ -110,7 +111,7 @@ info:
 
 clean:
 	$(MAKE_SUBDIRS_CLEAN)
-	rm -f $(ALL_COBJS) $(ALL_AOBJS) $(ALL_CDEPS) $(OUTFILENAME) $(EXTRAS)
+	rm -f $(ALL_COBJS) $(ALL_AOBJS) $(ALL_CDEPS) $(OUTFILENAME) $(OUTFILENAME).map $(EXTRAS)
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] cleaned! ->>"
 	@echo "======================================================"
@@ -161,8 +162,11 @@ install: all
 	@echo
 
 $(OUTFILENAME): $(ALL_COBJS) $(ALL_AOBJS) 
-	@echo =LINK======================================================
-	$(CC) $(CFLAGS) $(LDFLAGS) -DVERSION=\"$(VERSION)\" $(ALL_COBJS) $(ALL_AOBJS) -o $(OUTFILENAME)
+	@echo =LINK [@PACKAGE_NAME@]====================================
+	rm -f $(OUTFILENAME)
+	rm -f $(OUTFILENAME).map
+	touch $(OUTFILENAME).map
+	$(CC) $(CFLAGS) $(LDFLAGS) -DVERSION=\"$(VERSION)\" $(ALL_COBJS) $(ALL_AOBJS) -Xlinker -Map $(OUTFILENAME).map -o $(OUTFILENAME)
 
 ifneq ($(FOUND_CDEPS), )
    include $(FOUND_CDEPS)

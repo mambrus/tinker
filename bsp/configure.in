@@ -10,8 +10,26 @@ AC_CONFIG_AUX_DIR(..)
 dnl The following is sadly not working properly. Use autoconf -I <dir> instead to get the aclocal.m4
 #AC_CONFIG_MACRO_DIR(../)
 
-AC_CONFIG_SUBDIRS([gnu_arm])
 sources_c="gnu_stubs.c tk_stubs.c"
 TINKER_CONFIGURE(..)
+
+case "${host}" in
+  arm-*-*)
+    AC_MSG_NOTICE([<<< BSP for ARM >>>])
+    AC_CONFIG_SUBDIRS([gnu_arm])
+    ;;
+  powerpc-*-*)
+    AC_MSG_NOTICE([<<< BSP for PowerPC >>>])
+    AC_CONFIG_SUBDIRS([gnu_powerpc])
+    ;;
+  bfin-*-*)
+    AC_MSG_NOTICE([<<< BSP for Blackfin >>>])
+    AC_CONFIG_SUBDIRS([gnu_bfin])
+    ;;
+  i[[3456789]]86-*-*)
+    AC_MSG_NOTICE([<<< BSP for X86 >>>])
+    AC_CONFIG_SUBDIRS([gnu_i386])
+    ;;
+esac
 
 AC_OUTPUT(Makefile-gnu)

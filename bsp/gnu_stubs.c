@@ -34,6 +34,9 @@ properly implement (since there are neither less nor more of them).
 
 */
 
+
+#ifdef USE_GNU_SYSCALL_STUBS
+
 #include <errno.h>
 #include <time.h>    
 
@@ -320,13 +323,19 @@ int write(int file, char *ptr, int len){
 	}
 	return len;     
 }
+#endif
 
 /*! 
  * @defgroup CVSLOG_gnu_stubs_c gnu_stubs_c
  * @ingroup CVSLOG
  *
  *  $Log: gnu_stubs.c,v $
- *  Revision 1.5  2006-10-02 18:38:01  ambrmi09
+ *  Revision 1.6  2006-10-09 17:08:05  ambrmi09
+ *  * Sceleton for bfin and powerpc now compiles.
+ *  * Refingnemen in auto-tools to build correct BSP depending on toolchain and settings
+ *  * BFIN,bfin macro work-around
+ *
+ *  Revision 1.5  2006/10/02 18:38:01  ambrmi09
  *  Improved gdb-wrapper.ex to permit step into withot warning. This is
  *  however a workaround for something that must be a bug in the cross GDB
  *  used (target is halted at breakpoint even though GDB sends a warning).
