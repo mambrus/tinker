@@ -24,8 +24,8 @@
 #define TK_TUNING_H
 
 //App & system
-#define TK_MINIMUM_STACK_SIZE 	0x0300  
-#define TK_NORMAL_STACK_SIZE  	0x0300
+#define TK_MINIMUM_STACK_SIZE 	0x1000  
+#define TK_NORMAL_STACK_SIZE  	0x1000
 
 //SCHED 
 #define TK_MAX_THREADS          10  
@@ -58,7 +58,16 @@
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $
- *  Revision 1.1  2006-10-09 17:08:06  ambrmi09
+ *  Revision 1.2  2006-10-13 21:47:10  ambrmi09
+ *  2 new CPU ports added: PowerPC and Blackfin. Also testing a new a new concept
+ *  for thread creation that potentionally has big transparency advantages (needs
+ *  to be proven in preemtive cases).
+ *
+ *  * PowerPC tested against simulator
+ *  * Blackfin only compile and link (gcc and Newlib needes adaptation/porting -
+ *    GDB and sinulator still missing)
+ *
+ *  Revision 1.1  2006/10/09 17:08:06  ambrmi09
  *  * Sceleton for bfin and powerpc now compiles.
  *  * Refingnemen in auto-tools to build correct BSP depending on toolchain and settings
  *  * BFIN,bfin macro work-around

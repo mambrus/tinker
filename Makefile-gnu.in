@@ -1,6 +1,7 @@
 OUTFILENAME    = @TINKER_PATH@/lib/lib@PACKAGE_NAME@.a
 CC             = @CC@
 LD             = @LD@
+AS             = @AS@
 AR             = @AR@
 OBJCOPY        = @OBJCOPY@
 OBJDUMP        = @OBJDUMP@
@@ -23,13 +24,15 @@ MAKE_SUBDIRS   = @subdirs@
 TINKER_PATH    = @TINKER_PATH@
 THIS_DIR       = @THIS_DIR@
 CPU_OPT        = @CPU_OPT@
+DCPU           = @DCPU@
 
 .PHONY: all subdirs info depend link clean cleanall install rebuild flashit console
 
 MAKE_SUBDIRS_ALL   := $(patsubst %, make -f Makefile-gnu all -C %;, $(MAKE_SUBDIRS))
 MAKE_SUBDIRS_CLEAN := $(patsubst %, make -f Makefile-gnu clean -C %;, $(MAKE_SUBDIRS))
 
-SUBLIBS   := $(patsubst %, -l%, @subdirs@)
+SUBLIBS       := $(patsubst %, -l%, @subdirs@)
+SUBLIBOUT     := $(patsubst %, @TINKER_PATH@/lib/lib%.a, @subdirs@)
 
 LDFLAGS  := $(LDFLAGS) -L$(TINKER_PATH)/lib $(SUBLIBS)
 
@@ -37,18 +40,18 @@ LIBOBJS_LIST   = $(patsubst %,-l%,$(LIBOBJS))
 
 ifeq ($(XCOMPILE),1)
    CFLAGS := $(CFLAGS)  -DDEBUG -DBOARD=$(BOARD) -DABI=_$(ABI) -DARCH=_$(ARCH) 
-   CFLAGS := $(CFLAGS) $(CPU_OPT) -g -gstabs -D RUN_FROM_ROM -D XXX_OBSOLETE_GCC_ARM7
+   CFLAGS := $(CFLAGS) $(CPU_OPT) $(DCPU) -g -gstabs -D RUN_FROM_ROM
    CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(ALIAS_HOST)/include 
    CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include 
    
-   LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
+   LDFLAGS   := $(LDFLAGS) -Xlinker --relocatable
    
-   LDFLAGS := $(LDFLAGS) -nodefaultlibs
-   LDFLAGS := $(LDFLAGS) -nostdlib -nostartfiles
+   LDFLAGS   := $(LDFLAGS) -nodefaultlibs
+   LDFLAGS   := $(LDFLAGS) -nostdlib -nostartfiles
 
 else
-   CFLAGS := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=_$(ARCH) -DDEBUG 
-   CFLAGS := $(CFLAGS) -Wall -I . -I $(TINKER_PATH)/include 
+   CFLAGS   := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=_$(ARCH) -DDEBUG 
+   CFLAGS   := $(CFLAGS) -Wall -I . -I $(TINKER_PATH)/include 
    LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
    
    #On GCC 3.3.4 (SuSe 9.2) not having this flag will produce a link error to 
@@ -86,6 +89,7 @@ ALL_AOBJS:=$(patsubst %.s, %.ao, $(ALL_ASM))
 
 
 FOUND_CDEPS:= $(shell find . -name "*.d")
+FOUND_OPTMK:= $(shell ls -d *.mk 2>/dev/null)
 #-------1---------2---------3---------4---------5---------6---------7---------8
 
 all: subdirs $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) $(OUTFILENAME) $(EXTRAS)
@@ -161,12 +165,16 @@ install: all
 	$(CC) -c $(CFLAGS) ${@:ao=s} -o $@
 	@echo
 
-$(OUTFILENAME): $(ALL_COBJS) $(ALL_AOBJS) 
+$(OUTFILENAME): $(ALL_COBJS) $(ALL_AOBJS) $(SUBLIBOUT)
 	@echo =LINK [@PACKAGE_NAME@]====================================
 	rm -f $(OUTFILENAME)
 	rm -f $(OUTFILENAME).map
 	touch $(OUTFILENAME).map
 	$(CC) $(CFLAGS) $(LDFLAGS) -DVERSION=\"$(VERSION)\" $(ALL_COBJS) $(ALL_AOBJS) -Xlinker -Map $(OUTFILENAME).map -o $(OUTFILENAME)
+
+ifneq ($(FOUND_OPTMK), )
+   include $(FOUND_OPTMK)
+endif
 
 ifneq ($(FOUND_CDEPS), )
    include $(FOUND_CDEPS)

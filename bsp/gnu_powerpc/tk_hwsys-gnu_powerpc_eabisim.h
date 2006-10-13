@@ -19,41 +19,5 @@
  ***************************************************************************/
  
 
-#ifndef TK_HWTYPES_GNU_ARM_H
-#define TK_HWTYPES_GNU_ARM_H
-//------1---------2---------3---------4---------5---------6---------7---------8
+#include "tk_hwsys-gnu_powerpc_eabi.h"
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-#include <stddef.h>
-
-/*! 
-Architecture specific representation of a stack adress. In x86 this can be a 
-simple char* even in 16bit modes, since a pointer contains both segment and 
-offset.
-*/
-typedef struct{
-   char * tstack;
-   size_t stack_size;
-} stack_t;
-
-
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-#endif
-
-
-  
-/*!
- * @ingroup CVSLOG
- *
- *  $Log: tk_hwtypes-gnu_powerpc_elf.h,v $
- *  Revision 1.2  2006-10-09 17:08:06  ambrmi09
- *  * Sceleton for bfin and powerpc now compiles.
- *  * Refingnemen in auto-tools to build correct BSP depending on toolchain and settings
- *  * BFIN,bfin macro work-around
- *
- *  Revision 1.1  2006/10/09 00:20:40  ambrmi09
- *  Sceleton for bfin and PPC added
- *
- *******************************************************************/

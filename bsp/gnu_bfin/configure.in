@@ -16,7 +16,7 @@ dnl The following is sadly not working properly. Use autoconf -I <dir> instead t
 sources_c="hixsys.c"
 #sources_asm="startup_gnu.s"
 sources_asm=""
-#extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
+extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
 
 TINKER_CONFIGURE(../..)
 subdirs=

@@ -167,13 +167,13 @@ How printk is implemented on this target. I.e. no ability to output on console
       "nop"                               \
    );
 
-//Note: flags (CPSR) not saved. TBD!!!
+//Note: flags (CPSR) not saved. FIXME
 #define PUSHALL()                         \
    asm __volatile__ (                     \
       "stmdb sp!, {r0-r12,lr}"            \
    );
 
-//Note: flags (CPSR) not restored. TBD!!!
+//Note: flags (CPSR) not restored. FIXME
 #define POPALL()                          \
    asm __volatile__ (                     \
       "ldmia sp!, {r0-r12,lr}"            \

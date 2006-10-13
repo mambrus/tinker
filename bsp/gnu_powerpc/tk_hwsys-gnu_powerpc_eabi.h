@@ -21,13 +21,42 @@
 /*!
 @file
 
-This file is a Blackfin elf 
+This file is a PowerPC eabi architecture.
 
+It implementation setjmp and longjmp techniques, which has some considerarions:
+- Both functions manipulate the CPU stackpointer themseves. We need to be certain 
+that the a thead comes out, it actually does so with the correct stack with it
+
+- Some extra overhead while creating a thread, which will also actually run for a
+very short time (needed so it can create it's ownv scope)
+
+- We're forced to rely on an external implementation in a very critical part of 
+the kernal.
+
+TinKers PUSH/POP based techiquie share a lot of similarities with setjmp/longjmp, 
+but they are not quite the same (se considerations above). However, by using 
+setjmp/longjump we will gain the following benefits:
+
+- TinKer becomes even more portable and even less code needs to be tailored
+for a certain archetecture (In this implementation there are actually only 2 
+lines of assembly code).
+
+- We need not to bother with certain special handling due to differen GCC -m 
+options or certaing CPU variants limitations or issues. We'll let the toolchains 
+libc implementation handlo those instead (great!)
+
+
+@note Tinker is from now on adapted to handle both techniques.
+
+@attention Consider this implementation highly EXPERIMENTAL
+
+@note Inline assemby syntax: 
+asm ( "statements" : output_registers : input_registers : clobbered_registers);
 
 */
 
-#ifndef TK_HWSYS_GNU_BFIN_H
-#define TK_HWSYS_GNU_BFIN_H
+#ifndef TK_HWSYS_GNU_POWERPC_H
+#define TK_HWSYS_GNU_POWERPC_H
 
 #include <setjmp.h>
 
@@ -70,17 +99,17 @@ How printk is implemented on this target. I.e. no ability to output on console
 #define PUSHALL()	/*No need to PUSHALL on this target- Allready done by setjmp*/
 #define POPALL()	/*No need to POPALL on this target- Allready done by longjmp*/
 
-#define GET_SP( OUT_SP ) 						\
-	asm __volatile__ (							\
-		"%[mystack] = SP;"						\
+#define GET_SP( OUT_SP )						\
+   asm __volatile__ (							\
+      "stw %%sp,%[mystack]"						\
       : [mystack] "=m" (OUT_SP)					\
       : /**/									\
       : "memory"								\
    );											\
-		   
+   
 #define SET_SP( IN_SP )							\
    asm __volatile__ (							\
-		"SP = %[mystack];"						\
+      "lwz %%sp,%[mystack]"						\
       : /**/									\
       : [mystack] "m" (IN_SP)					\
    );  /*Note, no clobber (intentional)*/ 		\

@@ -115,6 +115,7 @@ AC_SUBST(THIS_DIR)
 
 AC_CHECK_TOOL([LD],      [ld],      [:])
 AC_CHECK_TOOL([AR],      [ar],      [:])
+AC_CHECK_TOOL([AS],      [as],      [:])
 AC_CHECK_TOOL([GDB],     [gdb],     [:])
 AC_CHECK_TOOL([OBJCOPY], [objcopy], [:])
 AC_CHECK_TOOL([OBJDUMP], [objdump], [:])
@@ -159,12 +160,14 @@ AC_ARG_VAR(MCPU, [Sets the GCC CPU optimization switch (i.e. -mcpu=<MCPU>])
 if test -z $MCPU; then
    AC_MSG_NOTICE([<<< No -mcpu optimization])
    CPU_OPT=""
-   AC_SUBST(CPU_OPT)
+   DCPU=""
 else
    AC_MSG_NOTICE([<<< Using optimize CPU flag: -mcpu=$MCPU- ])
    CPU_OPT="-mcpu=$MCPU"
-   AC_SUBST(CPU_OPT)
+   DCPU="-DWITH_CPU=$MCPU"
 fi
+AC_SUBST(CPU_OPT)
+AC_SUBST(DCPU)
 
 
 if test $cross_compiling == yes; then

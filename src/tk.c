@@ -1058,15 +1058,20 @@ void _tk_context_switch_to_thread(
 
    //TRY_CATCH_STACK_ERROR( proc_stat[SID].stack_begin, cswTEMP2 );
    //INTEGRITY_CERTIFY_STACK( proc_stat[SID], cswTEMP2 ); //Certify the stack we're leaving from
-   
+
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );
-
-   STACK_PTR( proc_stat[SID].curr_sp ) = cswTSP;
    
-   cswTSP = STACK_PTR( proc_stat[RID].curr_sp ); 
+   #ifdef  JUMPER_BASED
+   if (cswTEMP==0)
+   #endif
+   {
+      STACK_PTR( proc_stat[SID].curr_sp ) = cswTSP;
+   
+      cswTSP = STACK_PTR( proc_stat[RID].curr_sp ); 
 
-   active_thread=RID;
-   CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );
+      active_thread=RID;
+      CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );
+   }
    //TRY_CATCH_STACK_INTEGRITY_VIOLATION( proc_stat[active_thread], cswTEMP2 ); //Check integrity is OK before running 
 }
 
@@ -1086,14 +1091,19 @@ void _tk_half_switch (
    //TRY_CATCH_STACK_ERROR( proc_stat[SID].stack_begin, cswTEMP2 );
    //INTEGRITY_CERTIFY_STACK( proc_stat[SID], cswTEMP2 ); //Certify the stack we're leaving from
    
+
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );
 
-   STACK_PTR( proc_stat[SID].curr_sp ) = cswTSP;
-   
-   cswTSP = STACK_PTR( proc_stat[SID].curr_sp );
+   #ifdef  JUMPER_BASED
+   if (cswTEMP==0)
+   #endif
+   {
+      STACK_PTR( proc_stat[SID].curr_sp ) = cswTSP;
+      cswTSP = STACK_PTR( proc_stat[SID].curr_sp );
 
-   active_thread=RID;
-   CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );
+      active_thread=RID;
+      CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );
+   }
    //TRY_CATCH_STACK_INTEGRITY_VIOLATION( proc_stat[active_thread], cswTEMP2 ); //Check integrity is OK before running 
 }
 
@@ -1320,6 +1330,7 @@ things at least:
 - You need a working printf to see run-time errors
 
 */
+
 void _tk_main( void ){
    tk_bsp_sysinit();      //For emulation targets, this is ment to be nothing 
    printk(("BSP initialized\n"));
@@ -1420,6 +1431,7 @@ int main(int argc, char **argv){
    //(i.e. My_syscall_mon since we overloaded it) and to My_write    
    printf("Hello world"); 
    */
+   
    _tk_main();
    TRAP(0); 
 }
@@ -1443,7 +1455,16 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.62  2006-09-28 17:42:44  ambrmi09
+ *  Revision 1.63  2006-10-13 21:47:11  ambrmi09
+ *  2 new CPU ports added: PowerPC and Blackfin. Also testing a new a new concept
+ *  for thread creation that potentionally has big transparency advantages (needs
+ *  to be proven in preemtive cases).
+ *
+ *  * PowerPC tested against simulator
+ *  * Blackfin only compile and link (gcc and Newlib needes adaptation/porting -
+ *    GDB and sinulator still missing)
+ *
+ *  Revision 1.62  2006/09/28 17:42:44  ambrmi09
  *  HIXS system integration for RM done. ARM now has two different system call API supported. This is mostly interesting from a transparency point of view, but also a good exersisze for bfin and ppc, which are not ported yet (since I'm not planning on implementing any other system integrations than HIXS from now on).
  *
  *  Revision 1.61  2006/09/27 13:46:26  ambrmi09
