@@ -6,13 +6,13 @@
  *                              
  *  HISTORY:    
  *
- *  Current $Revision: 1.3 $
+ *  Current $Revision: 1.1 $
  *
  *******************************************************************/
   
 
-#ifndef TK_HWTYPES_MSVCX86_H
-#define TK_HWTYPES_MSVCX86_H
+#ifndef TK_HWTYPES_GNU_i386_H
+#define TK_HWTYPES_GNU_i386_H
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -32,7 +32,6 @@ typedef struct{
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-
 #endif
 
 
@@ -41,24 +40,23 @@ typedef struct{
  * @defgroup CVSLOGtk_hwtypes_borlandX86_h tk_hwtypes_borlandX86_h
  * @ingroup CVSLOG
  *
- *  $Log: tk_hwtypes_mvcsX86.h,v $
- *  Revision 1.3  2006-04-08 10:15:50  ambrmi09
- *  Merged with branch newThreadstarter (as of 060408)
+ *  $Log: stypes-gnu_i386.h,v $
+ *  Revision 1.1  2006-11-03 11:33:30  ambrmi09
+ *  Moved architecture specific files out from bsp structure and into kernel
+ *  source 'arch' structure. This makes sense since I plan to refine the
+ *  project into kernel specific maintenence on one hand, and BSP (and
+ *  eventually other's) on the other.
  *
- *  Revision 1.2.2.1  2006/03/30 10:52:18  ambrmi09
- *  First version of new threadstarter. It seems very promising. A *lot* of
- *  awfull pain concerning different targets has the potential to go away.
+ *  BSP's as part of the *kernlel* project will only be in the form of crude
+ *  template BSP (community will take care of the rest).
  *
- *  Revision 1.2  2006/02/28 11:50:06  ambrmi09
- *  - Trimmed the time constants (ruffly). 4sek per 14hrs drift
- *  - Revived the Borland C (BC5) target. Projectfile also added (BC5.ide)
- *  - Started experimenting with a indlude filename macro, that has the
- *    the potential of solving my ANSI header/function dilemma (\ref
- *    BUILDCHAIN )
- *  - Some "fishyness" about BC5 handling of time. Either \ref clock or
- *    \ref CLK_TCK doesn't follow standard (the latter I know for a fact,
- *    since it's 1e3 instead of 1e6 - but thats not all). \ref tk_msleep is
- *    adjusted to try to see the error.
+ *  Revision 1.2  2006/03/05 11:11:24  ambrmi09
+ *  License added (GPL).
+ *
+ *  Revision 1.1  2006/03/04 19:31:02  ambrmi09
+ *  Structure for new targets based on GNU toolchain added.
+ *  - gnu-i386  (Linux, Cygwin)
+ *  - gnu-arm   (LPC2129 i.e. ARM7 derivate)
  *
  *  Revision 1.1  2006/02/28 11:24:48  ambrmi09
  *  Initial checkin of missing files for Borland C and MSVC

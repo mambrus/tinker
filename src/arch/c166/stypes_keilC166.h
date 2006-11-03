@@ -233,8 +233,17 @@ extern void _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
  * @defgroup CVSLOG_tk_hwtypes_keilC166_h tk_hwtypes_keilC166_h
  * @ingroup CVSLOG
  *
- *  $Log: tk_hwtypes_keilC166.h,v $
- *  Revision 1.7  2006-04-08 10:15:51  ambrmi09
+ *  $Log: stypes_keilC166.h,v $
+ *  Revision 1.1  2006-11-03 11:33:30  ambrmi09
+ *  Moved architecture specific files out from bsp structure and into kernel
+ *  source 'arch' structure. This makes sense since I plan to refine the
+ *  project into kernel specific maintenence on one hand, and BSP (and
+ *  eventually other's) on the other.
+ *
+ *  BSP's as part of the *kernlel* project will only be in the form of crude
+ *  template BSP (community will take care of the rest).
+ *
+ *  Revision 1.7  2006/04/08 10:15:51  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.6.2.2  2006/04/03 20:07:21  ambrmi09

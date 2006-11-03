@@ -19,8 +19,8 @@
  ***************************************************************************/
  
 
-#ifndef TK_HWTYPES_GNU_BFIN_H
-#define TK_HWTYPES_GNU_BFIN_H
+#ifndef TK_HWTYPES_GNU_POWERPC_H
+#define TK_HWTYPES_GNU_POWERPC_H
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -47,8 +47,17 @@ typedef struct{
 /*!
  * @ingroup CVSLOG
  *
- *  $Log: tk_hwtypes-gnu_bfin_elf.h,v $
- *  Revision 1.2  2006-10-13 21:47:10  ambrmi09
+ *  $Log: stypes-gnu_powerpc-eabi.h,v $
+ *  Revision 1.1  2006-11-03 11:33:30  ambrmi09
+ *  Moved architecture specific files out from bsp structure and into kernel
+ *  source 'arch' structure. This makes sense since I plan to refine the
+ *  project into kernel specific maintenence on one hand, and BSP (and
+ *  eventually other's) on the other.
+ *
+ *  BSP's as part of the *kernlel* project will only be in the form of crude
+ *  template BSP (community will take care of the rest).
+ *
+ *  Revision 1.1  2006/10/13 21:47:11  ambrmi09
  *  2 new CPU ports added: PowerPC and Blackfin. Also testing a new a new concept
  *  for thread creation that potentionally has big transparency advantages (needs
  *  to be proven in preemtive cases).
@@ -66,3 +75,5 @@ typedef struct{
  *  Sceleton for bfin and PPC added
  *
  *******************************************************************/
+
+ 

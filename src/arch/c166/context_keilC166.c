@@ -100,8 +100,17 @@ void _do_trap (unsigned int num){
  * @defgroup CVSLOG_tk_hwsys_keilC166_c tk_hwsys_keilC166_c
  * @ingroup CVSLOG
  *
- *  $Log: tk_hwsys_keilC166.c,v $
- *  Revision 1.12  2006-04-08 10:15:51  ambrmi09
+ *  $Log: context_keilC166.c,v $
+ *  Revision 1.1  2006-11-03 11:33:30  ambrmi09
+ *  Moved architecture specific files out from bsp structure and into kernel
+ *  source 'arch' structure. This makes sense since I plan to refine the
+ *  project into kernel specific maintenence on one hand, and BSP (and
+ *  eventually other's) on the other.
+ *
+ *  BSP's as part of the *kernlel* project will only be in the form of crude
+ *  template BSP (community will take care of the rest).
+ *
+ *  Revision 1.12  2006/04/08 10:15:51  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.11.2.1  2006/04/03 20:07:21  ambrmi09
