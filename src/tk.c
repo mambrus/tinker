@@ -63,7 +63,7 @@ any of them.   errno.h
    #include <tk_mem.h>
 #endif
 
-#if defined(TK_COMP_ITC) && TK_COMP_ITC
+#if defined(TK_COMP_ITC) && (TK_COMP_ITC==1)
    #include <tk_itc.h>
 #endif
 
@@ -77,7 +77,7 @@ any of them.   errno.h
    #include <tk_ptimer.h>
 #endif
 
-#if defined(TK_COMP_PTHREAD) && TK_COMP_PTHREAD
+#if defined(TK_COMP_PTHREAD) && (TK_COMP_PTHREAD==1)
    #ifndef TK_COMP_ITC
       #error Component POSIX_RT is dependant of ITC
    #endif
@@ -85,7 +85,7 @@ any of them.   errno.h
    #undef main
 #endif
 
-#if defined(TK_COMP_POSIX_RT) && TK_COMP_POSIX_RT
+#if defined(TK_COMP_POSIX_RT) && (TK_COMP_POSIX_RT==1)
    #ifndef TK_COMP_PTHREAD
       #error Component POSIX_RT is dependant of PTHREAD
    #endif
@@ -1448,7 +1448,10 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.65  2006-11-05 19:06:04  ambrmi09
+ *  Revision 1.66  2006-11-05 19:10:06  ambrmi09
+ *  minor
+ *
+ *  Revision 1.65  2006/11/05 19:06:04  ambrmi09
  *  Buildsystem adjusted to permit configuration of components.
  *  Now when component is enabled it will also be included in the build
  *  (instead of just sanity-tested in the source files).
