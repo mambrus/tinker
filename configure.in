@@ -11,7 +11,8 @@ TINKER_AM_PREREQ
 AC_CONFIG_AUX_DIR(.)
 
 AC_CONFIG_SUBDIRS([bsp])
-sources_c="src/tk.c src/tk_itc.c src/tk_sysqueues.c"
+#Sources are deducted based on components configuration. The line below is now set further down.
+#sources_c="src/tk.c src/tk_itc.c src/tk_sysqueues.c"
 
 dnl Autoheader stuff
 AH_TOP(
@@ -29,7 +30,7 @@ dnl Analyzed build system defines (by any TinKer configure options)
 AH_TEMPLATE([TK_CANONICAL_HOST],
    [Canonical hostname])
 AH_TEMPLATE([TK_ALIAS_HOST],
-   [As CANONICAL_HOST but without expansion, i.e. exactlly as typed when configured])
+   [As CANONICAL_HOST but without expansion, i.e. exactly as typed when configured])
 AH_TEMPLATE([TK_XCOMPILE],
    [If cross-compile build is expected])
 AH_TEMPLATE([TK_ARCH],
@@ -43,7 +44,7 @@ AH_TEMPLATE([TK_TOOLDIR],
 AH_TEMPLATE([TK_GCC_VERSION],
    [Version of GCC that compiled tinker])
 AH_TEMPLATE([TK_TINKER_PATH],
-   [Source path of TinKer (when compiled)])
+   [Source path of TinKer (as it were when built)])
 
 dnl Selectable build system defines
 AH_TEMPLATE([TK_BOARD],
@@ -54,21 +55,21 @@ AH_TEMPLATE([TK_DCPU],
 
 dnl TinKer tuning defines
 AH_TEMPLATE([TK_MINIMUM_STACK_SIZE],
-   [Maximum size of a stack for a thread])
+   [Maximum size of a stack for a thread. If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_NORMAL_STACK_SIZE],
-   [Stacksize used when stack-size is omitted])
+   [Stacksize used when stack-size is omitted. If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_MAX_THREADS],
-   [Maximum number of threds your system could have])
+   [Maximum number of threds your system could have. If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_MAX_PRIO_LEVELS],
-   [Numer of priorities for you system (recomended 3 or 16)])
+   [Numer of priorities for you system (recomended 3 or 16). If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_MAX_THREADS_AT_PRIO],
-   [Number of threads that can be sceduled at each priority])
+   [Number of threads that can be sceduled at each priority. If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_THREAD_NAME_LEN],
-   [Lengts of the string in TCB that holds the name of the thread])
+   [Lengts of the string in TCB that holds the name of the thread. If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_MAX_BLOCKED_ON_Q],
-   [Maximum nuber of threads blocked on any ITC primitive (not only Q)])
+   [Maximum nuber of threads blocked on any ITC primitive (not only Q). If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_MAX_NUM_Q],
-   [Maximum number of any ITC primitive (not only Q)])
+   [Maximum number of any ITC primitive (not only Q). If not set, value in tk_tuning.h will be used instead])
 
 dnl TinKer components defines
 AH_TEMPLATE([TK_COMP_ITC],
@@ -82,19 +83,36 @@ AH_TEMPLATE([TK_COMP_PTHREAD],
 AH_TEMPLATE([TK_COMP_POSIX_RT],
    [POSIX_RT - POSIX 1003.1b queues, semaphores component enabled])
 
-
-
-#if test $SYSTEM == 'default'; then
-#   AC_DEFINE([TK_SYSTEM],__SYS_DEFAULT__)
-#elif test $SYSTEM == 'hixs'; then
-#   AC_DEFINE([TK_SYSTEM],__SYS_HIXS__)
-#else
-#   AC_MSG_ERROR([<<< Tinker does not support the system you'we chosen])
-#fi
+dnl Other features
+AH_TEMPLATE([TK_DISPATCH],
+   [Main type of dispatching. MIXED or EXCLUSIVE])
 
 TINKER_CONFIGURE(.)
 
 AC_CONFIG_HEADER(include/tinker/config.h)
+
+sources_c="src/tk.c"
+
+dnl Components deduction
+if test $enable_itc != no; then
+   sources_c="$sources_c src/tk_itc.c src/tk_sysqueues.c"
+fi
+if test $enable_ptimer != no; then
+   sources_c="$sources_c src/tk_ptime.c"
+fi
+if test $enable_kmem != no; then
+   sources_c="$sources_c src/tk_mem.c"
+fi
+if test $enable_pthread != no; then
+   sources_c="$sources_c src/pthread_attr_cond.c src/pthread_attr_mutex.c src/pthread_attr_rwlock.c src/pthread_attr_sched.c src/pthread_cond.c src/pthread_mutex.c src/pthread_rwlock.c src/pthread_sched.c src/pthread_sync.c"
+fi
+if test $enable_posix_rt != no; then
+   sources_c="$sources_c src/semaphore.c src/mqueue.c"
+fi
+
+
+ALL_C=$sources_c
+AC_SUBST(ALL_C)
 
 dnl Read Makefile.in and config.h.in, Write Makefile and config.h
 AC_OUTPUT(Makefile-gnu)

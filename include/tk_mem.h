@@ -36,9 +36,19 @@ KMEM
 #ifndef TK_MEM_H
 #define TK_MEM_H
 
+#if defined(__GNUC__)
+   #include <tinker/config.h>
+   #if (!defined(TK_COMP_KMEM) || (TK_COMP_KMEM==0) ) && !defined(ECODES_ONLY)
+   #error "tk_mem.h" belongs to a component that your build of TinKer didn't include. Please reconfigure and rebuild TinKer.
+   #endif
+#endif
+
+
 #include <stddef.h>  //Needed for size_t
 
+#define ECODES_ONLY
 #include <tk_ptime.h> //last in error chain
+#undef ECODES_ONLY
 
 /*- Error codes **/
 
@@ -155,7 +165,17 @@ void           tk_mem_free    ( heapid_t, void* );
  * @defgroup CVSLOG_tk_mem_h tk_mem_h
  * @ingroup CVSLOG
  *  $Log: tk_mem.h,v $
- *  Revision 1.10  2006-04-08 10:15:58  ambrmi09
+ *  Revision 1.11  2006-11-05 19:06:03  ambrmi09
+ *  Buildsystem adjusted to permit configuration of components.
+ *  Now when component is enabled it will also be included in the build
+ *  (instead of just sanity-tested in the source files).
+ *
+ *  Also a feature for application sanity is assed. When a header-file is
+ *  included in the application, a check against the component it belongs
+ *  to will be performed. That way user don't need to rely on run-time
+ *  checks and can get feedback much earlier.
+ *
+ *  Revision 1.10  2006/04/08 10:15:58  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.9.2.1  2006/04/03 20:07:24  ambrmi09

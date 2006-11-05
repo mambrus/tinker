@@ -37,24 +37,36 @@ PTHREAD
 #ifndef _PTHREAD_H
 #define _PTHREAD_H
 
+#if defined(__GNUC__)
+   #include <tinker/config.h>
+   #if (!defined(TK_COMP_PTHREAD) || TK_COMP_PTHREAD==0 ) && !defined(ECODES_ONLY)
+   #error "pthread.h" belongs to a component that your build of TinKer didn't include. Please reconfigure and rebuild TinKer.
+   #endif
+#endif
+
+#ifndef TK_MAX_THREADS
+#error TK_MAX_THREADS not defined. Did you --enable-max_threads=<val> properly?
+#endif
+
 //#include <sched.h>
 #include <time.h>
 #include <sys/types.h>
 #include <tk.h>
 
 #if defined(TINKER)
-#  define main(x,y) root() 
+   #define main(x,y) root() 
 #endif
 
 #define SCHED_OTHER 0    //!< not used by tinker
 #define SCHED_FIFO  1
 #define SCHED_RR    2
 
-#define _PTHREAD_PRIOS 0x10  //!< Match this with TK_MAX_PRIO_LEVELS. Intentionally not set equal sice some static arrays init needs adjustment. see \ref PTHREAD_RWLOCK_INITIALIZER
-#define _PTHREAD_NO_WARN_VAR(x) ((void)x)  //!< Used in stibbed functions to avoid lots of warnings
+#define _PTHREAD_PRIOS 0x10  //!< Match this with TK_MAX_PRIO_LEVELS. Intentionally not set equal sice some static arrays init needs adjustment. see \ref PTHREAD_RWLOCK_INITIALIZER further down in this file. Easy to fix, but haven't had time yet... For now, just kae sure it will build on a 16 priority system only.
+
+#define _PTHREAD_NO_WARN_VAR(x) ((void)x)  //!< Used in stubbed functions to avoid lots of warnings
 
 #if (TK_MAX_PRIO_LEVELS != _PTHREAD_PRIOS)
-#  error You need to adjust the _PTHREAD_PRIOS *AND* initializers for arrays depending on this
+   #error You need to adjust the _PTHREAD_PRIOS *AND* initializers for arrays depending on this
 #endif
 
 typedef enum {
@@ -1048,7 +1060,17 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.17  2006-04-08 10:15:57  ambrmi09
+ *  Revision 1.18  2006-11-05 19:06:03  ambrmi09
+ *  Buildsystem adjusted to permit configuration of components.
+ *  Now when component is enabled it will also be included in the build
+ *  (instead of just sanity-tested in the source files).
+ *
+ *  Also a feature for application sanity is assed. When a header-file is
+ *  included in the application, a check against the component it belongs
+ *  to will be performed. That way user don't need to rely on run-time
+ *  checks and can get feedback much earlier.
+ *
+ *  Revision 1.17  2006/04/08 10:15:57  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.16.2.1  2006/04/03 20:07:22  ambrmi09

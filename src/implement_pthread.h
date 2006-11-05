@@ -53,6 +53,7 @@ PTHREAD
 
 #ifndef _IMPLEMENT_PTHREAD_H
 #define _IMPLEMENT_PTHREAD_H
+#include "stypes.h"
 
 /*!
 @brief Tinker ID mapping.
@@ -456,7 +457,17 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
  * @defgroup CVSLOG_implement_pthread_h implement_pthread_h
  * @ingroup CVSLOG
  *  $Log: implement_pthread.h,v $
- *  Revision 1.10  2006-04-08 10:15:59  ambrmi09
+ *  Revision 1.11  2006-11-05 19:06:04  ambrmi09
+ *  Buildsystem adjusted to permit configuration of components.
+ *  Now when component is enabled it will also be included in the build
+ *  (instead of just sanity-tested in the source files).
+ *
+ *  Also a feature for application sanity is assed. When a header-file is
+ *  included in the application, a check against the component it belongs
+ *  to will be performed. That way user don't need to rely on run-time
+ *  checks and can get feedback much earlier.
+ *
+ *  Revision 1.10  2006/04/08 10:15:59  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.9.2.1  2006/04/03 20:07:25  ambrmi09

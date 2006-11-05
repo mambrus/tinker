@@ -33,7 +33,7 @@
 /* Calling convention */
 #undef TK_ABI
 
-/* As CANONICAL_HOST but without expansion, i.e. exactlly as typed when
+/* As CANONICAL_HOST but without expansion, i.e. exactly as typed when
    configured */
 #undef TK_ALIAS_HOST
 
@@ -64,37 +64,48 @@
 /* Specific CPU variant (i.e. -m option used) */
 #undef TK_DCPU
 
+/* Main type of dispatching. MIXED or EXCLUSIVE */
+#undef TK_DISPATCH
+
 /* Version of GCC that compiled tinker */
 #undef TK_GCC_VERSION
 
-/* Maximum nuber of threads blocked on any ITC primitive (not only Q) */
+/* Maximum nuber of threads blocked on any ITC primitive (not only Q). If not
+   set, value in tk_tuning.h will be used instead */
 #undef TK_MAX_BLOCKED_ON_Q
 
-/* Maximum number of any ITC primitive (not only Q) */
+/* Maximum number of any ITC primitive (not only Q). If not set, value in
+   tk_tuning.h will be used instead */
 #undef TK_MAX_NUM_Q
 
-/* Numer of priorities for you system (recomended 3 or 16) */
+/* Numer of priorities for you system (recomended 3 or 16). If not set, value
+   in tk_tuning.h will be used instead */
 #undef TK_MAX_PRIO_LEVELS
 
-/* Maximum number of threds your system could have */
+/* Maximum number of threds your system could have. If not set, value in
+   tk_tuning.h will be used instead */
 #undef TK_MAX_THREADS
 
-/* Number of threads that can be sceduled at each priority */
+/* Number of threads that can be sceduled at each priority. If not set, value
+   in tk_tuning.h will be used instead */
 #undef TK_MAX_THREADS_AT_PRIO
 
-/* Maximum size of a stack for a thread */
+/* Maximum size of a stack for a thread. If not set, value in tk_tuning.h will
+   be used instead */
 #undef TK_MINIMUM_STACK_SIZE
 
-/* Stacksize used when stack-size is omitted */
+/* Stacksize used when stack-size is omitted. If not set, value in tk_tuning.h
+   will be used instead */
 #undef TK_NORMAL_STACK_SIZE
 
 /* Defines which system (i.e. system call API) we're using */
 #undef TK_SYSTEM
 
-/* Lengts of the string in TCB that holds the name of the thread */
+/* Lengts of the string in TCB that holds the name of the thread. If not set,
+   value in tk_tuning.h will be used instead */
 #undef TK_THREAD_NAME_LEN
 
-/* Source path of TinKer (when compiled) */
+/* Source path of TinKer (as it were when built) */
 #undef TK_TINKER_PATH
 
 /* Where the PREFIX directory is */

@@ -59,7 +59,7 @@ any of them.   errno.h
 @see COMPONENTS 
 */
 //@{
-#if defined(TK_COMP_KMEM) && TK_COMP_KMEM
+#if defined(TK_COMP_KMEM) && (TK_COMP_KMEM==1)
    #include <tk_mem.h>
 #endif
 
@@ -67,7 +67,7 @@ any of them.   errno.h
    #include <tk_itc.h>
 #endif
 
-#if defined(TK_COMP_PTIME) && TK_COMP_PTIMER
+#if defined(TK_COMP_PTIME) && (TK_COMP_PTIMER==1)
    #ifndef TK_COMP_PTHREAD
       #error Component PTIMER is dependant of PTHREAD
    #endif
@@ -1448,7 +1448,17 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.64  2006-11-05 14:18:59  ambrmi09
+ *  Revision 1.65  2006-11-05 19:06:04  ambrmi09
+ *  Buildsystem adjusted to permit configuration of components.
+ *  Now when component is enabled it will also be included in the build
+ *  (instead of just sanity-tested in the source files).
+ *
+ *  Also a feature for application sanity is assed. When a header-file is
+ *  included in the application, a check against the component it belongs
+ *  to will be performed. That way user don't need to rely on run-time
+ *  checks and can get feedback much earlier.
+ *
+ *  Revision 1.64  2006/11/05 14:18:59  ambrmi09
  *  Build system and source modified to make better use of config.h
  *
  *  This file now contains information about how the kernel is configured

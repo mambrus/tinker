@@ -96,7 +96,7 @@ $(MODULES):
 	@echo "======================================================"
 	@echo "<<-            ENTERING MODULE $@                  ->>"
 	@echo "======================================================"
-	make -k $(NEXT_MAKEALL) -C  $@
+	make $(NEXT_MAKEALL) -C  $@
 
 configure:
 	rm -f config.*

@@ -45,6 +45,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 TINKER_PATH=$1
 AC_SUBST(TINKER_PATH)
 
+
 dnl if called from kernel directory create the AM prerequisits 
 dnl All other should use AC_CONFIG_AUX_DIR
 if test $1 == "."; then
@@ -80,6 +81,8 @@ fi
 
 AC_SUBST(SYSTEM)
 AC_SUBST(host_alias)
+AC_DEFINE_UNQUOTED([TK_ALIAS_HOST],$host_alias)
+
 
 dnl What is this?
 AC_PROG_MAKE_SET 
@@ -110,6 +113,13 @@ else
    THIS_DIR=$(pwd)
 fi
 
+dnl if called from kernel directory, save TK_TINKER_PATH  to later so sub configure use the same value
+dnl All other should use AC_CONFIG_AUX_DIR
+if test $1 == "."; then
+   export SAVED_TK_DIR=$THIS_DIR
+fi
+AC_DEFINE_UNQUOTED([TK_TINKER_PATH],$SAVED_TK_DIR)
+
 AC_SUBST(SERIAL_PORT)
 AC_SUBST(THIS_DIR)
 
@@ -124,9 +134,11 @@ AC_PATH_TOOL([GCC_PATH], [gcc],     [:])
 
 CANONICAL_HOST=$host
 AC_SUBST(CANONICAL_HOST)
+AC_DEFINE_UNQUOTED([TK_CANONICAL_HOST],$CANONICAL_HOST)
 
 TOOLDIR=$(echo $GCC_PATH | sed -e "s/\/bin\/$CC//")
 AC_SUBST(TOOLDIR)
+AC_DEFINE_UNQUOTED([TK_TOOLDIR],$TOOLDIR)
 
 if test $cross_compiling == yes; then
    XCOMPILE=1
@@ -145,15 +157,20 @@ fi
 AC_SUBST(XCOMPILE)
 AC_SUBST(ARCH)
 AC_SUBST(ABI)
+AC_DEFINE_UNQUOTED([TK_XCOMPILE],$XCOMPILE)
+AC_DEFINE_UNQUOTED([TK_ARCH],$ARCH)
+AC_DEFINE_UNQUOTED([TK_ABI],$ABI)
 
 GCC_VERSION=$($CC -v 2>&1 | grep version | sed -e 's/gcc version //' | cut -f1 -d " ")
 AC_SUBST(GCC_VERSION)
+AC_DEFINE_UNQUOTED([TK_GCC_VERSION],$GCC_VERSION)
 
 dnl Do not accept default autoconf CFLAGS. Tinker will not run with them (not on ARM tdmi at leat)
 CFLAGS=""
 AC_SUBST(CFLAGS)
 
 AC_ARG_VAR(BOARD, [Selects which board to build TinKer BSP for. Valid values depend on each BSP and coorespond to a sub-directory in that structure])
+AC_DEFINE_UNQUOTED([TK_BOARD],$BOARD)
 
 AC_ARG_VAR(MCPU, [Sets the GCC CPU optimization switch (i.e. -mcpu=<MCPU>])
 
@@ -168,6 +185,7 @@ else
 fi
 AC_SUBST(CPU_OPT)
 AC_SUBST(DCPU)
+AC_DEFINE_UNQUOTED([TK_DCPU],$MCPU)
 
 dnl Components config part. Use enable-feature/disable-feature without arguments
 dnl Note: Default values are set here.
@@ -175,27 +193,27 @@ dnl ----------------------------------------------------------------------------
 AC_ARG_ENABLE(itc,
 	AS_HELP_STRING([--enable-itc],[ITC - Enable/disable Inter thread communication component (native API)]),
 	AC_DEFINE_UNQUOTED([TK_COMP_ITC],$enableval),
-	AC_DEFINE_UNQUOTED([TK_COMP_ITC],1)
+	AC_DEFINE_UNQUOTED([TK_COMP_ITC],yes)
 )
 AC_ARG_ENABLE(ptimer,
 	AS_HELP_STRING([--enable-ptimer],[PTIMER - Enable/disable Preemptive timer component]),
 	AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],$enableval),
-	AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],0)
+	AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],no)
 )
 AC_ARG_ENABLE(kmem,
 	AS_HELP_STRING([--enable-kmem],[KMEM - Enable/disable Kernel memory manager component]),
 	AC_DEFINE_UNQUOTED([TK_COMP_KMEM],$enableval),
-	AC_DEFINE_UNQUOTED([TK_COMP_KMEM],0)
+	AC_DEFINE_UNQUOTED([TK_COMP_KMEM],no)
 )
 AC_ARG_ENABLE(pthread,
 	AS_HELP_STRING([--enable-pthread],[PTHRED - Enable/disable POSIX 1003.1c threads component]),
 	AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],$enableval),
-	AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],0)
+	AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],no)
 )
 AC_ARG_ENABLE(posix_rt,
 	AS_HELP_STRING([--enable-posix_rt],[POSIX_RT - Enable/disable POSIX 1003.1b queues, semaphores component enabled]),
 	AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],$enableval),
-	AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],0)
+	AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],no)
 )
 
 dnl Configurable entities (TinKer tuning defines)
@@ -225,6 +243,13 @@ AC_ARG_ENABLE(max_q,
 	AS_HELP_STRING([--enable-max_q=<val>],[Maximum number of any ITC primitive, i.e not only Q ]),
 	AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],$enableval))
 
+dnl Other configurable features
+dnl ---------------------------------------------
+AC_ARG_ENABLE(dispatch,
+	AS_HELP_STRING([--enable-dispatch=<val>],[Main type of dispatching. MIXED or EXCLUSIVE (default is MIXED]),
+	AC_DEFINE_UNQUOTED([TK_DISPATCH],$enableval),
+	AC_DEFINE_UNQUOTED([TK_DISPATCH],MIXED)
+)
 
 if test $cross_compiling == yes; then
    if test -z $BOARD; then
