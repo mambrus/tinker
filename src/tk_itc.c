@@ -36,6 +36,8 @@ ITC
   
 
 /*- include files **/
+#include <tk.h>
+
 #include <stdio.h>			    	          	       	   	      	   
 #include <stdlib.h>
 #include <string.h>
@@ -49,10 +51,8 @@ ITC
 #define clock clock_stubbed
 #endif
 
-
-#include <tk.h>
-#include <../src/implement_tk.h>
-#include <tk_hwsys.h>
+#include "implement_tk.h"
+#include "context.h"
 #include <tk_itc.h>
 
 /* You should not test at sharp (libfile) version*/
@@ -93,7 +93,7 @@ static unsigned long uintDiff(
 /*! 
 contains pointers to queue structs 			
 */
-static itc_t *ipc_array[MAX_NUM_Q];	
+static itc_t *ipc_array[TK_MAX_NUM_Q];	
 
 /*! 
 points to the most resently created ITC object
@@ -122,7 +122,7 @@ int proveConcistency(unsigned int qid) {
 	if (ipc_array[qid]->token > 0)
 		return(TRUE);
 		
-	for (i=out; i != in; i++, i %= MAX_BLOCKED_ON_Q) {
+	for (i=out; i != in; i++, i %= TK_MAX_BLOCKED_ON_Q) {
 		if (
 			ipc_array[qid]->blocked_procs[i]->state & _____Q__ ||
 			ipc_array[qid]->blocked_procs[i]->state == READY
@@ -148,7 +148,7 @@ int no_duplicateBlock(unsigned int qid, unsigned int mark) {
 	unsigned int out = ipc_array[qid]->out_idx;
 	unsigned int i;
 
-	for (i=out;i!=in;i++,i %= MAX_BLOCKED_ON_Q) {
+	for (i=out;i!=in;i++,i %= TK_MAX_BLOCKED_ON_Q) {
 		if (i != mark)
 			if (refProc == ipc_array[qid]->blocked_procs[i])
 				return(FALSE);
@@ -174,7 +174,7 @@ void p_bQf(int x,int y,unsigned int qid) {
    
 	if(ipc_array[qid]->token == 0)
 		return;
-	for(mark_idx=ipc_array[qid]->out_idx;mark_idx!=ipc_array[qid]->in_idx;mark_idx++,mark_idx %= MAX_BLOCKED_ON_Q) {
+	for(mark_idx=ipc_array[qid]->out_idx;mark_idx!=ipc_array[qid]->in_idx;mark_idx++,mark_idx %= TK_MAX_BLOCKED_ON_Q) {
 		printk(("%s ",ipc_array[qid]->blocked_procs[mark_idx]->name));
 		if (!(no_duplicateBlock(qid,mark_idx)))
 			rc = FALSE;
@@ -222,41 +222,41 @@ static void removeBlocked(itc_t *queue_p, unsigned int idx) {
 	
 	in_idx = queue_p->in_idx;
 	in_idx--;
-	if ( in_idx > MAX_BLOCKED_ON_Q) {
-		in_idx = MAX_BLOCKED_ON_Q - 1;
+	if ( in_idx > TK_MAX_BLOCKED_ON_Q) {
+		in_idx = TK_MAX_BLOCKED_ON_Q - 1;
 	}
 	
 	/* Special case (quicker). Take away from start instead */
 	if (queue_p->out_idx == idx) {
 		queue_p->blocked_procs[idx] = NULL;
 		queue_p->out_idx++;
-		queue_p->out_idx %=	MAX_BLOCKED_ON_Q;
+		queue_p->out_idx %=	TK_MAX_BLOCKED_ON_Q;
 		queue_p->token++;
 		return;
 	}
 	if (in_idx == idx) {
 		queue_p->blocked_procs[idx] = NULL;
 		queue_p->in_idx--;
-		if ( queue_p->in_idx > MAX_BLOCKED_ON_Q) {
-			queue_p->in_idx = MAX_BLOCKED_ON_Q - 1;
+		if ( queue_p->in_idx > TK_MAX_BLOCKED_ON_Q) {
+			queue_p->in_idx = TK_MAX_BLOCKED_ON_Q - 1;
 		}
 		queue_p->token++;
 		return;
 	}
 
 	cp_idx = idx + 1;
-	cp_idx %= MAX_BLOCKED_ON_Q;
+	cp_idx %= TK_MAX_BLOCKED_ON_Q;
 	
 	for (; idx != queue_p->in_idx ; ) {
 		queue_p->blocked_procs[idx]	= queue_p->blocked_procs[cp_idx];	
 		cp_idx++;
-		cp_idx %= MAX_BLOCKED_ON_Q;
+		cp_idx %= TK_MAX_BLOCKED_ON_Q;
 		idx++;
-		idx %= MAX_BLOCKED_ON_Q;
+		idx %= TK_MAX_BLOCKED_ON_Q;
 	}
 	queue_p->in_idx--;
-	if ( queue_p->in_idx > MAX_BLOCKED_ON_Q) {
-		queue_p->in_idx = MAX_BLOCKED_ON_Q - 1;
+	if ( queue_p->in_idx > TK_MAX_BLOCKED_ON_Q) {
+		queue_p->in_idx = TK_MAX_BLOCKED_ON_Q - 1;
 	}
 	queue_p->token++;
 }
@@ -270,12 +270,12 @@ Doc TBD
 static unsigned int findNextEmpySlot() {
 	unsigned int seekcounter = 0;
 	
-	while ( (ipc_array[ipc_idx] != NULL) && ( seekcounter < MAX_NUM_Q) ) {
+	while ( (ipc_array[ipc_idx] != NULL) && ( seekcounter < TK_MAX_NUM_Q) ) {
 		ipc_idx++;
-		ipc_idx %= MAX_NUM_Q;
+		ipc_idx %= TK_MAX_NUM_Q;
 		seekcounter ++;
 	}
-   return (seekcounter == MAX_NUM_Q) ? ERR_OBJFULL : ERR_OK;	
+   return (seekcounter == TK_MAX_NUM_Q) ? ERR_OBJFULL : ERR_OK;	
 }
 
 /******************************************************************************
@@ -313,7 +313,7 @@ static unsigned long lock_stage(
 	}else {
 		/* Hrrm, someone else was here before me */
 		/* Can I block? */
-		if (abs(ipc_array[qid]->token) < (MAX_BLOCKED_ON_Q - 1) ) {
+		if (abs(ipc_array[qid]->token) < (TK_MAX_BLOCKED_ON_Q - 1) ) {
 			ipc_array[qid]->token--;	
 		}else
 			return(ERR_BLOCKLIMIT);
@@ -321,7 +321,7 @@ static unsigned long lock_stage(
 		/* Put myself on the fifo list */
 		ipc_array[qid]->blocked_procs[ipc_array[qid]->in_idx] = MySelf;
 		ipc_array[qid]->in_idx++;
-		ipc_array[qid]->in_idx %= MAX_BLOCKED_ON_Q;
+		ipc_array[qid]->in_idx %= TK_MAX_BLOCKED_ON_Q;
 		/* Put myself om the "waiting" list */
 		if (timeout == 0) {
 			//assert(0);
@@ -343,8 +343,8 @@ static unsigned long lock_stage(
 			if (MySelf->wakeupEvent == E_TIMER) {
 				/* Take process away from "que blocked" list*/
 				mark_idx--;
-				if (mark_idx > MAX_BLOCKED_ON_Q) {
-					mark_idx = MAX_BLOCKED_ON_Q - 1;	
+				if (mark_idx > TK_MAX_BLOCKED_ON_Q) {
+					mark_idx = TK_MAX_BLOCKED_ON_Q - 1;	
 				}
 				
 				/*Scan block list for any more procs that has been released by timer*/
@@ -371,7 +371,7 @@ static unsigned long lock_stage(
 					}
 					if (mark_idx == ipc_array[qid]->in_idx)
 						break;
-					mark_idx++; mark_idx %= MAX_BLOCKED_ON_Q;
+					mark_idx++; mark_idx %= TK_MAX_BLOCKED_ON_Q;
 				}
 				while(ipc_array[qid]->token < 0 && mark_idx != ipc_array[qid]->in_idx);
 				p_bQ(40,21,qid);
@@ -422,7 +422,7 @@ static unsigned long unlock_stage(
 			for (
 				i=ipc_array[qid]->out_idx;
 				i!=ipc_array[qid]->in_idx; /*This is important, the last index can expire*/
-				i++,i %= MAX_BLOCKED_ON_Q)
+				i++,i %= TK_MAX_BLOCKED_ON_Q)
 			{
 				if (!(ipc_array[qid]->blocked_procs[i]->state & _____Q__))  { 
 					/*Oops, found one!*/
@@ -436,7 +436,7 @@ static unsigned long unlock_stage(
 			}
 			//assert(ipc_array[qid]->token<0);
 			if ((ipc_array[qid]->in_idx - ipc_array[qid]->out_idx) == 0) { /*ipc_array[qid]->token==0*/
-				/*printk(("Hubba i örat\n"));
+				/*printk(("Hubba i ï¿½at\n"));
 				while(1);*/
 				return(ERR_OK);
 				
@@ -446,7 +446,7 @@ static unsigned long unlock_stage(
 			for (
 				i=ipc_array[qid]->out_idx;
 				i!=ipc_array[qid]->in_idx;
-				i++,i %= MAX_BLOCKED_ON_Q)
+				i++,i %= TK_MAX_BLOCKED_ON_Q)
 			{
 				if (ipc_array[qid]->blocked_procs[i]->Prio < t_prio) {
 					t_prio = ipc_array[qid]->blocked_procs[i]->Prio;
@@ -467,7 +467,7 @@ static unsigned long unlock_stage(
 			do {
 				Him = ipc_array[qid]->blocked_procs[ipc_array[qid]->out_idx];
 				ipc_array[qid]->out_idx++,
-				ipc_array[qid]->out_idx %= MAX_BLOCKED_ON_Q;
+				ipc_array[qid]->out_idx %= TK_MAX_BLOCKED_ON_Q;
 				ipc_array[qid]->token++;
 			}while(!(Him->state & _____Q__) && ipc_array[qid]->token < 0);
 			 /*Above can happen if made ready by timer */								   
@@ -518,7 +518,7 @@ static unsigned long _lock_stage_ny(
    }else {
       /* Hrrm, someone else was here before me */
       /* Can I block? */
-      if (abs(ipc_array[qid]->token) < (MAX_BLOCKED_ON_Q - 1) ) {
+      if (abs(ipc_array[qid]->token) < (TK_MAX_BLOCKED_ON_Q - 1) ) {
          ipc_array[qid]->token--;   
       }else
          return(ERR_BLOCKLIMIT);
@@ -526,7 +526,7 @@ static unsigned long _lock_stage_ny(
       /* Put myself on the fifo list */
       ipc_array[qid]->blocked_procs[ipc_array[qid]->in_idx] = MySelf;
       ipc_array[qid]->in_idx++;
-      ipc_array[qid]->in_idx %= MAX_BLOCKED_ON_Q;
+      ipc_array[qid]->in_idx %= TK_MAX_BLOCKED_ON_Q;
       /* Put myself om the "waiting" list */
       if (timeout == 0) {
          //assert(0);
@@ -548,8 +548,8 @@ static unsigned long _lock_stage_ny(
          if (MySelf->wakeupEvent == E_TIMER) {
             /* Take process away from "que blocked" list*/
             mark_idx--;
-            if (mark_idx > MAX_BLOCKED_ON_Q) {
-               mark_idx = MAX_BLOCKED_ON_Q - 1; 
+            if (mark_idx > TK_MAX_BLOCKED_ON_Q) {
+               mark_idx = TK_MAX_BLOCKED_ON_Q - 1; 
             }
             
             /*Scan block list for any more procs that has been released by timer*/
@@ -576,7 +576,7 @@ static unsigned long _lock_stage_ny(
                }
                if (mark_idx == ipc_array[qid]->in_idx)
                   break;
-               mark_idx++; mark_idx %= MAX_BLOCKED_ON_Q;
+               mark_idx++; mark_idx %= TK_MAX_BLOCKED_ON_Q;
             }
             while(ipc_array[qid]->token < 0 && mark_idx != ipc_array[qid]->in_idx);
             p_bQ(40,21,qid);
@@ -627,7 +627,7 @@ static unsigned long _unlock_stage_ny(
          for (
             i=ipc_array[qid]->out_idx;
             i!=ipc_array[qid]->in_idx; /*This is important, the last index can expire*/
-            i++,i %= MAX_BLOCKED_ON_Q)
+            i++,i %= TK_MAX_BLOCKED_ON_Q)
          {
             if (!(ipc_array[qid]->blocked_procs[i]->state & _____Q__))  { 
                /*Oops, found one!*/
@@ -641,7 +641,7 @@ static unsigned long _unlock_stage_ny(
          }
          //assert(ipc_array[qid]->token<0);
          if ((ipc_array[qid]->in_idx - ipc_array[qid]->out_idx) == 0) { /*ipc_array[qid]->token==0*/
-            /*printk(("Hubba i örat\n"));
+            /*printk(("Hubba i ï¿½at\n"));
             while(1);*/
             return(ERR_OK);
             
@@ -651,7 +651,7 @@ static unsigned long _unlock_stage_ny(
          for (
             i=ipc_array[qid]->out_idx;
             i!=ipc_array[qid]->in_idx;
-            i++,i %= MAX_BLOCKED_ON_Q)
+            i++,i %= TK_MAX_BLOCKED_ON_Q)
          {
             if (ipc_array[qid]->blocked_procs[i]->Prio < t_prio) {
                t_prio = ipc_array[qid]->blocked_procs[i]->Prio;
@@ -672,7 +672,7 @@ static unsigned long _unlock_stage_ny(
          do {
             Him = ipc_array[qid]->blocked_procs[ipc_array[qid]->out_idx];
             ipc_array[qid]->out_idx++,
-            ipc_array[qid]->out_idx %= MAX_BLOCKED_ON_Q;
+            ipc_array[qid]->out_idx %= TK_MAX_BLOCKED_ON_Q;
             ipc_array[qid]->token++;
          }while(!(Him->state & _____Q__) && ipc_array[qid]->token < 0);
           /*Above can happen if made ready by timer */                           
@@ -703,7 +703,7 @@ unsigned long tk_itc( void ){
 	
 	ipc_idx = 0;
 	
-	for (i=0; i<MAX_NUM_Q; i++) {
+	for (i=0; i<TK_MAX_NUM_Q; i++) {
 		ipc_array[i] = NULL;
 	}
    return ERR_OK;    	
@@ -719,7 +719,7 @@ unsigned long tk_itc_destruct( void ){
 	
 	/* If for any reason any queue is left unallocated, try to free its */
 	/* allocated memory */
-	for (i=0; i<MAX_NUM_Q; i++) {
+	for (i=0; i<TK_MAX_NUM_Q; i++) {
 		if (ipc_array[i] != NULL) {
 			if (ipc_array[i]->b_type ==	 S_QUEUE)	   /* free memory allocated for simple queue */
 				free( ipc_array[i]->m.q );				   
@@ -1014,12 +1014,12 @@ unsigned long sm_create(
 	}else if ((ipc_array[ipc_idx] = (itc_t*)malloc(sizeof(itc_t)) ) == NULL) {
 		return(ERR_NOMEM);
 	/* Allocate memory for pointertable of tk_tcb_t pointers */
-	}else if ((ipc_array[ipc_idx]->blocked_procs = (tk_tcb_t**)malloc(MAX_BLOCKED_ON_Q * sizeof(tk_tcb_t*)) ) == NULL) {
+	}else if ((ipc_array[ipc_idx]->blocked_procs = (tk_tcb_t**)malloc(TK_MAX_BLOCKED_ON_Q * sizeof(tk_tcb_t*)) ) == NULL) {
 			return(ERR_NOMEM);
 	}
 	
 	/* Clean pointertable of blocked procs*/
-	for (i=0; i<MAX_BLOCKED_ON_Q; i++) {
+	for (i=0; i<TK_MAX_BLOCKED_ON_Q; i++) {
 		ipc_array[ipc_idx]->blocked_procs[i] = NULL;
 	}
 	strncpy(ipc_array[ipc_idx]->name,name,4);
@@ -1388,12 +1388,12 @@ unsigned long sm_create_ny(
    }else if ((ipc_array[ipc_idx] = (itc_t*)malloc(sizeof(itc_t)) ) == NULL) {
       return(ERR_NOMEM);
    /* Allocate memory for pointertable of tk_tcb_t pointers */
-   }else if ((ipc_array[ipc_idx]->blocked_procs = (tk_tcb_t**)malloc(MAX_BLOCKED_ON_Q * sizeof(tk_tcb_t*)) ) == NULL) {
+   }else if ((ipc_array[ipc_idx]->blocked_procs = (tk_tcb_t**)malloc(TK_MAX_BLOCKED_ON_Q * sizeof(tk_tcb_t*)) ) == NULL) {
          return(ERR_NOMEM);
    }
    
    /* Clean pointertable of blocked procs*/
-   for (i=0; i<MAX_BLOCKED_ON_Q; i++) {
+   for (i=0; i<TK_MAX_BLOCKED_ON_Q; i++) {
       ipc_array[ipc_idx]->blocked_procs[i] = NULL;
    }
    strncpy(ipc_array[ipc_idx]->name,name,4);
@@ -1534,7 +1534,21 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.27  2006-04-08 10:16:03  ambrmi09
+ *  Revision 1.28  2006-11-05 14:19:00  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.27  2006/04/08 10:16:03  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.26.2.2  2006/04/03 20:07:29  ambrmi09

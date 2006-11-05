@@ -54,11 +54,11 @@
    #define str( x ) \
       #x
 
-   #define INCLNAME( arch ) \
-      <../bsp/gnu arch/tk_hwtypes-gnu arch.h>
+   #define INCLNAME( farch ) \
+      <../src/arch/farch/stypes-gnu_ farch.h>
    
-   #define INCLABI( arch, abi )                      \
-      <../bsp/gnu arch/tk_hwtypes-gnu arch abi.h>
+   #define INCLABI( farch, abi )                      \
+      <../src/arch/farch/stypes-gnu_ farch-abi.h>
    
 
    #ifdef ABI
@@ -85,8 +85,22 @@
  * @defgroup CVSLOG_tk_hwtypes_h tk_hwtypes_h
  * @ingroup CVSLOG
  *
- *  $Log: tk_hwtypes.h,v $
- *  Revision 1.10  2006-04-08 10:15:58  ambrmi09
+ *  $Log: stypes.h,v $
+ *  Revision 1.1  2006-11-05 14:18:59  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.10  2006/04/08 10:15:58  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.9.2.1  2006/04/03 20:07:24  ambrmi09

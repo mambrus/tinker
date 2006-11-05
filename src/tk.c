@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2006 by Michael Ambrus                                  * 
- *   michael.ambrus@maquet.com                                              *
+ *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -41,9 +41,9 @@ SCHED
 #include <time.h>
 
 #include <tk.h>
-#include <tk_hwsys.h>
-#include <tk_tuning.h>	 //?
-#include <../src/implement_tk.h>
+#include "context.h"
+#include "tk_tuning.h"	 //?
+#include "implement_tk.h"
 
 #ifndef printk
 #   error "Tinker needs a prink to be implemented for this target"
@@ -97,13 +97,6 @@ any of them.   errno.h
 #endif
 
 //@}
-
-//The sysqueues should maybe be a component?
-#include <tk_sysqueues.h>
-
-#include "tk_hwsys.h"
-
-
 
 #if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
 #  define tk_clock()  clock_stubbed()   
@@ -1455,7 +1448,21 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.63  2006-10-13 21:47:11  ambrmi09
+ *  Revision 1.64  2006-11-05 14:18:59  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.63  2006/10/13 21:47:11  ambrmi09
  *  2 new CPU ports added: PowerPC and Blackfin. Also testing a new a new concept
  *  for thread creation that potentionally has big transparency advantages (needs
  *  to be proven in preemtive cases).

@@ -39,7 +39,7 @@ LDFLAGS  := $(LDFLAGS) -L$(TINKER_PATH)/lib $(SUBLIBS)
 LIBOBJS_LIST   = $(patsubst %,-l%,$(LIBOBJS))
 
 ifeq ($(XCOMPILE),1)
-   CFLAGS := $(CFLAGS)  -DDEBUG -DBOARD=$(BOARD) -DABI=_$(ABI) -DARCH=_$(ARCH) 
+   CFLAGS := $(CFLAGS)  -DDEBUG -DBOARD=$(BOARD) -DABI=$(ABI) -DARCH=$(ARCH) 
    CFLAGS := $(CFLAGS) $(CPU_OPT) $(DCPU) -g -gstabs -D RUN_FROM_ROM
    CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(ALIAS_HOST)/include 
    CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include 
@@ -73,14 +73,6 @@ ALL_ASM   := $(patsubst %, ${THIS_DIR}/%, ${ALL_ASM_r})
 EXTRAS    := $(patsubst %, ${THIS_DIR}/%, ${EXTRAS_r})
 
 #-------1---------2---------3---------4---------5---------6---------7---------8
-
-CFLAGS   := $(CFLAGS)                        \
-   -DTK_COMP_ITC=1                           \
-   -DTK_COMP_PTIMER=0                        \
-   -DTK_COMP_KMEM=0                          \
-   -DTK_COMP_PTHREAD=0                       \
-   -DTK_COMP_POSIX_RT=0
-   
 
 ALL_COBJS:=$(patsubst %.c, %.o, $(ALL_C))
 ALL_CDEPS:=$(patsubst %.c, %.d, $(ALL_C))
@@ -121,19 +113,22 @@ clean:
 	@echo "======================================================"
 
 cleanall: clean
-	rm -rf @TINKER_PATH@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
+	rm -rf @TINKER_PATH@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/	
 	rm -rf @TINKER_PATH@/lib/crt*.o $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
 	rm $(TOOLDIR)/$(ALIAS_HOST)/lib/lib@PACKAGE_NAME@.a
+	rm -rf $(TOOLDIR)/$(ALIAS_HOST)/include/tinker
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] installation removed! ->>"
 	@echo "======================================================"
 
 install: all
 	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
+	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/
 	mkdir -p $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
 	cp -dpv $(OUTFILENAME) $(TOOLDIR)/$(ALIAS_HOST)/lib/
 	cp -dpv @TINKER_PATH@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
 	cp -dpv @TINKER_PATH@/lib/crt*.o $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
+	cp -dprv @TINKER_PATH@/include/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] installed! ->>"
 	@echo "======================================================"
@@ -162,7 +157,7 @@ install: all
 
 %.ao: %.s Makefile-gnu
 	@echo =a2========================================================
-	$(CC) -c $(CFLAGS) ${@:ao=s} -o $@
+	$(CC) -c $(CFLAGS) ${@:ao=S} -o $@
 	@echo
 
 $(OUTFILENAME): $(ALL_COBJS) $(ALL_AOBJS) $(SUBLIBOUT)

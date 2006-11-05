@@ -23,26 +23,50 @@
 #ifndef TK_TUNING_H
 #define TK_TUNING_H
 
+#if defined(__GNUC__)
+   #include <tinker/config.h>
+#endif
+
 //App & system
-#if      defined(__CYGWIN32__)  || defined(__CYGWIN__)
-#   define TK_NORMAL_STACK_SIZE     0xD000 //!< @note Cygwin needs a humongus stack
-#   define TK_MINIMUM_STACK_SIZE    0x0D00  //!< TBD this @todo TBD this
+#if      defined(__CYGWIN32__)  || defined(__CYGWIN__)	
+	#ifndef TK_NORMAL_STACK_SIZE
+		#define TK_NORMAL_STACK_SIZE     0xD000 //!< @note Cygwin needs a humongus stack
+	#endif
+	#ifndef TK_MINIMUM_STACK_SIZE
+		#define TK_MINIMUM_STACK_SIZE    0x0D00  //!< TBD this @todo TBD this
+	#endif
 
 #else
-#   define TK_NORMAL_STACK_SIZE     0x1200 //!< @note Whats normal or reasonable differs between architectures. 
-#   define TK_MINIMUM_STACK_SIZE    0x0600  //!< TBD this @todo TBD this
+	#ifndef TK_NORMAL_STACK_SIZE
+		#define TK_NORMAL_STACK_SIZE     0x1200 //!< @note Whats normal or reasonable differs between architectures. 
+	#endif
+	#ifndef TK_MINIMUM_STACK_SIZE
+		#define TK_MINIMUM_STACK_SIZE    0x0600  //!< TBD this @todo TBD this
+	#endif
 
 #endif
 
 //SCHED 
-#define TK_MAX_THREADS          0x100
-#define TK_MAX_PRIO_LEVELS      0x10
-#define TK_MAX_THREADS_AT_PRIO  TK_MAX_THREADS
-#define TK_THREAD_NAME_LEN      0x27
+#ifndef TK_MAX_THREADS
+	#define TK_MAX_THREADS          0x100
+#endif
+#ifndef TK_MAX_PRIO_LEVELS
+	#define TK_MAX_PRIO_LEVELS      0x10
+#endif
+#ifndef TK_MAX_THREADS_AT_PRIO
+	#define TK_MAX_THREADS_AT_PRIO  TK_MAX_THREADS
+#endif
+#ifndef TK_THREAD_NAME_LEN
+	#define TK_THREAD_NAME_LEN      0x27
+#endif
 
 //ITC
-#define MAX_BLOCKED_ON_Q    	TK_MAX_THREADS
-#define MAX_NUM_Q       		0x100
+#ifndef TK_MAX_BLOCKED_ON_Q
+	#define TK_MAX_BLOCKED_ON_Q    	TK_MAX_THREADS
+#endif
+#ifndef TK_MAX_NUM_Q
+	#define TK_MAX_NUM_Q       		0x100
+#endif
 
 
 #endif  //TK_TUNING_H
@@ -52,7 +76,21 @@
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $
- *  Revision 1.2  2006-04-08 10:15:57  ambrmi09
+ *  Revision 1.3  2006-11-05 14:18:58  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.2  2006/04/08 10:15:57  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.1.2.3  2006/04/03 20:07:22  ambrmi09

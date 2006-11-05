@@ -37,6 +37,9 @@ SCHED
 #ifndef _IMPLEMENT_TK_H
 #define _IMPLEMENT_TK_H
 
+#include "tk_tuning.h"
+#include "stypes.h"
+
 /*!
 @brief Defines the threads status (bit addressable)
 Defines the threads status (bit addressable)
@@ -194,7 +197,21 @@ extern int Tk_IntFlagCntr;
  * @defgroup CVSLOG_implement_tk_h implement_tk_h
  * @ingroup CVSLOG
  *  $Log: implement_tk.h,v $
- *  Revision 1.9  2006-04-08 10:16:00  ambrmi09
+ *  Revision 1.10  2006-11-05 14:18:59  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.9  2006/04/08 10:16:00  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.8.2.2  2006/04/03 20:07:26  ambrmi09

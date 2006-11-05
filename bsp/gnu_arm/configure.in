@@ -35,6 +35,6 @@ else
 fi
 
 dnl Update config.h
-AC_CONFIG_HEADER(../../include/config.h)
+AC_CONFIG_HEADER(../../include/tinker/config.h)
 
 AC_OUTPUT(Makefile-gnu)

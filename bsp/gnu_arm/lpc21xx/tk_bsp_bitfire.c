@@ -26,7 +26,7 @@
  
  */
 
-#include <config.h>
+#include <tinker/config.h>
 
 #include "../tk_bsp.h"
 #include "../tk_systimer.h"
@@ -248,7 +248,21 @@ int tk_bsp_sysinit        (void){
  * @defgroup CVSLOG_tk_bsp_bitfire.c tk_bsp_bitfire.c
  * @ingroup CVSLOG
  *  $Log: tk_bsp_bitfire.c,v $
- *  Revision 1.5  2006-10-02 18:38:01  ambrmi09
+ *  Revision 1.6  2006-11-05 14:18:58  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.5  2006/10/02 18:38:01  ambrmi09
  *  Improved gdb-wrapper.ex to permit step into withot warning. This is
  *  however a workaround for something that must be a bug in the cross GDB
  *  used (target is halted at breakpoint even though GDB sends a warning).

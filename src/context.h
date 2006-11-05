@@ -62,7 +62,7 @@ too small.
 
 Thread with this stack size should be able to handle printf
 
-@note What's normal or reasonable differs between architectures. 
+@note What's normal or reasonable differs between farchitectures. 
 
 */
 #define TK_NORMAL_STACK_SIZE 0
@@ -344,11 +344,14 @@ cases might want to replace this with a NOP.
    #  error For GNU targets, ARCH has to be defined
    #endif
    
-   #define INCLNAME( arch ) \
-      <../bsp/gnu arch/tk_hwsys-gnu arch.h>
+   #define INCLNAME( farch ) \
+      <../src/arch/farch/context-gnu_ farch.h>
    
-   #define INCLABI( arch, abi ) \
-      <../bsp/gnu arch/tk_hwsys-gnu arch abi.h>
+   #define INCLABI( farch, abi ) \
+      <../src/arch/farch/context-gnu_ farch-abi.h>
+
+
+
    
    #ifdef ABI
    #   include INCLABI( ARCH, ABI )
@@ -375,8 +378,22 @@ cases might want to replace this with a NOP.
 /*! 
  * @defgroup CVSLOG_tk_hwsys_h tk_hwsys_h
  * @ingroup CVSLOG
- *  $Log: tk_hwsys.h,v $
- *  Revision 1.20  2006-04-08 10:15:58  ambrmi09
+ *  $Log: context.h,v $
+ *  Revision 1.1  2006-11-05 14:18:59  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.20  2006/04/08 10:15:58  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.19.2.2  2006/04/03 20:07:23  ambrmi09

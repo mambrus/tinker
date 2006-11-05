@@ -1,0 +1,107 @@
+/* include/tinker/config.h.in.  Generated from configure.in by autoheader.  */
+
+#ifndef tinker_config_h
+#define tinker_config_h
+#define yes 1
+#define no 0
+
+
+/* Define to 1 if you have the `clock' function. */
+#undef HAVE_CLOCK
+
+/* Define to 1 if you have the `gcc_s' library (-lgcc_s). */
+#undef HAVE_LIBGCC_S
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Calling convention */
+#undef TK_ABI
+
+/* As CANONICAL_HOST but without expansion, i.e. exactlly as typed when
+   configured */
+#undef TK_ALIAS_HOST
+
+/* Which main CPU architecture */
+#undef TK_ARCH
+
+/* Name of the board directory (i.e. BSP adaption) */
+#undef TK_BOARD
+
+/* Canonical hostname */
+#undef TK_CANONICAL_HOST
+
+/* ITC - Inter thread communication component enabled */
+#undef TK_COMP_ITC
+
+/* KMEM - Kernel memory manager component enabled */
+#undef TK_COMP_KMEM
+
+/* POSIX_RT - POSIX 1003.1b queues, semaphores component enabled */
+#undef TK_COMP_POSIX_RT
+
+/* PTHRED - POSIX 1003.1c threads component enabled */
+#undef TK_COMP_PTHREAD
+
+/* PTIMER - Preemptive timer component enabled */
+#undef TK_COMP_PTIMER
+
+/* Specific CPU variant (i.e. -m option used) */
+#undef TK_DCPU
+
+/* Version of GCC that compiled tinker */
+#undef TK_GCC_VERSION
+
+/* Maximum nuber of threads blocked on any ITC primitive (not only Q) */
+#undef TK_MAX_BLOCKED_ON_Q
+
+/* Maximum number of any ITC primitive (not only Q) */
+#undef TK_MAX_NUM_Q
+
+/* Numer of priorities for you system (recomended 3 or 16) */
+#undef TK_MAX_PRIO_LEVELS
+
+/* Maximum number of threds your system could have */
+#undef TK_MAX_THREADS
+
+/* Number of threads that can be sceduled at each priority */
+#undef TK_MAX_THREADS_AT_PRIO
+
+/* Maximum size of a stack for a thread */
+#undef TK_MINIMUM_STACK_SIZE
+
+/* Stacksize used when stack-size is omitted */
+#undef TK_NORMAL_STACK_SIZE
+
+/* Defines which system (i.e. system call API) we're using */
+#undef TK_SYSTEM
+
+/* Lengts of the string in TCB that holds the name of the thread */
+#undef TK_THREAD_NAME_LEN
+
+/* Source path of TinKer (when compiled) */
+#undef TK_TINKER_PATH
+
+/* Where the PREFIX directory is */
+#undef TK_TOOLDIR
+
+/* If cross-compile build is expected */
+#undef TK_XCOMPILE
+
+#endif //tinker_config_h
+

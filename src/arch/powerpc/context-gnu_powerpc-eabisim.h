@@ -19,5 +19,5 @@
  ***************************************************************************/
  
 
-#include "tk_hwsys-gnu_powerpc_eabi.h"
+#include "context-gnu_powerpc-eabi.h"
 

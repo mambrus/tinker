@@ -47,8 +47,8 @@
    #  error For GNU targets, ARCH has to be defined
    #endif
    
-   #define INCLNAME( arch ) \
-      <../bsp/gnu arch/tk_tuning.h>
+   #define INCLNAME( farch ) \
+      <../bsp/gnu_ farch/tk_tuning.h>
    
    
    #include INCLNAME( ARCH )
@@ -69,7 +69,21 @@
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $
- *  Revision 1.2  2006-04-08 10:15:59  ambrmi09
+ *  Revision 1.1  2006-11-05 14:19:00  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.2  2006/04/08 10:15:59  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.1.2.4  2006/04/06 09:01:56  ambrmi09
@@ -91,7 +105,7 @@
  *  quite handleable) because it *truly* takes away a lot of pain with
  *  porting.
  *
- *  The ARM port (architecture level) is than's to this now fully operational
+ *  The ARM port (farchitecture level) is than's to this now fully operational
  *  without the r13 hack in the context switch. This includes thread
  *  cancellation and thread argument passing (which were not functioning in
  *  the old port).

@@ -23,19 +23,40 @@
 #ifndef TK_TUNING_H
 #define TK_TUNING_H
 
+#if defined(__GNUC__)
+   #include <tinker/config.h>
+#endif
+
 //App & system
-#define TK_MINIMUM_STACK_SIZE 	0x1000  
-#define TK_NORMAL_STACK_SIZE  	0x1000
+#ifndef TK_MINIMUM_STACK_SIZE
+	#define TK_MINIMUM_STACK_SIZE 	0x1000  
+#endif
+#ifndef TK_NORMAL_STACK_SIZE
+	#define TK_NORMAL_STACK_SIZE  	0x1000
+#endif
 
 //SCHED 
-#define TK_MAX_THREADS          10  
-#define TK_MAX_PRIO_LEVELS      4
-#define TK_MAX_THREADS_AT_PRIO  3
-#define TK_THREAD_NAME_LEN      0x17
+#ifndef TK_MAX_THREADS
+	#define TK_MAX_THREADS          10  
+#endif
+#ifndef TK_MAX_PRIO_LEVELS
+	#define TK_MAX_PRIO_LEVELS      4
+#endif
+#ifndef TK_MAX_THREADS_AT_PRIO
+	#define TK_MAX_THREADS_AT_PRIO  3
+#endif
+#ifndef TK_THREAD_NAME_LEN
+	#define TK_THREAD_NAME_LEN      0x17
+#endif
 
 //ITC
-#define MAX_BLOCKED_ON_Q    	TK_MAX_THREADS
-#define MAX_NUM_Q       		10
+#ifndef TK_MAX_BLOCKED_ON_Q
+	#define TK_MAX_BLOCKED_ON_Q    	TK_MAX_THREADS
+#endif
+#ifndef TK_MAX_NUM_Q
+	#define TK_MAX_NUM_Q       		10
+#endif
+
 
 /*
 #define TK_HOWTO_MALLOC 		TK_FNK_ORIGINAL
@@ -58,7 +79,21 @@
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $
- *  Revision 1.2  2006-10-13 21:47:10  ambrmi09
+ *  Revision 1.3  2006-11-05 14:18:58  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.2  2006/10/13 21:47:10  ambrmi09
  *  2 new CPU ports added: PowerPC and Blackfin. Also testing a new a new concept
  *  for thread creation that potentionally has big transparency advantages (needs
  *  to be proven in preemtive cases).

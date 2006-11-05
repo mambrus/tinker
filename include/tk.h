@@ -24,7 +24,7 @@
 
 @brief Tinker inner-most \e"guts"
 
-This comonent is not selectable as the others normally are
+This component is not selectable as the others normally are
 
 For in-depth discussions about this component, see \ref
 SCHED
@@ -41,11 +41,12 @@ you use printf in thread else 64bytes is probably sufficient.
 #define TK_H
 #define TINKER
 
-/*- include files **/
+#if defined(__GNUC__)
+   #include <tinker/config.h>
+#endif
+
 #include <stddef.h>
 #include <time.h>
-#include <tk_hwtypes.h>   //should be OK now
-#include <tk_tuning.h>      //Tuning constants for size and number or resources
 
 
 enum SCHED_ERROR_CODES{
@@ -103,7 +104,6 @@ in each targets corresponding tk_tuning.h.
 //# error YOU HAVE TOO LITTLE MEMORY FOR THE NUMBER OF THREADS YOU HAVE DEFINED
 //#endif
 
-
 /*!
 @name Build including following components
 
@@ -119,7 +119,7 @@ You can set the options from command line also:
 MSVC "preprocessor directive" would be:
 TK_COMP_ITC=1,TK_COMP_PTIMER=1,TK_COMP_KMEM=1,TK_COMP_PTHREAD=1,TK_COMP_POSIX_RT=1
 
-@note Settings from command line will over-rule the ones in this file
+@note Settings can be over-ruled by compile-time defies or confugure options
 */
 //@{
 #ifndef  TK_COMP_ITC
@@ -238,7 +238,21 @@ int           *_tk_errno();
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.40  2006-04-08 10:15:58  ambrmi09
+ *  Revision 1.41  2006-11-05 14:18:58  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.40  2006/04/08 10:15:58  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.39.2.6  2006/04/07 12:10:07  ambrmi09

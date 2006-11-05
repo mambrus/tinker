@@ -13,14 +13,88 @@ AC_CONFIG_AUX_DIR(.)
 AC_CONFIG_SUBDIRS([bsp])
 sources_c="src/tk.c src/tk_itc.c src/tk_sysqueues.c"
 
-TINKER_CONFIGURE(.)
+dnl Autoheader stuff
+AH_TOP(
+#ifndef tinker_config_h
+#define tinker_config_h
+#define yes 1
+#define no 0
+)
+AH_BOTTOM(
+#endif //tinker_config_h
+)
 
-dnl Create defines we expect sub-configure scripts to set
+dnl Create defines we expect configure or sub-configure scripts to set (will end up in config.h)
+dnl Analyzed build system defines (by any TinKer configure options)
+AH_TEMPLATE([TK_CANONICAL_HOST],
+   [Canonical hostname])
+AH_TEMPLATE([TK_ALIAS_HOST],
+   [As CANONICAL_HOST but without expansion, i.e. exactlly as typed when configured])
+AH_TEMPLATE([TK_XCOMPILE],
+   [If cross-compile build is expected])
+AH_TEMPLATE([TK_ARCH],
+   [Which main CPU architecture])
 AH_TEMPLATE([TK_SYSTEM],
    [Defines which system (i.e. system call API) we're using])
-   
-AC_CONFIG_HEADER(include/config.h)
+AH_TEMPLATE([TK_ABI],
+   [Calling convention])
+AH_TEMPLATE([TK_TOOLDIR],
+   [Where the PREFIX directory is])
+AH_TEMPLATE([TK_GCC_VERSION],
+   [Version of GCC that compiled tinker])
+AH_TEMPLATE([TK_TINKER_PATH],
+   [Source path of TinKer (when compiled)])
 
+dnl Selectable build system defines
+AH_TEMPLATE([TK_BOARD],
+   [Name of the board directory (i.e. BSP adaption)])
+AH_TEMPLATE([TK_DCPU],
+   [Specific CPU variant (i.e. -m option used)])
+
+
+dnl TinKer tuning defines
+AH_TEMPLATE([TK_MINIMUM_STACK_SIZE],
+   [Maximum size of a stack for a thread])
+AH_TEMPLATE([TK_NORMAL_STACK_SIZE],
+   [Stacksize used when stack-size is omitted])
+AH_TEMPLATE([TK_MAX_THREADS],
+   [Maximum number of threds your system could have])
+AH_TEMPLATE([TK_MAX_PRIO_LEVELS],
+   [Numer of priorities for you system (recomended 3 or 16)])
+AH_TEMPLATE([TK_MAX_THREADS_AT_PRIO],
+   [Number of threads that can be sceduled at each priority])
+AH_TEMPLATE([TK_THREAD_NAME_LEN],
+   [Lengts of the string in TCB that holds the name of the thread])
+AH_TEMPLATE([TK_MAX_BLOCKED_ON_Q],
+   [Maximum nuber of threads blocked on any ITC primitive (not only Q)])
+AH_TEMPLATE([TK_MAX_NUM_Q],
+   [Maximum number of any ITC primitive (not only Q)])
+
+dnl TinKer components defines
+AH_TEMPLATE([TK_COMP_ITC],
+   [ITC - Inter thread communication component enabled])
+AH_TEMPLATE([TK_COMP_PTIMER],
+   [PTIMER - Preemptive timer component enabled])
+AH_TEMPLATE([TK_COMP_KMEM],
+   [KMEM - Kernel memory manager component enabled ])
+AH_TEMPLATE([TK_COMP_PTHREAD],
+   [PTHRED - POSIX 1003.1c threads component enabled])
+AH_TEMPLATE([TK_COMP_POSIX_RT],
+   [POSIX_RT - POSIX 1003.1b queues, semaphores component enabled])
+
+
+
+#if test $SYSTEM == 'default'; then
+#   AC_DEFINE([TK_SYSTEM],__SYS_DEFAULT__)
+#elif test $SYSTEM == 'hixs'; then
+#   AC_DEFINE([TK_SYSTEM],__SYS_HIXS__)
+#else
+#   AC_MSG_ERROR([<<< Tinker does not support the system you'we chosen])
+#fi
+
+TINKER_CONFIGURE(.)
+
+AC_CONFIG_HEADER(include/tinker/config.h)
 
 dnl Read Makefile.in and config.h.in, Write Makefile and config.h
 AC_OUTPUT(Makefile-gnu)

@@ -34,8 +34,8 @@
 #define TK_THREAD_NAME_LEN      0x27
 
 //ITC
-#define MAX_BLOCKED_ON_Q    	TK_MAX_THREADS
-#define MAX_NUM_Q       		0x100
+#define TK_MAX_BLOCKED_ON_Q    	TK_MAX_THREADS
+#define TK_MAX_NUM_Q       		0x100
 
 
 
@@ -46,7 +46,21 @@
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $
- *  Revision 1.2  2006-04-08 10:15:50  ambrmi09
+ *  Revision 1.3  2006-11-05 14:18:56  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.2  2006/04/08 10:15:50  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.1.2.3  2006/04/03 20:07:20  ambrmi09

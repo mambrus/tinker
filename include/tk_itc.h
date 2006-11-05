@@ -54,8 +54,8 @@ in each targets corresponding tk_tuning.h.
 @warning </b>Do not change these if using pre-built kernel as lib</b>
 */
 //@{
-#define MAX_BLOCKED_ON_Q    TK_MAX_THREADS   /*!< Max num of proces blocked on queue or sem*/
-#define MAX_NUM_Q       	50  /*!< Max num of semaphores OR queues (i.e. primitives) in total*/
+#define TK_MAX_BLOCKED_ON_Q    TK_MAX_THREADS   /*!< Max num of proces blocked on queue or sem*/
+#define TK_MAX_NUM_Q       	50  /*!< Max num of semaphores OR queues (i.e. primitives) in total*/
 //@}
 #endif
 
@@ -176,7 +176,7 @@ typedef struct itc_t_{
     unsigned long   sizeof_q;           /*!< @brief Size in indexes */
     unsigned long   maxSizeof_m;        /*!< @brief Max size of message (This is stupid ,pSos)*/ 
     itc_set_t       b_type;             /*!< @brief Determines what kind of primitive this block handles.*/ 
-    struct tcb_t_** blocked_procs;      /*!< @brief List of blocked_procs[MAX_BLOCKED_ON_Q];*/
+    struct tcb_t_** blocked_procs;      /*!< @brief List of blocked_procs[TK_MAX_BLOCKED_ON_Q];*/
     unsigned long   in_idx;             /*!< @brief Input index for the blocked proc fifo */
     unsigned long   out_idx;            /*!< @brief Output index for the blocked proc fifo */
     unsigned long   min_idx;            /*!< @brief Input index for the blocked message fifo */
@@ -423,7 +423,21 @@ unsigned long sm_v_ny(
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.22  2006-04-08 10:15:58  ambrmi09
+ *  Revision 1.23  2006-11-05 14:18:59  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.22  2006/04/08 10:15:58  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.21.2.2  2006/04/03 20:07:24  ambrmi09

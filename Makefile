@@ -108,7 +108,7 @@ configure:
 	$(CONFIGURE_MODS)
 	@echo "Configure scripts created. Now run './configure [options]'. For example: "
 	@echo "./configure -C --host=bfin-hixs-elf BOARD=generic"
-	@echo "./configure -C --host=powerpc-elf MCPU=860 BOARD=generic"
+	@echo "./configure -C --host=powerpc-eabisim MCPU=860 BOARD=generic"
 	@echo "./configure -C --host=arm-hixs-elf MCPU=arm7tdmi BOARD=lpc21xx"
 	@echo "==========================================================="
 

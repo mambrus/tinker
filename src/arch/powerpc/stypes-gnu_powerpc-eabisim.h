@@ -19,5 +19,5 @@
  ***************************************************************************/
  
 
-#include "tk_hwtypes-gnu_powerpc_eabi.h"
+#include "stypes-gnu_powerpc-eabi.h"
 

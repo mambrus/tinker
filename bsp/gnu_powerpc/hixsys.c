@@ -1,4 +1,4 @@
-#include <config.h>
+#include <tinker/config.h>
 
 
 #if !defined(BOARD)

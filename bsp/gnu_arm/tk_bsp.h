@@ -30,7 +30,7 @@ combo.
 #ifndef TK_BSP_H
 #define TK_BSP_H
 
-#include <config.h>
+#include <tinker/config.h>
 
 #if !defined(BOARD)
    #error BOARD needs to be defined
@@ -103,7 +103,21 @@ int bsp_ReportException (/*TBD*/);
  * @defgroup CVSLOG_tk_bsp_h tk_bsp_h
  * @ingroup CVSLOG
  *  $Log: tk_bsp.h,v $
- *  Revision 1.4  2006-09-28 17:42:44  ambrmi09
+ *  Revision 1.5  2006-11-05 14:18:56  ambrmi09
+ *  Build system and source modified to make better use of config.h
+ *
+ *  This file now contains information about how the kernel is configured
+ *  and can be used by both application and kernel build (old solution only
+ *  let kernel-buils know of these details).
+ *
+ *  This applies to both tk_tuning, component configuration among others.
+ *  Use './configure --help' to see a full list. Note that  if a certain
+ *  feature is not configured, the old tk_tuning will fill in the gaps.
+ *  This is especially usefull when not using GNU build- and configure-
+ *  tool-chain. Hopefully, we'll be able to get rid of tk_tuning.h in the
+ *  future.
+ *
+ *  Revision 1.4  2006/09/28 17:42:44  ambrmi09
  *  HIXS system integration for RM done. ARM now has two different system call API supported. This is mostly interesting from a transparency point of view, but also a good exersisze for bfin and ppc, which are not ported yet (since I'm not planning on implementing any other system integrations than HIXS from now on).
  *
  *  Revision 1.3  2006/09/13 18:29:30  ambrmi09

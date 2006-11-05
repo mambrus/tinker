@@ -169,6 +169,62 @@ fi
 AC_SUBST(CPU_OPT)
 AC_SUBST(DCPU)
 
+dnl Components config part. Use enable-feature/disable-feature without arguments
+dnl Note: Default values are set here.
+dnl ----------------------------------------------------------------------------
+AC_ARG_ENABLE(itc,
+	AS_HELP_STRING([--enable-itc],[ITC - Enable/disable Inter thread communication component (native API)]),
+	AC_DEFINE_UNQUOTED([TK_COMP_ITC],$enableval),
+	AC_DEFINE_UNQUOTED([TK_COMP_ITC],1)
+)
+AC_ARG_ENABLE(ptimer,
+	AS_HELP_STRING([--enable-ptimer],[PTIMER - Enable/disable Preemptive timer component]),
+	AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],$enableval),
+	AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],0)
+)
+AC_ARG_ENABLE(kmem,
+	AS_HELP_STRING([--enable-kmem],[KMEM - Enable/disable Kernel memory manager component]),
+	AC_DEFINE_UNQUOTED([TK_COMP_KMEM],$enableval),
+	AC_DEFINE_UNQUOTED([TK_COMP_KMEM],0)
+)
+AC_ARG_ENABLE(pthread,
+	AS_HELP_STRING([--enable-pthread],[PTHRED - Enable/disable POSIX 1003.1c threads component]),
+	AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],$enableval),
+	AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],0)
+)
+AC_ARG_ENABLE(posix_rt,
+	AS_HELP_STRING([--enable-posix_rt],[POSIX_RT - Enable/disable POSIX 1003.1b queues, semaphores component enabled]),
+	AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],$enableval),
+	AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],0)
+)
+
+dnl Configurable entities (TinKer tuning defines)
+dnl ---------------------------------------------
+AC_ARG_ENABLE(min_stack,
+	AS_HELP_STRING([--enable-min_stack=<val>],[Maximum size of a stack for a thread ]),
+	AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],$enableval))
+AC_ARG_ENABLE(norm_stack,
+	AS_HELP_STRING([--enable-norm_stack=<val>],[Stacksize used when stack-size is omitted ]),
+	AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],$enableval))
+AC_ARG_ENABLE(max_threads,
+	AS_HELP_STRING([--enable-max_threads=<val>],[Maximum number of threds your system could have ]),
+	AC_DEFINE_UNQUOTED([TK_MAX_THREADS],$enableval))
+AC_ARG_ENABLE(max_prio,
+	AS_HELP_STRING([--enable-max_prio=<val>],[Numer of priorities for you system  (recomended value: 3 or 16)]),
+	AC_DEFINE_UNQUOTED([TK_MAX_PRIO_LEVELS],$enableval))
+AC_ARG_ENABLE(that_prio,
+	AS_HELP_STRING([--enable-that_prio=<val>],[Number of threads that can be sceduled at each priority ]),
+	AC_DEFINE_UNQUOTED([TK_MAX_THREADS_AT_PRIO],$enableval))
+AC_ARG_ENABLE(thename_len,
+	AS_HELP_STRING([--enable-thename_len=<val>],[Lengts of the string in TCB that holds the name of the thread ]),
+	AC_DEFINE_UNQUOTED([TK_THREAD_NAME_LEN],$enableval))
+AC_ARG_ENABLE(blocked_q,
+	AS_HELP_STRING([--enable-blocked_q=<val>],[Maximum nuber of threads blocked on any ITC primitive, i.e. not only Q ]),
+	AC_DEFINE_UNQUOTED([TK_MAX_BLOCKED_ON_Q],$enableval))
+AC_ARG_ENABLE(max_q,
+	AS_HELP_STRING([--enable-max_q=<val>],[Maximum number of any ITC primitive, i.e not only Q ]),
+	AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],$enableval))
+
 
 if test $cross_compiling == yes; then
    if test -z $BOARD; then
