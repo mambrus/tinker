@@ -1,20 +1,20 @@
 
-\part{Using a pTread, mqueue based kernel}
+\part{Using a pThreads, mqueue based kernel}
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \chapter{Introduction}
-In this part, we'll start using TinKer by playing with some examples. That the examples are targeting concurrency issues. Real-time issues are a very often tightly related to concurrency\footnote{An aspect of concurrency}. But remeber, formally it's not the same.
+In this part, we'll start using TinKer by playing with some examples. That the examples are targeting concurrency issues. Real-time issues are a very often tightly related to concurrency\footnote{An aspect of concurrency}. But remember, formally it's not the same.
 \\\\
-TinKer follows the POISX 1003.1c \& 1003.1b standards. The first one covers concurrency but real-time is not mentioned at all. In the second standard real-time is mentioned, but the meaning is not complete and adreesses queues only.
+TinKer follows the POSIX 1003.1c \& 1003.1b standards. The first one covers concurrency but real-time is not mentioned at all. In the second standard real-time is mentioned, but the meaning is not complete and addresses queues only.
 \\\\
-TinKer covers POSIX 1003.1c, but does it so that it grants real-time behaviour to the system that uses it. The end result is a real-time kernel with a standardized, very wide speread and very well defined API.
+TinKer covers POSIX 1003.1c, but does it so that it grants real-time behaviour to the system that uses it. The end result is a real-time kernel with a standardised, very widespread and very well defined API.
 \\\\
-All the examples have been verified agains two other independant OS'es to verify their POSIX 1003.1c and 1003.1b compience. 
+All the examples have been verified against two other independent OS's to verify their POSIX 1003.1c and 1003.1b compliance. 
 \\\\
 The examples will be tailored for a GNU tool-chain. Other environment for TinKer exists\footnote{MSVC, Keil, Borland} however.
 \\\\
-This part could be extended to cover the subject of concurrent programming and real-time of it's own, which is not the purpose. Litterature are full of good books in these subjects. TODO references \ref{FIXME}
+This part could be extended to cover the subject of concurrent programming and real-time of it's own, which is not the purpose. Literature are full of good books in these subjects. TODO references \ref{FIXME}
 
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
@@ -24,9 +24,9 @@ Start a shell and move to the directory where you've the TinKer sources. Now exe
 \\\\
 \textit{make configure}
 \\\\
-This is a boot-strap build and will prepare the project to be configured. It has to be run once after each check-out or fresh source package installation. After that, you don't need to reinvoke this command even if you configue and build the kernal for different targets (or any other option changes).
+This is a boot-strap build and will prepare the project to be configured. It has to be run once after each check-out or fresh source package installation. After that, you don't need to reinvoke this command even if you configure and build the kernel for different targets (or any other option changes).
 \\\\
-Then run the configure script with the aproprialte parameters. You can do this either from the source diectory root or from an empty directory\footnote{Same principle as most Open Source projects}. For example\footnote{Type  \textit{./configure --help} for a full list of usage and options.}:
+Then run the configure script with the appropriate parameters. You can do this either from the source directory root or from an empty directory\footnote{Same principle as most Open Source projects}. For example\footnote{Type  \textit{./configure --help} for a full list of usage and options.}:
 \\\\
 \textit{./configure -C --host=arm-hixs-elf MCPU=arm7tdmi BOARD=lpc21xx}
 \\\\
@@ -38,7 +38,7 @@ Now all you have to do is:
 \\\\
 \textit{make install}
 \\\\
-This will build the kernel as a library\footnote{libtinker.a} and install this and TinKers header files on your build system\footnote{Note, to install on your target you still need to statically link with an application and download the binary}.
+This will build the kernel as a library\footnote{libtinker.a} and install this and Tinker's header files on your build system\footnote{Note, to install on your target you still need to statically link with an application and download the binary}.
 
 \paragraph{Removal}
 In case you need to remove TinKer from your system, invoke the command: \textit{make cleanall}\\\\
@@ -88,11 +88,11 @@ PREFIX/
 \caption{Where TinKer files get installed}\label{inslall_structure}
 \end{table}
 
-Due to TinKers ambition to cope with different libc, it also does not impose any changes or requirements on the headerfiles. Note that libc usually allready has several headerfiles with the same name as TinKer's headers, but with different or incompatible contents.
+Due to TinKer's ambition to cope with different libc, it also does not impose any changes or requirements on the headerfiles. Note that libc usually allready has several headerfiles with the same name as TinKer's headers, but with different or incompatible contents.
 
 The TinKer headers are designed to be able to not only cope, but also take advantage of certain parts of any existing headerfiles. It's therefore very important that you application builds headerfile search-path finds the TinKer headers first and the original headerfiles after.
 
-TinKer will aid you in this task by the use of the mandatory define CHAINPATH. This define instead of a seachpath to the original headerfiles makes it possible for TinKer sources to overlay header files\footnote{I.e. either as whole file substitution or as combined with TinKer's equivalent}. 
+TinKer will aid you in this task by the use of the mandatory define CHAINPATH. Use this define instead of a searchpath to the original headerfiles. It will make it possible for TinKer sources to overlay header files\footnote{I.e. either as whole file substitution or as combined with TinKer's equivalent}. automatically (internally handled by macro expansion).
 
 Just set this define to what the system header-files would otherwise be, and set the \textit{-I \$dir} to TinKer header search path\footnote{See table~\ref{inslall_structure}}.
 \\\\
@@ -118,7 +118,7 @@ arch-ven-abi-objdump -d hello.abi > hello.objdump
 I'd recommend that you build and test the examples in this whole part of the text in the following three cases one by one\footnote{I.e. build ALL the examples for each of the mentioned cases one by one. The order is from the easiest to the hardest to get started with.}:
 
 \begin{itemize}
-\item As native programs using another OS available to you, for example Linux \footnote{You'll need a Linux kernel 2.6.8 or newer} will work fine. Note that this build does not use TinKer at all and the build steps are also different\footnote{For example: \textit{gcc -O2 -g -o hello hello.c}}. It's for your exercise, to remeber to always make certain your applications are portable across targets.
+\item As native programs using another OS available to you, for example Linux \footnote{You'll need a Linux kernel 2.6.8 or newer} will work fine. Note that this build does not use TinKer at all and the build steps are also different\footnote{For example: \textit{gcc -O2 -g -o hello hello.c}}. It's for your exercise, to remember to always make certain your applications are portable across targets.
 \item Build the kernel for your desktop computer as a target, and link your applications towards this library. This will enable you to run the examples in a simulated environment \footnote{Available simulated targets are Linux x86 and Cygwin (Win32)} which is more convenient than to run it on a dedicated target.
 \item Cross build \& run for a dedicated OS-less target and remote debug it. 
 \end{itemize}
@@ -130,9 +130,9 @@ The build process regarding the last point is identical to the simulated version
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \chapter{"Hellow world"}
-Let's start off by a classical hello world example. The program cosists of a main part in table~\ref{hello1} and one thread in table~\ref{hello_thread}.
+Let's start off by a classical hello world example. The program consists of a main part in table~\ref{hello1} and one thread in table~\ref{hello_thread}.
 
-The initial part in table~\ref{top_of_app} is just a couple for includes and defines for your conveniance. Please reuse it for the rest of the examples.
+The initial part in table~\ref{top_of_app} is just a couple for includes and defines for your convenience. Please reuse it for the rest of the examples.
 
 \begin{table}[!hbp]
 \begin{verbatim}
@@ -217,7 +217,7 @@ int main(char argc, char **argv)
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \chapter{A mutex example}
-This example shows the usage of a mutex. Please notice that the mutex valiable in this example has to be public to both threads\footnote{I.e. it has to be defined in the code section} and it therefore must be defined before both threads.
+This example shows the usage of a mutex. Please notice that the mutex variable in this example has to be public to both threads\footnote{I.e. it has to be defined in the code section} and it therefore must be defined before both threads.
 
 \begin{table}[!hbp]
 \begin{verbatim}
@@ -431,11 +431,11 @@ int main(char argc, char **argv)
 %------------------------------------------------------------------------------
 %------------------------------------------------------------------------------
 \chapter{Master-worker programming model - sorting}
-This example implements quick-sort as a threaded operation in a marter-worker programming model. In principle it's the same alorithm ar the text-book qsort, exepth that instead of recursing, a new thread is started.
+This example implements quick-sort as a threaded operation in a master-worker programming model. In principle it's the same algorithm as the text-book qsort, except that instead of using recursion new threads are started.
 
-The pronciple is that each word in the text will get it's own thread. This thread only job is to move the word into position and then exit.
+The principle is that each word in the text will get it's own thread. This thread only job is to move the word into position and then exit.
 
-It's a silly way to implement qsort on a single-core system\footnote{On a mutli-core system it could however actualy be quite effective!}. The example only serves the purpose of exemplifying master-worker threading model
+It's a silly way to implement qsort on a single-core system\footnote{On a multi-core system it could however actually be quite effective!}. The example only serves the purpose of exemplifying master-worker threading model
 
 Depending on how balanced the text to be sorted is, the number of worker threads can be up to $(2 * n) - 1$, where $n$ is the number of words in the text to be sorted\footnote{Be carefull about the stack usage!}.
 
@@ -556,7 +556,7 @@ void *conc_quicksort ( void* inarg_vp){
    return (void*)0;
 }
 \end{verbatim}
-\caption{Body of each sorting threads.\label{ccsort_thread}}
+\caption{Body of each sorting thread (all threads use the same).\label{ccsort_thread}}
 \end{table}
 
 \begin{table}[!hbp]
@@ -611,7 +611,7 @@ A text-book example of how to use conditional variables
 
 Two threads are updating the shared resource "count". When count reaches
 the agreed upon threshold, a third thread acting as "listener" (and who
-is blocked at that time) will be signaled and awakened.
+is blocked at that time) will be signalled and awakened.
 
 \begin{table}[!hbp]
 \begin{verbatim}
@@ -690,11 +690,11 @@ A text-book example of how to use RW locks
 Three threads are reading a resource and two threads are writing it
 
 \begin{itemize}
-	\item Readers read more often then the writers erite (which would be the most common real case).
+	\item Readers read more often then the writers write (which would be the most common real case).
 	\item Readers will not block each other, but would block a writer
 	\item A writer will block readers and writers
-	\item When releasing lock $\Rightarrow$ If writer blocks readers and writers of same prio, release writer first (part of standard)
-	\item When taking read lock $\Rightarrow$ If a writer is blocked and of higher prio than you, back of and let the writer have a chance on the lock.
+	\item When releasing lock $\Rightarrow$ If writer blocks readers and writers of same priority, release writer first (part of standard)
+	\item When taking read lock $\Rightarrow$ If a writer is blocked and of higher priority than you, back of and let the writer have a chance on the lock.
 \end{itemize}
 
 \begin{table}[!hbp]
