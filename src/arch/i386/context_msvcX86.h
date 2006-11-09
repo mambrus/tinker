@@ -55,10 +55,10 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 
 #define INIT_SP( _stack_SP, _stack_begin )                                                                     \
    _stack_SP.stack_size = _stack_begin.stack_size;                                                             \
-   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size;                                           \
+   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size;
 
 //Does nothing on this port
-#define BIND_STACK( _stack_struct, _temp2 )     
+#define BIND_STACK( _stack_struct, _temp2 )
     
 
 /*!
@@ -99,11 +99,11 @@ bla...
 
 #define PUSHALL()  \
     __asm{ pushfd                       }                                                                      \
-    __asm{ pushad                       }                                                                      \
+    __asm{ pushad                       }
 
 #define POPALL()  \
     __asm{ popad                        }                                                                      \
-    __asm{ popfd                        }																								\
+    __asm{ popfd                        }
 
 
 //Allready a char', no need to do handle in any special way.
@@ -116,7 +116,7 @@ bla...
 
 //Just a stub ATM - TBD
 #define TRAP( NUM )                                                           \
-   exit( NUM )   
+   exit( NUM )
 
 #endif
 

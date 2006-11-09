@@ -148,7 +148,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ push  MDH                    }                                                                      \
    __asm{ push  MDC                    }                                                                      \
    __asm{ push  STKOV                  }                                                                      \
-   __asm{ push  STKUN                  }                                                                      \
+   __asm{ push  STKUN                  }
 
    
       
@@ -178,21 +178,21 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ pop  R2                      }                                                                      \
    __asm{ pop  R1                      }                                                                      \
    __asm{ pop  R0                      }                                                                      \
-   __asm{ pop  PSW                     }                                                                      \
+   __asm{ pop  PSW                     }
 
 
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                                                   \
    PUSHALL()                                                                                                  \
    TEMP = 0ul;                      /*Important, or the next assembly "cast" will fail (not clearing 16 MSB */ \
    __asm{ mov TEMP,SP             } /*The current SP is now the new _newSP, save it.      */                  \
-   TSP1 = ((unsigned long)SPSEG<<16) + (unsigned long)TEMP; /*  This value will then be copied into the TCB    */ 
+   TSP1 = ((unsigned long)SPSEG<<16) + (unsigned long)TEMP; /*  This value will then be copied into the TCB    */
 
   
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )                                                                    \
    TEMP = (unsigned long)TSP1 >> 16;                                                                          \
    __asm{ mov SP,TSP1                 }                                                                       \
    __asm{ mov SPSEG,TEMP              }                                                                       \
-   POPALL();                                                                                                  \
+   POPALL();
    
 #define CHANGE_STACK( TSP1, TEMP )                                                                            \
    TEMP = (unsigned long)TSP1 >> 16;                                                                          \
@@ -203,7 +203,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    _stack_SP.usr_stack_size      = _stack_begin.usr_stack_size;                                             \
    _stack_SP.userstack.linear    = _stack_begin.userstack.linear   + _stack_begin.usr_stack_size;           \
    _stack_SP.sys_stack_size      = _stack_begin.sys_stack_size;                                             \
-   _stack_SP.systemstack.linear  = _stack_begin.systemstack.linear + _stack_begin.sys_stack_size;           \
+   _stack_SP.systemstack.linear  = _stack_begin.systemstack.linear + _stack_begin.sys_stack_size;
 
 #define BIND_STACK( _stack_struct, _temp2 )                                                                 \
    _temp2 = _stack_struct.userstack.u.offs24._offs;    /*Set up the user-stack pointer (DPP0:r0)*/          \
@@ -215,7 +215,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    _temp2 = _stack_struct.systemstack.reg._SP + 4 /*Note: had to add a few bytes (not good really)*/;       \
    __asm{ mov STKOV,_temp2          }                                                                       \
    _temp2 = _stack_struct.systemstack.reg._SP + _stack_struct.sys_stack_size;                               \
-   __asm{ mov STKUN,_temp2          }                                                                       \
+   __asm{ mov STKUN,_temp2          }
                                                                                                             \
       
 #define GET_THREADS_RETVAL( THRETVAL, TEMP  )                                                               \
@@ -230,21 +230,21 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
 extern unsigned long Q_ASC0;
 void _tk_initialize_system_ques( );
 
-#define REINIT_STACKADDR( ADDR, size )  \
+#define REINIT_STACKADDR( ADDR, size )                                                                      \
    _tk_reinit_stackaddr_xc167keil( &ADDR, size )
  
-#define REAL_STACK_SIZE( ADDR )  \
+#define REAL_STACK_SIZE( ADDR )                                                                             \
    ( ADDR.sys_stack_size ) 
    
 
 #define TRY_CATCH_STACK_ERROR( STACK_T, TEMP )                                \
    __asm { mov TEMP, R0 }                                                     \
    if ( TEMP < STACK_T.userstack.u.offs24._offs + SAFEZONE ){                 \
-      printk(("tk: Error - user stack trashed!\n"));                            \
+      printk(("tk: Error - user stack trashed!\n"));                          \
       tk_exit(TC_ERR_STACK);                                                  \
    }                                                                          \
    if ( DPP0 < STACK_T.userstack.u.seg24._seg ){                              \
-      printk(("tk: Error - user stack trashed!\n"));                            \
+      printk(("tk: Error - user stack trashed!\n"));                          \
       tk_exit(TC_ERR_STACK);                                                  \
    }
    
@@ -257,18 +257,18 @@ void _do_trap (unsigned int num);
 
 #define OBSOLETE_TK_CLI()                                                     \
    __asm{ BCLR PSW_IEN }                                                      \
-   Tk_IntFlagCntr++;                                                          \
+   Tk_IntFlagCntr++;
 
 
-#define OBSOLETE_TK_STI()	                                                  \
+#define OBSOLETE_TK_STI()	                                              \
    Tk_IntFlagCntr--;  /*Is ok since CLI is active no one can interfere*/      \
    if (Tk_IntFlagCntr == 0)                                                   \
       __asm{ BSET PSW_IEN }
 
 #define TK_CLI()                                                              \
-   __asm{ BCLR PSW_IEN }                                                      
+   __asm{ BCLR PSW_IEN }
 
-#define TK_STI()	                                                          \
+#define TK_STI()	                                                      \
    __asm{ BSET PSW_IEN }
          
 
@@ -313,8 +313,7 @@ void _do_trap (unsigned int num);
    __asm { ROL R2, R4 }    \
    __asm { add R2, [R3+] } \
    __asm { ROL R2, R4 }    \
-   __asm { mov TEMP, R2 }  \
-   
+   __asm { mov TEMP, R2 }
 
 
 /*!
@@ -324,8 +323,8 @@ TBD
 
 */
 #define INTEGRITY_CERTIFY_STACK( TCB_T, TEMP)               \
-   STK_CRC_CALC( TEMP );                                    \  
-   TCB_T.stack_crc = TEMP                                   \
+   STK_CRC_CALC( TEMP );                                    \
+   TCB_T.stack_crc = TEMP
 
 
 
@@ -358,7 +357,10 @@ TBD
  * @ingroup CVSLOG
  *
  *  $Log: context_keilC166.h,v $
- *  Revision 1.1  2006-11-03 11:33:30  ambrmi09
+ *  Revision 1.2  2006-11-09 12:31:35  ambrmi09
+ *  Fixed macros with line cont. last (broke build after indent)
+ *
+ *  Revision 1.1  2006/11/03 11:33:30  ambrmi09
  *  Moved architecture specific files out from bsp structure and into kernel
  *  source 'arch' structure. This makes sense since I plan to refine the
  *  project into kernel specific maintenence on one hand, and BSP (and

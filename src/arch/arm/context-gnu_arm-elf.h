@@ -148,12 +148,12 @@ How printk is implemented on this target. I.e. no ability to output on console
       "mov %%r13, %0 "                    \
       : /**/                              \
       : "r" (TSP1)                        \
-   );  /*Note, no clobber (intentional)*/ \
+   );  /*Note, no clobber (intentional)*/
 
 
 #define INIT_SP( _stack_SP, _stack_begin )\
    _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; 					\
-   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;  \
+   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;
 
 //Does nothing on this port
 #define BIND_STACK( _stack_struct, _temp2 )     

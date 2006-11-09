@@ -56,8 +56,8 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 
    
 #define REAL_STACK_SIZE( TCB )  \
-   ( TCB.stack_size ) 
-   
+   ( TCB.stack_size )
+
 
 //Push & pops of all regs and flags possibly not needed
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                                                    \
@@ -75,10 +75,10 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 
 #define INIT_SP( _stack_SP, _stack_begin )                                                                     \
    _stack_SP.stack_size = _stack_begin.stack_size;                                                             \
-   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size;                                           \
+   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size;
 
 //Does nothing on this port
-#define BIND_STACK( _stack_struct, _temp2 )     
+#define BIND_STACK( _stack_struct, _temp2 )
 
 
 //function enters as a result of a ret instruction. EAX is passed
@@ -89,11 +89,11 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 
 #define PUSHALL()  \
     __asm{ pushfd                       }                                                                      \
-    __asm{ pushad                       }                                                                      \
+    __asm{ pushad                       }
 
 #define POPALL()  \
     __asm{ popad                        }                                                                      \
-    __asm{ popfd                        }																								\
+    __asm{ popfd                        }
 
 
 //Allready a char', no need to do handle in any special way.
@@ -106,7 +106,7 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 
 //Just a stub ATM - TBD
 #define TRAP( NUM )                                                           \
-   exit( NUM )   
+   exit( NUM )
 
 #endif
 

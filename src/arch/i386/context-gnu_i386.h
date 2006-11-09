@@ -113,8 +113,8 @@ for bare-bone systems (since we have no port it yet/ever).
       : "=a" (TSP1)                       \
       : /*No input reg*/                  \
       : "memory"                          \
-   );                                     \
-  
+   );
+
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )   \
    asm __volatile__ (                     \
       " movl %%ebx, %%esp"                \
@@ -131,15 +131,15 @@ for bare-bone systems (since we have no port it yet/ever).
       " movl %%ebx, %%esp"                \
       : /*no output*/                     \
       : "b" (TSP1)                        \
-   );  /*Note, no clobber (intentional)*/ 
+   );  /*Note, no clobber (intentional)*/
 
 
 #define INIT_SP( _stack_SP, _stack_begin )\
-   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; 					\
-   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;  \
+   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; 			\
+   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;
 
 //Does nothing on this port
-#define BIND_STACK( _stack_struct, _temp2 )     
+#define BIND_STACK( _stack_struct, _temp2 )
 
 #define GET_THREADS_RETVAL( THRETVAL, TEMP )  \
    asm __volatile__ (                     \
@@ -172,7 +172,7 @@ for bare-bone systems (since we have no port it yet/ever).
 
 //Just a stub ATM - TBD
 #define TRAP( NUM )                                                           \
-   exit( NUM )   
+   exit( NUM )
 
 #endif
 

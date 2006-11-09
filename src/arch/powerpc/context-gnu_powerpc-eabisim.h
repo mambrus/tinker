@@ -18,6 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
+#ifndef CONTEXT_GNU_POWERPCSIM_H
+#define CONTEXT_GNU_POWERPCSIM_H
 
 #include "context-gnu_powerpc-eabi.h"
+
+#endif
+
 

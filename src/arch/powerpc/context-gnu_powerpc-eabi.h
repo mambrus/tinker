@@ -99,26 +99,26 @@ How printk is implemented on this target. I.e. no ability to output on console
 #define PUSHALL()	/*No need to PUSHALL on this target- Allready done by setjmp*/
 #define POPALL()	/*No need to POPALL on this target- Allready done by longjmp*/
 
-#define GET_SP( OUT_SP )						\
-   asm __volatile__ (							\
-      "stw %%sp,%[mystack]"						\
+#define GET_SP( OUT_SP )					\
+   asm __volatile__ (						\
+      "stw %%sp,%[mystack]"					\
       : [mystack] "=m" (OUT_SP)					\
-      : /**/									\
-      : "memory"								\
-   );											\
+      : /**/							\
+      : "memory"						\
+   );
    
-#define SET_SP( IN_SP )							\
-   asm __volatile__ (							\
-      "lwz %%sp,%[mystack]"						\
-      : /**/									\
+#define SET_SP( IN_SP )						\
+   asm __volatile__ (						\
+      "lwz %%sp,%[mystack]"					\
+      : /**/							\
       : [mystack] "m" (IN_SP)					\
-   );  /*Note, no clobber (intentional)*/ 		\
+   );  /*Note, no clobber (intentional)*/
 
-#define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )     \
-   GET_SP( TSP1 )								\
+#define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )			\
+   GET_SP( TSP1 )						\
    TEMP = setjmp( TSP1 - (_JBLEN*sizeof(double)) - EXTRA_MARGIN);              \
    if (TEMP != (active_thread+1))				\
-      GET_SP( TSP1 )							\
+      GET_SP( TSP1 )
 
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )		\
 	longjmp( TSP1 - (_JBLEN*sizeof(double)) - EXTRA_MARGIN, active_thread+1);
@@ -127,9 +127,9 @@ How printk is implemented on this target. I.e. no ability to output on console
 #define CHANGE_STACK( TSP1, TEMP )        		\
   SET_SP( TSP1 )
 
-#define INIT_SP( _stack_SP, _stack_begin )\
-   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; 					\
-   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;  \
+#define INIT_SP( _stack_SP, _stack_begin )						\
+   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; 			\
+   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;
 
 //Does nothing on this port
 #define BIND_STACK( _stack_struct, _temp2 )
@@ -143,8 +143,8 @@ How printk is implemented on this target. I.e. no ability to output on console
    (ADDR.stack_size = size)
 
 //Just a stub ATM - Should really go to a TinKer exit handler ( FIXME )
-#define TRAP( NUM )                                                           \
-   exit( NUM )   
+#define TRAP( NUM )		\
+   exit( NUM )
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
