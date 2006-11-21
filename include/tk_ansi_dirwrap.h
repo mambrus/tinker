@@ -93,7 +93,10 @@ kernel_reimpl_ansi
  * @ingroup CVSLOG
  *
  *  $Log: tk_ansi_dirwrap.h,v $
- *  Revision 1.8  2006-10-09 17:08:06  ambrmi09
+ *  Revision 1.1  2006-11-21 17:19:39  ambrmi09
+ *  Moved tk_ansi_dirwrap to public directory (applications without TinKer sources needs also wrapping)
+ *
+ *  Revision 1.8  2006/10/09 17:08:06  ambrmi09
  *  * Sceleton for bfin and powerpc now compiles.
  *  * Refingnemen in auto-tools to build correct BSP depending on toolchain and settings
  *  * BFIN,bfin macro work-around
