@@ -125,12 +125,14 @@ install: all
 	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
 	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/
 	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/tinker
+	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/sys
 	mkdir -p $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
 	cp -dpv $(OUTFILENAME) $(TOOLDIR)/$(ALIAS_HOST)/lib/
 	cp -dpv @TINKER_PATH@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
 	cp -dpv @TINKER_PATH@/lib/crt*.o $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
 	cp -dprv @TINKER_PATH@/include/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/
 	cp -dprv @TINKER_PATH@/include/tinker/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/tinker/
+	cp -dprv @TINKER_PATH@/include/sys/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/sys/
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] installed! ->>"
 	@echo "======================================================"

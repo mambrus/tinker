@@ -29,7 +29,7 @@
 
 #include "swi.h"
 #include "tk_bsp.h"
-#include "tk_hwsys-gnu_arm_elf.h"
+#include "../src/context.h"
 
 void Angel_Handler( void )__attribute__((interrupt("SWI")));
 
@@ -113,7 +113,11 @@ void Angel_Handler( void )
  * @defgroup CVSLOG_tk_angel_c tk_angel_c
  * @ingroup CVSLOG
  *  $Log: tk_angel.c,v $
- *  Revision 1.3  2006-09-13 18:29:30  ambrmi09
+ *  Revision 1.4  2006-11-27 22:29:22  ambrmi09
+ *  Minor djustments completeing the move of some header files to public and due
+ *  to some name clashed with user space naming conventions.
+ *
+ *  Revision 1.3  2006/09/13 18:29:30  ambrmi09
  *  Commited needed in repocitory
  *
  *  Revision 1.2  2006/04/08 10:15:55  ambrmi09

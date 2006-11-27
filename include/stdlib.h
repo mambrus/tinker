@@ -39,8 +39,8 @@ kernel_reimpl_ansi.
 stdlib.h get properly included. It contains definitions 
 with special pointertypes. Using functions that use those 
 pointers will most likelly break in RUN-TIME*/
-#include <../src/tk_ansi.h>
-#include <../src/tk_ansi_dirwrap.h>
+#include <tk_ansi.h>
+#include <tk_ansi_dirwrap.h>
 #include BUILDCHAIN(stdlib.h)
 
 
@@ -124,7 +124,11 @@ int  _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );
  * @defgroup CVSLOG_stdlib_h stdlib_h
  * @ingroup CVSLOG
  *  $Log: stdlib.h,v $
- *  Revision 1.3  2006-04-08 10:15:58  ambrmi09
+ *  Revision 1.4  2006-11-27 22:29:22  ambrmi09
+ *  Minor djustments completeing the move of some header files to public and due
+ *  to some name clashed with user space naming conventions.
+ *
+ *  Revision 1.3  2006/04/08 10:15:58  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.2.2.1  2006/04/03 20:07:23  ambrmi09

@@ -174,7 +174,7 @@ telling about the reason of the exit.
 #define TC_UNKNOWN         0x8000   //!< Unknown (or undefined) termination reason
 //@}
 
-typedef enum{FALSE,TRUE}BOOL;
+typedef enum{TK_FALSE,TK_TRUE}TK_BOOL;
 typedef void *start_func_ft(void *);
 typedef start_func_ft   *start_func_f;
 
@@ -238,7 +238,11 @@ int           *_tk_errno();
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.41  2006-11-05 14:18:58  ambrmi09
+ *  Revision 1.42  2006-11-27 22:29:23  ambrmi09
+ *  Minor djustments completeing the move of some header files to public and due
+ *  to some name clashed with user space naming conventions.
+ *
+ *  Revision 1.41  2006/11/05 14:18:58  ambrmi09
  *  Build system and source modified to make better use of config.h
  *
  *  This file now contains information about how the kernel is configured

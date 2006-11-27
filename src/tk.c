@@ -189,7 +189,7 @@ static thid_t idle_Thid;            //!< Idle_Thid must be known, therefor publi
 
 void *_tk_idle( void *foo ){       //!< idle loop (non public)
    TK_NO_WARN_ARG(foo);
-   while (TRUE){
+   while (TK_TRUE){
       tk_yield();
    }
 }
@@ -279,7 +279,7 @@ void tk_create_kernel( void ){
       proc_stat[i].bOnId.kind                   = BON_SCHED; 
       proc_stat[i].bOnId.entity.tcb             = NULL;
       proc_stat[i].wakeuptime                   = 0;
-      proc_stat[i].valid                        = FALSE;
+      proc_stat[i].valid                        = TK_FALSE;
       proc_stat[i].name[TK_THREAD_NAME_LEN]     = 0;
       proc_stat[i].Gid                          = 0;
       proc_stat[i].Thid                         = 0;
@@ -300,7 +300,7 @@ void tk_create_kernel( void ){
    }
    //The Root proc is already created but must be registred
    proc_stat[0].state = READY;
-   proc_stat[0].valid = TRUE;
+   proc_stat[0].valid = TK_TRUE;
    strcpy(proc_stat[0].name,"root");
    procs_in_use = 1;
    proc_idx = 0;
@@ -378,7 +378,7 @@ void *_tk_destructor( void *retval ){
    //tk_delete_thread(active_thread);
    //tk_yield();
 
-   while (TRUE){
+   while (TK_TRUE){
       tk_msleep(1000);
       #ifdef DEBUG
       printk(("Dead thread [id=%d] still waiting for Nirvana! \n",active_thread));
@@ -399,9 +399,9 @@ int tk_delete_thread(
    thid_t Thid              //!< Threads identity
 ){
    unsigned int Prio,Idx,i;
-   int bury_it = TRUE;
+   int bury_it = TK_TRUE;
    
-   if ( proc_stat[Thid].valid == FALSE )  {
+   if ( proc_stat[Thid].valid == TK_FALSE )  {
       //The process you are trying to delete does not exist
       return(TK_ERROR);    
    }
@@ -410,7 +410,7 @@ int tk_delete_thread(
    if (!(proc_stat[Thid].state & ZOMBI)){ //If not self terminated, but killed explicitlly - we need to perform some duties
       proc_stat[Thid].state = ZOMBI;
       _tk_detach_children(Thid); 
-      bury_it = _tk_try_detach_parent(Thid, FALSE); 
+      bury_it = _tk_try_detach_parent(Thid, TK_FALSE); 
    }
    
    if (bury_it){   //Can we buy the damned thing allready? or do we have to try another round?
@@ -434,7 +434,7 @@ int tk_delete_thread(
       }
       //Make it final - remove it's primary resource: it's stack
       stalloc_free( STACK_PTR(proc_stat[Thid].stack_begin) );
-      proc_stat[Thid].valid = FALSE;
+      proc_stat[Thid].valid = TK_FALSE;
    }
    
    return(TK_OK);
@@ -443,13 +443,13 @@ int tk_delete_thread(
 int tk_detach(
    thid_t Thid              //!< Threads identity
 ){
-   if ( proc_stat[Thid].valid != TRUE)
+   if ( proc_stat[Thid].valid != TK_TRUE)
       return ESRCH;
       
    if ( proc_stat[Thid].Gid != -1)
       return EINVAL;
       
-   _tk_try_detach_parent(Thid, TRUE); //forcefully detach
+   _tk_try_detach_parent(Thid, TK_TRUE); //forcefully detach
    return 0;
 }
 
@@ -505,7 +505,7 @@ thid_t tk_create_thread(
    do{
       proc_idx++;
       proc_idx %= TK_MAX_THREADS;
-   }while (proc_stat[proc_idx].valid == TRUE);
+   }while (proc_stat[proc_idx].valid == TK_TRUE);
 
    //Test if the assigned name fits   
    //In case highly optimized kernel, no names stored at all and no timly string copy
@@ -527,7 +527,7 @@ thid_t tk_create_thread(
 
    REINIT_STACKADDR( proc_stat[proc_idx].stack_begin, stack_size );
    
-   proc_stat[proc_idx].valid              = TRUE;
+   proc_stat[proc_idx].valid              = TK_TRUE;
    proc_stat[proc_idx].state              = READY;
    proc_stat[proc_idx].bOnId.kind         = BON_SCHED;
    proc_stat[proc_idx].bOnId.entity.tcb   = NULL;
@@ -572,7 +572,7 @@ int tk_join(thid_t PID, void ** value_ptr){
    if ( proc_stat[PID].Gid != active_thread)    //Only threads own children can be joined in TinKer (restrictive)
       return EINVAL;                            
       
-   if ( proc_stat[PID].valid != TRUE)
+   if ( proc_stat[PID].valid != TK_TRUE)
       return ESRCH;
       
    if (proc_stat[PID].state & ZOMBI){ //Thread is finished allready. no need to block AND we can safelly read it's return value
@@ -581,7 +581,7 @@ int tk_join(thid_t PID, void ** value_ptr){
       }
       //Also release it for cancelling. This is done by breaking it's 
       //parent-child relationship
-      _tk_try_detach_parent(PID, TRUE); //forcefully detach. This will also count down the child count in the parent
+      _tk_try_detach_parent(PID, TK_TRUE); //forcefully detach. This will also count down the child count in the parent
 
    }else{
       //prepare to block   
@@ -709,7 +709,7 @@ int tk_change_prio(thid_t tid, int newPrio){
    int error = 0;
    int i;
    
-   if ( proc_stat[tid].valid != TRUE){
+   if ( proc_stat[tid].valid != TK_TRUE){
       printk(("tk: Error - Invalid TCB detected\n"));
       error |= TC_TCB_INVALID;   
    }       
@@ -834,7 +834,7 @@ void _tk_wakeup_timedout_threads( void ){
             //_tk_detach_children(i); 
             
             
-            if ( _tk_try_detach_parent(i, FALSE) ){
+            if ( _tk_try_detach_parent(i, TK_FALSE) ){
                //Finally, it should now be safe to send the zombied thread to Nirvana 
                tk_delete_thread(i);
             } 
@@ -903,7 +903,7 @@ relation is unchanged.)
 The only duty a exiting thread really has is to umblock it's parent \b once. 
 When this is done, the thread has no other obligations and can safelly cancel.
 
-\returns The function will return succes (TRUE) or faliure (FALSE).
+\returns The function will return succes (TK_TRUE) or faliure (TK_FALSE).
 
 When we detach from a parent, we mean the following:
 
@@ -919,10 +919,10 @@ function is called, we release it (no matter of the status of \e force
 attribute).
 
 - To detach a parent that might deside us later, we have to explicitly
-say so by setting \e force to TRUE. Otherwize, detachement will only be
+say so by setting \e force to TK_TRUE. Otherwize, detachement will only be
 a succes if a parent is joining on us.
 
-- If \e thid is allready detached once, the function alwas returns TRUE
+- If \e thid is allready detached once, the function alwas returns TK_TRUE
 
 */   
 
@@ -930,10 +930,10 @@ int _tk_try_detach_parent(
    thid_t thid,                  //!< The thread id whos parent we are concerned with
    int force                     //!< Force detachment
 ){
-   int succeded_unblocking_parent = FALSE;      
+   int succeded_unblocking_parent = TK_FALSE;      
    
    if (  proc_stat[thid].Gid == -1 )
-      return TRUE;                     //allready orphan
+      return TK_TRUE;                     //allready orphan
       
    // (if con't) Yes, I have a parent, but is it waiting for my death or not?         
    assert (proc_stat[proc_stat[thid].Gid].valid);  //sanity check
@@ -958,23 +958,23 @@ int _tk_try_detach_parent(
          proc_stat[proc_stat[thid].Gid].bOnId.kind       = BON_SCHED;
       }
 
-      succeded_unblocking_parent = TRUE;
+      succeded_unblocking_parent = TK_TRUE;
       //We are likelly to get out of context before the parent can read our retval. Therefore make an
       //active copy to the parent's retval instead. The parent will know of this case and use that one 
       //instead of trying to read a potentially invalid TCB.
       proc_stat[proc_stat[thid].Gid].retval = proc_stat[thid].retval;
       
    } else
-      succeded_unblocking_parent = FALSE;
+      succeded_unblocking_parent = TK_FALSE;
       
-   if ( (succeded_unblocking_parent == TRUE) || (force == TRUE) ) {
+   if ( (succeded_unblocking_parent == TK_TRUE) || (force == TK_TRUE) ) {
       proc_stat[proc_stat[thid].Gid].noChilds--;
       assert(proc_stat[proc_stat[thid].Gid].noChilds >= 0);
       proc_stat[thid].Gid = -1;
-      return TRUE;
+      return TK_TRUE;
    } 
    
-   return FALSE;               
+   return TK_FALSE;               
 }
 
 
@@ -986,10 +986,10 @@ to determine which one that would be.
 */ 
 
 thid_t _tk_next_runable_thread(){ 
-   int idx,prio,cidx,/*midx,*/nbTry,loop,return_Thid,p_at_p; BOOL found;
+   int idx,prio,cidx,/*midx,*/nbTry,loop,return_Thid,p_at_p; TK_BOOL found;
 
    return_Thid  = idle_Thid; //In case no runnable proc is found...
-   found        = FALSE;
+   found        = TK_FALSE;
 
    for(prio=0;prio<TK_MAX_PRIO_LEVELS && !found;prio++){ //prio from highets to lowest
       p_at_p = scheduleIdxs[prio].procs_at_prio;
@@ -1003,7 +1003,7 @@ thid_t _tk_next_runable_thread(){
                loop++){
             if (proc_stat[theSchedule[prio][idx]].state == READY){
                return_Thid = theSchedule[prio][idx];
-               found = TRUE;
+               found = TK_TRUE;
             }
             //Next proc at this prio that should try to run
             idx++;
@@ -1448,7 +1448,11 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.66  2006-11-05 19:10:06  ambrmi09
+ *  Revision 1.67  2006-11-27 22:29:24  ambrmi09
+ *  Minor djustments completeing the move of some header files to public and due
+ *  to some name clashed with user space naming conventions.
+ *
+ *  Revision 1.66  2006/11/05 19:10:06  ambrmi09
  *  minor
  *
  *  Revision 1.65  2006/11/05 19:06:04  ambrmi09

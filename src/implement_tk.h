@@ -148,7 +148,7 @@ typedef struct tcb_t_{
    thid_t         Thid,Gid;            //!< Process ID and Parent ID (Gid). A Gid of -1 would indicate a detached (parent-less) thread
    int            noChilds;            //!< Numb of procs this has created
    char           name[TK_THREAD_NAME_LEN+1]; //!< Name of the thread (+ 1 extra for byte terminating zero)
-   BOOL           valid;               //!< This TCB is active and contains valid info about a thread.
+   TK_BOOL           valid;               //!< This TCB is active and contains valid info about a thread.
    PROCSTATE      state;               //!< State of the process
    bon_t          bOnId;               //!< The ID of the \b main entity this thread is blocked on (either other threads-ID or ITC or ptimer-ID). If serveral entities are reason for blocking, ontly the main entity will be mentioned here.
    int            _errno_;             //!< Support of per thread errno
@@ -197,7 +197,11 @@ extern int Tk_IntFlagCntr;
  * @defgroup CVSLOG_implement_tk_h implement_tk_h
  * @ingroup CVSLOG
  *  $Log: implement_tk.h,v $
- *  Revision 1.10  2006-11-05 14:18:59  ambrmi09
+ *  Revision 1.11  2006-11-27 22:29:23  ambrmi09
+ *  Minor djustments completeing the move of some header files to public and due
+ *  to some name clashed with user space naming conventions.
+ *
+ *  Revision 1.10  2006/11/05 14:18:59  ambrmi09
  *  Build system and source modified to make better use of config.h
  *
  *  This file now contains information about how the kernel is configured

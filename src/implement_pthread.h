@@ -372,7 +372,7 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 //#endif /* _MSC_VER */
 //
 ///* Function pointer to TryEnterCriticalSection if it exists; otherwise NULL */
-//extern BOOL (WINAPI *_pthread_try_enter_critical_section)(LPCRITICAL_SECTION);
+//extern TK_BOOL (WINAPI *_pthread_try_enter_critical_section)(LPCRITICAL_SECTION);
 //
 ///* Declared in global.c */
 //extern int _pthread_processInitialized;
@@ -457,7 +457,11 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
  * @defgroup CVSLOG_implement_pthread_h implement_pthread_h
  * @ingroup CVSLOG
  *  $Log: implement_pthread.h,v $
- *  Revision 1.11  2006-11-05 19:06:04  ambrmi09
+ *  Revision 1.12  2006-11-27 22:29:23  ambrmi09
+ *  Minor djustments completeing the move of some header files to public and due
+ *  to some name clashed with user space naming conventions.
+ *
+ *  Revision 1.11  2006/11/05 19:06:04  ambrmi09
  *  Buildsystem adjusted to permit configuration of components.
  *  Now when component is enabled it will also be included in the build
  *  (instead of just sanity-tested in the source files).

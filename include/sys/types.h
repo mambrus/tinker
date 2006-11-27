@@ -39,8 +39,8 @@ kernel_reimpl_ansi.
 */
 
 #if defined (__GNUC__)
-   #include <../src/tk_ansi.h>
-   #include <../src/tk_ansi_dirwrap.h>
+   #include <tk_ansi.h>
+   #include <tk_ansi_dirwrap.h>
    #include BUILDCHAIN(sys/types.h)
 #endif
 
@@ -116,7 +116,11 @@ normal pthread names (very nifty!).
  * @defgroup CVSLOG_types_h types_h
  * @ingroup CVSLOG
  *  $Log: types.h,v $
- *  Revision 1.10  2006-04-08 10:15:59  ambrmi09
+ *  Revision 1.11  2006-11-27 22:29:23  ambrmi09
+ *  Minor djustments completeing the move of some header files to public and due
+ *  to some name clashed with user space naming conventions.
+ *
+ *  Revision 1.10  2006/04/08 10:15:59  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.9.2.1  2006/04/03 20:07:25  ambrmi09

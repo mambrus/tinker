@@ -201,7 +201,11 @@ cartful!
  * @defgroup CVSLOG_tk_ansi_h tk_ansi_h
  * @ingroup CVSLOG
  *  $Log: tk_ansi.h,v $
- *  Revision 1.14  2006-04-08 10:16:02  ambrmi09
+ *  Revision 1.1  2006-11-27 22:29:23  ambrmi09
+ *  Minor djustments completeing the move of some header files to public and due
+ *  to some name clashed with user space naming conventions.
+ *
+ *  Revision 1.14  2006/04/08 10:16:02  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.13.2.1  2006/04/03 20:07:29  ambrmi09

@@ -247,7 +247,7 @@ control weather init function shall be run or not.
 one more than once if needed.
 
 */
-#define PTHREAD_ONCE_INIT       { FALSE, -1 }  
+#define PTHREAD_ONCE_INIT       { TK_FALSE, -1 }  
 
 
 struct pthread_once_t_ {
@@ -1060,7 +1060,11 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.18  2006-11-05 19:06:03  ambrmi09
+ *  Revision 1.19  2006-11-27 22:29:22  ambrmi09
+ *  Minor djustments completeing the move of some header files to public and due
+ *  to some name clashed with user space naming conventions.
+ *
+ *  Revision 1.18  2006/11/05 19:06:03  ambrmi09
  *  Buildsystem adjusted to permit configuration of components.
  *  Now when component is enabled it will also be included in the build
  *  (instead of just sanity-tested in the source files).

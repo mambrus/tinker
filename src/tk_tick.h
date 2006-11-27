@@ -141,7 +141,11 @@ void getnanouptime (
  * @ingroup CVSLOG
  *
  *  $Log: tk_tick.h,v $
- *  Revision 1.23  2006-09-13 18:29:32  ambrmi09
+ *  Revision 1.24  2006-11-27 22:29:25  ambrmi09
+ *  Minor djustments completeing the move of some header files to public and due
+ *  to some name clashed with user space naming conventions.
+ *
+ *  Revision 1.23  2006/09/13 18:29:32  ambrmi09
  *  Commited needed in repocitory
  *
  *  Revision 1.22  2006/04/08 10:16:04  ambrmi09
@@ -185,7 +189,7 @@ void getnanouptime (
  *  prepared for better presision clock (true uS presision).
  *
  *  Revision 1.17  2006/02/23 15:33:33  ambrmi09
- *  Found a nasty "bug", that was not a read bug after all. At least not in the kernel as a feared. It turned out that I forgot some of the details about how timeouts were to be handled (especially in \ref ITC ). A timeout of value \b zero is equal of never to timeout (read more about it in define \ref FOREVER). However two important lesson learned: Even simple add operations get "funny" when adding large numbers (see line 303 in tk_ipc.c - in the \ref lock_stage function). Anyway. FOREVER should equal zero. (This issue makes me wonder sometimes how sane it really was to resurrect a project that has been dormant for nearly 10 years.) The CodeWright project ruler should be positioned on the actual line btw. This check-in will be accompanied  by a <tt>cvs tag</tt> for this reason, and for yet another nasty bug that seems to be a real dispatcher bug. The current source-set-up will show the bug within one mint (which is good since it makes it a little bit less of a search for the <I>"needle in the haystack</i>").
+ *  Found a nasty "bug", that was not a read bug after all. At least not in the kernel as a feared. It turned out that I forgot some of the details about how timeouts were to be handled (especially in \ref ITC ). A timeout of value \b zero is equal of never to timeout (read more about it in define \ref TK_FOREVER). However two important lesson learned: Even simple add operations get "funny" when adding large numbers (see line 303 in tk_ipc.c - in the \ref lock_stage function). Anyway. TK_FOREVER should equal zero. (This issue makes me wonder sometimes how sane it really was to resurrect a project that has been dormant for nearly 10 years.) The CodeWright project ruler should be positioned on the actual line btw. This check-in will be accompanied  by a <tt>cvs tag</tt> for this reason, and for yet another nasty bug that seems to be a real dispatcher bug. The current source-set-up will show the bug within one mint (which is good since it makes it a little bit less of a search for the <I>"needle in the haystack</i>").
  *
  *  Revision 1.16  2006/02/22 13:05:47  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.

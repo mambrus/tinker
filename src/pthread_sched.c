@@ -175,7 +175,7 @@ int pthread_once (
    }else{
       //Proper way      
       //--- Detect ---
-      rc = sm_p(sem_once,WAIT,/*FOREVER*/1000);
+      rc = sm_p(sem_once,WAIT,/*TK_FOREVER*/1000);
       assert(rc==ERR_OK);
       if (once_control->started < 0){
          need2run = 1;
@@ -190,7 +190,7 @@ int pthread_once (
          init_routine();
 
          //--- Mark as finished ---            
-         rc = sm_p(sem_once,WAIT,/*FOREVER*/1000);
+         rc = sm_p(sem_once,WAIT,/*TK_FOREVER*/1000);
          assert(rc==ERR_OK);
 
          once_control->done = 1;         
@@ -263,7 +263,11 @@ int pthread_getschedparam (
  *  @defgroup CVSLOG_pthread_sched_c pthread_sched_c
  *  @ingroup CVSLOG 
  *  $Log: pthread_sched.c,v $
- *  Revision 1.14  2006-04-08 10:16:01  ambrmi09
+ *  Revision 1.15  2006-11-27 22:29:24  ambrmi09
+ *  Minor djustments completeing the move of some header files to public and due
+ *  to some name clashed with user space naming conventions.
+ *
+ *  Revision 1.14  2006/04/08 10:16:01  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.13.2.2  2006/04/03 20:07:27  ambrmi09

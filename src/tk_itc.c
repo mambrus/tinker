@@ -120,7 +120,7 @@ int proveConcistency(unsigned int qid) {
 	unsigned int i;
 	
 	if (ipc_array[qid]->token > 0)
-		return(TRUE);
+		return(TK_TRUE);
 		
 	for (i=out; i != in; i++, i %= TK_MAX_BLOCKED_ON_Q) {
 		if (
@@ -131,8 +131,8 @@ int proveConcistency(unsigned int qid) {
 	}
 	
 	if (count != (unsigned int)( abs(ipc_array[qid]->token) ) )
-		return(FALSE);
-	return(TRUE);	
+		return(TK_FALSE);
+	return(TK_TRUE);	
 }
 
 #ifndef NOTDEBUG_WITH_CURSES
@@ -151,9 +151,9 @@ int no_duplicateBlock(unsigned int qid, unsigned int mark) {
 	for (i=out;i!=in;i++,i %= TK_MAX_BLOCKED_ON_Q) {
 		if (i != mark)
 			if (refProc == ipc_array[qid]->blocked_procs[i])
-				return(FALSE);
+				return(TK_FALSE);
 	}
-	return(TRUE);
+	return(TK_TRUE);
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -165,19 +165,19 @@ Doc TBD
 void p_bQf(int x,int y,unsigned int qid) {
 	
 	unsigned int mark_idx,count = 0;	
-	BOOL rc;
+	TK_BOOL rc;
 	
 	gotoxy(x,y);
 	printk(("                                                               "));
 	gotoxy(x,y);
-	rc = TRUE;
+	rc = TK_TRUE;
    
 	if(ipc_array[qid]->token == 0)
 		return;
 	for(mark_idx=ipc_array[qid]->out_idx;mark_idx!=ipc_array[qid]->in_idx;mark_idx++,mark_idx %= TK_MAX_BLOCKED_ON_Q) {
 		printk(("%s ",ipc_array[qid]->blocked_procs[mark_idx]->name));
 		if (!(no_duplicateBlock(qid,mark_idx)))
-			rc = FALSE;
+			rc = TK_FALSE;
 		count++;
 	} 
 	printk(("T=%d D=%d",ipc_array[qid]->token, abs(ipc_array[qid]->out_idx - ipc_array[qid]->in_idx)) );
@@ -1534,7 +1534,11 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.28  2006-11-05 14:19:00  ambrmi09
+ *  Revision 1.29  2006-11-27 22:29:24  ambrmi09
+ *  Minor djustments completeing the move of some header files to public and due
+ *  to some name clashed with user space naming conventions.
+ *
+ *  Revision 1.28  2006/11/05 14:19:00  ambrmi09
  *  Build system and source modified to make better use of config.h
  *
  *  This file now contains information about how the kernel is configured
@@ -1645,7 +1649,7 @@ pointer anyway).
  *    adjusted to try to see the error.
  *
  *  Revision 1.18  2006/02/23 15:33:33  ambrmi09
- *  Found a nasty "bug", that was not a read bug after all. At least not in the kernel as a feared. It turned out that I forgot some of the details about how timeouts were to be handled (especially in \ref ITC ). A timeout of value \b zero is equal of never to timeout (read more about it in define \ref FOREVER). However two important lesson learned: Even simple add operations get "funny" when adding large numbers (see line 303 in tk_ipc.c - in the \ref lock_stage function). Anyway. FOREVER should equal zero. (This issue makes me wonder sometimes how sane it really was to resurrect a project that has been dormant for nearly 10 years.) The CodeWright project ruler should be positioned on the actual line btw. This check-in will be accompanied  by a <tt>cvs tag</tt> for this reason, and for yet another nasty bug that seems to be a real dispatcher bug. The current source-set-up will show the bug within one mint (which is good since it makes it a little bit less of a search for the <I>"needle in the haystack</i>").
+ *  Found a nasty "bug", that was not a read bug after all. At least not in the kernel as a feared. It turned out that I forgot some of the details about how timeouts were to be handled (especially in \ref ITC ). A timeout of value \b zero is equal of never to timeout (read more about it in define \ref TK_FOREVER). However two important lesson learned: Even simple add operations get "funny" when adding large numbers (see line 303 in tk_ipc.c - in the \ref lock_stage function). Anyway. TK_FOREVER should equal zero. (This issue makes me wonder sometimes how sane it really was to resurrect a project that has been dormant for nearly 10 years.) The CodeWright project ruler should be positioned on the actual line btw. This check-in will be accompanied  by a <tt>cvs tag</tt> for this reason, and for yet another nasty bug that seems to be a real dispatcher bug. The current source-set-up will show the bug within one mint (which is good since it makes it a little bit less of a search for the <I>"needle in the haystack</i>").
  *
  *  Revision 1.17  2006/02/22 13:05:47  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
