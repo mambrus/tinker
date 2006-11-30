@@ -136,7 +136,8 @@ CANONICAL_HOST=$host
 AC_SUBST(CANONICAL_HOST)
 AC_DEFINE_UNQUOTED([TK_CANONICAL_HOST],$CANONICAL_HOST)
 
-TOOLDIR=$(echo $GCC_PATH | sed -e "s/\/bin\/$CC//")
+#TOOLDIR=$(echo $GCC_PATH | sed -e "s/\/bin\/$CC//")
+TOOLDIR=$(echo $GCC_PATH | sed -e "s/\/bin\/\+$CC//")
 AC_SUBST(TOOLDIR)
 AC_DEFINE_UNQUOTED([TK_TOOLDIR],$TOOLDIR)
 
@@ -187,6 +188,17 @@ AC_SUBST(CPU_OPT)
 AC_SUBST(DCPU)
 AC_DEFINE_UNQUOTED([TK_DCPU],$MCPU)
 
+
+dnl these shell values are used in our scripts. Set them to defaut values that correspond the the
+dnl values in each values AC_ARG_ENABLE section
+enable_itc=yes
+enable_ptimer=no
+enable_kmem=no
+enable_pthread=yes
+enable_posix_rt=yes
+
+enable_builtin_sorting=yes
+
 dnl Components config part. Use enable-feature/disable-feature without arguments
 dnl Note: Default values are set here.
 dnl ----------------------------------------------------------------------------
@@ -208,15 +220,26 @@ AC_ARG_ENABLE(kmem,
 AC_ARG_ENABLE(pthread,
 	AS_HELP_STRING([--enable-pthread],[PTHRED - Enable/disable POSIX 1003.1c threads component]),
 	AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],$enableval),
-	AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],no)
+	AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],yes)
 )
 AC_ARG_ENABLE(posix_rt,
 	AS_HELP_STRING([--enable-posix_rt],[POSIX_RT - Enable/disable POSIX 1003.1b queues, semaphores component enabled]),
 	AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],$enableval),
-	AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],no)
+	AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],yes)
+)
+
+dnl Package config part. (usage, tuning and misc) Use enable-feature/disable-feature (arguments optional)
+dnl NOTE: Default values are set here, but *might get overridden in target specific sub-trees*
+dnl ----------------------------------------------------------------------------
+AC_ARG_ENABLE(builtin_sorting,
+	AS_HELP_STRING([--enable-builtin_sorting],[PACKAGE - Use builtin search/sort functions (overrides default for target)]),
+	AC_DEFINE_UNQUOTED([TK_USE_BUILTIN_SORT],$enableval),
+	AC_DEFINE_UNQUOTED([TK_USE_BUILTIN_SORT],yes)
 )
 
 dnl Configurable entities (TinKer tuning defines)
+dnl NOTE: Default values *NOT* set here, These are supposed to be set in target specific sub-trees
+dnl   which goes in each configure.in in such case.
 dnl ---------------------------------------------
 AC_ARG_ENABLE(min_stack,
 	AS_HELP_STRING([--enable-min_stack=<val>],[Maximum size of a stack for a thread ]),

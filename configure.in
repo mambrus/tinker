@@ -73,15 +73,19 @@ AH_TEMPLATE([TK_MAX_NUM_Q],
 
 dnl TinKer components defines
 AH_TEMPLATE([TK_COMP_ITC],
-   [ITC - Inter thread communication component enabled])
+   [Comp. ITC - Inter thread communication component enabled])
 AH_TEMPLATE([TK_COMP_PTIMER],
-   [PTIMER - Preemptive timer component enabled])
+   [Comp. PTIMER - Preemptive timer component enabled])
 AH_TEMPLATE([TK_COMP_KMEM],
-   [KMEM - Kernel memory manager component enabled ])
+   [Comp. KMEM - Kernel memory manager component enabled ])
 AH_TEMPLATE([TK_COMP_PTHREAD],
-   [PTHRED - POSIX 1003.1c threads component enabled])
+   [Comp. PTHRED - POSIX 1003.1c threads component enabled])
 AH_TEMPLATE([TK_COMP_POSIX_RT],
-   [POSIX_RT - POSIX 1003.1b queues, semaphores component enabled])
+   [Comp. POSIX_RT - POSIX 1003.1b queues, semaphores component enabled])
+
+dnl TinKer package tuning defines
+AH_TEMPLATE([TK_USE_BUILTIN_SORT],
+   [Pack. - Use builtin search/sort function (overrides default for target)])
 
 dnl Other features
 AH_TEMPLATE([TK_DISPATCH],
@@ -96,6 +100,9 @@ sources_c="src/tk.c"
 dnl Components deduction
 if test $enable_itc != no; then
    sources_c="$sources_c src/tk_itc.c src/tk_sysqueues.c"
+   if test $enable_builtin_sorting != no; then
+      sources_c="$sources_c src/tk_ansi_search.c"
+   fi
 fi
 if test $enable_ptimer != no; then
    sources_c="$sources_c src/tk_ptime.c"

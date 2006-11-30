@@ -37,13 +37,13 @@
 
 //SCHED 
 #ifndef TK_MAX_THREADS
-	#define TK_MAX_THREADS          10  
+	#define TK_MAX_THREADS          500  
 #endif
 #ifndef TK_MAX_PRIO_LEVELS
-	#define TK_MAX_PRIO_LEVELS      4
+	#define TK_MAX_PRIO_LEVELS      16
 #endif
 #ifndef TK_MAX_THREADS_AT_PRIO
-	#define TK_MAX_THREADS_AT_PRIO  3
+	#define TK_MAX_THREADS_AT_PRIO  250
 #endif
 #ifndef TK_THREAD_NAME_LEN
 	#define TK_THREAD_NAME_LEN      0x17
@@ -54,7 +54,7 @@
 	#define TK_MAX_BLOCKED_ON_Q    	TK_MAX_THREADS
 #endif
 #ifndef TK_MAX_NUM_Q
-	#define TK_MAX_NUM_Q       		10
+	#define TK_MAX_NUM_Q       	TK_MAX_THREADS
 #endif
 
 /*
@@ -78,7 +78,10 @@
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $
- *  Revision 1.3  2006-11-05 14:18:58  ambrmi09
+ *  Revision 1.4  2006-11-30 10:58:16  ambrmi09
+ *  bug #1605910 (solved)
+ *
+ *  Revision 1.3  2006/11/05 14:18:58  ambrmi09
  *  Build system and source modified to make better use of config.h
  *
  *  This file now contains information about how the kernel is configured
