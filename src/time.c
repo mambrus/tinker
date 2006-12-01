@@ -33,49 +33,64 @@ kernel_reimpl_ansi
 
 @see kernel_reimpl_ansi
 
-@todo Function \ref time is quick and dirty. Certanly quick at least. Temporary solution just to pass compilation. <b>This really needs fixing.</b>
-
+@note there exists two time.h. One time.h and one sys/time.h. The latter one is
+used for hi-res calendar time-structs.
 */
 
 #include <time.h>
-#include "tk_tick.h"
-#include "tk_hwclock.h"
-#include <tk_hwsys.h> //< Try to remove this one
 #include <errno.h>
 #include <assert.h>
 
+#if defined (__GNUC__)
+   #include <tinker/config.h>
+   #include <sys/times.h>
+   #include <sys/time.h>
+#else
 
-/*! 
-An internal scaling factor that needs to be matched against the
-timer resolution so that the POSIX requirements for CLOCKS_PER_SEC is
-fullfilled. The current resolution is 1000 tics per second (1kHZ
-interrupts). The POSIX CLOCKS_PER_SEC is preset to 1*10e6. How many
-clock_ticks is there (or would there be) in a sys_mickey.
-*/
-#define TICK_PER_CLK 1000ul  //<! How much a tick is advanced on 
-//each interrupt
-
-
-#include "tk_tick.h"         //internal macros for tick handliing in this header
-#if defined (HW_CLOCKED) 
-#   define USE_HW_CLOCK      //!< Undef this to see the "error" in tk_msleep that happens each 17.2 minutes (see \Blog060227 for in-deapth discussion). Should be undefined if monitoring of ISR latency is turned off in the HW clock, since it will generate worse accuracy then reading only the sys_mikey_mickey alone.
-#endif
-
-/*! 
-Optionally this can be defined instead, but leave /ref
-USE_HW_CLOCK defined (same reasoning remains though, accuracy will
-be totally spoiled). 
-*/
-#define NO_SYSTIMER_WRAP_MONITOR 
-
-//return (clock_t)(-1);
+   #include "tk_tick.h"    //internal macros for tick handliing in this header
+   #include "tk_hwclock.h"
+   #include <tk_hwsys.h>   //< Try to remove this one
 
 
+
+   /*! 
+   An internal scaling factor that needs to be matched against the
+   timer resolution so that the POSIX requirements for CLOCKS_PER_SEC is
+   fullfilled. The current resolution is 1000 tics per second (1kHZ
+   interrupts). The POSIX CLOCKS_PER_SEC is preset to 1*10e6. How many
+   clock_ticks is there (or would there be) in a sys_mickey.
+   */
+   #define TICK_PER_CLK 1000ul  //<! How much a tick is advanced on 
+   //each interrupt
+
+
+   #include "tk_tick.h"
+   #if defined (HW_CLOCKED) 
+      #define USE_HW_CLOCK      //!< Undef this to see the "error" in tk_msleep that happens each 17.2 minutes (see \Blog060227 for in-deapth discussion). Should be undefined if monitoring of ISR latency is turned off in the HW clock, since it will generate worse accuracy then reading only the sys_mikey_mickey alone.
+   #endif
+
+   /*! 
+   Optionally this can be defined instead, but leave /ref
+   USE_HW_CLOCK defined (same reasoning remains though, accuracy will
+   be totally spoiled). 
+   */
+   #define NO_SYSTIMER_WRAP_MONITOR 
+
+   //return (clock_t)(-1);
+#endif //defined (__GNUC__)
+
+//---------------------------------------------------------------------------------------
+// The following section is used to figure out which funtion we can use to figure out
+// usable TinKer time information for the dispatcher and various other needs (user needs).
+// Notice that in case GNU build syste is used, a tinker.config.h exists which sets the
+// HAVE_xxx macros
+//---------------------------------------------------------------------------------------
 /*!
-
 @ingroup @ingroup kernel_internal_POSIX
         
 @brief returns time since startup in 1 millionth of a second (uS)
+CPU time
+http://www.gnu.org/software/libc/manual/html_mono/libc.html#CPU%20Time
 
 This function is used by the kernal, but can also be used by the application.
 We try to follow POSIX standard as close as possible with some minor exeptions:
@@ -107,6 +122,8 @@ Implementation in principle the same as \ref getnanouptime
 @todo check the "(TICK_PER_CLK * sys_mickey);  // This *HAS* to ne wrong" thingy
    
 */
+
+#ifndef HAVE_CLOCK
 clock_t clock(){   
    #if !defined (USE_HW_CLOCK)
    return (TICK_PER_CLK * sys_mickey);  // This *HAS* to ne wrong
@@ -166,26 +183,86 @@ clock_t clock(){
 
    #endif
 }
+#endif
 
-time_t time (time_t *result){
-   *result = (time_t)clock();
-   return *result;
+/*!
+
+@ingroup @ingroup kernel_internal_POSIX
+        
+@brief Simple calendar time
+
+(time(s) - 's' as in system)
+Returns calendar time (i.e. absolute time) since epoch. To be able to do that we need 
+the time from RTC on startup, which in many cases are missing.
+
+time() and clock() are indentical ecept for this startup offset (RTC).
+
+I.e. this function emulates the case where RCT returns zero, which for relative time
+cases is just as good.
+*/
+#ifndef HAVE_TIME
+time_t time (time_t *result){ 
+   time_t tresult;
+   tresult = (time_t)clock();
+
+   if (result != NULL)
+      *result = tresult;
+
+   return tresult;
 }
+#endif
 
+/*!
+@ingroup @ingroup kernel_internal_POSIX
+        
+@brief Processor (i.e. process or system) time inquiry
+http://www.gnu.org/software/libc/manual/html_mono/libc.html#Processor%20Time
 
+*/
+#ifndef HAVE_TIMES
+clock_t times (struct tms *buffer){
+   assert("Not implemented");
+   
+   return clock();
+}
+#endif
+
+/*!
+@ingroup @ingroup kernel_internal_POSIX
+        
+@brief Get (calendare) time of day
+http://www.gnu.org/software/libc/manual/html_mono/libc.html#High-Resolution%20Calendar
+
+*/
+#ifndef HAVE_GETTIMEOFDAY
 int gettimeofday (struct timeval *tp, struct timezone *tzp){
+   assert("Not implemented");
+   return 0;
 }
+#endif
 
+/*!
+@ingroup @ingroup kernel_internal_POSIX
+        
+@brief Set (calendare) time of day
+http://www.gnu.org/software/libc/manual/html_mono/libc.html#High-Resolution%20Calendar
 
+*/
+#ifndef HAVE_SETTIMEOFDAY
 int settimeofday (const struct timeval *tp, const struct timezone *tzp){
+   assert("Not implemented");
+   return 0;
 }
+#endif
+
+//---------------------------------------------------------------------------------------
 
 /*!
 
 http://lists.freebsd.org/pipermail/freebsd-threads/2005-June/003123.html
 
 */
-
+#if !defined (__GNUC__)
 int clock_gettime (
    clockid_t clock_id, 
    struct timespec *tp
@@ -206,7 +283,7 @@ int clock_gettime (
 
    return ERR_OK;
 }
-
+#endif //!defined (__GNUC__)
 
 
 /*!
@@ -244,9 +321,8 @@ storing the result in RESULT.
 
 @returns 1 if the difference is negative, otherwise 0.  
 */
-     
-int
-   timeval_subtract (result, x, y)
+#if !defined (__GNUC__)
+int timeval_subtract (result, x, y)
          struct timeval *result, *x, *y;
    {
       /* Perform the carry for the later subtraction by updating y. */
@@ -260,24 +336,26 @@ int
       y->tv_usec += 1000000 * nsec;
       y->tv_sec -= nsec;
       }
-     
+
    /* Compute the time remaining to wait.
          tv_usec is certainly positive. */
       result->tv_sec = x->tv_sec - y->tv_sec;
       result->tv_usec = x->tv_usec - y->tv_usec;
-     
+
    /* Return 1 if result is negative. */
       return x->tv_sec < y->tv_sec;
    }
-   
-   
-  
+#endif //!defined (__GNUC__)
+
 
 /*!
  * @defgroup CVSLOG_time_c time_c
  * @ingroup CVSLOG
  *  $Log: time.c,v $
- *  Revision 1.19  2006-11-27 22:29:24  ambrmi09
+ *  Revision 1.20  2006-12-01 10:58:51  ambrmi09
+ *  Solves #1605911 #1605893
+ *
+ *  Revision 1.19  2006/11/27 22:29:24  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.
  *

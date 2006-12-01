@@ -471,6 +471,7 @@ int mq_send(
    unsigned int      msgprio
 ){
    QueueD   *Q;
+   time_t   ttime;
 
    pthread_once(&mq_once, initialize);
    assert(sem_wait(&poolAccessSem) == 0);
@@ -532,7 +533,7 @@ int mq_send(
    Q->mBox.messArray[Q->mBox.mIdxIn].order.prio = msgprio;
    Q->mBox.messArray[Q->mBox.mIdxIn].order.inOrder =  
       Q->mBox.lastInOrder++;
-   Q->mBox.messArray[Q->mBox.mIdxIn].order.time = time(NULL);
+   Q->mBox.messArray[Q->mBox.mIdxIn].order.time = time(&ttime);
 
    Q->mBox.mIdxIn++;
    Q->mBox.mIdxIn %= Q->mq_attr.mq_maxmsg;
@@ -715,7 +716,10 @@ Good references about the API:
  * @defgroup CVSLOG_mqueue_c mqueue_c
  * @ingroup CVSLOG
  *  $Log: mqueue.c,v $
- *  Revision 1.18  2006-11-27 22:29:23  ambrmi09
+ *  Revision 1.19  2006-12-01 10:58:51  ambrmi09
+ *  Solves #1605911 #1605893
+ *
+ *  Revision 1.18  2006/11/27 22:29:23  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.
  *

@@ -1425,7 +1425,7 @@ int main(int argc, char **argv){
    printf("Hello world"); 
    */
    
-   _tk_main();
+    _tk_main();
    TRAP(0); 
 }
 #endif
@@ -1448,7 +1448,10 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.67  2006-11-27 22:29:24  ambrmi09
+ *  Revision 1.68  2006-12-01 10:58:51  ambrmi09
+ *  Solves #1605911 #1605893
+ *
+ *  Revision 1.67  2006/11/27 22:29:24  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.
  *

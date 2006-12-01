@@ -9,8 +9,20 @@
 /* Define to 1 if you have the `clock' function. */
 #undef HAVE_CLOCK
 
+/* Define to 1 if you have the `gettimeofday' function. */
+#undef HAVE_GETTIMEOFDAY
+
 /* Define to 1 if you have the `gcc_s' library (-lgcc_s). */
 #undef HAVE_LIBGCC_S
+
+/* Define to 1 if you have the `settimeofday' function. */
+#undef HAVE_SETTIMEOFDAY
+
+/* Define to 1 if you have the `time' function. */
+#undef HAVE_TIME
+
+/* Define to 1 if you have the `times' function. */
+#undef HAVE_TIMES
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -46,19 +58,19 @@
 /* Canonical hostname */
 #undef TK_CANONICAL_HOST
 
-/* ITC - Inter thread communication component enabled */
+/* Comp. ITC - Inter thread communication component enabled */
 #undef TK_COMP_ITC
 
-/* KMEM - Kernel memory manager component enabled */
+/* Comp. KMEM - Kernel memory manager component enabled */
 #undef TK_COMP_KMEM
 
-/* POSIX_RT - POSIX 1003.1b queues, semaphores component enabled */
+/* Comp. POSIX_RT - POSIX 1003.1b queues, semaphores component enabled */
 #undef TK_COMP_POSIX_RT
 
-/* PTHRED - POSIX 1003.1c threads component enabled */
+/* Comp. PTHRED - POSIX 1003.1c threads component enabled */
 #undef TK_COMP_PTHREAD
 
-/* PTIMER - Preemptive timer component enabled */
+/* Comp. PTIMER - Preemptive timer component enabled */
 #undef TK_COMP_PTIMER
 
 /* Specific CPU variant (i.e. -m option used) */
@@ -110,6 +122,9 @@
 
 /* Where the PREFIX directory is */
 #undef TK_TOOLDIR
+
+/* Pack. - Use builtin search/sort function (overrides default for target) */
+#undef TK_USE_BUILTIN_SORT
 
 /* If cross-compile build is expected */
 #undef TK_XCOMPILE

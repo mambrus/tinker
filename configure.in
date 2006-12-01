@@ -95,7 +95,7 @@ TINKER_CONFIGURE(.)
 
 AC_CONFIG_HEADER(include/tinker/config.h)
 
-sources_c="src/tk.c"
+sources_c="src/tk.c src/time.c"
 
 dnl Components deduction
 if test $enable_itc != no; then
