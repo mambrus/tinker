@@ -49,6 +49,10 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#Sleeping
 
 #include <tk_ansi.h>
 
+/*
+The Following will get the tool-chains version of time.h 
+(excluding the build-chains that completly miss that file)
+*/
 #if !defined(__C166__)
 #	include <tk_ansi_dirwrap.h>
 #	include BUILDCHAIN(time.h)
@@ -345,7 +349,10 @@ Wrapper macro until \ref PTIMER is ready
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.27  2006-11-27 22:29:22  ambrmi09
+ *  Revision 1.28  2006-12-11 14:41:52  ambrmi09
+ *  Solves #1609064 (part1)
+ *
+ *  Revision 1.27  2006/11/27 22:29:22  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.
  *

@@ -25,6 +25,9 @@
 //#include "kernel/src/tk_ansi.h"
 #include <tk_ansi.h>
 
+void _tk_assertfail(char *assertstr, char *filestr, int line);
+
+
 #if !defined(__C166__)
 #	include <tk_ansi_dirwrap.h>
 #	include BUILDCHAIN(assert.h)
@@ -68,7 +71,10 @@ The assert macro.
  * @defgroup CVSLOG_assert_h assert_h
  * @ingroup CVSLOG
  *  $Log: assert.h,v $
- *  Revision 1.11  2006-11-27 22:29:22  ambrmi09
+ *  Revision 1.12  2006-12-11 14:41:51  ambrmi09
+ *  Solves #1609064 (part1)
+ *
+ *  Revision 1.11  2006/11/27 22:29:22  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.
  *

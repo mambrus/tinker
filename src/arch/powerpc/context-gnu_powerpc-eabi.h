@@ -116,12 +116,12 @@ How printk is implemented on this target. I.e. no ability to output on console
 
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )			\
    GET_SP( TSP1 )						\
-   TEMP = setjmp( TSP1 - (_JBLEN*sizeof(double)) - EXTRA_MARGIN);              \
+   TEMP = setjmp( (double*)(TSP1 - (_JBLEN*sizeof(double)) - EXTRA_MARGIN));              \
    if (TEMP != (active_thread+1))				\
       GET_SP( TSP1 )
 
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )		\
-	longjmp( TSP1 - (_JBLEN*sizeof(double)) - EXTRA_MARGIN, active_thread+1);
+	longjmp( (double*)(TSP1 - (_JBLEN*sizeof(double)) - EXTRA_MARGIN), active_thread+1);
 
 
 #define CHANGE_STACK( TSP1, TEMP )        		\

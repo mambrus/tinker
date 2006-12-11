@@ -65,6 +65,7 @@ any of them.   errno.h
 
 #if defined(TK_COMP_ITC) && (TK_COMP_ITC==1)
    #include <tk_itc.h>
+   #include <tk_sysqueues.h>
 #endif
 
 #if defined(TK_COMP_PTIME) && (TK_COMP_PTIMER==1)
@@ -99,10 +100,12 @@ any of them.   errno.h
 //@}
 
 #if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
-#  define tk_clock()  clock_stubbed()   
+   clock_t clock_stubbed();
+   #define tk_clock()  clock_stubbed()   
 #else
-#  define tk_clock()  clock()   
+   #define tk_clock()  clock()   
 #endif
+
 
 /*- internal functions **/
 void *_tk_destructor( void *retval );
@@ -289,7 +292,7 @@ void tk_create_kernel( void ){
       STACK_PTR(proc_stat[i].stack_begin)       = NULL;      
       STACK_PTR(proc_stat[i].curr_sp)           = NULL;      
       proc_stat[i].stack_crc                    = 0;      
-      proc_stat[i].wakeupEvent                  = 0;
+      proc_stat[i].wakeupEvent                  = E_NONE;
       proc_stat[i].retval                       = (void*)0;
       
 /*
@@ -301,7 +304,7 @@ void tk_create_kernel( void ){
    //The Root proc is already created but must be registred
    proc_stat[0].state = READY;
    proc_stat[0].valid = TK_TRUE;
-   strcpy(proc_stat[0].name,"root");
+   strcpy(proc_stat[0].name,"tk_root");
    procs_in_use = 1;
    proc_idx = 0;
    //Clear the tables (before creating idle - thread)
@@ -368,12 +371,11 @@ void *_tk_destructor( void *retval ){
    #ifdef DEBUG
    //printk(("Dieing thread [id=%d] is returning! Return value is: 0x%lX\n\n",active_thread,retval));  
    #endif
-   
-   
+
    proc_stat[active_thread].state  = ZOMBI;
    proc_stat[active_thread].retval = (void*)retval;
    _tk_detach_children(active_thread); 
-   
+
    /*Finalize the destruction*/
    //tk_delete_thread(active_thread);
    //tk_yield();
@@ -540,7 +542,7 @@ thid_t tk_create_thread(
    proc_stat[proc_idx].Idx                = slot_idx;
    proc_stat[proc_idx].stack_crc          = 0;
 
-   proc_stat[proc_idx].wakeupEvent        = 0;
+   proc_stat[proc_idx].wakeupEvent        = E_NONE;
    proc_stat[proc_idx].retval             = inpar;  //This is convention and covers a special case
    /*
    proc_stat[proc_idx].start_funct  = f;
@@ -587,7 +589,7 @@ int tk_join(thid_t PID, void ** value_ptr){
       //prepare to block   
       proc_stat[active_thread].bOnId.kind       = BON_SCHED;
       proc_stat[active_thread].bOnId.entity.tcb = &proc_stat[PID];
-      proc_stat[active_thread].state |= TERM;
+      proc_stat[active_thread].state = (PROCSTATE)(proc_stat[active_thread].state | TERM);
       tk_yield();  //Will block
       assert(proc_stat[active_thread].wakeupEvent == E_CHILDDEATH);
       if (value_ptr != NULL) {
@@ -689,7 +691,7 @@ void tk_msleep( unsigned int time_ms ){
 
    //need a function t_diff that handles wraparound (done 060225, note kept for ref.)
    proc_stat[active_thread].wakeuptime = wkp_time_us;
-   proc_stat[active_thread].state |= SLEEP;
+   proc_stat[active_thread].state = (PROCSTATE)(proc_stat[active_thread].state | SLEEP);
    /*
    Hmm... don't do the following unless zombie is checked. Pointless info, so we'll skip it
    proc_stat[active_thread].bOnId = active_thread;
@@ -818,29 +820,29 @@ void _tk_wakeup_timedout_threads( void ){
             //if ( act_time >= proc_stat[i].wakeuptime ){
             //if ( (signed long)(act_time - proc_stat[i].wakeuptime) >= 0 ){
             if ( (signed long)(difftime(act_time_us,proc_stat[i].wakeuptime) ) >= 0 ){
-               proc_stat[i].state &= ~_____QS_; /*Release ques also (but not the TERM bit)*/
+               proc_stat[i].state = (PROCSTATE)(proc_stat[i].state & ~_____QS_); /*Release ques also (but not the TERM bit)*/
                proc_stat[i].wakeupEvent = E_TIMER;
             }
          }
-      
+
          //This thread wants to die (zombied). But make sure someone else is doing it 
          //(otherwize we would remove our own stack, which is both ugly and dangerous)
          if ((proc_stat[i].state & ZOMBI) && (i != active_thread)){ 
-         
+
             //We shuld not really need to do the following line. Should 
             //have been done in any canceling mechanism of the thread.
             //Note and commented call saved for future reference.
-            
+
             //_tk_detach_children(i); 
-            
-            
+
+
             if ( _tk_try_detach_parent(i, TK_FALSE) ){
                //Finally, it should now be safe to send the zombied thread to Nirvana 
                tk_delete_thread(i);
             } 
             //else: The parent is either blocking on a brother or sister OR 
             //neither, but might consider blocking later. I.e. we have to stay 
-            //zombied until it desides (i.e. either joins us, dies or someone detaches us)                      
+            //zombied until it desides (i.e. either joins us, dies or someone detaches us).
          }
       }
    }
@@ -947,7 +949,7 @@ int _tk_try_detach_parent(
       (proc_stat[proc_stat[thid].Gid].state & TERM) && 
       proc_stat[proc_stat[thid].Gid].bOnId.entity.tcb == &proc_stat[thid] )
    {
-      proc_stat[proc_stat[thid].Gid].state &= ~_______T; //Release the waiting parent
+      proc_stat[proc_stat[thid].Gid].state = (PROCSTATE)(proc_stat[proc_stat[thid].Gid].state & ~_______T); //Release the waiting parent
       proc_stat[proc_stat[thid].Gid].wakeupEvent = E_CHILDDEATH;
       //Special case, if both ___S_ and ____T (i.e. timeoutable join)
       if (proc_stat[proc_stat[thid].Gid].state == READY) { //What must be left is __S_
@@ -1323,7 +1325,7 @@ things at least:
 - You need a working printf to see run-time errors
 
 */
-
+//void     tk_root( void ); 
 void _tk_main( void ){
    tk_bsp_sysinit();      //For emulation targets, this is ment to be nothing 
    printk(("BSP initialized\n"));
@@ -1356,7 +1358,7 @@ void _tk_main( void ){
       #endif
    #endif
     
-   root();
+   tk_root();
 
    #if defined(TK_COMP_ITC) && TK_COMP_ITC
       #if defined(TK_COMP_PTHREAD) && TK_COMP_PTHREAD
@@ -1448,7 +1450,10 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.68  2006-12-01 10:58:51  ambrmi09
+ *  Revision 1.69  2006-12-11 14:41:52  ambrmi09
+ *  Solves #1609064 (part1)
+ *
+ *  Revision 1.68  2006/12/01 10:58:51  ambrmi09
  *  Solves #1605911 #1605893
  *
  *  Revision 1.67  2006/11/27 22:29:24  ambrmi09

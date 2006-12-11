@@ -141,7 +141,8 @@ on other systems.
    #undef errno          //!< We'll define our own errno \e "varialble"
 #endif
 
-#include <tk.h>
+//#include <tk.h>
+int           *_tk_errno();
 
 /*! 
 @brief Access thread-internal errno variable
@@ -1076,7 +1077,10 @@ TBD
  * @defgroup CVSLOG_errno_h errno_h
  * @ingroup CVSLOG
  *  $Log: errno.h,v $
- *  Revision 1.13  2006-11-27 22:29:22  ambrmi09
+ *  Revision 1.14  2006-12-11 14:41:51  ambrmi09
+ *  Solves #1609064 (part1)
+ *
+ *  Revision 1.13  2006/11/27 22:29:22  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.
  *

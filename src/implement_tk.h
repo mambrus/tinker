@@ -46,7 +46,7 @@ Defines the threads status (bit addressable)
 	- ___T = TERM  = Process is waiting for one or more children to terminate
 	- __S_ = SLEEP = Process is blocked on timer (sleeping)
 	- _Q__ = QUEUE = Process is blocked on \b any kind of syncronisation primitive. I.e. semaphore, mutex, queue, pthread conditional variable e.t.a.
-   - Z___ = ZOMBI = Process is but waiting for cleanup operation (usually idle) to renove it
+	- Z___ = ZOMBI = Process is but waiting for cleanup operation (usually idle) to renove it
    
 @note the convenient naming. This is very practical when debugging the
 dispatcher since symbolic names will easily be translated to
@@ -54,23 +54,28 @@ corresponding bits. This is actually the only \e real reason for this enum to
 exist, since \ref STATEBITS does the same job.
 */
 typedef enum {
-   READY    =0x00,     
-   _______T =0x01,  
-   ______S_ =0x02,  
+   READY    =0x00,
+   _______T =0x01,
+   ______S_ =0x02,
    ______ST =0x03,
-   _____Q__ =0x04,  
-   _____Q_T =0x05,  
-   _____QS_ =0x06,  
+   _____Q__ =0x04,
+   _____Q_T =0x05,
+   _____QS_ =0x06,
    _____QST =0x07,
-   ____Z___ =0x08,  
-   ____Z__T =0x09,  
-   ____Z_S_ =0x0A,  
+   ____Z___ =0x08,
+   ____Z__T =0x09,
+   ____Z_S_ =0x0A,
    ____Z_ST =0x0B,
-   ____ZQ__ =0x0C,  
-   ____ZQ_T =0x0D,  
-   ____ZQS_ =0x0E,  
+   ____ZQ__ =0x0C,
+   ____ZQ_T =0x0D,
+   ____ZQS_ =0x0E,
    ____ZQST =0x0F
 }PROCSTATE;
+
+#define TERM  _______T	//!< "Terminated" state (simplyfied PROCSTATE)
+#define SLEEP ______S_	//!< "Sleeping" state (simplyfied PROCSTATE)
+#define QUEUE _____Q__	//!< "Blocked" state (simplyfied PROCSTATE)
+#define ZOMBI ____Z___	//!< "Zombi" state (simplyfied PROCSTATE)
 
 /*!
 @brief Defines what the threads is blocked on. 
@@ -81,7 +86,7 @@ SCHED, which means that it's blocked on a synch entity of some kind.
 
 I.e. anything else than another thread, cancelation or native timeout.
 */
-typedef enum{TERM=1,SLEEP=2,QUEUE=4,ZOMBI=8}STATEBITS;
+//typedef enum{TERM_BIT=1,SLEEP_BIT=2,QUEUE_BIT=4,ZOMBI_BIT=8}STATEBITS;
 
 /*!
 @brief Wake-up events. 
@@ -197,7 +202,10 @@ extern int Tk_IntFlagCntr;
  * @defgroup CVSLOG_implement_tk_h implement_tk_h
  * @ingroup CVSLOG
  *  $Log: implement_tk.h,v $
- *  Revision 1.11  2006-11-27 22:29:23  ambrmi09
+ *  Revision 1.12  2006-12-11 14:41:52  ambrmi09
+ *  Solves #1609064 (part1)
+ *
+ *  Revision 1.11  2006/11/27 22:29:23  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.
  *

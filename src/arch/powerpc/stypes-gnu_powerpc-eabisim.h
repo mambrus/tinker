@@ -18,6 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  
+#ifndef STYPES_GNU_POWERPCSIM_H
+#define STYPES_GNU_POWERPCSIM_H
 
 #include "stypes-gnu_powerpc-eabi.h"
+
+#endif
+
+
 

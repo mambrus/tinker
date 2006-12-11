@@ -214,18 +214,33 @@ void           tk_msleep( unsigned int time_ms );
 thid_t         tk_thread_id( void );
 int            tk_change_prio(thid_t tid, int newPrio);
 
-/*! Function supplied by \b YOU - constitutes the root thread function*/
-extern int     root( void ); 
+/*! Function supplied by \b YOU - constitutes the root thread function. 
+Aims "upwards" in the chain
 
-/*! Function supplied by \b YOU - initialize the BSP used by your sys-calls*/
+@note: We can't impose of forse which compiler (C or C++) will be used by
+the application. Therefor we must enforce the mangling of this function name
+to follow C regardless of which compiler type is used to build TinKer itself.
+*/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern int     tk_root( void ); 
+#ifdef __cplusplus
+}
+#endif
+
+/*! Function supplied by \b YOU - initialize the BSP used by your sys-calls
+Aims "downwards" in the chain
+*/
 extern int     tk_bsp_sysinit(void);
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 // The following are rerouted by bacros, so they need to be public. Don't use 
 // in appl. code
 
-void           _tk_assertfail( char *assertstr, char *filestr, int line );
-int           *_tk_errno();
+//void           _tk_assertfail( char *assertstr, char *filestr, int line ); <-- moved to assert.h
+//int           *_tk_errno(); <-- moved to errno.h
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 /*- private functions **/
@@ -238,7 +253,10 @@ int           *_tk_errno();
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.42  2006-11-27 22:29:23  ambrmi09
+ *  Revision 1.43  2006-12-11 14:41:52  ambrmi09
+ *  Solves #1609064 (part1)
+ *
+ *  Revision 1.42  2006/11/27 22:29:23  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.
  *

@@ -1,5 +1,6 @@
 OUTFILENAME    = @TINKER_PATH@/lib/lib@PACKAGE_NAME@.a
 CC             = @CC@
+CXX            = @CXX@
 LD             = @LD@
 AS             = @AS@
 AR             = @AR@
@@ -7,6 +8,7 @@ OBJCOPY        = @OBJCOPY@
 OBJDUMP        = @OBJDUMP@
 VERSION        = @PACKAGE_VERSION@
 CFLAGS         = @CFLAGS@
+CXXFLAGS       = @CXXFLAGS@
 LDFLAGS        = @LDFLAGS@
 LIBS           = @LIBS@
 LIBOBJS        = @LIBOBJS@
@@ -28,8 +30,8 @@ DCPU           = @DCPU@
 
 .PHONY: all subdirs info depend link clean cleanall install rebuild flashit console
 
-MAKE_SUBDIRS_ALL   := $(patsubst %, make -f Makefile-gnu all -C %;, $(MAKE_SUBDIRS))
-MAKE_SUBDIRS_CLEAN := $(patsubst %, make -f Makefile-gnu clean -C %;, $(MAKE_SUBDIRS))
+MAKE_SUBDIRS_ALL   := $(patsubst %, make -f Makefile-gnu all @MAKEOPTS@ -C % &&, $(MAKE_SUBDIRS))
+MAKE_SUBDIRS_CLEAN := $(patsubst %, make -f Makefile-gnu clean @MAKEOPTS@ -C % &&, $(MAKE_SUBDIRS))
 
 SUBLIBS       := $(patsubst %, -l%, @subdirs@)
 SUBLIBOUT     := $(patsubst %, @TINKER_PATH@/lib/lib%.a, @subdirs@)
@@ -90,7 +92,7 @@ all: subdirs $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) $(OUTFILENAME) $(EXTRAS)
 	@echo "======================================================"
 
 subdirs:
-	$(MAKE_SUBDIRS_ALL)
+	$(MAKE_SUBDIRS_ALL) echo "<<< All subdirs of [@PACKAGE_NAME@] successfully built >>>"
 
 info:
 	@echo "======================================================"
@@ -106,7 +108,7 @@ info:
 	@echo "======================================================"
 
 clean:
-	$(MAKE_SUBDIRS_CLEAN)
+	$(MAKE_SUBDIRS_CLEAN) echo "<<< All subdirs of [@PACKAGE_NAME@] successfully cleaned >>>"
 	rm -f $(ALL_COBJS) $(ALL_AOBJS) $(ALL_CDEPS) $(OUTFILENAME) $(OUTFILENAME).map $(EXTRAS)
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] cleaned! ->>"
@@ -145,7 +147,7 @@ install: all
 	@echo =CRT0========================================================
 	cp startup_gnu.ao $@
 
-%.d: %.c
+%.d: %.c @DEPMAKE@
 	@echo =d2========================================================
 	echo $*
 	echo $@
@@ -154,12 +156,12 @@ install: all
 	@sed  -e 's,\(.*\):,$*.o: $@,' > $@ < temp
 	@echo
 
-%.o: %.d Makefile-gnu
+%.o: %.d @DEPMAKE@
 	@echo =o2========================================================
 	$(CC) -c $(CFLAGS) ${@:o=c} -o $@
 	@echo
 
-%.ao: %.s Makefile-gnu
+%.ao: %.s @DEPMAKE@
 	@echo =a2========================================================
 	$(CC) -c $(CFLAGS) ${@:ao=S} -o $@
 	@echo

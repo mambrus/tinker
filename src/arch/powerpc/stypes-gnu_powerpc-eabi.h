@@ -48,7 +48,10 @@ typedef struct{
  * @ingroup CVSLOG
  *
  *  $Log: stypes-gnu_powerpc-eabi.h,v $
- *  Revision 1.1  2006-11-03 11:33:30  ambrmi09
+ *  Revision 1.2  2006-12-11 14:41:53  ambrmi09
+ *  Solves #1609064 (part1)
+ *
+ *  Revision 1.1  2006/11/03 11:33:30  ambrmi09
  *  Moved architecture specific files out from bsp structure and into kernel
  *  source 'arch' structure. This makes sense since I plan to refine the
  *  project into kernel specific maintenence on one hand, and BSP (and
@@ -76,4 +79,3 @@ typedef struct{
  *
  *******************************************************************/
 
- 

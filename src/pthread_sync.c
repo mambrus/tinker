@@ -68,7 +68,7 @@ int _mutex_lock_primitive (pthread_mutex_t *mutex){
       self = pthread_self();
       self->bOnId.kind = BON_PMUTEX;
       self->bOnId.entity.mutex = mutex;
-      self->state |= QUEUE;
+      self->state = (PROCSTATE)(self->state | QUEUE);
 
       mutex->linkOf=_PBON_NOLINK;
       mutex->link.dummy=NULL;
@@ -115,7 +115,7 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast){
       for (i=0; i<mutex->blocked.numb;i++){
          mutex->blocked.thread[i]->bOnId.kind         =     BON_SCHED;
          mutex->blocked.thread[i]->bOnId.entity.tcb   =     NULL;
-         mutex->blocked.thread[i]->state             &=    ~QUEUE;
+         mutex->blocked.thread[i]->state              =     (PROCSTATE)(mutex->blocked.thread[i]->state & ~QUEUE);
          mutex->blocked.thread[i]->wakeupEvent        =     E_ITC;
       }
       mutex->blocked.numb=0;
@@ -143,7 +143,7 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast){
 
       newOwner->bOnId.kind = BON_SCHED;
       newOwner->bOnId.entity.tcb = NULL;
-      newOwner->state &= ~QUEUE;
+      newOwner->state = (PROCSTATE)(newOwner->state & ~QUEUE);
       newOwner->wakeupEvent = E_ITC;
    }
 
@@ -171,7 +171,10 @@ Syncronisation between threads, i.e.
  *  @defgroup CVSLOG_pthread_sync_c pthread_sync_c
  *  @ingroup CVSLOG
  *  $Log: pthread_sync.c,v $
- *  Revision 1.9  2006-04-08 10:16:01  ambrmi09
+ *  Revision 1.10  2006-12-11 14:41:52  ambrmi09
+ *  Solves #1609064 (part1)
+ *
+ *  Revision 1.9  2006/04/08 10:16:01  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.8.2.1  2006/04/03 20:07:28  ambrmi09

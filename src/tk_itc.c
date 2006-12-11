@@ -48,7 +48,8 @@ ITC
 #define NOTDEBUG_WITH_CURSES  //!< Visual "debugging" for queue operations if disabled 
 
 #if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
-#define clock clock_stubbed
+   clock_t clock_stubbed();
+   #define clock clock_stubbed
 #endif
 
 #include "implement_tk.h"
@@ -98,7 +99,7 @@ static itc_t *ipc_array[TK_MAX_NUM_Q];
 /*! 
 points to the most resently created ITC object
 */
-static ipc_idx;						
+static int ipc_idx;						
 
 /*- private functions **/
 /*******************************************************************************
@@ -325,14 +326,14 @@ static unsigned long lock_stage(
 		/* Put myself om the "waiting" list */
 		if (timeout == 0) {
 			//assert(0);
-			MySelf->state = ( (MySelf->state) | _____Q__);
-			MySelf->wakeupEvent = 0;
+			MySelf->state = (PROCSTATE)( (MySelf->state) | _____Q__);
+			MySelf->wakeupEvent = E_NONE;
 			tk_yield();
 			/* OK, I've been blocked and now I'm free*/		
 			return(ERR_OK);
 		}else {
 			p_bQ(40,21,qid);
-			MySelf->state = ( (MySelf->state) | _____QS_);
+			MySelf->state = (PROCSTATE)( (MySelf->state) | _____QS_);
 			timeout_time = act_time + timeout;
 			MySelf->wakeuptime = timeout_time;
 			/*In case need to remove from list (timerelease)*/
@@ -457,7 +458,7 @@ static unsigned long unlock_stage(
 			/*Now the highest waiting process should be found*/
 			p_bQ(40,21,qid);
 			assert(t_prio != (TK_MAX_PRIO_LEVELS + 2)); /*Could not find anyone to release*/
-			ipc_array[qid]->blocked_procs[t_idx]->state &= ~_____QST; 
+			ipc_array[qid]->blocked_procs[t_idx]->state = (PROCSTATE)(ipc_array[qid]->blocked_procs[t_idx]->state & ~_____QST); 
 			ipc_array[qid]->blocked_procs[t_idx]->wakeupEvent = E_ITC;
 			//ipc_array[qid]->token++;
 			removeBlocked(ipc_array[qid],t_idx);	
@@ -474,7 +475,7 @@ static unsigned long unlock_stage(
 			 /*but has not runned (had the oppotunity */								   
 			 /*to remove from this list)*/								   
 			 /*Should be obsolite now, but is not*/
-			Him->state = ( (Him->state) & ~_____QST); /* In case of timeout active release that to */
+			Him->state = (PROCSTATE)( (Him->state) & ~_____QST); /* In case of timeout active release that to */
 			Him->wakeupEvent = E_ITC;
 			tk_yield(); /*In case the one you've just released has higher prio, run it*/	
 		}
@@ -530,14 +531,14 @@ static unsigned long _lock_stage_ny(
       /* Put myself om the "waiting" list */
       if (timeout == 0) {
          //assert(0);
-         MySelf->state = ( (MySelf->state) | _____Q__);
-         MySelf->wakeupEvent = 0;
+         MySelf->state = (PROCSTATE)( (MySelf->state) | _____Q__);
+         MySelf->wakeupEvent = E_NONE;
          //tk_yield();
          /* OK, I've been blocked and now I'm free*/     
          return(ERR_OK);
       }else {
          p_bQ(40,21,qid);
-         MySelf->state = ( (MySelf->state) | _____QS_);
+         MySelf->state = (PROCSTATE)( (MySelf->state) | _____QS_);
          timeout_time = act_time + timeout;
          MySelf->wakeuptime = timeout_time;
          /*In case need to remove from list (timerelease)*/
@@ -662,7 +663,7 @@ static unsigned long _unlock_stage_ny(
          /*Now the highest waiting process should be found*/
          p_bQ(40,21,qid);
          assert(t_prio != (TK_MAX_PRIO_LEVELS + 2)); /*Could not find anyone to release*/
-         ipc_array[qid]->blocked_procs[t_idx]->state &= ~_____QST; 
+         ipc_array[qid]->blocked_procs[t_idx]->state = (PROCSTATE)(ipc_array[qid]->blocked_procs[t_idx]->state & ~_____QST); 
          ipc_array[qid]->blocked_procs[t_idx]->wakeupEvent = E_ITC;
          //ipc_array[qid]->token++;
          removeBlocked(ipc_array[qid],t_idx);  
@@ -679,7 +680,7 @@ static unsigned long _unlock_stage_ny(
           /*but has not runned (had the oppotunity */                         
           /*to remove from this list)*/                           
           /*Should be obsolite now, but is not*/
-         Him->state = ( (Him->state) & ~_____QST); /* In case of timeout active release that to */
+         Him->state = (PROCSTATE)( (Him->state) & ~_____QST); /* In case of timeout active release that to */
          Him->wakeupEvent = E_ITC;
          //tk_yield(); /*In case the one you've just released has higher prio, run it*/   
       }
@@ -1534,7 +1535,10 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
- *  Revision 1.29  2006-11-27 22:29:24  ambrmi09
+ *  Revision 1.30  2006-12-11 14:41:53  ambrmi09
+ *  Solves #1609064 (part1)
+ *
+ *  Revision 1.29  2006/11/27 22:29:24  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.
  *

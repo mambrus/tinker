@@ -44,6 +44,32 @@ fi
 
 ])
 
+dnl Options affecting the build
+dnl Note: Default values are set here.
+dnl ----------------------------------------------------------------------------
+AC_DEFUN([TINKER_OPTIONS_BUILD],
+[
+	AC_ARG_ENABLE(depmake,
+		AS_HELP_STRING([--enable-depmake],[Build - Enable/disable makefile targets to depend on Makefile and Makefile-gnu. Optionally you can assign a value naming which specific files to depend on]),
+		DEPMAKE=$enableval,
+		DEPMAKE="Makefile-gnu Makefile"
+	)
+	AC_ARG_ENABLE(cplusplus,
+		AS_HELP_STRING([--enable-cplusplus],[Build - Enable/disable using C++ for compilation and linking]),
+		USECPLUSPLUS=$enableval,
+		USECPLUSPLUS="no"
+	)
+	AC_ARG_ENABLE(makeopts,
+		AS_HELP_STRING([--enable-makeopts],[Build - Pass specified make options to recursive makes (=arg). Options worth considering are -S, -w]),
+		MAKEOPTS=$enableval,
+		MAKEOPTS=""
+	)
+
+	AC_SUBST(DEPMAKE)
+	AC_SUBST(MAKEOPTS)
+])
+
+
 dnl Mega everything. This function reaally needs to be broken up in bits...
 AC_DEFUN([TINKER_CONFIGURE],
 [
@@ -58,10 +84,36 @@ AC_DEFUN([TINKER_CONFIGURE],
 		TINKER_AM_PREREQ
 	fi
 
-	dnl Find and set the C compiler
-	AC_PROG_CC
-	AC_PROG_CC(gcc)
-	AC_LANG_C
+	TINKER_OPTIONS_BUILD
+
+	dnl Find and set the C compiler. The result of this will affect the $CC env. var in the make
+	dnl files. Further more the TK_CPLUSPLUS macro in config.h will reflec the following:
+	dnl * Undefined. Whomever intended to build TinKer did *not* intend TinKer to be build with g++
+	dnl * Set but "FALSE". Whomever intended to build TinKer *did* intend TinKer to be build 
+	dnl    with g++, but the test failed and the build system falls back to gcc
+	dnl * Set but "TRUE". Whomever intended to build TinKer *did* intend TinKer to be build 
+	dnl    with g++ and TinKer was built that way.
+	dnl
+	dnl Note: it's easy to mix up the two macros G++ and C++ because they look very similar
+	dnl.They indicate the same logic, but their contents are very different.
+	AC_PROG_CC	
+	if test $USECPLUSPLUS != no; then		
+		dnl Tries to use g++ as instructed. Should fall back on gcc if c++ is not available
+		AC_PROG_CXX
+		AC_PROG_CC(g++)		
+		AC_LANG_CPLUSPLUS
+		dnl The TK_CPLUSPLUS macro in config.h will be set accordingly to the result
+		AC_DEFINE_UNQUOTED([TK_CPLUSPLUS],$GXX)
+		if test $GXX == yes; then
+			CC=$CXX
+			#AC_SUBST(CC)
+		fi
+	else
+		dnl Use gcc
+		AC_PROG_CC
+		AC_PROG_CC(gcc)		
+		AC_LANG_C
+	fi
 
 	dnl Expand the canonicals
 	AC_CANONICAL_BUILD
@@ -141,12 +193,17 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_CHECK_TOOL([OBJDUMP], [objdump], [:])
 	AC_PATH_TOOL([GCC_PATH], [gcc],     [:])
 
-
 	CANONICAL_HOST=$host
 	AC_SUBST(CANONICAL_HOST)
 	AC_DEFINE_UNQUOTED([TK_CANONICAL_HOST],$CANONICAL_HOST)
 
-	TOOLDIR=$(echo $GCC_PATH | sed -e "s/\/bin\/\+$CC//")
+	if test $USECPLUSPLUS == no; then
+		TOOLDIR=$(echo $GCC_PATH | sed -e "s/\/bin\/\+$CC//")
+	else
+		AC_PATH_TOOL([GXX_PATH], [g++],     [:])
+		TOOLDIR=$(echo $GXX_PATH | sed -e "s/\/bin\/\+$CXX//")
+	fi
+
 	AC_SUBST(TOOLDIR)
 	AC_DEFINE_UNQUOTED([TK_TOOLDIR],$TOOLDIR)
 
@@ -294,6 +351,14 @@ AC_DEFUN([TINKER_CONFIGURE],
 				This option does no purpose...])
 		fi
 	fi
+
+	dnl The following test will handle defaults but also permit specific argument values
+	if test "$DEPMAKE" == yes; then
+		DEPMAKE="Makefile-gnu Makefile"
+	elif test "$DEPMAKE" == no; then
+		DEPMAKE=""
+	fi
+	AC_SUBST(DEPMAKE)
 
 	AC_PROG_INSTALL
 

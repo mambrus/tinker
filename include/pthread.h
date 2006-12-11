@@ -54,7 +54,7 @@ PTHREAD
 #include <tk.h>
 
 #if defined(TINKER)
-   #define main(x,y) root() 
+   #define main(x,y) tk_root() 
 #endif
 
 #define SCHED_OTHER 0    //!< not used by tinker
@@ -1060,7 +1060,10 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.19  2006-11-27 22:29:22  ambrmi09
+ *  Revision 1.20  2006-12-11 14:41:52  ambrmi09
+ *  Solves #1609064 (part1)
+ *
+ *  Revision 1.19  2006/11/27 22:29:22  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.
  *
