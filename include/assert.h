@@ -25,7 +25,17 @@
 //#include "kernel/src/tk_ansi.h"
 #include <tk_ansi.h>
 
+#include <tinker/config.h>
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+extern "C" {
+#endif
+
 void _tk_assertfail(char *assertstr, char *filestr, int line);
+
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+}
+#endif
+
 
 
 #if !defined(__C166__)
@@ -71,7 +81,10 @@ The assert macro.
  * @defgroup CVSLOG_assert_h assert_h
  * @ingroup CVSLOG
  *  $Log: assert.h,v $
- *  Revision 1.12  2006-12-11 14:41:51  ambrmi09
+ *  Revision 1.13  2006-12-12 10:57:04  ambrmi09
+ *  This adresses the second part of #1609064
+ *
+ *  Revision 1.12  2006/12/11 14:41:51  ambrmi09
  *  Solves #1609064 (part1)
  *
  *  Revision 1.11  2006/11/27 22:29:22  ambrmi09

@@ -123,6 +123,11 @@ EINVAL
  * public function declarations
  *****************************************************************************/
 
+#include <tinker/config.h>
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+extern "C" {
+#endif
+
 int mq_close(
    mqd_t                 mq
 );
@@ -164,6 +169,9 @@ int mq_unlink(
    const char           *mq_name
 );
 
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+}
+#endif
 
 #endif
 
@@ -171,7 +179,10 @@ int mq_unlink(
  * @defgroup CVSLOG_mqueue_h mqueue_h
  * @ingroup CVSLOG
  *  $Log: mqueue.h,v $
- *  Revision 1.9  2006-11-05 19:06:03  ambrmi09
+ *  Revision 1.10  2006-12-12 10:57:05  ambrmi09
+ *  This adresses the second part of #1609064
+ *
+ *  Revision 1.9  2006/11/05 19:06:03  ambrmi09
  *  Buildsystem adjusted to permit configuration of components.
  *  Now when component is enabled it will also be included in the build
  *  (instead of just sanity-tested in the source files).

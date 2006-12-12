@@ -59,6 +59,11 @@ ERR_KMEM_SENTINEL
 
 };
 
+#include <tinker/config.h>
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+extern "C" {
+#endif
+
 
 /*! 
 @name Function specification for locking "malloc" and "free" operations on a particular heap.
@@ -158,6 +163,12 @@ void           tk_mem_free    ( heapid_t, void* );
 //@}
 
 
+
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+}
+#endif
+
+
 #endif //TK_MEM_H
 
   
@@ -165,7 +176,10 @@ void           tk_mem_free    ( heapid_t, void* );
  * @defgroup CVSLOG_tk_mem_h tk_mem_h
  * @ingroup CVSLOG
  *  $Log: tk_mem.h,v $
- *  Revision 1.11  2006-11-05 19:06:03  ambrmi09
+ *  Revision 1.12  2006-12-12 10:57:05  ambrmi09
+ *  This adresses the second part of #1609064
+ *
+ *  Revision 1.11  2006/11/05 19:06:03  ambrmi09
  *  Buildsystem adjusted to permit configuration of components.
  *  Now when component is enabled it will also be included in the build
  *  (instead of just sanity-tested in the source files).

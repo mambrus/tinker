@@ -18,8 +18,12 @@ dnl Autoheader stuff
 AH_TOP(
 #ifndef tinker_config_h
 #define tinker_config_h
-#define yes 1
-#define no 0
+
+// Please do not refere to __tk_yes or __tk_no in your application directly. 
+// They are only here because the buildsystem requires it.
+#define __tk_no 0
+#define __tk_yes 1
+
 )
 AH_BOTTOM(
 //Avoid userspace naming conflicts

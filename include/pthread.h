@@ -256,6 +256,11 @@ struct pthread_once_t_ {
                                  to zero executes the user function */
 };
 
+#include <tinker/config.h>
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+extern "C" {
+#endif
+
 
 
 int pthread_create_named_np (
@@ -1016,6 +1021,9 @@ extern void _pthread_cleanup_pop_restore (struct _pthread_cleanup_buffer *__buff
 //extern void pthread_kill_other_threads_np (void);
 //
 
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+}
+#endif
 
 
 
@@ -1060,7 +1068,10 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
- *  Revision 1.20  2006-12-11 14:41:52  ambrmi09
+ *  Revision 1.21  2006-12-12 10:57:05  ambrmi09
+ *  This adresses the second part of #1609064
+ *
+ *  Revision 1.20  2006/12/11 14:41:52  ambrmi09
  *  Solves #1609064 (part1)
  *
  *  Revision 1.19  2006/11/27 22:29:22  ambrmi09

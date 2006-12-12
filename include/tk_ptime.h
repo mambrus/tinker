@@ -153,6 +153,10 @@ typedef struct ptimer_s{
 /*- private data **/
 
 /*- public functions **/
+#include <tinker/config.h>
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+extern "C" {
+#endif
 
 /*!
 @name Creation and destruction of this component
@@ -193,6 +197,10 @@ unsigned long  tk_ptimer_sleep  ( thid_t  tid, time_t *relTime );
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+}
+#endif
+
 #endif
 
   
@@ -201,7 +209,10 @@ unsigned long  tk_ptimer_sleep  ( thid_t  tid, time_t *relTime );
  * @ingroup CVSLOG
  *
  *  $Log: tk_ptime.h,v $
- *  Revision 1.13  2006-11-05 19:06:03  ambrmi09
+ *  Revision 1.14  2006-12-12 10:57:06  ambrmi09
+ *  This adresses the second part of #1609064
+ *
+ *  Revision 1.13  2006/11/05 19:06:03  ambrmi09
  *  Buildsystem adjusted to permit configuration of components.
  *  Now when component is enabled it will also be included in the build
  *  (instead of just sanity-tested in the source files).

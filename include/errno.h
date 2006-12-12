@@ -142,7 +142,21 @@ on other systems.
 #endif
 
 //#include <tk.h>
+#include <tinker/config.h>
+#if defined(__cplusplus) && (TK_CPLUSPLUS==0)
+extern "C" {
+#endif
+
 int           *_tk_errno();
+
+#if defined(__cplusplus) && (TK_CPLUSPLUS==0)
+}
+#endif
+
+#if apa
+#error Hehe
+#endif
+
 
 /*! 
 @brief Access thread-internal errno variable
@@ -1077,7 +1091,10 @@ TBD
  * @defgroup CVSLOG_errno_h errno_h
  * @ingroup CVSLOG
  *  $Log: errno.h,v $
- *  Revision 1.14  2006-12-11 14:41:51  ambrmi09
+ *  Revision 1.15  2006-12-12 10:57:04  ambrmi09
+ *  This adresses the second part of #1609064
+ *
+ *  Revision 1.14  2006/12/11 14:41:51  ambrmi09
  *  Solves #1609064 (part1)
  *
  *  Revision 1.13  2006/11/27 22:29:22  ambrmi09

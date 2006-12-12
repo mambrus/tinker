@@ -49,9 +49,15 @@ pointers will most likelly break in RUN-TIME*/
 #define STDLIB_H_TK
 
 #include <stddef.h>  //Needed for size_t
-#if (!defined(TK_USE_BUILTIN_SORT) || (TK_USE_BUILTIN_SORT==yes))
+#if (!defined(TK_USE_BUILTIN_SORT) || (TK_USE_BUILTIN_SORT==1))
 	#define TINKER_SEARCH_SORT //!< Opional define, use to debug qsort & bsearch. Undefine to use tool-chains own versions
 #endif
+
+#include <tinker/config.h>
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+extern "C" {
+#endif
+
 
 /*!
 A comparison funtion definition type that ANSI search & sort funtions use.
@@ -121,12 +127,20 @@ void _tk_quicksort ( void *, int, int, int, comparison_fn_t );
 int  _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );
 //@}
 
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+}
+#endif
+
+
 #endif //STDLIB_H_TK
 /*!
  * @defgroup CVSLOG_stdlib_h stdlib_h
  * @ingroup CVSLOG
  *  $Log: stdlib.h,v $
- *  Revision 1.5  2006-11-30 10:58:16  ambrmi09
+ *  Revision 1.6  2006-12-12 10:57:05  ambrmi09
+ *  This adresses the second part of #1609064
+ *
+ *  Revision 1.5  2006/11/30 10:58:16  ambrmi09
  *  bug #1605910 (solved)
  *
  *  Revision 1.4  2006/11/27 22:29:22  ambrmi09

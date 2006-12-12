@@ -44,10 +44,13 @@ POSIX_RT
 #endif
 
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif                          
+#include <tinker/config.h>
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+extern "C" {
+#endif
+
+
+
 
 typedef unsigned long sem_t;
 
@@ -68,17 +71,20 @@ int sem_wait (sem_t * sem
 int sem_post (sem_t * sem
 	      );
 
-#ifdef __cplusplus
-}                               
-#endif                          
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+}
+#endif
 
-#endif                          
+#endif
 
 /*!
  * @defgroup CVSLOG_semaphore_h semaphore_h
  * @ingroup CVSLOG
  *  $Log: semaphore.h,v $
- *  Revision 1.7  2006-11-05 19:06:03  ambrmi09
+ *  Revision 1.8  2006-12-12 10:57:05  ambrmi09
+ *  This adresses the second part of #1609064
+ *
+ *  Revision 1.7  2006/11/05 19:06:03  ambrmi09
  *  Buildsystem adjusted to permit configuration of components.
  *  Now when component is enabled it will also be included in the build
  *  (instead of just sanity-tested in the source files).

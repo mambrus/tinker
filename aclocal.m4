@@ -51,14 +51,15 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
 [
 	AC_ARG_ENABLE(depmake,
 		AS_HELP_STRING([--enable-depmake],[Build - Enable/disable makefile targets to depend on Makefile and Makefile-gnu. Optionally you can assign a value naming which specific files to depend on]),
-		DEPMAKE=$enableval,
+		DEPMAKE=__tk_$enableval,
 		DEPMAKE="Makefile-gnu Makefile"
 	)
 	AC_ARG_ENABLE(cplusplus,
 		AS_HELP_STRING([--enable-cplusplus],[Build - Enable/disable using C++ for compilation and linking]),
-		USECPLUSPLUS=$enableval,
-		USECPLUSPLUS="no"
+		USECPLUSPLUS=__tk_$enableval,
+		USECPLUSPLUS=__tk_no
 	)
+	dnl Note that the omission of '__tk_' below is intentional
 	AC_ARG_ENABLE(makeopts,
 		AS_HELP_STRING([--enable-makeopts],[Build - Pass specified make options to recursive makes (=arg). Options worth considering are -S, -w]),
 		MAKEOPTS=$enableval,
@@ -70,7 +71,7 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
 ])
 
 
-dnl Mega everything. This function reaally needs to be broken up in bits...
+dnl Mega everything. This function really needs to be broken up in bits...
 AC_DEFUN([TINKER_CONFIGURE],
 [
 
@@ -97,13 +98,13 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl Note: it's easy to mix up the two macros G++ and C++ because they look very similar
 	dnl.They indicate the same logic, but their contents are very different.
 	AC_PROG_CC	
-	if test $USECPLUSPLUS != no; then		
+	if test $USECPLUSPLUS != __tk_no; then		
 		dnl Tries to use g++ as instructed. Should fall back on gcc if c++ is not available
 		AC_PROG_CXX
 		AC_PROG_CC(g++)		
 		AC_LANG_CPLUSPLUS
 		dnl The TK_CPLUSPLUS macro in config.h will be set accordingly to the result
-		AC_DEFINE_UNQUOTED([TK_CPLUSPLUS],$GXX)
+		AC_DEFINE_UNQUOTED([TK_CPLUSPLUS],__tk_$GXX)
 		if test $GXX == yes; then
 			CC=$CXX
 			#AC_SUBST(CC)
@@ -197,7 +198,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_SUBST(CANONICAL_HOST)
 	AC_DEFINE_UNQUOTED([TK_CANONICAL_HOST],$CANONICAL_HOST)
 
-	if test $USECPLUSPLUS == no; then
+	if test $USECPLUSPLUS == __tk_no; then
 		TOOLDIR=$(echo $GCC_PATH | sed -e "s/\/bin\/\+$CC//")
 	else
 		AC_PATH_TOOL([GXX_PATH], [g++],     [:])
@@ -255,8 +256,9 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_DEFINE_UNQUOTED([TK_DCPU],$MCPU)
 
 
-	dnl these shell values are used in our scripts. Set them to defaut values that correspond the the
-	dnl values in each values AC_ARG_ENABLE section
+	dnl these shell values are used in our scripts. Set them to defaut values that 
+	dnl correspond the values in each values AC_ARG_ENABLE section.
+	dnl Note: the prefix (i.e. '__tk_') is not used.
 	enable_itc=yes
 	enable_ptimer=no
 	enable_kmem=no
@@ -270,28 +272,28 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl ----------------------------------------------------------------------------
 	AC_ARG_ENABLE(itc,
 		AS_HELP_STRING([--enable-itc],[ITC - Enable/disable Inter thread communication component (native API)]),
-		AC_DEFINE_UNQUOTED([TK_COMP_ITC],$enableval),
-		AC_DEFINE_UNQUOTED([TK_COMP_ITC],yes)
+		AC_DEFINE_UNQUOTED([TK_COMP_ITC],__tk_$enableval),
+		AC_DEFINE_UNQUOTED([TK_COMP_ITC],__tk_yes)
 	)
 	AC_ARG_ENABLE(ptimer,
 		AS_HELP_STRING([--enable-ptimer],[PTIMER - Enable/disable Preemptive timer component]),
-		AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],$enableval),
-		AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],no)
+		AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],__tk_$enableval),
+		AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],__tk_no)
 	)
 	AC_ARG_ENABLE(kmem,
 		AS_HELP_STRING([--enable-kmem],[KMEM - Enable/disable Kernel memory manager component]),
-		AC_DEFINE_UNQUOTED([TK_COMP_KMEM],$enableval),
-		AC_DEFINE_UNQUOTED([TK_COMP_KMEM],no)
+		AC_DEFINE_UNQUOTED([TK_COMP_KMEM],__tk_$enableval),
+		AC_DEFINE_UNQUOTED([TK_COMP_KMEM],__tk_no)
 	)
 	AC_ARG_ENABLE(pthread,
 		AS_HELP_STRING([--enable-pthread],[PTHRED - Enable/disable POSIX 1003.1c threads component]),
-		AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],$enableval),
-		AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],yes)
+		AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],__tk_$enableval),
+		AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],__tk_yes)
 	)
 	AC_ARG_ENABLE(posix_rt,
 		AS_HELP_STRING([--enable-posix_rt],[POSIX_RT - Enable/disable POSIX 1003.1b queues, semaphores component enabled]),
-		AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],$enableval),
-		AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],yes)
+		AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],__tk_$enableval),
+		AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],__tk_yes)
 	)
 
 	dnl Package config part. (usage, tuning and misc) Use enable-feature/disable-feature (arguments optional)
@@ -299,8 +301,8 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl ----------------------------------------------------------------------------
 	AC_ARG_ENABLE(builtin_sorting,
 		AS_HELP_STRING([--enable-builtin_sorting],[PACKAGE - Use builtin search/sort functions (overrides default for target)]),
-		AC_DEFINE_UNQUOTED([TK_USE_BUILTIN_SORT],$enableval),
-		AC_DEFINE_UNQUOTED([TK_USE_BUILTIN_SORT],yes)
+		AC_DEFINE_UNQUOTED([TK_USE_BUILTIN_SORT],__tk_$enableval),
+		AC_DEFINE_UNQUOTED([TK_USE_BUILTIN_SORT],__tk_yes)
 	)
 
 	dnl Configurable entities (TinKer tuning defines)
@@ -309,34 +311,34 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl ---------------------------------------------
 	AC_ARG_ENABLE(min_stack,
 		AS_HELP_STRING([--enable-min_stack=<val>],[Maximum size of a stack for a thread ]),
-		AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],$enableval))
+		AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],__tk_$enableval))
 	AC_ARG_ENABLE(norm_stack,
 		AS_HELP_STRING([--enable-norm_stack=<val>],[Stacksize used when stack-size is omitted ]),
-		AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],$enableval))
+		AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],__tk_$enableval))
 	AC_ARG_ENABLE(max_threads,
 		AS_HELP_STRING([--enable-max_threads=<val>],[Maximum number of threds your system could have ]),
-		AC_DEFINE_UNQUOTED([TK_MAX_THREADS],$enableval))
+		AC_DEFINE_UNQUOTED([TK_MAX_THREADS],__tk_$enableval))
 	AC_ARG_ENABLE(max_prio,
 		AS_HELP_STRING([--enable-max_prio=<val>],[Numer of priorities for you system  (recomended value: 3 or 16)]),
-		AC_DEFINE_UNQUOTED([TK_MAX_PRIO_LEVELS],$enableval))
+		AC_DEFINE_UNQUOTED([TK_MAX_PRIO_LEVELS],__tk_$enableval))
 	AC_ARG_ENABLE(that_prio,
 		AS_HELP_STRING([--enable-that_prio=<val>],[Number of threads that can be sceduled at each priority ]),
-		AC_DEFINE_UNQUOTED([TK_MAX_THREADS_AT_PRIO],$enableval))
+		AC_DEFINE_UNQUOTED([TK_MAX_THREADS_AT_PRIO],__tk_$enableval))
 	AC_ARG_ENABLE(thename_len,
 		AS_HELP_STRING([--enable-thename_len=<val>],[Lengts of the string in TCB that holds the name of the thread ]),
-		AC_DEFINE_UNQUOTED([TK_THREAD_NAME_LEN],$enableval))
+		AC_DEFINE_UNQUOTED([TK_THREAD_NAME_LEN],__tk_$enableval))
 	AC_ARG_ENABLE(blocked_q,
 		AS_HELP_STRING([--enable-blocked_q=<val>],[Maximum nuber of threads blocked on any ITC primitive, i.e. not only Q ]),
-		AC_DEFINE_UNQUOTED([TK_MAX_BLOCKED_ON_Q],$enableval))
+		AC_DEFINE_UNQUOTED([TK_MAX_BLOCKED_ON_Q],__tk_$enableval))
 	AC_ARG_ENABLE(max_q,
 		AS_HELP_STRING([--enable-max_q=<val>],[Maximum number of any ITC primitive, i.e not only Q ]),
-		AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],$enableval))
+		AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],__tk_$enableval))
 
 	dnl Other configurable features
 	dnl ---------------------------------------------
 	AC_ARG_ENABLE(dispatch,
 		AS_HELP_STRING([--enable-dispatch=<val>],[Main type of dispatching. MIXED or EXCLUSIVE (default is MIXED]),
-		AC_DEFINE_UNQUOTED([TK_DISPATCH],$enableval),
+		AC_DEFINE_UNQUOTED([TK_DISPATCH],__tk_$enableval),
 		AC_DEFINE_UNQUOTED([TK_DISPATCH],MIXED)
 	)
 

@@ -67,6 +67,13 @@ The Following will get the tool-chains version of time.h
 //#include <limits.h> //<! Information about integers max and min values
 //#include <stdint.h> //<! Fixed bitsize type definitions
 
+
+#include <tinker/config.h>
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+extern "C" {
+#endif
+
+
 /*!
 @brief Struct holds time in formatted form for easier readability.
 
@@ -342,6 +349,13 @@ Wrapper macro until \ref PTIMER is ready
 #undef time
 #endif
 
+
+
+
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+}
+#endif
+
 #endif /*time_h_tk*/
 
   
@@ -349,7 +363,10 @@ Wrapper macro until \ref PTIMER is ready
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.28  2006-12-11 14:41:52  ambrmi09
+ *  Revision 1.29  2006-12-12 10:57:05  ambrmi09
+ *  This adresses the second part of #1609064
+ *
+ *  Revision 1.28  2006/12/11 14:41:52  ambrmi09
  *  Solves #1609064 (part1)
  *
  *  Revision 1.27  2006/11/27 22:29:22  ambrmi09

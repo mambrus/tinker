@@ -257,6 +257,10 @@ unsigned long  tk_itc_destruct( void );
 #endif
 */
 
+#include <tinker/config.h>
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+extern "C" {
+#endif
 
 
 /*!
@@ -422,6 +426,11 @@ unsigned long sm_v_ny(
 );
 //@}
 
+
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+}
+#endif
+
 #endif
 
   
@@ -430,7 +439,10 @@ unsigned long sm_v_ny(
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.h,v $
- *  Revision 1.25  2006-11-27 22:29:23  ambrmi09
+ *  Revision 1.26  2006-12-12 10:57:05  ambrmi09
+ *  This adresses the second part of #1609064
+ *
+ *  Revision 1.25  2006/11/27 22:29:23  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.
  *

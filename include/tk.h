@@ -195,6 +195,13 @@ typedef tin_t titi_t;   //!< A tinker pTimer ID
 
 //*- public functions **/
 //------1---------2---------3---------4---------5---------6---------7---------8
+
+#include <tinker/config.h>
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+extern "C" {
+#endif
+
+
 int            tk_delete_thread(thid_t PID);
 thid_t         tk_create_thread(
                   char          *name,
@@ -214,6 +221,15 @@ void           tk_msleep( unsigned int time_ms );
 thid_t         tk_thread_id( void );
 int            tk_change_prio(thid_t tid, int newPrio);
 
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+}
+#endif
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*! Function supplied by \b YOU - constitutes the root thread function. 
 Aims "upwards" in the chain
 
@@ -222,18 +238,26 @@ the application. Therefor we must enforce the mangling of this function name
 to follow C regardless of which compiler type is used to build TinKer itself.
 */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 extern int     tk_root( void ); 
+
 #ifdef __cplusplus
 }
+#endif
+
+
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+extern "C" {
 #endif
 
 /*! Function supplied by \b YOU - initialize the BSP used by your sys-calls
 Aims "downwards" in the chain
 */
 extern int     tk_bsp_sysinit(void);
+
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+}
+#endif
+
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 // The following are rerouted by bacros, so they need to be public. Don't use 
@@ -253,7 +277,10 @@ extern int     tk_bsp_sysinit(void);
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.43  2006-12-11 14:41:52  ambrmi09
+ *  Revision 1.44  2006-12-12 10:57:05  ambrmi09
+ *  This adresses the second part of #1609064
+ *
+ *  Revision 1.43  2006/12/11 14:41:52  ambrmi09
  *  Solves #1609064 (part1)
  *
  *  Revision 1.42  2006/11/27 22:29:23  ambrmi09

@@ -66,8 +66,17 @@ typedef enum {
 extern unsigned long tk_sys_queues[TK_NUMBER_OF_SYSQ];
 
 /*- private functions **/
+#include <tinker/config.h>
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+extern "C" {
+#endif
+
 unsigned long _tk_create_system_queues();
 
+
+#if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
+}
+#endif
 
 #endif
 
@@ -80,7 +89,10 @@ unsigned long _tk_create_system_queues();
  * @ingroup CVSLOG
  *
  *  $Log: tk_sysqueues.h,v $
- *  Revision 1.8  2006-11-05 19:06:03  ambrmi09
+ *  Revision 1.9  2006-12-12 10:57:06  ambrmi09
+ *  This adresses the second part of #1609064
+ *
+ *  Revision 1.8  2006/11/05 19:06:03  ambrmi09
  *  Buildsystem adjusted to permit configuration of components.
  *  Now when component is enabled it will also be included in the build
  *  (instead of just sanity-tested in the source files).
