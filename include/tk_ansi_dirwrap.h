@@ -45,6 +45,20 @@ kernel_reimpl_ansi
 #define NO 0
 #endif
 
+/*Make sure pthread stypes, time-constants and other stuff from other from any 
+of these OS'es that we don't care about*/
+#if defined(__rtems__)
+#undef __rtems__
+#endif
+
+#if defined(__svr4__)
+#undef __svr4__
+#endif
+
+#if defined(__CYGWIN__)
+#undef __CYGWIN__
+#endif
+/*OS*/
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 #if defined(_WIN32) &&  defined(_MSC_VER)
@@ -93,7 +107,10 @@ kernel_reimpl_ansi
  * @ingroup CVSLOG
  *
  *  $Log: tk_ansi_dirwrap.h,v $
- *  Revision 1.1  2006-11-21 17:19:39  ambrmi09
+ *  Revision 1.2  2007-02-19 17:34:37  ambrmi09
+ *  Tinker will now compile for target powerpc-hixs-rtems
+ *
+ *  Revision 1.1  2006/11/21 17:19:39  ambrmi09
  *  Moved tk_ansi_dirwrap to public directory (applications without TinKer sources needs also wrapping)
  *
  *  Revision 1.8  2006/10/09 17:08:06  ambrmi09

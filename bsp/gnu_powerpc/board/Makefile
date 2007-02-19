@@ -1,4 +1,4 @@
-SUB_MODS:=
+SUB_MODS:=ESC
 SUB_MODS_CONFIGURE := $(patsubst %, make configure -C %;, $(SUB_MODS))
 .PHONY: all configure
 
@@ -10,8 +10,8 @@ configure:
 	rm -f install-sh
 	rm -rf autom4te.cache
 	rm -f Makefile-gnu.in
-	cp ../../Makefile-gnu.in .	
+	cp ../../../Makefile-gnu.in .	
 	#rm -f aclocal.m4 
-	autoconf -I ../../
+	autoconf -I ../../../
 	#aclocal
 	$(SUB_MODS_CONFIGURE)

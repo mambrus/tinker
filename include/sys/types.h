@@ -41,6 +41,7 @@ kernel_reimpl_ansi.
 #if defined (__GNUC__)
    #include <tk_ansi.h>
    #include <tk_ansi_dirwrap.h>
+
    #include BUILDCHAIN(sys/types.h)
 #endif
 
@@ -116,7 +117,10 @@ normal pthread names (very nifty!).
  * @defgroup CVSLOG_types_h types_h
  * @ingroup CVSLOG
  *  $Log: types.h,v $
- *  Revision 1.11  2006-11-27 22:29:23  ambrmi09
+ *  Revision 1.12  2007-02-19 17:34:37  ambrmi09
+ *  Tinker will now compile for target powerpc-hixs-rtems
+ *
+ *  Revision 1.11  2006/11/27 22:29:23  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.
  *

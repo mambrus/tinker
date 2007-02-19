@@ -70,31 +70,6 @@ caddr_t ppc_sbrk(int incr) {
 }
 
 
-/*According to POSIX, CLOCKS_PER_SEC is a fixed value */
-#ifdef CLOCKS_PER_SEC
-#undef CLOCKS_PER_SEC
-#define CLOCKS_PER_SEC 1000000 
-#endif
-
-#if MICKEYS_PER_SEC > CLOCKS_PER_SEC
-#define CRATIO  (MICKEYS_PER_SEC/CLOCKS_PER_SEC)
-#else
-#define MRATIO  (CLOCKS_PER_SEC/MICKEYS_PER_SEC)
-#endif
-
-clock_t ppc_clock           (){
-	unsigned int TmickS_low  = __sys_mickey;           //Low  32 bit worth value (in board time-base)
-	long long    TmickS_high = __sys_mackey;           //High ditto
-
-	#ifdef CRATIO	
-	long long Tcl = ((TmickS_high << 32) + TmickS_low ) / CRATIO;
-	#else
-	long long Tcl = ((TmickS_high << 32) + TmickS_low ) * MRATIO;
-	#endif
-	
-	return (clock_t)Tcl; //Possibly trunc it... (best we can do anyway)	
-}
-
 clock_t ppc_times(struct tms *buf){
 	clock_t upTime = ppc_clock();
 	if (buf!=NULL){

@@ -68,7 +68,7 @@
 //#define TK_HOWTO_CLOCK  		TK_FNK_STUBBED
 #define TK_HOWTO_CLOCK  		TK_FNK_ORIGINAL
 #define TK_HOWTO_PRINTK 		TK_FNK_RENAMED
-#define TK_HOWTO_ASSERT 		TK_FNK_RENAMED      
+#define TK_HOWTO_ASSERT 		TK_FNK_RENAMED
 
 
 #endif  //TK_TUNING_H
@@ -78,7 +78,10 @@
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $
- *  Revision 1.4  2006-11-30 10:58:16  ambrmi09
+ *  Revision 1.5  2007-02-19 17:34:37  ambrmi09
+ *  Tinker will now compile for target powerpc-hixs-rtems
+ *
+ *  Revision 1.4  2006/11/30 10:58:16  ambrmi09
  *  bug #1605910 (solved)
  *
  *  Revision 1.3  2006/11/05 14:18:58  ambrmi09
