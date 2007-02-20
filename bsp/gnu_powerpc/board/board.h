@@ -18,10 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <tinker/config.h>
 
 #if defined(TK_DCPU)
-#include <mmap_regs.h>
-#include <asm/bits.h>
+	#if TK_DCPU==860
+		#include <CPU/860/mmap_regs.h>
+		#include <CPU/860/asm/bits.h>
+	#else
+		#Sorry, TinKer doesn't know how to use your CPU
+	#endif
 #else
-#error Must have CPU for board to work
+	#error Must have CPU for board to work
 #endif
