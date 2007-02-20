@@ -3,16 +3,15 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
 
-AC_INIT(gnu_powerpc_board_ESC, [0.1.0])
+AC_INIT(ESC, [0.1.0])
 AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
 
 AC_CONFIG_AUX_DIR(../../../..)
 
 sources_c="can.c"
-#sources_asm="startup_gnu.s"
 sources_asm=""
-#extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
-extras=""
+
+extras="../../../../lib/ram_gnu.ld"
 
 TINKER_CONFIGURE(../../../..)
 subdirs=
@@ -22,6 +21,14 @@ dnl Tunings. Main reason they are here is to set defaults specific to this targe
 dnl This part will is an itermediate solution and takes over the rols of >>tk_tuning.h<<
 dnl Future solutions might me an ordinary text file that both GNU and non GNU build 
 dnl   sytems can make use of
+
+if test $SYSTEM == 'hixs'; then
+   AC_DEFINE([TK_SYSTEM],__SYS_HIXS__)
+else
+   AC_DEFINE([TK_SYSTEM],__SYS_UNKNOWN__)
+   AC_MSG_ERROR([<<< Sorry, TinKer for PowerPC does not support the system you'we chosen])
+fi
+
 AC_ARG_ENABLE(min_stack,
 	AS_HELP_STRING([--enable-min_stack=<val>],[Maximum size of a stack for a thread ]),
 	AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],$enableval),

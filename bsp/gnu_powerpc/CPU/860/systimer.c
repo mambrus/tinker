@@ -28,7 +28,7 @@ Notes: See chapter 10.11 for details
 #include <mmap_regs.h>
 #include <sys/types.h>
 #include <isr.h>
-
+#include <time.h>
 
 /* Trimming constant - Adjust for 1mS __sys_mickey resolution*/
 
@@ -129,13 +129,7 @@ void systimer_init(){
 
 }
 
-/*System interface function*/
-
-/*According to POSIX, CLOCKS_PER_SEC is a fixed value */
-#ifdef CLOCKS_PER_SEC
-#undef CLOCKS_PER_SEC
-#define CLOCKS_PER_SEC 1000000 
-#endif
+/*System integration interface follows*/
 
 #if MICKEYS_PER_SEC > CLOCKS_PER_SEC
 #define CRATIO  (MICKEYS_PER_SEC/CLOCKS_PER_SEC)

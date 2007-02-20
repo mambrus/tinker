@@ -3,20 +3,16 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
 #AC_INIT(startup_gnu.s)
-AC_INIT(gnu_powerpc_CPU_860, [0.1.0])
+AC_INIT(860, [0.1.0])
 AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
 
 AC_CONFIG_AUX_DIR(../../../..)
 
-dnl The following is sadly not working properly. Use autoconf -I <dir> instead to get the aclocal.m4
-#AC_CONFIG_MACRO_DIR(../../../..)
-
-#AC_CONFIG_SUBDIRS([lpc21xx])
-
 sources_c="systimer.c isr.c"
 sources_asm=""
-extras=""
 
+extras="../../../../lib/crt0.o"
+CRT0_OBJECT=exceptions.AO
 TINKER_CONFIGURE(../../../..)
 subdirs=
 AC_SUBST(subdirs)

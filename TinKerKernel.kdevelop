@@ -34,7 +34,7 @@
         <cflags>-O2 -g0</cflags>
       </optimized>
       <debug>
-        <configargs>--enable-debug=full --host=powerpc-hixs-elf MCPU=860 BOARD=ESC --enable-makeopts=-&quot;S -w&quot; --disable-cplusplus</configargs>
+        <configargs>--enable-debug=full --host=powerpc-hixs-elf MCPU=860 BOARD=ESC --enable-makeopts=-&quot;S -w&quot; --disable-cplusplus --enable-verbose-config</configargs>
         <builddir></builddir>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>

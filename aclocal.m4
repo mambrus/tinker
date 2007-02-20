@@ -49,6 +49,11 @@ dnl Note: Default values are set here.
 dnl ----------------------------------------------------------------------------
 AC_DEFUN([TINKER_OPTIONS_BUILD],
 [
+	AC_ARG_ENABLE(verbose-config,
+		AS_HELP_STRING([--verbose-config],[Configure - Shows exrea information while running configure script]),
+		CONF_VERBOSE=$enableval,
+		CONF_VERBOSE="no"
+	)
 	AC_ARG_ENABLE(depmake,
 		AS_HELP_STRING([--enable-depmake],[Build - Enable/disable makefile targets to depend on Makefile and Makefile-gnu. Optionally you can assign a value naming which specific files to depend on]),
 		DEPMAKE=__tk_$enableval,
@@ -68,12 +73,41 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
 
 	AC_SUBST(DEPMAKE)
 	AC_SUBST(MAKEOPTS)
+
+	if test -z $CRT0_OBJECT; then
+                AC_MSG_NOTICE([<<< ctr0.o is based on startup_gnu.ao (default)])
+                CRT0_OBJECT=startup_gnu.ao
+        else
+                AC_MSG_NOTICE([<<< ctr0.o is based on $CRT0_OBJECT])
+        fi
+	AC_SUBST(CRT0_OBJECT)
+])
+
+dnl Options affecting the configuration
+dnl Note: Default values are set here.
+dnl ----------------------------------------------------------------------------
+AC_DEFUN([TINKER_OPTIONS_CONFIG],
+[
+	AC_ARG_ENABLE(verbose-config,
+		AS_HELP_STRING([--verbose-config],[Configure - Shows exrea information while running configure script]),
+		CONF_VERBOSE=$enableval,
+		CONF_VERBOSE="no"
+	)
+
 ])
 
 
 dnl Mega everything. This function really needs to be broken up in bits...
 AC_DEFUN([TINKER_CONFIGURE],
 [
+	TINKER_OPTIONS_CONFIG
+
+	if test $CONF_VERBOSE == "yes"; then
+		echo
+		echo "================================================================================"
+		echo "Configuring $PWD"
+		echo "================================================================================"
+	fi
 
 	TINKER_PATH=$1
 	AC_SUBST(TINKER_PATH)
@@ -254,6 +288,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	fi
 	AC_SUBST(CPU_OPT)
 	AC_SUBST(DCPU)
+	AC_SUBST(MCPU)
 	AC_DEFINE_UNQUOTED([TK_DCPU],$MCPU)
 
 

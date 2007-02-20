@@ -27,6 +27,7 @@ TINKER_PATH    = @TINKER_PATH@
 THIS_DIR       = @THIS_DIR@
 CPU_OPT        = @CPU_OPT@
 DCPU           = @DCPU@
+MCPU           = @MCPU@
 
 .PHONY: all subdirs info depend link clean cleanall install rebuild flashit console
 
@@ -143,9 +144,9 @@ install: all
 	@echo =LD========================================================
 	cp ${@F} $@
 
-%crt0.o: ${THIS_DIR}/startup_gnu.ao
+%crt0.o: ${THIS_DIR}/@CRT0_OBJECT@
 	@echo =CRT0========================================================
-	cp startup_gnu.ao $@
+	cp @CRT0_OBJECT@ $@
 
 %.d: %.c @DEPMAKE@
 	@echo =d2========================================================
@@ -163,8 +164,14 @@ install: all
 
 %.ao: %.s @DEPMAKE@
 	@echo =a2========================================================
-	$(CC) -c $(CFLAGS) ${@:ao=S} -o $@
+	$(CC) -c $(CFLAGS) ${@:ao=s} -o $@
 	@echo
+
+%.AO: %.S @DEPMAKE@
+	@echo =A2========================================================
+	$(CC) -c $(CFLAGS) ${@:AO=S} -o $@
+	@echo
+
 
 $(OUTFILENAME): $(ALL_COBJS) $(ALL_AOBJS) $(SUBLIBOUT)
 	@echo =LINK [@PACKAGE_NAME@]====================================
