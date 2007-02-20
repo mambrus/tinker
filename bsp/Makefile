@@ -25,10 +25,8 @@ configure_this:
 	rm -rf autom4te.cache
 	rm -f Makefile-gnu.in
 	cp $(TINKER_SRC_DIR)/Makefile-gnu.in .
-	#rm -f aclocal.m4 
 	autoconf -I $(TINKER_SRC_DIR)
-	#aclocal
-	if test -n $(SUB_MODS); then for SUBDIR in $(SUB_MODS); do cp $(TINKER_BSP_DIR)/Makefile $$SUBDIR/; done; fi
+	if test -n "$(SUB_MODS)"; then for SUBDIR in $(SUB_MODS); do cp $(TINKER_BSP_DIR)/Makefile $$SUBDIR/; done; fi
 	
 
 configure_subs:
