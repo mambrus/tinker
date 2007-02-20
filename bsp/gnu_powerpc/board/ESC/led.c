@@ -17,8 +17,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "can.h"
 
-int can_init(){
-	return 0;
-};
+#include "led.h"
+#include <board/board.h>
+
+void led_on(led_id id, led_color color){
+	if (id==LED_2)
+		if (color==LED_RED)
+			bitclear_16(PADAT,8);	
+		else
+			bitclear_16(PADAT,9);	
+	else
+		if (color==LED_RED)
+			bitclear_16(PADAT,10);	
+		else
+			bitclear_16(PADAT,11);	
+}
+
+void led_off(led_id id, led_color color){
+	if (id==LED_2)
+		if (color==LED_RED)
+			bitset_16(PADAT,8);	
+		else
+			bitset_16(PADAT,9);	
+	else
+		if (color==LED_RED)
+			bitset_16(PADAT,10);	
+		else
+			bitset_16(PADAT,11);	
+}
+

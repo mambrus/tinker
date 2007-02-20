@@ -8,14 +8,17 @@ AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION 
 
 AC_CONFIG_AUX_DIR(../../../..)
 
-sources_c="can.c"
+sources_c="can.c led.c"
 sources_asm=""
 
 extras="../../../../lib/ram_gnu.ld"
+extern_includes="../.."
 
 TINKER_CONFIGURE(../../../..)
 subdirs=
 AC_SUBST(subdirs)
+
+
 
 dnl Tunings. Main reason they are here is to set defaults specific to this target.
 dnl This part will is an itermediate solution and takes over the rols of >>tk_tuning.h<<

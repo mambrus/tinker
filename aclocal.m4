@@ -81,6 +81,10 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
                 AC_MSG_NOTICE([<<< ctr0.o is based on $CRT0_OBJECT])
         fi
 	AC_SUBST(CRT0_OBJECT)
+	echo "------------------------------------------------------> $extern_includes"
+	ext_incl=$(echo $extern_includes  | sed -e 's/[^ ]\+/-I &/g')
+	echo "------------------------------------------------------> $ext_incl"
+	AC_SUBST(ext_incl)
 ])
 
 dnl Options affecting the configuration

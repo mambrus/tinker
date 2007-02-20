@@ -17,8 +17,14 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "can.h"
+#ifndef LED_H
+#define LED_H
 
-int can_init(){
-	return 0;
-};
+typedef enum {LED_GREEN, LED_RED} led_color;
+typedef enum {LED_1=0, LED_2=1} led_id;
+
+void led_on(led_id id, led_color color);
+void led_off(led_id id, led_color color);
+
+#endif //LED_H
+

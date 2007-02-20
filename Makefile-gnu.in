@@ -22,12 +22,14 @@ ABI            = @ABI@
 TOOLDIR        = @TOOLDIR@
 GCC_VERSION    = @GCC_VERSION@
 BOARD          = @BOARD@
+MCPU           = @MCPU@
 MAKE_SUBDIRS   = @subdirs@
+EXTERN_INCL    = @ext_incl@
 TINKER_PATH    = @TINKER_PATH@
 THIS_DIR       = @THIS_DIR@
 CPU_OPT        = @CPU_OPT@
 DCPU           = @DCPU@
-MCPU           = @MCPU@
+
 
 .PHONY: all subdirs info depend link clean cleanall install rebuild flashit console
 
@@ -45,7 +47,7 @@ ifeq ($(XCOMPILE),1)
    CFLAGS := $(CFLAGS)  -DDEBUG -DBOARD=$(BOARD) -DABI=$(ABI) -DARCH=$(ARCH)
    CFLAGS := $(CFLAGS) $(CPU_OPT) $(DCPU) -g -gstabs -D RUN_FROM_ROM
    CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(ALIAS_HOST)/include 
-   CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include 
+   CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include $(EXTERN_INCL)
    
    LDFLAGS   := $(LDFLAGS) -Xlinker --relocatable
    

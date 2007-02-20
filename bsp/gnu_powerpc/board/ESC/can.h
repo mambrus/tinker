@@ -17,8 +17,5 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "can.h"
 
-int can_init(){
-	return 0;
-};
+int can_init();
