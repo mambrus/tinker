@@ -26,6 +26,8 @@ CONFMODULES:=  bsp
 THIS_MODULE=DUMMY_MODULE
 CPU_T=DUMMY_CPU_TYPE
 USR_DEFINES:=DUMMY_DEF
+export TINKER_SRC_DIR = $(shell pwd)
+export TINKER_BSP_DIR = $(TINKER_SRC_DIR)/bsp
 
 # TOOLS could be either 'gnu' or any othe supported tool-chain.
 # If TOOLS is not set, the build system assumes each sub-module 

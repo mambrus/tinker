@@ -1,18 +1,39 @@
-#SUB_MODS:=gnu_arm gnu_i386 gnu_bfin gnu_powerpc
-SUB_MODS:=$(shell cat make.subdirs)
+
+HAS_SUBDIRS_FILE:=$(shell if test -f make.subdirs; then echo yes; else echo no; fi)
+
+ifeq ($(HAS_SUBDIRS_FILE),yes)
+	SUB_MODS:=$(shell cat make.subdirs)
+else
+	SUB_MODS:=
+endif
+
 SUB_MODS_CONFIGURE := $(patsubst %, make configure -C %;, $(SUB_MODS))
-.PHONY: all configure
+.PHONY: all info configure configure_this configure_subs
 
 all: 
 	make -f Makefile-gnu all
 
-configure:
+info:
+	@echo
+	@echo "================================================================================"
+	@echo "---- $$PWD ----"
+	@echo "================================================================================"
+
+configure_this:
 	rm -f config.*
 	rm -f install-sh
 	rm -rf autom4te.cache
 	rm -f Makefile-gnu.in
-	cp ../Makefile-gnu.in .
+	cp $(TINKER_SRC_DIR)/Makefile-gnu.in .
 	#rm -f aclocal.m4 
-	autoconf -I ../
+	autoconf -I $(TINKER_SRC_DIR)
 	#aclocal
+	if test -n $(SUB_MODS); then for SUBDIR in $(SUB_MODS); do cp $(TINKER_BSP_DIR)/Makefile $$SUBDIR/; done; fi
+	
+
+configure_subs:
 	$(SUB_MODS_CONFIGURE)
+
+#for SUBDIR in $(SUB_MODS); do cp $(TINKER_BSP_DIR)/Makefile $$SUBDIR/; done
+
+configure: info configure_this configure_subs
