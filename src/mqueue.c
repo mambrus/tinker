@@ -38,6 +38,10 @@ POSIX_RT
 @see PTHREAD
 
 @todo Consider replacing qsort with insert sort (or at least a non-reqursive version)
+
+@todo FIXME Figure out a better way to handle the queues names lengts than PATH_MAX
+This is a reserved definition and we're re-asigning it. Better name it differently.
+Perhaps making this a configurable option also?
 */
 
 
@@ -571,6 +575,8 @@ static void initialize( void ) {
    assert(sem_wait(&poolAccessSem) == 0);
    for (i=0; i<NUMBER_OF_QUEUES; i++) {
 	   queuePool[i].taken = 0;
+           memset(queuePool[i].mq_name,'Q',PATH_MAX); //Makes a mark in memory. Easy to find the pool
+           queuePool[i].mq_name[0]=0; //Also invalidate it for any string comparisments just in case
    }
    for (i=0; i<NUMBER_OF_FILES; i++) {
 	   filePool[i].taken = 0;
@@ -716,7 +722,10 @@ Good references about the API:
  * @defgroup CVSLOG_mqueue_c mqueue_c
  * @ingroup CVSLOG
  *  $Log: mqueue.c,v $
- *  Revision 1.19  2006-12-01 10:58:51  ambrmi09
+ *  Revision 1.20  2007-02-21 21:05:03  ambrmi09
+ *  Old bug that has gone undetected for long fixed.
+ *
+ *  Revision 1.19  2006/12/01 10:58:51  ambrmi09
  *  Solves #1605911 #1605893
  *
  *  Revision 1.18  2006/11/27 22:29:23  ambrmi09
