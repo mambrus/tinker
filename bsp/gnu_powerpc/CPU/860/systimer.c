@@ -24,7 +24,7 @@ Notes: See chapter 10.11 for details
 
 
 #include "systimer.h"
-#include <asm/bits.h>
+#include <arch/powerpc/bits.h>
 #include <mmap_regs.h>
 #include <sys/types.h>
 #include <isr.h>

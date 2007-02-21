@@ -80,12 +80,8 @@ initial startup routines respectivly
 	#error "System either not supported or provided"
 #endif
 
-
-
 int ppc_write (int file, char *ptr, int len){
 	hixs_syscall_mon(ppc_write);
-	if ((__uint32_t)ptr > 0x103ff000 )
-		return 0;
 	console_write(ptr, len);	// Ignore the file ID - write all on console regardless
 	if (ptr[len-1]=='\n')
 		console_write("\r", 1);	// Add carrige return (hack, migh be avoided by tuning istty)

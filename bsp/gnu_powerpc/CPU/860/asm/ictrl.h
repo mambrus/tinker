@@ -29,7 +29,7 @@ conﬁgure instruction breakpoint operations.
 
 #include <sys/types.h>
 
-#ifdef NEVER
+/*
  0–2    CTA  Compare type of comparator A–D
              0xx Not active (reset value)
  3–5    CTB  100 Equal
@@ -86,7 +86,7 @@ conﬁgure instruction breakpoint operations.
                writing 10 or 11 to SIUMCR[DBGC]. The address on the external bus should be sampled only
                when STS is asserted.
 
-#endif
+*/
 
 typedef union{ 
 	__uint32_t raw; 

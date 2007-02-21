@@ -24,7 +24,7 @@ Notes: See chapter 10.11 for details
 
 
 #include "isr.h"
-#include <asm/bits.h>
+#include <arch/powerpc/bits.h>
 #include <asm/msr.h>
 #include <mmap_regs.h>
 #include <sys/types.h>

@@ -386,10 +386,43 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl Other configurable features
 	dnl ---------------------------------------------
 	AC_ARG_ENABLE(dispatch,
-		AS_HELP_STRING([--enable-dispatch=<val>],[Main type of dispatching. MIXED or EXCLUSIVE (default is MIXED]),
+		AS_HELP_STRING([--enable-dispatch=<val>],[Main type of dispatching. MIXED or EXCLUSIVE (default is MIXED)]),
 		AC_DEFINE_UNQUOTED([TK_DISPATCH],__tk_$enableval),
 		AC_DEFINE_UNQUOTED([TK_DISPATCH],MIXED)
 	)
+
+	dnl Advanced initial portining tuning.
+	dnl These options provice certain funtion/macro mappings. Not all values are valid for each setting
+	dnl possible values (NOTE: capital letters required!)
+	dnl ORIGINAL 	- Use & link against original name somewhere
+	dnl STUBBED 	- Use the stubbed version of the function
+	dnl RENAMED	- Use a renamed version
+	dnl VOIDED	- Void function call out
+	dnl NOTE: Default values *NOT* set here, These are supposed to be set in target specific sub-trees
+	dnl   which goes in each configure.in in such case.
+	dnl ---------------------------------------------
+	AC_ARG_ENABLE(how-to-malloc,
+		AS_HELP_STRING([--enable-how-to-mallow=<val>],[Advanced pimary porting - ORIGINAL/STUBBED/RENAMED/VOIDED]),
+		AC_DEFINE_UNQUOTED([TK_HOWTO_MALLOC],TK_FNK_$enableval)
+	)
+
+	AC_ARG_ENABLE(how-to-clock,
+		AS_HELP_STRING([--enable-how-to-clock=<val>],[Advanced pimary porting - ORIGINAL/STUBBED/RENAMED/VOIDED]),
+		AC_DEFINE_UNQUOTED([TK_HOWTO_CLOCK],TK_FNK_$enableval)
+	)
+
+	AC_ARG_ENABLE(how-to-printk,
+		AS_HELP_STRING([--enable-how-to-printk=<val>],[Advanced pimary porting - )]),
+		AC_DEFINE_UNQUOTED([TK_HOWTO_PRINTK],TK_FNK_$enableval)
+	)
+
+	AC_ARG_ENABLE(how-to-assert,
+		AS_HELP_STRING([--enable-how-to-assert=<val>],[Advanced pimary porting - ]),
+		AC_DEFINE_UNQUOTED([TK_HOWTO_ASSERT],TK_FNK_$enableval)
+	)
+
+	dnl Tuning section ended
+	dnl --------------------------------------------
 
 	if test $cross_compiling == yes; then
 		if test -z $BOARD; then

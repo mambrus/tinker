@@ -110,6 +110,16 @@ AH_TEMPLATE([TK_DISPATCH],
    [Main type of dispatching. MIXED or EXCLUSIVE])
 
 
+dnl Low level porting (advanced)
+AH_TEMPLATE([TK_HOWTO_MALLOC],
+   [Advanced pimary porting])
+AH_TEMPLATE([TK_HOWTO_CLOCK],
+   [Advanced pimary porting])
+AH_TEMPLATE([TK_HOWTO_PRINTK],
+   [Advanced pimary porting])
+AH_TEMPLATE([TK_HOWTO_ASSERT],
+   [Advanced pimary porting])
+
 TINKER_CONFIGURE(.)
 
 AC_CONFIG_HEADER(include/tinker/config.h)

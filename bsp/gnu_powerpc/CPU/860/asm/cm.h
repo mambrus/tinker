@@ -61,7 +61,7 @@
 #endif
 
 
-#ifdef NEVER
+/*
   0   RST    CP reset command. Set by the core and cleared by the CP. Executing this command clears RST
              and FLG within two general system clocks. The CPM reset routine takes approximately 60 clocks,
              but CPM initialization can start immediately after this command is issued. Use RST to reset the
@@ -182,7 +182,7 @@ RESET BCS
             Undeﬁned. Reserved for use by Motorola-supplied RAM microcode packages.
 U
 
-#endif
+*/
 
 /*
 0x0	0000	INIT_RX_AND_TX_PARAMS
@@ -231,7 +231,7 @@ typedef union{
 }cpcr_t;
 
 /* RCCR stuff... (RISC Controller Conﬁguration Register (RCCR))*/
-#ifdef NEVER
+/*
    0   TIME Timer enable. Controls whether the CP’s internal timer sends a tick to the CP based on the value
             programmed in the timer period (TIMEP).
             0 Stop RISC timer table scanning.
@@ -271,7 +271,7 @@ typedef union{
             10 Microcode executes from the ﬁrst 1 Kbyte and a 256-byte extension of dual-port system RAM.
             11 Microcode executes from the ﬁrst 2 Kbytes and a 512-byte extension of dual-port system RAM.
 
-#endif
+*/
 
 typedef union{ 
 	__uint16_t raw; 
@@ -351,7 +351,7 @@ typedef struct{
 
 
 
-#ifdef NEVER
+/*
                          Table 20-13. BRGCn Field Descriptions
  Bits Name                                              Description
 0–13    —  Reserved, should be cleared.
@@ -386,7 +386,7 @@ typedef struct{
             Section 20.4.3, “UART Baud Rate Examples.”
             0 Divide by 1.
             1 Divide by 16.
-#endif
+*/
 typedef union{ 
 	__uint32_t raw; 
 	struct {

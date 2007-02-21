@@ -192,6 +192,20 @@ static __inline__ __uint32_t revbits_32(__uint32_t in){
 	: 						\
 	: "memory" );
 
+/* Support for reading and writing MSR (Machine State Register)              */
+/* ------------------------------------------------------------------------- */
+#define SET_MSR( INc ) 					\
+	__asm__ __volatile__ ("mtmsr %[INa]"		\
+	:						\
+	: [INa] "r" (INc)				\
+	: "memory" );
+
+#define GET_MSR(  OUTc ) 				\
+	__asm__ __volatile__ ("mfmsr %[OUTa]"		\
+	: [OUTa] "=r" (OUTc)				\
+	: 						\
+	: "memory" );
+
 
 
 #endif //bits_h

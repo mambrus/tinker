@@ -23,7 +23,7 @@
 
 #include <sys/types.h>
 
-#ifdef NEVER
+/*
 0–12   —  Reserved
  13  POW  Power management enable
           0 Power management disabled (normal operation mode)
@@ -94,22 +94,7 @@
 1   These bits are loaded into SRR1 when an exception is taken. These bits are written back into the MSR when an rﬁ
    is executed.
 
-#endif
-
-
-/* Support for reading and writing the MSR  (Machine State Register)	     */
-/* ------------------------------------------------------------------------- */
-#define SET_MSR( INc ) 				\
-	__asm__ __volatile__ ("mtmsr %[INa]"		\
-	:						\
-	: [INa] "r" (INc)				\
-	: "memory" );
-
-#define GET_MSR(  OUTc ) 				\
-	__asm__ __volatile__ ("mfmsr %[OUTa]"		\
-	: [OUTa] "=r" (OUTc)				\
-	: 						\
-	: "memory" );
+*/
 
 
 #define GDB_KNOWS_OF_UNSIGNED

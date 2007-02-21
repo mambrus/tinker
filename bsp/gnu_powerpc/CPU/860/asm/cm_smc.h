@@ -25,7 +25,9 @@
 
 #include <sys/types.h>
 
-#ifdef NEVER_smc_rx_control_descriptor
+/*
+smc_rx_control_descriptor
+===============================================================================
 0  E Empty.
      0 The buffer is full or reception was aborted due to an error. The core can read or write to any ﬁelds
         of this BD. The CPM does not reuse this BD while E = 0.
@@ -69,7 +71,7 @@
 13 —  Reserved, should be cleared.
 14 OV Overrun. Set when a receiver overrun occurs during reception.
 15 CD Carrier detect lost. Set when the carrier detect signal is negated during reception.
-#endif
+*/
 
 typedef union{ 
 	__uint16_t raw; 
@@ -93,7 +95,9 @@ typedef union{
 	}f;
 }bd_ctrl_smc_rx_t;
 
-#ifdef NEVER_smc_TX_control_descriptor
+/*
+smc_TX_control_descriptor
+===============================================================================
 0 R Ready.
     0 The buffer is not ready. This BD and buffer can be modiﬁed. The CPM automatically clears R after
        the buffer is sent or an error occurs.
@@ -131,7 +135,7 @@ typedef union{
  15  CT CTS lost. The CPM writes this status bit after sending the associated buffer.
         0 CTS remained asserted during transmission.
         1 CTS negated during transmission.
-#endif
+*/
 
 
 typedef union{ 
@@ -203,7 +207,7 @@ typedef union{
 	}f;
 }smc_fcr_t;
 
-#ifdef NEVER_SMC_UART_AND_TRANSPARENT_PARAM
+/*
          Table 29-2. SMC UART and Transparent Parameter RAM Memory Map
 Offset 1  Name   Width                                           Description
 
@@ -265,10 +269,13 @@ Offset 1  Name   Width                                           Description
 
 0x28 — Hword First half-word of protocol-speciﬁc area.
 0x32 — Hword Last half-word of protocol-speciﬁc area.
-#endif
 
 
-#ifdef NEVER_SMC_UART_STUFF
+
+SMC_UART_STUFF
+===============================================================================
+
+
 0x28 MAX_IDL Hword Maximum idle characters. When a character is received on the line, the SMC starts
                    counting idle characters received. If MAX_IDL idle characters arrive before the next
                    character, an idle time-out occurs and the buffer closes, which sends an interrupt
@@ -294,7 +301,7 @@ Offset 1  Name   Width                                           Description
                    character is 10 zeros.
 0x32 R_MASK  Hword Temporary bit mask.
 
-#endif
+*/
 
 typedef struct{ 
 
@@ -340,7 +347,7 @@ typedef struct{
 }smc_param_t;
 
 
-#ifdef NEVER
+/*
                    Table 29-10. SMCE/SMCM Field Descriptions
 Bits Name                                               Description
  0     —  Reserved, should be cleared.
@@ -357,7 +364,7 @@ Bits Name                                               Description
  7    RX  Rx buffer. Set when a buffer is received and its associated RxBD is closed. Set no sooner than the
           middle of the last stop bit of the last character that is written to the receive buffer.
 
-#endif
+*/
 
 typedef union{ 
 	__uint8_t raw; 
@@ -374,7 +381,7 @@ typedef union{
 	}f;
 }smce_smcm_t;
 
-#ifdef NEVER
+/*
                Table 29-1. SMCMR Field Descriptions (continued)
 Bits Name                                                 Description
 0 —       Reserved, should be cleared
@@ -441,7 +448,7 @@ Bits Name                                                 Description
  15   REN SMC receive enable.
           0 SMC receiver disabled.
           1 SMC receiver enabled.
-#endif
+*/
 
 
 /*Generic for - bugged, don't use this (FIXME)*/
@@ -541,5 +548,5 @@ typedef union{
 
 
 
-#endif //CM_SCC_H
+#endif //CM_SMC_H
 

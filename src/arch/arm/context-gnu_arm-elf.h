@@ -34,21 +34,6 @@ http://www.arm.com/miscPDFs/9658.pdf
 #define EXTRA_MARGIN 20                //<! Define SP this below the theoretical top (some compilers require it)
 
 /*!
-How printk is implemented on this target. I.e. no ability to output on console
-
-@note macro should digest <b>all</b> arguments.
-*/
-#if (TK_HOWTO_PRINTK == TK_FNK_VOIDED)
-#   define printk(x) ((void)0)
-#elif (TK_HOWTO_PRINTK == TK_FNK_RENAMED)
-#   define eprintf(...) fprintf (stdout, __VA_ARGS__)
-#   define printk(x) eprintf x
-//#   define printk(x) printf x
-#else
-#   error Can't handle requested option for printk
-#endif
-
-/*!
 @name Mapping stack allocation API for this target
 */
 //@{

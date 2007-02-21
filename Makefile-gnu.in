@@ -47,7 +47,7 @@ ifeq ($(XCOMPILE),1)
    CFLAGS := $(CFLAGS)  -DDEBUG -DBOARD=$(BOARD) -DABI=$(ABI) -DARCH=$(ARCH)
    CFLAGS := $(CFLAGS) $(CPU_OPT) $(DCPU) -g -gstabs+ -D RUN_FROM_ROM
    CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(ALIAS_HOST)/include 
-   CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include $(EXTERN_INCL)
+   CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include -I $(TINKER_PATH)/src $(EXTERN_INCL)
    
    LDFLAGS   := $(LDFLAGS) -Xlinker --relocatable
    

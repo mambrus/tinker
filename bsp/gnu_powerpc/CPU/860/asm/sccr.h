@@ -26,7 +26,7 @@
 #include <sys/types.h>
 
 
-#ifdef NEVER
+/*
 
                           Table 14-9. SCCR Field Descriptions
  Bits  Name                                             Description
@@ -116,7 +116,7 @@
              111 Reserved.
 27–31 —      Reserved, should be cleared.
 
-#endif
+*/
 
 
 typedef union{ 

@@ -49,7 +49,7 @@ Read ratio as x:y or user_size/system_size
 
 //ITC
 #define TK_MAX_BLOCKED_ON_Q    	10
-#define TK_MAX_NUM_Q       		75
+#define TK_MAX_NUM_Q       	75
 
 
 
@@ -60,7 +60,16 @@ Read ratio as x:y or user_size/system_size
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $
- *  Revision 1.3  2006-11-05 14:18:56  ambrmi09
+ *  Revision 1.4  2007-02-21 21:18:41  ambrmi09
+ *  Nasty bug fixed. Turns out setjump/jongjum is more sensitive for interrupt
+ *  interference than the old techique. Will be reluctant to change back though
+ *  since I really like this design. Saving context in the beginnig of each
+ *  pool might be a better solution. For now the issue is solved with interrupt
+ *  enable/disable protection (which should go there sooner or later anyway, I
+ *  would just feel better if the mentioned fix would be implemented also as a
+ *  double precaution).
+ *
+ *  Revision 1.3  2006/11/05 14:18:56  ambrmi09
  *  Build system and source modified to make better use of config.h
  *
  *  This file now contains information about how the kernel is configured

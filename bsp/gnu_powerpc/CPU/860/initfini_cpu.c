@@ -22,7 +22,7 @@
 Initialice CPU specific internals
 */
 
-#include <asm/bits.h>
+#include <arch/powerpc/bits.h>
 #include <asm/msr.h>
 #include <asm/cm.h>
 #include <asm/plprcr.h>

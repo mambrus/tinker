@@ -22,7 +22,7 @@
 #define BOARD_H
 
 #include <tinker/config.h>
-#include <asm/bits.h>
+#include <arch/powerpc//bits.h>
 
 #if defined(TK_DCPU)
 	#if TK_DCPU==860

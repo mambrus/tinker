@@ -26,8 +26,8 @@ This code has not been thouroughly tested nor is complete.
 */
 
 
-#ifndef CM_SCR_H
-#define CM_SCR_H
+#ifndef CM_SCC_H
+#define CM_SCC_H
 
 //Stuff for the communications module (CM) - SCC specific
 
@@ -47,7 +47,9 @@ Note: control and status is the same for SCC and SMC, Direction differs however.
                      0x04       High-order of buffer pointer
                      0x06       Low-order of buffer pointer
 */
-#ifdef NEVER_scc_rx_control_descriptor
+/*
+scc_rx_control_descriptor
+===============================================================================
 0  E Empty.
      0 The buffer is full or reception was aborted due to an error. The core can read or write to any ﬁelds
         of this BD. The CPM does not reuse this BD while E = 0.
@@ -91,9 +93,10 @@ Note: control and status is the same for SCC and SMC, Direction differs however.
 13 —  Reserved, should be cleared.
 14 OV Overrun. Set when a receiver overrun occurs during reception.
 15 CD Carrier detect lost. Set when the carrier detect signal is negated during reception.
-#endif
 
-#ifdef NEVER_scc_TX_control_descriptor
+
+scc_TX_control_descriptor
+===============================================================================
 0 R Ready.
     0 The buffer is not ready. This BD and buffer can be modiﬁed. The CPM automatically clears R after
        the buffer is sent or an error occurs.
@@ -131,7 +134,7 @@ Note: control and status is the same for SCC and SMC, Direction differs however.
  15  CT CTS lost. The CPM writes this status bit after sending the associated buffer.
         0 CTS remained asserted during transmission.
         1 CTS negated during transmission.
-#endif
+*/
 
 
 typedef union{ 
@@ -209,7 +212,9 @@ typedef union{
 }scc_fcr_t;
 
 /*Protocol specific areas*/
-#ifdef NEVER_SCC_UART_STUFF
+/*
+SCC_UART_STUFF
+===============================================================================
 0x30    —    DWord Reserved
 0x38 MAX_IDL Hword Maximum idle characters. When a character is received, the receiver begins
                    counting idle characters. If MAX_IDL idle characters are received before the next
@@ -269,7 +274,7 @@ typedef union{
                       indicates two zeros; 0b1xxxxxxxxxxxxxxx indicates no zeros.
                       Note that RLBC can be used in combination with BRKLN above to measure the
                       break length down to a bit resolution: (BRKLN + number of zeros in RLBC).
-#endif
+*/
 
 typedef struct{ 
 /*0x30 PADD_0*/		__uint32_t	PADD_0;

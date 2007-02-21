@@ -211,23 +211,6 @@ void _b_hook(void *caller){
 	boot_hook(caller);
 }
 
-#define sstr(x) \
-	x
-
-#define str(x) \
-	sstr(#x)
-/*!
-To round it all off, the kernel uses this macro to call the boot_hook manager. using it will provide 
-the manager withe the calling functions adress as an input argument.
-@note this macro doen't work FIXME
-*/
-#if defined (__GNUC__)
-#define BOOT_HOOK _b_hook(str(__FUNCTION__));
-#else
-#define BOOT_HOOK _b_hook(str(__func__));
-#endif
-
-
 void *_tk_idle( void *foo ){       //!< idle loop (non public)
    TK_NO_WARN_ARG(foo);
    while (TK_TRUE){
@@ -327,12 +310,12 @@ void tk_create_kernel( void ){
       proc_stat[i].noChilds                     = 0;
       proc_stat[i]._errno_                      = 0;
       proc_stat[i].stack_size                   = 0;
-      STACK_PTR(proc_stat[i].stack_begin)       = NULL;      
-      STACK_PTR(proc_stat[i].curr_sp)           = NULL;      
-      proc_stat[i].stack_crc                    = 0;      
+      STACK_PTR(proc_stat[i].stack_begin)       = NULL;
+      STACK_PTR(proc_stat[i].curr_sp)           = NULL;
+      proc_stat[i].stack_crc                    = 0;
       proc_stat[i].wakeupEvent                  = E_NONE;
       proc_stat[i].retval                       = (void*)0;
-      
+
 /*
       proc_stat[i].start_funct                  = NULL;
       proc_stat[i].init_funct                   = NULL;
@@ -1509,6 +1492,15 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
+ *  Revision 1.71  2007-02-21 21:18:41  ambrmi09
+ *  Nasty bug fixed. Turns out setjump/jongjum is more sensitive for interrupt
+ *  interference than the old techique. Will be reluctant to change back though
+ *  since I really like this design. Saving context in the beginnig of each
+ *  pool might be a better solution. For now the issue is solved with interrupt
+ *  enable/disable protection (which should go there sooner or later anyway, I
+ *  would just feel better if the mentioned fix would be implemented also as a
+ *  double precaution).
+ *
  *  Revision 1.70  2007-02-21 01:01:24  ambrmi09
  *  Was a very good and productive day! Kernel runs on new target, but stacks
  *  get busted. i think it's the setjmp, longjump think thats messing with us.

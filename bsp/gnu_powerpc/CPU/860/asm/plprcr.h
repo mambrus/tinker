@@ -26,7 +26,7 @@
 #include <sys/types.h>
 
 
-#ifdef NEVER
+/*
                           Table 14-10. PLPRCR Field Descriptions
  Bits  Name                                                Description
  0–11 MF    Multiplication factor. Determines the factor by which the OSCCLK input is multiplied to produce
@@ -95,7 +95,7 @@ PLPRCR[CSR]   DER[CHSTPE] Checkstop Mode        Result
      1             1            No                —
      1             1           Yes        Enter debug mode
 
-#endif
+*/
 
 
 typedef union{ 
