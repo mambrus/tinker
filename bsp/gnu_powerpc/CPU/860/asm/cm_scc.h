@@ -32,8 +32,6 @@ This code has not been thouroughly tested nor is complete.
 //Stuff for the communications module (CM) - SCC specific
 
 #include <sys/types.h>
-#include <mmap_regs.h>
-
 
 /* Buffer Descriptor (BD) stuff */
 /* 

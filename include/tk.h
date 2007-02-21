@@ -181,6 +181,8 @@ typedef start_func_ft   *start_func_f;
 typedef void init_func_ft(void *);
 typedef init_func_ft   *init_func_f;
 
+extern init_func_f boot_hook;
+
 typedef int tin_t;      //!< A tinker        ID
 typedef tin_t thid_t;   //!< A tinker thread ID
 typedef tin_t titc_t;   //!< A tinker ITC    ID
@@ -277,7 +279,15 @@ extern int     tk_bsp_sysinit(void);
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
- *  Revision 1.44  2006-12-12 10:57:05  ambrmi09
+ *  Revision 1.45  2007-02-21 01:01:24  ambrmi09
+ *  Was a very good and productive day! Kernel runs on new target, but stacks
+ *  get busted. i think it's the setjmp, longjump think thats messing with us.
+ *  It's not saving enough registers or the stack is creaping away fo some other
+ *  reason.
+ *
+ *  The error seems quite easy though (relativly speaking i.e. ...)
+ *
+ *  Revision 1.44  2006/12/12 10:57:05  ambrmi09
  *  This adresses the second part of #1609064
  *
  *  Revision 1.43  2006/12/11 14:41:52  ambrmi09

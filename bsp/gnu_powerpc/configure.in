@@ -13,7 +13,7 @@ dnl The following is sadly not working properly. Use autoconf -I <dir> instead t
 
 #AC_CONFIG_SUBDIRS([lpc21xx])
 
-sources_c="hixsys.c"
+sources_c="hixsys.c syscon.c initfini.c"
 #sources_asm="startup_gnu.s"
 sources_asm=""
 extras=""

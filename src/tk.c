@@ -190,6 +190,44 @@ static thid_t procs_in_use    = 0;
 static thid_t proc_idx;             //!< Points at the last TCB created in the \ref proc_stat pool
 static thid_t idle_Thid;            //!< Idle_Thid must be known, therefor public in this module (file)
 
+
+/*! 
+Assign a value to this function pointer in your app, and you can break into the kernel before it boots. 
+Great tool for connecting other monitors (syscall monitors e.t.a.). Note that this function pointer 
+is initially and intentionally zero, and non-static. Functionality relies on that .sdata gets initialized
+properly. Note that the kernel will call this pointer as the first thing it does. If the pointer is not
+or statically initialized by the application, all sorts of bad things will happen.
+*/
+
+        init_func_f boot_hook;
+
+
+/*! 
+Manages the boot_hook. Not all systems will support calls even to null pointers (even though this is in 
+most cases not hard to accomplish).
+*/
+void _b_hook(void *caller){
+   if (boot_hook!=0)
+	boot_hook(caller);
+}
+
+#define sstr(x) \
+	x
+
+#define str(x) \
+	sstr(#x)
+/*!
+To round it all off, the kernel uses this macro to call the boot_hook manager. using it will provide 
+the manager withe the calling functions adress as an input argument.
+@note this macro doen't work FIXME
+*/
+#if defined (__GNUC__)
+#define BOOT_HOOK _b_hook(str(__FUNCTION__));
+#else
+#define BOOT_HOOK _b_hook(str(__func__));
+#endif
+
+
 void *_tk_idle( void *foo ){       //!< idle loop (non public)
    TK_NO_WARN_ARG(foo);
    while (TK_TRUE){
@@ -1327,12 +1365,16 @@ things at least:
 */
 //void     tk_root( void ); 
 void _tk_main( void ){
+   _b_hook(_tk_main);
    tk_bsp_sysinit();      //For emulation targets, this is ment to be nothing 
+   _b_hook(tk_bsp_sysinit);
+
    printk(("BSP initialized\n"));
 
+   _b_hook(tk_create_kernel);
    tk_create_kernel();
    printk(("TinKer kernel created\n"));
-   
+
    printk(("ANSI timing constants:\n"));
    #if  defined( __C166__ )
        printk(("CLK_TCK=[%ld], CLOCKS_PER_SEC=[%ld]\n",CLK_TCK, CLOCKS_PER_SEC));
@@ -1340,17 +1382,24 @@ void _tk_main( void ){
        printk(("CLK_TCK=[%d], CLOCKS_PER_SEC=[%d]\n",CLK_TCK, CLOCKS_PER_SEC));
    #endif
    #if defined(TK_COMP_KMEM) && TK_COMP_KMEM
+      _b_hook(tk_mem);
       assert( tk_mem() == ERR_OK );
    #endif
    
    #if defined(TK_COMP_ITC) && TK_COMP_ITC
+      _b_hook(tk_itc);
       assert( tk_itc() == ERR_OK );
-/*TBD*/      assert(_tk_create_system_queues( ) == 0);
+
+      _b_hook(_tk_create_system_queues);
+      assert(_tk_create_system_queues( ) == 0);  //FIXME this one needs re-work
       #if defined(TK_COMP_PTIMER) && TK_COMP_PTIMER
+         _b_hook(tk_ptime);
          assert( tk_ptime() == ERR_OK );
       #endif
       #if defined(TK_COMP_PTHREAD) && TK_COMP_PTHREAD
+         _b_hook(tk_pthread_sched);
          assert( tk_pthread_sched() == ERR_OK );
+         _b_hook(tk_pthread_sync);
          assert( tk_pthread_sync()  == ERR_OK );
          #if defined(TK_COMP_POSIX_RT) && TK_COMP_POSIX_RT
             //TBD
@@ -1365,18 +1414,24 @@ void _tk_main( void ){
          #if defined(TK_COMP_POSIX_RT) && TK_COMP_POSIX_RT
             //TBD
          #endif
+         _b_hook(tk_pthread_sched_destruct);
          assert( tk_pthread_sched_destruct() == ERR_OK );
+         _b_hook(tk_pthread_sync_destruct);
          assert( tk_pthread_sync_destruct()  == ERR_OK );
       #endif
+      _b_hook(tk_itc_destruct);
       assert( tk_itc_destruct() == ERR_OK );
       #if defined(TK_COMP_PTIMER) && TK_COMP_PTIMER
+         _b_hook(tk_ptime_destruct);
          assert( tk_ptime_destruct() == ERR_OK );
       #endif
    #endif
    
    #if defined(TK_COMP_KMEM) && TK_COMP_KMEM
+      _b_hook(tk_mem_destruct);
       assert( tk_mem_destruct() == ERR_OK );
    #endif 
+   _b_hook(tk_delete_kernel);
    tk_delete_kernel();
 }
 
@@ -1409,6 +1464,7 @@ extern int  (*hixs_write)(int file, char *ptr, int len);
 extern void (*hixs_syscall_mon)(void *syscall);
 */
 
+
 int main(int argc, char **argv); 
 int main(int argc, char **argv){
    /*	
@@ -1427,7 +1483,10 @@ int main(int argc, char **argv){
    printf("Hello world"); 
    */
    
+   //BOOT_HOOK;
+   _b_hook(main);
     _tk_main();
+   _b_hook(NULL);
    TRAP(0); 
 }
 #endif
@@ -1450,7 +1509,15 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
- *  Revision 1.69  2006-12-11 14:41:52  ambrmi09
+ *  Revision 1.70  2007-02-21 01:01:24  ambrmi09
+ *  Was a very good and productive day! Kernel runs on new target, but stacks
+ *  get busted. i think it's the setjmp, longjump think thats messing with us.
+ *  It's not saving enough registers or the stack is creaping away fo some other
+ *  reason.
+ *
+ *  The error seems quite easy though (relativly speaking i.e. ...)
+ *
+ *  Revision 1.69  2006/12/11 14:41:52  ambrmi09
  *  Solves #1609064 (part1)
  *
  *  Revision 1.68  2006/12/01 10:58:51  ambrmi09

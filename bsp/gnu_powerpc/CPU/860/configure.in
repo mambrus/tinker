@@ -8,11 +8,19 @@ AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION 
 
 AC_CONFIG_AUX_DIR(../../../..)
 
-sources_c="systimer.c isr.c"
-sources_asm=""
+sources_c="systimer.c isr.c initfini_cpu.c"
+extern_includes="../.."
 
+# By putting the start module in the library we don't have to use crt0.o
+# exceptions.AO will output to a special region that we can let the linker 
+# relocate automagically instead
+sources_asm="exceptions.AO"
+
+# Provide it as a crt0.o anyway 8just to have something to provide)
+# Note that using it with libtinker will brak the link in our case (PowerPC/860)
 extras="../../../../lib/crt0.o"
 CRT0_OBJECT=exceptions.AO
+
 TINKER_CONFIGURE(../../../..)
 subdirs=
 AC_SUBST(subdirs)

@@ -81,9 +81,18 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
                 AC_MSG_NOTICE([<<< ctr0.o is based on $CRT0_OBJECT])
         fi
 	AC_SUBST(CRT0_OBJECT)
-	echo "------------------------------------------------------> $extern_includes"
-	ext_incl=$(echo $extern_includes  | sed -e 's/[^ ]\+/-I &/g')
-	echo "------------------------------------------------------> $ext_incl"
+
+	#echo "------------------------------------------------------> $extern_includes"	
+	#Annoying, the below does not work - ^ is the problem
+	#ext_incl=$(echo $extern_includes  | sed -e 's/[^ ]\+/-I &/g')
+
+	if test -n "$extern_includes"; then
+		ext_incl=$(echo -n "-I "; echo $extern_includes  | sed -e 's/ \+/ -I &/g')
+	fi
+
+	#ext_incl=$(echo $extern_includes  | sed -e 's/[\/]\+/ XXX /g')
+	#echo "------------------------------------------------------> $ext_incl"
+
 	AC_SUBST(ext_incl)
 ])
 
@@ -351,28 +360,28 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl ---------------------------------------------
 	AC_ARG_ENABLE(min_stack,
 		AS_HELP_STRING([--enable-min_stack=<val>],[Maximum size of a stack for a thread ]),
-		AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],__tk_$enableval))
+		AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],$enableval))
 	AC_ARG_ENABLE(norm_stack,
 		AS_HELP_STRING([--enable-norm_stack=<val>],[Stacksize used when stack-size is omitted ]),
-		AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],__tk_$enableval))
+		AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],$enableval))
 	AC_ARG_ENABLE(max_threads,
 		AS_HELP_STRING([--enable-max_threads=<val>],[Maximum number of threds your system could have ]),
-		AC_DEFINE_UNQUOTED([TK_MAX_THREADS],__tk_$enableval))
+		AC_DEFINE_UNQUOTED([TK_MAX_THREADS],$enableval))
 	AC_ARG_ENABLE(max_prio,
 		AS_HELP_STRING([--enable-max_prio=<val>],[Numer of priorities for you system  (recomended value: 3 or 16)]),
-		AC_DEFINE_UNQUOTED([TK_MAX_PRIO_LEVELS],__tk_$enableval))
+		AC_DEFINE_UNQUOTED([TK_MAX_PRIO_LEVELS],$enableval))
 	AC_ARG_ENABLE(that_prio,
 		AS_HELP_STRING([--enable-that_prio=<val>],[Number of threads that can be sceduled at each priority ]),
-		AC_DEFINE_UNQUOTED([TK_MAX_THREADS_AT_PRIO],__tk_$enableval))
+		AC_DEFINE_UNQUOTED([TK_MAX_THREADS_AT_PRIO],$enableval))
 	AC_ARG_ENABLE(thename_len,
 		AS_HELP_STRING([--enable-thename_len=<val>],[Lengts of the string in TCB that holds the name of the thread ]),
-		AC_DEFINE_UNQUOTED([TK_THREAD_NAME_LEN],__tk_$enableval))
+		AC_DEFINE_UNQUOTED([TK_THREAD_NAME_LEN],$enableval))
 	AC_ARG_ENABLE(blocked_q,
 		AS_HELP_STRING([--enable-blocked_q=<val>],[Maximum nuber of threads blocked on any ITC primitive, i.e. not only Q ]),
-		AC_DEFINE_UNQUOTED([TK_MAX_BLOCKED_ON_Q],__tk_$enableval))
+		AC_DEFINE_UNQUOTED([TK_MAX_BLOCKED_ON_Q],$enableval))
 	AC_ARG_ENABLE(max_q,
 		AS_HELP_STRING([--enable-max_q=<val>],[Maximum number of any ITC primitive, i.e not only Q ]),
-		AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],__tk_$enableval))
+		AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],$enableval))
 
 	dnl Other configurable features
 	dnl ---------------------------------------------

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michael Ambrus                                  *
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,8 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CAN_H
-#define CAN_H
-int can_init();
 
-#endif // CAN_H
+/*
+This file contains initialization and closing down of the system
+*/
+
+#include <initfini.h>
+
+void __init(){
+	__init_cpu();
+	__init_board();
+	__exeptions_enable_cpu();
+	__exeptions_enable_board();
+}
+
+void __fini(){
+	__exeptions_disable_board();
+	__exeptions_disable_cpu();
+	__fini_board();
+	__fini_cpu();
+}
+

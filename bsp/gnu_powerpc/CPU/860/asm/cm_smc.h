@@ -24,9 +24,6 @@
 //Stuff for the SMC part of the communications module (CM)
 
 #include <sys/types.h>
-#include <mmap_regs.h>
-
-
 
 #ifdef NEVER_smc_rx_control_descriptor
 0  E Empty.

@@ -24,8 +24,6 @@
 //Stuff for the  PLL, Low-Power, and Reset Control Register (PLPRCR)
 
 #include <sys/types.h>
-#include <mmap_regs.h>
-
 
 
 #ifdef NEVER

@@ -28,9 +28,6 @@ conﬁgure instruction breakpoint operations.
 
 
 #include <sys/types.h>
-#include <mmap_regs.h>
-
-
 
 #ifdef NEVER
  0–2    CTA  Compare type of comparator A–D

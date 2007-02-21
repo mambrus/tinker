@@ -1,3 +1,27 @@
+/***************************************************************************
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
+ *   michael.ambrus@maquet.com                                             *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+/*
+This module serves as a replacement for hixs crt0.o so that you might omitt 
+it - or replace it with your own with potentially different context.
+*/
+
 #include <tinker/config.h>
 
 
@@ -5,27 +29,12 @@
 #include <_ansi.h>
 #include <_syslist.h>
 #include <errno.h>
-//#undef errno
-//extern int errno;
-//#include "warning.h"
-
-/*
-#include <asm/bits.h>
-#include <asm/msr.h>
-#include <asm/cm.h>
-#include <asm/plprcr.h>
-#include <asm/ictrl.h>
-#include <asm/sccr.h>
-#include <mmap_regs.h>
-#include <console.h>
-#include <isr.h>
-*/
-
 
 #include <reent.h>
 #include <stdio.h>
 #include <sys/times.h>
 #include <time.h>
+#include <stdarg.h>
 
 
 #if !defined(BOARD)
@@ -41,155 +50,115 @@
 #define __SYS_HIXS__       1
 
 
-int ppc_write (int file, char *ptr, int len){
-	if ((__uint32_t)ptr > 0x103ff000 )
-		return 0;
-	console_write(ptr, len);	// Ignore the file ID - write all on console regardless
-	if (ptr[len-1]=='\n')
-		console_write("\r", 1);	// Add carrige return (hack, migh be avoided by tuning istty)
-	return len; /*Wrote it all (say...)*/
-};
+#if !defined(__SYS_DEFAULT__)
+#error "Sanity check"
+#endif
 
-//=====================================
-char* myheap_end = (char*)0x10080000;   //<- NOTE: Test purpose only, dont use this unless you know what you're doing
-//=====================================
-caddr_t ppc_sbrk(int incr) {
-   extern char* myheap_end;
-   /* Defined by the linker. */
-   static char *heap_end;
-   char *prev_heap_end;
+//Hook up the lib (nobody else will)
+#if (TK_SYSTEM==__SYS_DEFAULT__)
+#	error - when not usung HIXS, this module will provide duplicates of syscall (this is not what you want)
+#elif (TK_SYSTEM==__SYS_HIXS__)
 
-   if (heap_end == 0) {
-      heap_end = myheap_end;
-   }
+	/* Function call definitions, type declaration and storage */
+	#define DEF_FUN_HIXS( v, x, y )    \
+	typedef v _HIXS_##x y;          \
+	typedef _HIXS_##x * pHIXS_##x;  \
+	v HIXS_##x y;
+	
+	DEF_FUN_HIXS(int,     close,        (int file));
+	DEF_FUN_HIXS(void,    exit,         (int status));
+	DEF_FUN_HIXS(int,     execve,       (char *name, char **argv, char **env));
+	DEF_FUN_HIXS(int,     fcntl,        (int filedes, int command, ...));
+	DEF_FUN_HIXS(int,     fork,         ());
+	DEF_FUN_HIXS(int,     fstat,        (int file, struct stat *st));
+	DEF_FUN_HIXS(int,     getpid,       ());
+	DEF_FUN_HIXS(int,     gettimeofday, (struct timeval *tp, struct timezone *tzp));
+	DEF_FUN_HIXS(int,     isatty,       (int file));
+	DEF_FUN_HIXS(int,     kill,         (int pid, int sig));
+	DEF_FUN_HIXS(int,     link,         (char *old, char *new));
+	DEF_FUN_HIXS(int,     lseek,        (int file, int ptr, int dir));
+	DEF_FUN_HIXS(int,     open,         (const char *filename, int flags, ...));
+	DEF_FUN_HIXS(int,     read,         (int file, char *ptr, int len));
+	DEF_FUN_HIXS(caddr_t, sbrk,         (int incr));
+	DEF_FUN_HIXS(int,     settimeofday, (const struct timeval *tp, const struct timezone *tzp))
+	DEF_FUN_HIXS(int,     stat,         (const char *file, struct stat *st));
+	DEF_FUN_HIXS(clock_t, times,        (struct tms *buf));
+	DEF_FUN_HIXS(int,     unlink,       (char *name));
+	DEF_FUN_HIXS(int,     wait,         (int *status));
+	DEF_FUN_HIXS(int,     write,        (int file, char *ptr, int len));
+	#if !defined( _NO_HIXS_SYSCALLMON_ )
+	DEF_FUN_HIXS(void,    syscall_mon,  (void *));
+	#endif
 
-   prev_heap_end = heap_end;
+/*Connect them to the stibs we know exists stubs - 
+(will go in .sbss section, i.e. initialized static but R/W data)*/
+	
+	pHIXS_close        hixs_close        = HIXS_close;
+	pHIXS_exit         hixs_exit         = HIXS_exit;
+	pHIXS_execve       hixs_execve       = HIXS_execve;
+	pHIXS_fcntl        hixs_fcntl        = HIXS_fcntl;
+	pHIXS_fork         hixs_fork         = HIXS_fork;
+	pHIXS_fstat        hixs_fstat        = HIXS_fstat;
+	pHIXS_getpid       hixs_getpid       = HIXS_getpid;
+	pHIXS_gettimeofday hixs_gettimeofday = HIXS_gettimeofday;
+	pHIXS_isatty       hixs_isatty       = HIXS_isatty;
+	pHIXS_kill         hixs_kill         = HIXS_kill;
+	pHIXS_link         hixs_link         = HIXS_link;
+	pHIXS_lseek        hixs_lseek        = HIXS_lseek;
+	pHIXS_open         hixs_open         = HIXS_open;
+	pHIXS_read         hixs_read         = HIXS_read;
+	pHIXS_sbrk         hixs_sbrk         = HIXS_sbrk;
+	pHIXS_settimeofday hixs_settimeofday = HIXS_settimeofday;
+	pHIXS_stat         hixs_stat         = HIXS_stat;
+	pHIXS_times        hixs_times        = HIXS_times;
+	pHIXS_unlink       hixs_unlink       = HIXS_unlink;
+	pHIXS_wait         hixs_wait         = HIXS_wait;
+	pHIXS_write        hixs_write        = HIXS_write;
+	#if !defined( _NO_HIXS_SYSCALLMON_ )
+	pHIXS_syscall_mon  hixs_syscall_mon  = HIXS_syscall_mon;
+	#endif
 
-   heap_end += incr;   
-   return (caddr_t) prev_heap_end;   
+#if defined __cplusplus
+extern "C" {
+#endif
+	int     _close        (int file){ return hixs_close(file);}
+	void    _exit         (int status){ return hixs_exit(status);}
+	int     _execve       (char *name, char **argv, char **env){ return hixs_execve(name, argv, env);}
+	int     _fcntl        (int filedes, int command, ...){
+					va_list ap;
+					/*any local vars here...*/
+					va_start (ap, command);
+					return hixs_fcntl(filedes, command, va_arg (ap, int));
+				}
+	int     _fork         (){ return hixs_fork();}
+	int     _fstat        (int file, struct stat *st){ return hixs_fstat(file, st);}
+	int     _getpid       (){ return hixs_getpid();}
+	int     _gettimeofday (struct timeval *tp, struct timezone *tzp){ return hixs_gettimeofday(tp, tzp);}
+	int      isatty       (int file){ return hixs_isatty(file);}
+	int     _kill         (int pid, int sig){ return hixs_kill(pid, sig);}
+	int     _link         (char *old, char *new){ return hixs_link(old, new);}
+	int     _lseek        (int file, int ptr, int dir){ return hixs_lseek(file, ptr, dir);}
+	int     _open        (const char *filename, int flags, ...){ 
+					va_list ap;
+					/*any local vars here...*/
+					va_start (ap, flags);
+					return hixs_open(filename, flags, va_arg (ap, int));
+				}
+	int     _read         (int file, char *ptr, int len){ return hixs_read(file, ptr, len);}
+	caddr_t _sbrk         (int incr){ return hixs_sbrk(incr);}
+	int     _settimeofday (const struct timeval *tp, const struct timezone *tzp){ return hixs_settimeofday(tp, tzp);}
+	int     _stat         (const char *file, struct stat *st){ return hixs_stat(file, st);}
+	clock_t _times        (struct tms *buf){ return hixs_times(buf);}
+	int     _unlink       (char *name){ return hixs_unlink(name);}
+	int     _wait         (int *status){ return hixs_wait(status);}
+	int     _write        (int file, char *ptr, int len){ return hixs_write(file, ptr, len);}
+	
+	#if !defined( _NO_HIXS_SYSCALLMON_ )
+	void    _syscall_mon  (void *sys_func_ptr){ return hixs_syscall_mon(sys_func_ptr);}
+	#endif
+
+#if defined __cplusplus
 }
+#endif
 
-
-clock_t ppc_times(struct tms *buf){
-	clock_t upTime = ppc_clock();
-	if (buf!=NULL){
-		(*buf).tms_utime  = upTime;
-		buf->tms_stime  = 0;
-		buf->tms_cutime = 0;
-		buf->tms_cstime = 0;
-	}
-	return upTime;
-}
-
-int ppc_open (const char *filename, int flags, ...){
-   errno = ENOSYS;
-   return -1;
-}
-
-
-int ppc_fcntl (int filedes, int command, ...){
-   errno = ENOSYS;
-   return -1;
-}
-
-void (*used_syscall)(void);
-void ppc_syscall_mon(void *hix_syscall){
-	used_syscall = hix_syscall;
-}
-
-
-int tk_bsp_sysinit (void){
-
-   {
-
-
-      #if !defined(__SYS_DEFAULT__)
-      #error "Sanity check"
-      #endif
-
-      //Hook up the lib (nobody else will)
-      #if (TK_SYSTEM==__SYS_DEFAULT__)
-/*
-         extern void    initialise_monitor_handles _PARAMS ((void));
-         initialise_monitor_handles(); 
-*/
-      #elif (TK_SYSTEM==__SYS_HIXS__)
-		extern int     (*hixs_close)        (int file);
-		extern void    (*hixs_exit)         (int status);
-		extern int     (*hixs_execve)       (char *name, char **argv, char **env);
-		extern int     (*hixs_fcntl)        (int filedes, int command, ...);
-		extern int     (*hixs_fork)         ();
-		extern int     (*hixs_fstat)        (int file, struct stat *st);
-		extern int     (*hixs_getpid)       ();
-		extern int     (*hixs_gettimeofday) (struct timeval *tp, struct timezone *tzp);
-		extern int     (*hixs_isatty)       (int file);
-		extern int     (*hixs_kill)         (int pid, int sig);
-		extern int     (*hixs_link)         (char *old, char *new);
-		extern int     (*hixs_lseek)        (int file, int ptr, int dir);
-		extern int     (*hixs_open)         (const char *filename, int flags, ...);
-		extern int     (*hixs_read)         (int file, char *ptr, int len);
-		extern caddr_t (*hixs_sbrk)         (int incr);
-		extern int     (*hixs_settimeofday) (const struct timeval *tp, const struct timezone *tzp);
-		extern int     (*hixs_stat)         (char *file, struct stat *st);
-		extern clock_t (*hixs_times)        (struct tms *buf);
-		extern int     (*hixs_unlink)       (char *name);
-		extern int     (*hixs_wait)         (int *status);
-		extern int     (*hixs_write)        (int file, char *ptr, int len);
-		extern void    (*hixs_syscall_mon)  (void *);
-				
-		hixs_close        = hixs_close;
-		hixs_exit         = hixs_exit;
-		hixs_execve       = hixs_execve;
-		hixs_fcntl        = ppc_fcntl;		// <- NOTE
-		hixs_fork         = hixs_fork;
-		hixs_fstat        = hixs_fstat;
-		hixs_getpid       = hixs_getpid;
-		hixs_gettimeofday = hixs_gettimeofday; 
-		hixs_isatty       = hixs_isatty; 
-		hixs_kill         = hixs_kill;
-		hixs_link         = hixs_link;
-		hixs_lseek        = hixs_lseek;
-		hixs_open         = ppc_open;		// <- NOTE
-		hixs_read         = hixs_read;
-		//hixs_sbrk         = ppc_sbrk;		// <- NOTE use built in -it's OK
-		hixs_settimeofday = hixs_settimeofday;
-		hixs_stat         = hixs_stat;
-		hixs_times        = ppc_times;		// <- NOTE
-		hixs_unlink       = hixs_unlink;
-		hixs_wait         = hixs_wait;
-		hixs_write        = ppc_write;		// <- NOTE
-		hixs_syscall_mon  = ppc_syscall_mon;	// <- NOTE
-
-      #else
-         #error "System either not supported or provided"
-      #endif
-
-      //Initialize the UART:s for std- in/out/err
-/*
-      uc0.port = 0;
-      uc0.LCR = LCR_WLS_8BIT | LCR_SBS_1BIT | LCR_PE_0 | LCR_PS_ODD | LCR_BK_0 | LCR_DLAB_1;
-      uc0.baudrate = 115200;
-      uart_polled_init(&uc0);
-
-      uc1.port = 1;
-      uc1.LCR = LCR_WLS_8BIT | LCR_SBS_1BIT | LCR_PE_0 | LCR_PS_ODD | LCR_BK_0 | LCR_DLAB_1;
-      uc1.baudrate = 115200;
-      uart_polled_init(&uc1);
-*/
-   }
-
-   {  // Set up system timer
-/*
-      vic_control vc;
-
-      //Showing our ISR intentions
-      vc.func       = systimer_Handler;
-      vc.vecaddr    = VICVectAddr7;              
-      vc.vecchannel = VIC_CH_TIMER0;
-
-      systimer_init(&vc);
-
-*/
-   }
-
-}
+#endif
