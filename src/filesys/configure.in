@@ -7,7 +7,7 @@ AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION 
 
 AC_CONFIG_AUX_DIR(../..)
 
-sources_c="filesys.c"
+sources_c=" filesys.c fs_ifdir.c fs_ifchr.c fs_ifblk.c fs_ifreg.c fs_iflnk.c fs_ifsock.c fs_ififo.c"
 
 TINKER_CONFIGURE(../..)
 subdirs=

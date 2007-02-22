@@ -34,7 +34,7 @@
         <cflags>-O2 -g0</cflags>
       </optimized>
       <debug>
-        <configargs>--enable-debug=full --host=powerpc-hixs-elf MCPU=860 BOARD=ESC --enable-makeopts=-&quot;S -w&quot; --disable-cplusplus --enable-verbose-config --enable-how-to-printk=ORIGINAL --enable-filesys --enable-min_stack=0x600 --enable-norm_stack=0x800 </configargs>
+        <configargs>--enable-debug=full --host=powerpc-hixs-elf MCPU=860 BOARD=ESC --enable-makeopts=-&quot;S -w&quot; --disable-cplusplus --enable-verbose-config --enable-how-to-printk=ORIGINAL --enable-filesys --enable-min_stack=0x20000 --enable-norm_stack=0x20000 </configargs>
         <builddir></builddir>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>

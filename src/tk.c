@@ -1202,10 +1202,13 @@ void _tk_construct_thread_scope(
    //keep the following  access simple by using a copy stored in the code seg.
    //(Note: stack_t is a form of pointer that is used to refer to the physical stack)
    SPS = proc_stat[t_id].curr_sp;     
-      
+   TK_CLI();
    PUSHALL();              // <--       // Make sure CPU context is ok
+   TK_STI();
+   TK_CLI();
    _tk_half_switch(t_id, active_thread);
-   
+   TK_STI();
+
    if (active_thread != t_id){      
       POPALL();            // <--      // ...since we're comming back via 
       return;                          // another function (might not be using
@@ -1342,6 +1345,25 @@ void _tk_assertfail(
 }
 
 
+#if defined(TK_COMP_FILESYS) && TK_COMP_FILESYS
+//#include <unistd.h>
+#include <fcntl.h>
+
+int
+     set_fflags(int desc, int flags)
+     {
+       int oldflags = fcntl (desc, F_GETFL, 0);
+       /* If reading the flags failed, return error indication now. */
+       if (oldflags == -1)
+         return -1;
+
+       oldflags |= O_NONBLOCK;
+
+       /* Store modified flag word in the descriptor. */
+       return fcntl (desc, F_SETFL, oldflags);
+     }
+#endif
+
 /*!
 @ingroup kernel_glue
 
@@ -1400,7 +1422,15 @@ void _tk_main( void ){
 
    #if defined(TK_COMP_FILESYS) && TK_COMP_FILESYS
       _b_hook(fs_init);
+      printk(("Filesystem starting...\n"));
       assert(fs_init() == ERR_OK );
+      //fdup(stdout);
+      //fdup2(stderr,stdout);
+
+      set_fflags(stdout,O_NONBLOCK);
+      set_fflags(stderr,O_NONBLOCK);
+
+      fprintf(stderr,"Filesystem initialized!\n");
    #endif
 
 
@@ -1408,7 +1438,9 @@ void _tk_main( void ){
 
    #if defined(TK_COMP_FILESYS) && TK_COMP_FILESYS
       _b_hook(fs_fini);
+      printk(("Filesystem shutting down...\n"));
       assert(fs_fini() == ERR_OK );
+      fprintf(stderr,"Filesystem terminated!\n");
    #endif
 
 
@@ -1436,6 +1468,7 @@ void _tk_main( void ){
    #endif 
    _b_hook(tk_delete_kernel);
    tk_delete_kernel();
+   printk(("Kernel deleted\n"));
 }
 
 
@@ -1512,6 +1545,9 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
+ *  Revision 1.73  2007-02-22 23:22:31  ambrmi09
+ *  FS structure added.
+ *
  *  Revision 1.72  2007-02-22 12:36:48  ambrmi09
  *  1) Structure adapted for modulerizing components under tinker/src
  *     in the same fashion as the modules under tinker/bsp

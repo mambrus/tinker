@@ -62,6 +62,10 @@ void _tk_assertfail(char *assertstr, char *filestr, int line);
 #endif
 */
 
+#define assure(p) ((p) ? (void)0 : (void) _tk_assertfail( \
+                    #p, __FILE__, __LINE__ ) )
+
+
 #if (TK_HOWTO_ASSERT == TK_FNK_RENAMED)
 #undef assert
 #endif 
@@ -72,8 +76,8 @@ The assert macro.
 
 @note Always assert, ignore NDEBUG setting
 */
-#define assert(p) ((p) ? (void)0 : (void) _tk_assertfail( \
-                    #p, __FILE__, __LINE__ ) )
+#define assert(p) assure(p)
+
 #endif
 
 #endif //ASSERT_H_TK
@@ -81,7 +85,10 @@ The assert macro.
  * @defgroup CVSLOG_assert_h assert_h
  * @ingroup CVSLOG
  *  $Log: assert.h,v $
- *  Revision 1.13  2006-12-12 10:57:04  ambrmi09
+ *  Revision 1.14  2007-02-22 23:22:31  ambrmi09
+ *  FS structure added.
+ *
+ *  Revision 1.13  2006/12/12 10:57:04  ambrmi09
  *  This adresses the second part of #1609064
  *
  *  Revision 1.12  2006/12/11 14:41:51  ambrmi09
