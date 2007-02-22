@@ -21,63 +21,51 @@
 #include "inode.h"
 
 int fs_ifchr_close(int file) {
-	_syscall_mon(fs_ifchr_close);
 	return -1;
 }
 
 int fs_ifchr_fcntl (int file, int command, ...){
-	_syscall_mon(fs_ifchr_fcntl);
 	errno = ENOSYS;
 	return -1;
 }
 	
-	
 int fs_ifchr_fstat(int file, struct stat *st) {
-	_syscall_mon(fs_ifchr_fstat);	
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 	
 int fs_ifchr_isatty(int file) {
-	_syscall_mon(fs_ifchr_isatty);	
 	return 1;
 }
 		
 int fs_ifchr_link(char *old, char *new) {
-	_syscall_mon(fs_ifchr_link);	
 	errno=EMLINK;
 	return -1;
 }
 	
 int fs_ifchr_lseek(int file, int ptr, int dir) {
-	_syscall_mon(fs_ifchr_lseek);	
 	return 0;
 }
 
 int fs_ifchr_open(const char *filename, int flags, ...){
-	_syscall_mon(fs_ifchr_open);	
 	errno = ENOSYS;
 	return -1;
 }
 	
 int fs_ifchr_read(int file, char *ptr, int len) {
-	_syscall_mon(fs_ifchr_read);	
 	return 0;
 }
 		
 int fs_ifchr_stat(const char *file, struct stat *st) {
-	_syscall_mon(fs_ifchr_stat);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 		
 int fs_ifchr_unlink(char *name) {
-	_syscall_mon(fs_ifchr_unlink);
 	errno=ENOENT;
 	return -1;
 }
 	
 int fs_ifchr_write(int file, char *ptr, int len) {
-	_syscall_mon(fs_ifchr_write);
 	return len;
 }

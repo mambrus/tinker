@@ -21,64 +21,52 @@
 #include "inode.h"
 
 int fs_ifblk_close(int file) {
-	_syscall_mon(fs_ifblk_close);
 	return -1;
 }
 
 int fs_ifblk_fcntl (int file, int command, ...){
-	_syscall_mon(fs_ifblk_fcntl);
 	errno = ENOSYS;
 	return -1;
 }
-	
-	
+		
 int fs_ifblk_fstat(int file, struct stat *st) {
-	_syscall_mon(fs_ifblk_fstat);	
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 	
 int fs_ifblk_isatty(int file) {
-	_syscall_mon(fs_ifblk_isatty);	
 	return 1;
 }
 		
 int fs_ifblk_link(char *old, char *new) {
-	_syscall_mon(fs_ifblk_link);	
 	errno=EMLINK;
 	return -1;
 }
 	
 int fs_ifblk_lseek(int file, int ptr, int dir) {
-	_syscall_mon(fs_ifblk_lseek);	
 	return 0;
 }
 
 int fs_ifblk_open(const char *filename, int flags, ...){
-	_syscall_mon(fs_ifblk_open);	
 	errno = ENOSYS;
 	return -1;
 }
 	
 int fs_ifblk_read(int file, char *ptr, int len) {
-	_syscall_mon(fs_ifblk_read);	
 	return 0;
 }
 		
 int fs_ifblk_stat(const char *file, struct stat *st) {
-	_syscall_mon(fs_ifblk_stat);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 		
 int fs_ifblk_unlink(char *name) {
-	_syscall_mon(fs_ifblk_unlink);
 	errno=ENOENT;
 	return -1;
 }
 	
 int fs_ifblk_write(int file, char *ptr, int len) {
-	_syscall_mon(fs_ifblk_write);
 	return len;
 }
 

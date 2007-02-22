@@ -22,63 +22,52 @@
 
 
 int fs_ifdir_close(int file) {
-	_syscall_mon(fs_ifdir_close);
 	return -1;
 }
 
 int fs_ifdir_fcntl (int file, int command, ...){
-	_syscall_mon(fs_ifdir_fcntl);
 	errno = ENOSYS;
 	return -1;
 }
 	
 	
 int fs_ifdir_fstat(int file, struct stat *st) {
-	_syscall_mon(fs_ifdir_fstat);	
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 	
 int fs_ifdir_isatty(int file) {
-	_syscall_mon(fs_ifdir_isatty);	
 	return 1;
 }
 		
 int fs_ifdir_link(char *old, char *new) {
-	_syscall_mon(fs_ifdir_link);	
 	errno=EMLINK;
 	return -1;
 }
 	
 int fs_ifdir_lseek(int file, int ptr, int dir) {
-	_syscall_mon(fs_ifdir_lseek);	
 	return 0;
 }
 
 int fs_ifdir_open(const char *filename, int flags, ...){
-	_syscall_mon(fs_ifdir_open);	
 	errno = ENOSYS;
 	return -1;
 }
 	
 int fs_ifdir_read(int file, char *ptr, int len) {
-	_syscall_mon(fs_ifdir_read);	
 	return 0;
 }
 		
 int fs_ifdir_stat(const char *file, struct stat *st) {
-	_syscall_mon(fs_ifdir_stat);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 		
 int fs_ifdir_unlink(char *name) {
-	_syscall_mon(fs_ifdir_unlink);
 	errno=ENOENT;
 	return -1;
 }
 	
 int fs_ifdir_write(int file, char *ptr, int len) {
-	_syscall_mon(fs_ifdir_write);
 	return len;
 }

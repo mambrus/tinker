@@ -22,63 +22,52 @@
 
 
 int fs_ifsock_close(int file) {
-	_syscall_mon(fs_ifsock_close);
 	return -1;
 }
 
 int fs_ifsock_fcntl (int file, int command, ...){
-	_syscall_mon(fs_ifsock_fcntl);
 	errno = ENOSYS;
 	return -1;
 }
 	
 	
 int fs_ifsock_fstat(int file, struct stat *st) {
-	_syscall_mon(fs_ifsock_fstat);	
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 	
 int fs_ifsock_isatty(int file) {
-	_syscall_mon(fs_ifsock_isatty);	
 	return 1;
 }
 		
 int fs_ifsock_link(char *old, char *new) {
-	_syscall_mon(fs_ifsock_link);	
 	errno=EMLINK;
 	return -1;
 }
 	
 int fs_ifsock_lseek(int file, int ptr, int dir) {
-	_syscall_mon(fs_ifsock_lseek);	
 	return 0;
 }
 
 int fs_ifsock_open(const char *filename, int flags, ...){
-	_syscall_mon(fs_ifsock_open);	
 	errno = ENOSYS;
 	return -1;
 }
 	
 int fs_ifsock_read(int file, char *ptr, int len) {
-	_syscall_mon(fs_ifsock_read);	
 	return 0;
 }
 		
 int fs_ifsock_stat(const char *file, struct stat *st) {
-	_syscall_mon(fs_ifsock_stat);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 		
 int fs_ifsock_unlink(char *name) {
-	_syscall_mon(fs_ifsock_unlink);
 	errno=ENOENT;
 	return -1;
 }
 	
 int fs_ifsock_write(int file, char *ptr, int len) {
-	_syscall_mon(fs_ifsock_write);
 	return len;
 }

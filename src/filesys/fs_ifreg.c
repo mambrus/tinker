@@ -22,63 +22,52 @@
 
 
 int fs_ifreg_close(int file) {
-	_syscall_mon(fs_ifreg_close);
 	return -1;
 }
 
 int fs_ifreg_fcntl (int file, int command, ...){
-	_syscall_mon(fs_ifreg_fcntl);
 	errno = ENOSYS;
 	return -1;
 }
 	
 	
 int fs_ifreg_fstat(int file, struct stat *st) {
-	_syscall_mon(fs_ifreg_fstat);	
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 	
 int fs_ifreg_isatty(int file) {
-	_syscall_mon(fs_ifreg_isatty);	
 	return 1;
 }
 		
 int fs_ifreg_link(char *old, char *new) {
-	_syscall_mon(fs_ifreg_link);	
 	errno=EMLINK;
 	return -1;
 }
 	
 int fs_ifreg_lseek(int file, int ptr, int dir) {
-	_syscall_mon(fs_ifreg_lseek);	
 	return 0;
 }
 
 int fs_ifreg_open(const char *filename, int flags, ...){
-	_syscall_mon(fs_ifreg_open);	
 	errno = ENOSYS;
 	return -1;
 }
 	
 int fs_ifreg_read(int file, char *ptr, int len) {
-	_syscall_mon(fs_ifreg_read);	
 	return 0;
 }
 		
 int fs_ifreg_stat(const char *file, struct stat *st) {
-	_syscall_mon(fs_ifreg_stat);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 		
 int fs_ifreg_unlink(char *name) {
-	_syscall_mon(fs_ifreg_unlink);
 	errno=ENOENT;
 	return -1;
 }
 	
 int fs_ifreg_write(int file, char *ptr, int len) {
-	_syscall_mon(fs_ifreg_write);
 	return len;
 }
