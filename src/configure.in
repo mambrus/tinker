@@ -1,0 +1,66 @@
+dnl This is the kernel configure.in file.
+dnl Process this file with autoconf to produce a configure script.
+
+AC_INIT(src, [0.1.0])
+AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
+
+dnl Probably works with much older, but tested at this one
+AC_PREREQ([2.59])
+
+TINKER_AM_PREREQ
+AC_CONFIG_AUX_DIR(..)
+
+TINKER_CONFIGURE(..)
+
+AC_CONFIG_HEADER(../include/tinker/config.h)
+
+sources_c="tk.c time.c"
+
+if test $CONF_VERBOSE == "yes"; then
+	echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+	echo "                   COMPONENTS"
+	echo "                   =========="
+	echo "TK_COMP_ITC:                             $_TK_COMP_ITC"
+	echo "TK_COMP_PTIMER:                          $_TK_COMP_PTIMER"
+	echo "TK_COMP_KMEM:                            $_TK_COMP_KMEM"
+	echo "TK_COMP_PTHREAD:                         $_TK_COMP_PTHREAD"
+	echo "TK_COMP_POSIX_RT:                        $_TK_COMP_POSIX_RT"
+	echo "TK_COMP_FILESYS:                         $_TK_COMP_FILESYS"
+	echo
+	echo "                 PACKAGES & misc"
+	echo "                 ==============="
+	echo "TK_USE_BUILTIN_SORT:                     $_TK_USE_BUILTIN_SORT"
+	echo "VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV"
+fi
+
+
+dnl Components & packake usage deduction 
+if test $_TK_COMP_ITC != __tk_no; then
+   sources_c="$sources_c tk_itc.c tk_sysqueues.c"
+   if test $_TK_USE_BUILTIN_SORT != __tk_no; then
+      sources_c="$sources_c tk_ansi_search.c"
+   fi
+fi
+if test $_TK_COMP_PTIMER != __tk_no; then
+   sources_c="$sources_c tk_ptime.c"
+fi
+if test $_TK_COMP_KMEM != __tk_no; then
+   sources_c="$sources_c tk_mem.c"
+fi
+if test $_TK_COMP_PTHREAD != __tk_no; then
+   sources_c="$sources_c pthread_attr_cond.c pthread_attr_mutex.c pthread_attr_rwlock.c pthread_attr_sched.c pthread_cond.c pthread_mutex.c pthread_rwlock.c pthread_sched.c pthread_sync.c"
+fi
+if test $_TK_COMP_POSIX_RT != __tk_no; then
+   sources_c="$sources_c semaphore.c mqueue.c"
+fi
+
+if test $_TK_COMP_FILESYS != __tk_no; then
+   AC_MSG_NOTICE([<<< Component <filesys> >>>])
+   AC_CONFIG_SUBDIRS([filesys])
+fi
+
+ALL_C=$sources_c
+AC_SUBST(ALL_C)
+
+dnl Read Makefile.in and config.h.in, Write Makefile and config.h
+AC_OUTPUT(Makefile-gnu)

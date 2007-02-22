@@ -26,7 +26,7 @@ configure_this:
 	rm -f Makefile-gnu.in
 	cp $(TINKER_SRC_DIR)/Makefile-gnu.in .
 	autoconf -I $(TINKER_SRC_DIR)
-	if test -n "$(SUB_MODS)"; then for SUBDIR in $(SUB_MODS); do cp $(TINKER_SRC_DIR)/bsp/Makefile $$SUBDIR/; done; fi
+	if test -n "$(SUB_MODS)"; then for SUBDIR in $(SUB_MODS); do cp $(TINKER_SRC_DIR)/src/Makefile $$SUBDIR/; done; fi
 	
 
 configure_subs:

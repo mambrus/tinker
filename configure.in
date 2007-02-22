@@ -10,7 +10,7 @@ AC_PREREQ([2.59])
 TINKER_AM_PREREQ
 AC_CONFIG_AUX_DIR(.)
 
-AC_CONFIG_SUBDIRS([bsp])
+AC_CONFIG_SUBDIRS([src bsp])
 #Sources are deducted based on components configuration. The line below is now set further down.
 #sources_c="src/tk.c src/tk_itc.c src/tk_sysqueues.c"
 
@@ -96,6 +96,8 @@ AH_TEMPLATE([TK_COMP_PTHREAD],
    [Comp. PTHRED - POSIX 1003.1c threads component enabled])
 AH_TEMPLATE([TK_COMP_POSIX_RT],
    [Comp. POSIX_RT - POSIX 1003.1b queues, semaphores component enabled])
+AH_TEMPLATE([TK_COMP_FILESYS],
+   [Comp. FILESYS - Embedded filesystem component enabled])
 
 dnl TinKer package tuning defines
 AH_TEMPLATE([TK_USE_BUILTIN_SORT],
@@ -107,7 +109,7 @@ AH_TEMPLATE([TK_CPLUSPLUS],
 
 dnl Other features
 AH_TEMPLATE([TK_DISPATCH],
-   [Main type of dispatching. MIXED or EXCLUSIVE])
+   [Main type of dispatching (MIXED or EXCLUSIVE).])
 
 
 dnl Low level porting (advanced)
@@ -124,27 +126,6 @@ TINKER_CONFIGURE(.)
 
 AC_CONFIG_HEADER(include/tinker/config.h)
 
-sources_c="src/tk.c src/time.c"
-
-dnl Components deduction
-if test $enable_itc != no; then
-   sources_c="$sources_c src/tk_itc.c src/tk_sysqueues.c"
-   if test $enable_builtin_sorting != no; then
-      sources_c="$sources_c src/tk_ansi_search.c"
-   fi
-fi
-if test $enable_ptimer != no; then
-   sources_c="$sources_c src/tk_ptime.c"
-fi
-if test $enable_kmem != no; then
-   sources_c="$sources_c src/tk_mem.c"
-fi
-if test $enable_pthread != no; then
-   sources_c="$sources_c src/pthread_attr_cond.c src/pthread_attr_mutex.c src/pthread_attr_rwlock.c src/pthread_attr_sched.c src/pthread_cond.c src/pthread_mutex.c src/pthread_rwlock.c src/pthread_sched.c src/pthread_sync.c"
-fi
-if test $enable_posix_rt != no; then
-   sources_c="$sources_c src/semaphore.c src/mqueue.c"
-fi
 
 
 ALL_C=$sources_c

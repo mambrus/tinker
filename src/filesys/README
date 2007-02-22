@@ -1,0 +1,9 @@
+				TK_FILESYS
+				==========
+
+			An embedded filesystem for TinKer.
+
+TK_FILESYS is an embedded filesystem for TinKer. It provides you with the 
+*NIX file system abstraction when operating on I/O.
+
+TK_FILESYS is only available for HIXS adapted GNU targets.

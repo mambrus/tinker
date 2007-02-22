@@ -52,7 +52,7 @@ you use printf in thread else 64bytes is probably sufficient.
 enum SCHED_ERROR_CODES{
 /*First are TiNker codes*/
 /*COMPONENT SCHED*/
-TK_OK            ,//!< @brief Operation returned without errors
+TK_OK=0          ,//!< @brief Operation returned without errors
 TK_ERROR         ,//!< @brief General TinKer catch all error
 TK_SENTINEL
 };
@@ -279,6 +279,11 @@ extern int     tk_bsp_sysinit(void);
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
+ *  Revision 1.46  2007-02-22 12:36:48  ambrmi09
+ *  1) Structure adapted for modulerizing components under tinker/src
+ *     in the same fashion as the modules under tinker/bsp
+ *  2) New component added TK_FILESYS (resides under src/filesys)
+ *
  *  Revision 1.45  2007-02-21 01:01:24  ambrmi09
  *  Was a very good and productive day! Kernel runs on new target, but stacks
  *  get busted. i think it's the setjmp, longjump think thats messing with us.

@@ -97,6 +97,14 @@ any of them.   errno.h
    #include <mqueue.h>
 #endif
 
+#if defined(TK_COMP_FILESYS) && (TK_COMP_FILESYS==1)
+   #ifndef __GNUC__
+      #error Component TK_COMP_FILESYS is only available for HIXS adapted GNU targets
+   #endif
+   #include <filesys/filesys.h>
+#endif
+
+
 //@}
 
 #if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
@@ -1389,8 +1397,20 @@ void _tk_main( void ){
          #endif
       #endif
    #endif
-    
+
+   #if defined(TK_COMP_FILESYS) && TK_COMP_FILESYS
+      _b_hook(fs_init);
+      assert(fs_init() == ERR_OK );
+   #endif
+
+
    tk_root();
+
+   #if defined(TK_COMP_FILESYS) && TK_COMP_FILESYS
+      _b_hook(fs_fini);
+      assert(fs_fini() == ERR_OK );
+   #endif
+
 
    #if defined(TK_COMP_ITC) && TK_COMP_ITC
       #if defined(TK_COMP_PTHREAD) && TK_COMP_PTHREAD
@@ -1492,6 +1512,11 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
+ *  Revision 1.72  2007-02-22 12:36:48  ambrmi09
+ *  1) Structure adapted for modulerizing components under tinker/src
+ *     in the same fashion as the modules under tinker/bsp
+ *  2) New component added TK_FILESYS (resides under src/filesys)
+ *
  *  Revision 1.71  2007-02-21 21:18:41  ambrmi09
  *  Nasty bug fixed. Turns out setjump/jongjum is more sensitive for interrupt
  *  interference than the old techique. Will be reluctant to change back though

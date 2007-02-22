@@ -447,7 +447,12 @@ void *bsearch (
  * @defgroup CVSLOG_tk_search_c tk_search_c
  * @ingroup CVSLOG
  *  $Log: tk_ansi_search.c,v $
- *  Revision 1.9  2006-04-08 10:16:02  ambrmi09
+ *  Revision 1.10  2007-02-22 12:36:48  ambrmi09
+ *  1) Structure adapted for modulerizing components under tinker/src
+ *     in the same fashion as the modules under tinker/bsp
+ *  2) New component added TK_FILESYS (resides under src/filesys)
+ *
+ *  Revision 1.9  2006/04/08 10:16:02  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *
  *  Revision 1.8.2.1  2006/04/03 20:07:29  ambrmi09

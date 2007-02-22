@@ -49,11 +49,6 @@ dnl Note: Default values are set here.
 dnl ----------------------------------------------------------------------------
 AC_DEFUN([TINKER_OPTIONS_BUILD],
 [
-	AC_ARG_ENABLE(verbose-config,
-		AS_HELP_STRING([--verbose-config],[Configure - Shows exrea information while running configure script]),
-		CONF_VERBOSE=$enableval,
-		CONF_VERBOSE="no"
-	)
 	AC_ARG_ENABLE(depmake,
 		AS_HELP_STRING([--enable-depmake],[Build - Enable/disable makefile targets to depend on Makefile and Makefile-gnu. Optionally you can assign a value naming which specific files to depend on]),
 		DEPMAKE=__tk_$enableval,
@@ -304,55 +299,58 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_SUBST(MCPU)
 	AC_DEFINE_UNQUOTED([TK_DCPU],$MCPU)
 
-
-	dnl these shell values are used in our scripts. Set them to defaut values that 
-	dnl correspond the values in each values AC_ARG_ENABLE section.
-	dnl Note: the prefix (i.e. '__tk_') is not used.
-	enable_itc=yes
-	enable_ptimer=no
-	enable_kmem=no
-	enable_pthread=yes
-	enable_posix_rt=yes
-
-	enable_builtin_sorting=yes
-
-	dnl Components config part. Use enable-feature/disable-feature without arguments
+	dnl *Components* config part. Use enable-feature/disable-feature without arguments
 	dnl Note: Default values are set here.
 	dnl ----------------------------------------------------------------------------
 	AC_ARG_ENABLE(itc,
 		AS_HELP_STRING([--enable-itc],[ITC - Enable/disable Inter thread communication component (native API)]),
-		AC_DEFINE_UNQUOTED([TK_COMP_ITC],__tk_$enableval),
-		AC_DEFINE_UNQUOTED([TK_COMP_ITC],__tk_yes)
+		_TK_COMP_ITC=__tk_$enableval,
+		_TK_COMP_ITC=__tk_yes
 	)
 	AC_ARG_ENABLE(ptimer,
 		AS_HELP_STRING([--enable-ptimer],[PTIMER - Enable/disable Preemptive timer component]),
-		AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],__tk_$enableval),
-		AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],__tk_no)
+		_TK_COMP_PTIMER=__tk_$enableval,
+		_TK_COMP_PTIMER=__tk_no
 	)
 	AC_ARG_ENABLE(kmem,
 		AS_HELP_STRING([--enable-kmem],[KMEM - Enable/disable Kernel memory manager component]),
-		AC_DEFINE_UNQUOTED([TK_COMP_KMEM],__tk_$enableval),
-		AC_DEFINE_UNQUOTED([TK_COMP_KMEM],__tk_no)
+		_TK_COMP_KMEM=__tk_$enableval,
+		_TK_COMP_KMEM=__tk_no
 	)
 	AC_ARG_ENABLE(pthread,
 		AS_HELP_STRING([--enable-pthread],[PTHRED - Enable/disable POSIX 1003.1c threads component]),
-		AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],__tk_$enableval),
-		AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],__tk_yes)
+		_TK_COMP_PTHREAD=__tk_$enableval,
+		_TK_COMP_PTHREAD=__tk_yes
 	)
 	AC_ARG_ENABLE(posix_rt,
 		AS_HELP_STRING([--enable-posix_rt],[POSIX_RT - Enable/disable POSIX 1003.1b queues, semaphores component enabled]),
-		AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],__tk_$enableval),
-		AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],__tk_yes)
+		_TK_COMP_POSIX_RT=__tk_$enableval,
+		_TK_COMP_POSIX_RT=__tk_yes
+	)
+	AC_ARG_ENABLE(filesys,
+		AS_HELP_STRING([--enable-filesys],[FIILESYS - Enable/disable embedded filesystem abstraction component. (Not available for all possible targets. Target must be HIXS adapted.)]),
+		_TK_COMP_FILESYS=__tk_$enableval,
+		_TK_COMP_FILESYS=__tk_no
 	)
 
-	dnl Package config part. (usage, tuning and misc) Use enable-feature/disable-feature (arguments optional)
+	AC_DEFINE_UNQUOTED([TK_COMP_ITC],	$_TK_COMP_ITC)
+	AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],	$_TK_COMP_PTIMER)
+	AC_DEFINE_UNQUOTED([TK_COMP_KMEM],	$_TK_COMP_KMEM)
+	AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],	$_TK_COMP_PTHREAD)
+	AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],	$_TK_COMP_POSIX_RT)
+	AC_DEFINE_UNQUOTED([TK_COMP_FILESYS],	$_TK_COMP_FILESYS)
+
+	dnl *Package* config part. (usage, tuning and misc) Use enable-feature/disable-feature (arguments optional)
 	dnl NOTE: Default values are set here, but *might get overridden in target specific sub-trees*
 	dnl ----------------------------------------------------------------------------
 	AC_ARG_ENABLE(builtin_sorting,
 		AS_HELP_STRING([--enable-builtin_sorting],[PACKAGE - Use builtin search/sort functions (overrides default for target)]),
-		AC_DEFINE_UNQUOTED([TK_USE_BUILTIN_SORT],__tk_$enableval),
-		AC_DEFINE_UNQUOTED([TK_USE_BUILTIN_SORT],__tk_yes)
+		_TK_USE_BUILTIN_SORT=__tk_$enableval,
+		_TK_USE_BUILTIN_SORT=__tk_yes
 	)
+
+	AC_DEFINE_UNQUOTED([TK_USE_BUILTIN_SORT],$_TK_USE_BUILTIN_SORT)
+
 
 	dnl Configurable entities (TinKer tuning defines)
 	dnl NOTE: Default values *NOT* set here, These are supposed to be set in target specific sub-trees
