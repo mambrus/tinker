@@ -42,10 +42,11 @@ node  ->	node  ->	node  ->	node  ->	NULL
 	#error TK_FILESYS needs a HIXS adapted tool-chain
 #endif
 */
-#include <sys/stat.h>
+//#include <sys/stat.h>
 #include <tinker/hixs.h>
 
 typedef enum {
+/*
 	ISA_IFDIR	= S_IFDIR,	//!< directory file.
 	ISA_IFCHR	= S_IFCHR,	//!< character-oriented device file.
 	ISA_IFBLK	= S_IFBLK,	//!< block-oriented device file.
@@ -54,6 +55,8 @@ typedef enum {
 	ISA_IFSOCK	= S_IFSOCK,	//!< socket
 	ISA_IFIFO	= S_IFIFO,	//!< FIFO or pipe
 	ISA_UNKNOWN			//!< Unknown type
+*/
+	mupp
 }tk_nodetype_t;
 
 /*

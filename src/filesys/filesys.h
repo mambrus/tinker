@@ -27,7 +27,7 @@
 #include <stdarg.h>
 #include <tinker/hixs.h>
 #include <malloc.h>
-
+#include <sys/stat.h>
 
 #ifndef assure
 #define assure(x) assert(x)

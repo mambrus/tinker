@@ -15,11 +15,6 @@
    #error System needs to be defined
 #endif
 
-// System ID definitions
-#define __SYS_DEFAULT__    0
-#define __SYS_HIXS__       1
-
-
 #define NO_JMP_WRAPPER
 #ifndef NO_JMP_WRAPPER
 #include <setjmp.h>

@@ -31,7 +31,7 @@ CPU_OPT        = @CPU_OPT@
 DCPU           = @DCPU@
 
 
-.PHONY: all subdirs info depend link clean cleanall install rebuild flashit console
+.PHONY: all subdirs info depend link clean cleanall cleanhard install rebuild flashit console
 
 MAKE_SUBDIRS_ALL   := $(patsubst %, make -f Makefile-gnu all @MAKEOPTS@ -C % &&, $(MAKE_SUBDIRS))
 MAKE_SUBDIRS_CLEAN := $(patsubst %, make -f Makefile-gnu clean @MAKEOPTS@ -C % &&, $(MAKE_SUBDIRS))
@@ -116,6 +116,15 @@ clean:
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] cleaned! ->>"
 	@echo "======================================================"
+
+cleanhard:
+	find -iname "*.d" -exec rm '{}' ';'
+	find -iname "*.o" -exec rm '{}' ';'
+	find -iname "*~" -exec rm '{}' ';'
+	@echo "======================================================"
+	@echo "<<- Target [@PACKAGE_NAME@] hard-cleaned from garbage! ->>"
+	@echo "======================================================"
+
 
 cleanall: clean
 	rm -rf @TINKER_PATH@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/	

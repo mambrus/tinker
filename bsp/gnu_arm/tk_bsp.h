@@ -40,9 +40,6 @@ combo.
    #error System needs to be defined
 #endif
 
-// System ID definitions
-#define __SYS_ANGEL_SWI__  0
-#define __SYS_HIXS__       1
 
 // Board ID definitions
 #define BITFIRE            0
@@ -103,7 +100,12 @@ int bsp_ReportException (/*TBD*/);
  * @defgroup CVSLOG_tk_bsp_h tk_bsp_h
  * @ingroup CVSLOG
  *  $Log: tk_bsp.h,v $
- *  Revision 1.5  2006-11-05 14:18:56  ambrmi09
+ *  Revision 1.6  2007-02-24 12:17:14  ambrmi09
+ *  1) Sync PowerPC sources
+ *  2) Add structure for i386-hixs-elf target. (Hopefully our new test-bed)
+ *     for developping the filesys component.)
+ *
+ *  Revision 1.5  2006/11/05 14:18:56  ambrmi09
  *  Build system and source modified to make better use of config.h
  *
  *  This file now contains information about how the kernel is configured

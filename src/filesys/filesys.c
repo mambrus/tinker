@@ -17,11 +17,29 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "filesys.h"
-#include "inode.h"
+#include <sys/stat.h>
+#include <tinker/hixs.h>
+#include <errno.h> 
+
+#include <filesys/inode.h>
+
+
+#define RX_BUFFLEN	102 
+#define TX_BUFFLEN	102
+
+int fs_close(int file);
+int fs_fcntl (int files, int command, ...);
+int fs_fstat(int file, struct stat *st);
+int fs_isatty(int file);
+int fs_link(char *old, char *new);
+int fs_lseek(int file, int ptr, int dir);
+int fs_open(const char *filename, int flags, ...);
+int fs_read(int file, char *ptr, int len);
+int fs_stat(const char *file, struct stat *st);
+int fs_unlink(char *name);
+int fs_write(int file, char *ptr, int len);
 
 #include <assert.h>
-#include <tinker/hixs.h>
 #include <string.h>
 
 tk_iohandle_t std_files[3];	//!< The thre standard handles (stdin,stdout & stderr)
@@ -39,13 +57,13 @@ int fs_init(){
 
 	hixs.close        = fs_close;
 	hixs.fcntl        = fs_fcntl;
-	hixs.fstat        = fs_fstat; //___HIXS_fstat; //fs_fstat;
+	hixs.fstat        = fs_fstat; //HIXS_fstat; 
 	hixs.isatty       = fs_isatty; 
 	hixs.link         = fs_link;
 	hixs.lseek        = fs_lseek;
 	hixs.open         = fs_open;
-	hixs.read         = fs_read;
-	hixs.stat         = fs_fstat;
+	hixs.read         = fs_read; 
+	hixs.stat         = fs_stat;
 	hixs.unlink       = fs_unlink;
 	hixs.write        = fs_write;
 
@@ -124,7 +142,7 @@ int fs_close(int file) {
 int fs_fcntl (int file, int command, ...){
 	va_list ap;
 	/*any local vars here...*/
-	va_start (ap, file);
+	va_start (ap, command);
 
 	_syscall_mon(fs_fcntl);
 	errno = ENOSYS;
@@ -133,6 +151,7 @@ int fs_fcntl (int file, int command, ...){
 	
 int fs_fstat(int file, struct stat *st) {
 	st->st_mode = S_IFCHR;
+	st->st_blksize = TX_BUFFLEN;
 	return 0;
 }
 	

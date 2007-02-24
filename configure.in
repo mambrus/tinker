@@ -19,10 +19,8 @@ AH_TOP(
 #ifndef tinker_config_h
 #define tinker_config_h
 
-// Please do not refere to __tk_yes or __tk_no in your application directly. 
-// They are only here because the buildsystem requires it.
-#define __tk_no 0
-#define __tk_yes 1
+// Include well known constants used in this file and which are needed for macro evaluation
+#include <tinker/_defines.h>
 
 )
 AH_BOTTOM(
@@ -49,10 +47,16 @@ AH_TEMPLATE([TK_XCOMPILE],
    [If cross-compile build is expected])
 AH_TEMPLATE([TK_ARCH],
    [Which main CPU architecture])
+AH_TEMPLATE([__TK_ARCH_up__],
+   [Which main CPU architecture - un-prefixed version])
 AH_TEMPLATE([TK_SYSTEM],
    [Defines which system (i.e. system call API) we're using])
+AH_TEMPLATE([__TK_SYSTEM_up__],
+   [Defines which system (i.e. system call API) we're using - un-prefixed version])
 AH_TEMPLATE([TK_ABI],
    [Calling convention])
+AH_TEMPLATE([__TK_ABI_up__],
+   [Calling convention - un-prefixed version])
 AH_TEMPLATE([TK_TOOLDIR],
    [Where the PREFIX directory is])
 AH_TEMPLATE([TK_GCC_VERSION],
@@ -63,6 +67,8 @@ AH_TEMPLATE([TK_TINKER_PATH],
 dnl Selectable build system defines
 AH_TEMPLATE([TK_BOARD],
    [Name of the board directory (i.e. BSP adaption)])
+AH_TEMPLATE([__TK_BOARD_up__],
+   [Name of the board directory (i.e. BSP adaption)  - un-prefixed version])
 AH_TEMPLATE([TK_DCPU],
    [Specific CPU variant (i.e. -m option used)])
 
@@ -102,6 +108,9 @@ AH_TEMPLATE([TK_COMP_FILESYS],
 dnl TinKer package tuning defines
 AH_TEMPLATE([TK_USE_BUILTIN_SORT],
    [Pack. - Use builtin search/sort function (overrides default for target)])
+AH_TEMPLATE([TK_USE_EMRGCY_CONSOLE],
+   [Pack. - Emergency console is claimed to be available - _tk_assert will use it])
+
 
 dnl Build features
 AH_TEMPLATE([TK_CPLUSPLUS],

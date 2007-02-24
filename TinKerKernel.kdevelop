@@ -34,7 +34,7 @@
         <cflags>-O2 -g0</cflags>
       </optimized>
       <debug>
-        <configargs>--enable-debug=full --host=powerpc-hixs-elf MCPU=860 BOARD=ESC --enable-makeopts=-&quot;S -w&quot; --disable-cplusplus --enable-verbose-config --enable-how-to-printk=ORIGINAL --enable-filesys --enable-min_stack=0x20000 --enable-norm_stack=0x20000 </configargs>
+        <configargs>--enable-debug=full --host=i386-hixs-elf MCPU=860 BOARD=ESC --enable-makeopts=-&quot;S -w&quot; --disable-cplusplus --enable-verbose-config --enable-how-to-printk=ORIGINAL --enable-filesys --enable-min_stack=0x20000 --enable-norm_stack=0x20000 </configargs>
         <builddir></builddir>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
@@ -42,7 +42,9 @@
         <cflags>-O0 -g3</cflags>
         <envvars>
           <envvar value="--enable-debug=full --host=arm-hixs-elf MCPU=arm7tdmi BOARD=lpc21xxx" name="ARM" />
+          <envvar value="--enable-debug=full --host=i386-hixs-elf MCPU=860 BOARD=ESC --enable-makeopts=-&quot;S -w&quot; --disable-cplusplus --enable-verbose-config --enable-how-to-printk=ORIGINAL --enable-filesys --enable-min_stack=0x20000 --enable-norm_stack=0x20000 " name="i386" />
           <envvar value="--enable-debug=full --host=powerpc-eabisim MCPU=860 BOARD=generic" name="PPC" />
+          <envvar value="--enable-debug=full --host=powerpc-hixs-elf MCPU=860 BOARD=ESC --enable-makeopts=-&quot;S -w&quot; --disable-cplusplus --enable-verbose-config --enable-how-to-printk=ORIGINAL --enable-filesys --enable-min_stack=0x20000 --enable-norm_stack=0x20000 " name="PPC_ESC" />
         </envvars>
         <topsourcedir></topsourcedir>
         <cppflags></cppflags>

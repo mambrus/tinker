@@ -28,8 +28,14 @@ it - or replace it with your own with potentially different context.
 #	include "hixs.h"
 #endif
 
+#include <assert.h>
+//#include <sys/stat.h>
+
 #if !defined( _NO_HIXS_SYSCALLMON_ )
-#	define MON(x) hixs.syscall_mon(x)
+#	define MON(x) 				\
+		assert(hixs.syscall_mon); 	\
+		assert(x);			\
+		hixs.syscall_mon(x)
 #else
 #	define MON(x)	((void)0)
 #endif

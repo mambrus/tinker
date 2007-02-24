@@ -179,8 +179,13 @@ AC_DEFUN([TINKER_CONFIGURE],
 	else
 		SYSTEM=$host_vendor
 	fi
-
+	dnl Note that system is not quoted in config.h in this file. This permits configure.in at lower level
+	dnl to determine {if test $SYSTEM == 'default'} to set whatever default system they think is best
+	dnl The "un-prefixed version is however quoted and is set to the cannonical middle name
 	AC_SUBST(SYSTEM)
+	AC_DEFINE_UNQUOTED([__TK_SYSTEM_up__],$host_vendor)
+
+
 	AC_SUBST(host_alias)
 	AC_DEFINE_UNQUOTED([TK_ALIAS_HOST],$host_alias)
 
@@ -269,8 +274,11 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_SUBST(ARCH)
 	AC_SUBST(ABI)
 	AC_DEFINE_UNQUOTED([TK_XCOMPILE],$XCOMPILE)
-	AC_DEFINE_UNQUOTED([TK_ARCH],$ARCH)
-	AC_DEFINE_UNQUOTED([TK_ABI],$ABI)
+	AC_DEFINE_UNQUOTED([TK_ARCH],__tk_$ARCH__)
+	AC_DEFINE_UNQUOTED([TK_ABI],__tk_$ABI__)
+	AC_DEFINE_UNQUOTED([__TK_ARCH_up__],$ARCH)
+	AC_DEFINE_UNQUOTED([__TK_ABI_up__],$ABI)
+
 
 	GCC_VERSION=$($CC -v 2>&1 | grep version | sed -e 's/gcc version //' | cut -f1 -d " ")
 	AC_SUBST(GCC_VERSION)
@@ -281,7 +289,8 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_SUBST(CFLAGS)
 
 	AC_ARG_VAR(BOARD, [Selects which board to build TinKer BSP for. Valid values depend on each BSP and coorespond to a sub-directory in that structure])
-	AC_DEFINE_UNQUOTED([TK_BOARD],$BOARD)
+	AC_DEFINE_UNQUOTED([TK_BOARD],__tk_$BOARD_)
+	AC_DEFINE_UNQUOTED([__TK_BOARD_up__],$BOARD)
 
 	AC_ARG_VAR(MCPU, [Sets the GCC CPU optimization switch (i.e. -mcpu=<MCPU>])
 
@@ -348,6 +357,11 @@ AC_DEFUN([TINKER_CONFIGURE],
 		_TK_USE_BUILTIN_SORT=__tk_$enableval,
 		_TK_USE_BUILTIN_SORT=__tk_yes
 	)
+	AC_ARG_ENABLE(emrgcy-console,
+		AS_HELP_STRING([--enable-emrgcy-console=<val>],[Claim an emergency console is available by the BSP. Alterativly, name a function to use.]),
+		AC_DEFINE_UNQUOTED([TK_USE_EMRGCY_CONSOLE],__tk_$enableval)
+	)
+
 
 	AC_DEFINE_UNQUOTED([TK_USE_BUILTIN_SORT],$_TK_USE_BUILTIN_SORT)
 

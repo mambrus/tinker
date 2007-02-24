@@ -1327,6 +1327,24 @@ void tk_exit( int ec ) {
    }
 }
 
+/*A simple conversion from a number to string*/
+void ntos(char *outst, int number, int maxlen){
+	int i,div,d,j,a=0;
+
+	for (i=0;i<maxlen;i++)
+		outst[i]=0;
+
+	for (d=10000000,i=0,j=0;d;i++,d/=10){
+		div=number/d;
+		if (a || div){
+			a=1;
+			outst[j]='0'+div;
+			number=number-(div*d);
+			j++;
+		}
+	}
+}
+
 /*!
 @ingroup kernel_glue
 
@@ -1336,12 +1354,51 @@ on targets that do not have assert implemented by TinKer.
 
 */
 void _tk_assertfail(  
-   char *assertstr, 
-   char *filestr, 
-   int line
+	char *assertstr, 
+	char *filestr, 
+	int line
 ) {
-   printk(("tk: Error - Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line));
-   tk_exit( TC_ERR_ASSERT );
+#if defined(TK_USE_EMRGCY_CONSOLE)
+	static const char* asrt_txt="tk: Error - Assertion failed: ";
+	static const char* file_txt="file: ";
+	static const char* line_txt="line: ";
+	#define MAX_LEN 80
+	#if (TK_USE_EMRGCY_CONSOLE == __tk_yes)
+		char astr[MAX_LEN];
+		console_write( asrt_txt, strnlen(asrt_txt, MAX_LEN));
+		
+		console_write(assertstr,strlen(assertstr));
+		console_write("\n\r",2);
+		
+		console_write(file_txt,strlen(file_txt));
+		console_write(filestr,strlen(filestr));
+		console_write("\n\r",2);
+		
+		console_write(line_txt,strlen(line_txt));
+		ntos(astr,line,MAX_LEN);
+		console_write(astr,strlen(astr));
+		console_write("\n\r",2);
+	#else
+		char astr[MAX_LEN];
+		TK_USE_EMRGCY_CONSOLE( asrt_txt, strnlen(asrt_txt, MAX_LEN));
+		
+		TK_USE_EMRGCY_CONSOLE(assertstr,strlen(assertstr));
+		TK_USE_EMRGCY_CONSOLE("\n\r",2);
+		
+		TK_USE_EMRGCY_CONSOLE(file_txt,strlen(file_txt));
+		TK_USE_EMRGCY_CONSOLE(filestr,strlen(filestr));
+		TK_USE_EMRGCY_CONSOLE("\n\r",2);
+		
+		TK_USE_EMRGCY_CONSOLE(line_txt,strlen(line_txt));
+		ntos(astr,line,MAX_LEN);
+		TK_USE_EMRGCY_CONSOLE(astr,strlen(astr));
+		TK_USE_EMRGCY_CONSOLE("\n\r",2);
+
+	#endif
+#else
+	printk(("tk: Error - Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line));
+#endif
+	tk_exit( TC_ERR_ASSERT );
 }
 
 
@@ -1379,6 +1436,9 @@ things at least:
 //void     tk_root( void ); 
 void _tk_main( void ){
    _b_hook(_tk_main);
+   #if defined (TK_SYSTEM) && (TK_SYSTEM == __SYS_HIXS__)
+   _syscall_mon(_tk_main);
+   #endif
    tk_bsp_sysinit();      //For emulation targets, this is ment to be nothing 
    _b_hook(tk_bsp_sysinit);
 
@@ -1398,7 +1458,7 @@ void _tk_main( void ){
       _b_hook(tk_mem);
       assert( tk_mem() == ERR_OK );
    #endif
-   
+
    #if defined(TK_COMP_ITC) && TK_COMP_ITC
       _b_hook(tk_itc);
       assert( tk_itc() == ERR_OK );
@@ -1427,8 +1487,8 @@ void _tk_main( void ){
       //fdup(stdout);
       //fdup2(stderr,stdout);
 
-      set_fflags(stdout,O_NONBLOCK);
-      set_fflags(stderr,O_NONBLOCK);
+      //set_fflags(stdout,O_NONBLOCK);
+      //set_fflags(stderr,O_NONBLOCK);
 
       fprintf(stderr,"Filesystem initialized!\n");
    #endif
@@ -1518,7 +1578,9 @@ int main(int argc, char **argv){
    //(i.e. My_syscall_mon since we overloaded it) and to My_write    
    printf("Hello world"); 
    */
-   
+
+   //assert("This is an intentional faliure..." == NULL);
+
    //BOOT_HOOK;
    _b_hook(main);
     _tk_main();
@@ -1545,6 +1607,11 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
+ *  Revision 1.74  2007-02-24 12:17:14  ambrmi09
+ *  1) Sync PowerPC sources
+ *  2) Add structure for i386-hixs-elf target. (Hopefully our new test-bed)
+ *     for developping the filesys component.)
+ *
  *  Revision 1.73  2007-02-22 23:22:31  ambrmi09
  *  FS structure added.
  *

@@ -54,9 +54,18 @@ endif
 #Note: 'make configure' always assumes a GNU (or UNIX like) build host
 CONFIGURE_MODS  := $(patsubst %, make configure -C %;, $(CONFMODULES))
 
-.PHONY: modules $(MODULES) clean cleanall configure install flashit console
+.PHONY: modules $(MODULES) clean cleanall configure install flashit console cleanhard
 
 all: modules
+
+cleanhard:
+	find -iname "*.d" -exec rm '{}' ';'
+	find -iname "*.o" -exec rm '{}' ';'
+	find -iname "*~" -exec rm '{}' ';'
+	@echo "======================================================"
+	@echo "<<- All is hard-cleaned from garbage! ->>"
+	@echo "======================================================"
+
 
 modules: $(MODULES)
 	@echo "======================================================"

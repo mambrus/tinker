@@ -45,8 +45,24 @@ kernel_reimpl_ansi
 #define NO 0
 #endif
 
-/*Make sure pthread stypes, time-constants and other stuff from other from any 
-of these OS'es that we don't care about*/
+/*
+Make sure pthread stypes, time-constants and other stuff from other from any 
+of these OS'es that we don't care about. This will affect certain types and 
+macros both for the kernel, but also for any application using the kernel 
+header structure
+
+NOTE VERY IMPORTANT
+Please make sure that your tool-chain is also building newlib with these 
+macros off (I.e. -U__rtems__ -U__svr4__ -U__CYGWIN__).
+
+If not, you will experiance problems when using funtions that
+take 'struct stat*' or dev_t as arguments (or any other type that is 
+differently specified depending on OS). Normally you would not need to 
+care about this, only if you use tools originally made for either of 
+these thre OS's. There exists cases where you'd  want to build kernel+tools
+with a tool-set originally tailored for any of these.
+
+*/
 #if defined(__rtems__)
 #undef __rtems__
 #endif
@@ -58,6 +74,7 @@ of these OS'es that we don't care about*/
 #if defined(__CYGWIN__)
 #undef __CYGWIN__
 #endif
+
 /*OS*/
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -107,6 +124,11 @@ of these OS'es that we don't care about*/
  * @ingroup CVSLOG
  *
  *  $Log: tk_ansi_dirwrap.h,v $
+ *  Revision 1.3  2007-02-24 12:17:14  ambrmi09
+ *  1) Sync PowerPC sources
+ *  2) Add structure for i386-hixs-elf target. (Hopefully our new test-bed)
+ *     for developping the filesys component.)
+ *
  *  Revision 1.2  2007-02-19 17:34:37  ambrmi09
  *  Tinker will now compile for target powerpc-hixs-rtems
  *

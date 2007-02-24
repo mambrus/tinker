@@ -45,10 +45,6 @@ initial startup routines respectivly
    #error System needs to be defined
 #endif
 
-// System ID definitions
-#define __SYS_DEFAULT__    0
-#define __SYS_HIXS__       1
-
 #if !defined(__SYS_DEFAULT__)
 #error "Sanity chec failk"
 #endif
@@ -60,7 +56,6 @@ initial startup routines respectivly
 #endif
 
 int ppc_write (int file, char *ptr, int len){
-	hixs.syscall_mon(ppc_write);
 	console_write(ptr, len);	// Ignore the file ID - write all on console regardless
 	if (ptr[len-1]=='\n')
 		console_write("\r", 1);	// Add carrige return (hack, migh be avoided by tuning istty)
@@ -71,7 +66,6 @@ int ppc_write (int file, char *ptr, int len){
 char* myheap_end = (char*)0x10080000;   //<- NOTE: Test purpose only, dont use this unless you know what you're doing
 //=====================================
 caddr_t ppc_sbrk(int incr) {
-   hixs.syscall_mon(ppc_sbrk);
    extern char* myheap_end;
    /* Defined by the linker. */
    static char *heap_end;
@@ -89,7 +83,6 @@ caddr_t ppc_sbrk(int incr) {
 
 
 clock_t ppc_times(struct tms *buf){
-	hixs.syscall_mon(ppc_times);
 	clock_t upTime = ppc_clock();
 	if (buf!=NULL){
 		(*buf).tms_utime  = upTime;
@@ -101,14 +94,12 @@ clock_t ppc_times(struct tms *buf){
 }
 
 int ppc_open (const char *filename, int flags, ...){
-   hixs.syscall_mon(ppc_open);
    errno = ENOSYS;
    return -1;
 }
 
 
 int ppc_fcntl (int filedes, int command, ...){
-   hixs.syscall_mon(ppc_fcntl);
    errno = ENOSYS;
    return -1;
 }

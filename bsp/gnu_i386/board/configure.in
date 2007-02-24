@@ -1,0 +1,30 @@
+dnl This is the tinker/bsp/gnu_i386/board configure.in file.
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.59])
+
+AC_INIT(board, [0.1.0])
+AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
+
+AC_CONFIG_AUX_DIR(../../..)
+
+sources_c="board.c"
+sources_asm=""
+extras=""
+
+TINKER_CONFIGURE(../../..)
+
+case "${BOARD}" in
+  localhost)
+    AC_MSG_NOTICE([<<< Board ESC is configured >>>])
+    AC_CONFIG_SUBDIRS([localhost])
+    ;;
+  *)
+    AC_MSG_ERROR([<<< Sorry, board $BOARD is not supported >>>])
+    ;;
+esac
+
+dnl Update config.h
+AC_CONFIG_HEADER(../../../include/tinker/config.h)
+
+AC_OUTPUT(Makefile-gnu)
