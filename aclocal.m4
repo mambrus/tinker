@@ -274,8 +274,8 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_SUBST(ARCH)
 	AC_SUBST(ABI)
 	AC_DEFINE_UNQUOTED([TK_XCOMPILE],$XCOMPILE)
-	AC_DEFINE_UNQUOTED([TK_ARCH],__tk_$ARCH__)
-	AC_DEFINE_UNQUOTED([TK_ABI],__tk_$ABI__)
+	AC_DEFINE_UNQUOTED([TK_ARCH],__tk_${ARCH}__)
+	AC_DEFINE_UNQUOTED([TK_ABI],__tk_${ABI}__)
 	AC_DEFINE_UNQUOTED([__TK_ARCH_up__],$ARCH)
 	AC_DEFINE_UNQUOTED([__TK_ABI_up__],$ABI)
 
@@ -289,7 +289,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_SUBST(CFLAGS)
 
 	AC_ARG_VAR(BOARD, [Selects which board to build TinKer BSP for. Valid values depend on each BSP and coorespond to a sub-directory in that structure])
-	AC_DEFINE_UNQUOTED([TK_BOARD],__tk_$BOARD_)
+	AC_DEFINE_UNQUOTED([TK_BOARD],__tk_${BOARD}__)
 	AC_DEFINE_UNQUOTED([__TK_BOARD_up__],$BOARD)
 
 	AC_ARG_VAR(MCPU, [Sets the GCC CPU optimization switch (i.e. -mcpu=<MCPU>])
@@ -306,7 +306,8 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_SUBST(CPU_OPT)
 	AC_SUBST(DCPU)
 	AC_SUBST(MCPU)
-	AC_DEFINE_UNQUOTED([TK_DCPU],$MCPU)
+	AC_DEFINE_UNQUOTED([TK_DCPU],__tk_${MCPU}__)
+	AC_DEFINE_UNQUOTED([__TK_DCPU_up__],$MCPU)
 
 	dnl *Components* config part. Use enable-feature/disable-feature without arguments
 	dnl Note: Default values are set here.

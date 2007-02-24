@@ -18,30 +18,24 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 /*
-Initialice board specific internals and perepherials
+This file contains declarations of the expected board and CPU specific 
+__init_x __fini_x functions (so we don't need duplicate this file 
+everywhere).
 */
 
-#include <board/board.h>
+#ifndef INITFINI_H
+#define INITFINI_H
 
-#if ( TK_DCPU == __tk_i386__ )
-void __init_board(){
-	//console_init(9600, 8,'N',1);
-	console_init(115200, 8,'N',1);
-}
+void __init_cpu(void );
+void __init_board(void );
+void __fini_cpu(void );
+void __fini_board(void );
 
-#else
-#error Sorry, TinKer can't handle the chosen CPU for this board
-#endif
+void __exeptions_enable_cpu(void);
+void __exeptions_disable_cpu(void);
+void __exeptions_enable_board(void);
+void __exeptions_disable_board(void);
 
 
-void __fini_board(){
-}
-
-void __exeptions_enable_board(){
-}
-
-void __exeptions_disable_board(){
-}
-
+#endif // INITFINI_H

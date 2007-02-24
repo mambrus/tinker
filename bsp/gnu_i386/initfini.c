@@ -18,30 +18,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 /*
-Initialice board specific internals and perepherials
+This file contains initialization and closing down of the system
 */
 
-#include <board/board.h>
+#include <initfini.h>
 
-#if ( TK_DCPU == __tk_i386__ )
-void __init_board(){
-	//console_init(9600, 8,'N',1);
-	console_init(115200, 8,'N',1);
+void __init(){
+	__init_board();
+	__exeptions_enable_board();
 }
 
-#else
-#error Sorry, TinKer can't handle the chosen CPU for this board
-#endif
-
-
-void __fini_board(){
-}
-
-void __exeptions_enable_board(){
-}
-
-void __exeptions_disable_board(){
+void __fini(){
+	__exeptions_disable_board();
+	__fini_board();
 }
 

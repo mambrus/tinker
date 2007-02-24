@@ -22,22 +22,12 @@
 #define BOARD_H
 
 #include <tinker/config.h>
-#include <arch/powerpc//bits.h>
 
 #if defined(TK_DCPU)
-	#if TK_DCPU==860
-		#include <CPU/860/mmap_regs.h>
-
-		#include <CPU/860/asm/cm.h>
-		#include <CPU/860/asm/cm_scc.h>
-		#include <CPU/860/asm/cm_smc.h>
-		#include <CPU/860/asm/ictrl.h>
-		#include <CPU/860/asm/msr.h>
-		#include <CPU/860/asm/plprcr.h>
-		#include <CPU/860/asm/sccr.h>
+	#if TK_DCPU==__tk_i386__
 
 	#else
-		#Sorry, TinKer doesn't know how to use your CPU
+		#error Sorry, TinKer doesn't know how to use your CPU
 	#endif
 #else
 	#error Must have CPU for board to work

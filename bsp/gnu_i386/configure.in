@@ -13,15 +13,21 @@ AC_CONFIG_SUBDIRS([board])
 # Note: The system identification and configure.h update has to be done by the last 
 # test in the cain
 
-if test $SYSTEM == 'hixs'; then
-   sources_c="hixsys.c syscon.c initfini.c"
-fi
-
 sources_asm=""
 extras=""
+sources_c=""
 #extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
 
 TINKER_CONFIGURE(../..)
+
+# Add sources depending on configuration
+if test $SYSTEM == 'hixs'; then
+	sources_c="$sources_c hixsys.c syscon.c initfini.c"
+fi
+
+# See to that all sources get in the makefile (both generic and configure specific)
+ALL_C=$sources_c
+AC_SUBST(ALL_C)
 
 dnl Update config.h
 AC_CONFIG_HEADER(../../include/tinker/config.h)

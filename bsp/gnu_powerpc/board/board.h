@@ -25,7 +25,7 @@
 #include <arch/powerpc//bits.h>
 
 #if defined(TK_DCPU)
-	#if TK_DCPU==860
+	#if TK_DCPU==__tk_860__
 		#include <CPU/860/mmap_regs.h>
 
 		#include <CPU/860/asm/cm.h>

@@ -74,8 +74,10 @@ with a tool-set originally tailored for any of these.
 #if defined(__CYGWIN__)
 #undef __CYGWIN__
 #endif
-
 /*OS*/
+
+
+
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 #if defined(_WIN32) &&  defined(_MSC_VER)
@@ -93,17 +95,34 @@ with a tool-set originally tailored for any of these.
       #define CHAINPATH /usr/include
    #endif
 
-//The following workaround is necessary for our BUILDCHAIN macro to work
+//Getting rid of other build-ins that will interfear
+// NOTE Inspect tool-chain builtins by invoking:
+// echo | *-*-*-cpp -dM | less
+// Look for macros that don't have '__' prefix and suffix
+
+//The following workarounds are necessary for our BUILDCHAIN macro to work
    #ifdef bfin
       #warning Workaround enabled for GCC builtin macro bug: bfin
       #undef bfin
-      #define __bfin__
+      #ifndef __bfin__
+         #define __bfin__
+      #endif
    #endif
    #ifdef BFIN
       #warning Workaround enabled for GCC builtin macro bug: BFIN
       #undef BFIN
-      #define __BFIN__
+      #ifndef __BFIN__
+         #define __BFIN__
+      #endif
    #endif
+   #ifdef i386
+      #warning Workaround enabled for GCC builtin macro bug: i386
+      #undef i386
+      #ifndef __i386__
+         #define __i386__
+      #endif
+   #endif
+
 #else
    #error "Can\'t determine the target for the TINKER kernel"
 #endif
@@ -124,6 +143,9 @@ with a tool-set originally tailored for any of these.
  * @ingroup CVSLOG
  *
  *  $Log: tk_ansi_dirwrap.h,v $
+ *  Revision 1.4  2007-02-24 14:27:16  ambrmi09
+ *  * i386-hixs-elf compiles and links properly
+ *
  *  Revision 1.3  2007-02-24 12:17:14  ambrmi09
  *  1) Sync PowerPC sources
  *  2) Add structure for i386-hixs-elf target. (Hopefully our new test-bed)

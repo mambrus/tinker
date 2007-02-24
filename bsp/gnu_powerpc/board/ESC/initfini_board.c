@@ -25,7 +25,7 @@ Initialice board specific internals and perepherials
 
 #include <board/board.h>
 
-#if ( TK_DCPU == 860 )
+#if ( TK_DCPU == __tk_860__ )
 void __init_board(){
 
 	//SC stuff (Serial Controller slvae processor) 

@@ -71,6 +71,8 @@ AH_TEMPLATE([__TK_BOARD_up__],
    [Name of the board directory (i.e. BSP adaption)  - un-prefixed version])
 AH_TEMPLATE([TK_DCPU],
    [Specific CPU variant (i.e. -m option used)])
+AH_TEMPLATE([__TK_DCPU_up__],
+   [Specific CPU variant (i.e. -m option used) - un-prefixed version])
 
 
 dnl TinKer tuning defines

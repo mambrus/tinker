@@ -96,6 +96,12 @@
 #define __tk_rtems__		0x203
 
 //-----------------------------------------------------------------------------
+// Some well known boards:
+#define __tk_unknown__		0x300
+#define __tk_default__		0x301
+#define __tk_localhost__	0x302
+
+//-----------------------------------------------------------------------------
 // Some well function names for emergency consoles
 int console_write(const char*, int );
 int emrgcy_write(const char*, int );
