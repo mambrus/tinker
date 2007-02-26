@@ -43,6 +43,11 @@ you use printf in thread else 64bytes is probably sufficient.
 
 #if defined(__GNUC__)
    #include <tinker/config.h>
+   #include <sys/types.h>	//Force header-file wrap fix-up (incompatible pthread types in newlib issue)
+
+   #if defined(_POSIX_THREADS)
+   #error newlib/libc headers somehow managed set _POSIX_THREADS and probably a whole set of others incompatible pthread related things
+   #endif
 #endif
 
 #include <stddef.h>
@@ -279,6 +284,10 @@ extern int     tk_bsp_sysinit(void);
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
+ *  Revision 1.47  2007-02-26 14:16:53  ambrmi09
+ *  1) Drivers    - structure added
+ *  2) Filesystem - in progress
+ *
  *  Revision 1.46  2007-02-22 12:36:48  ambrmi09
  *  1) Structure adapted for modulerizing components under tinker/src
  *     in the same fashion as the modules under tinker/bsp

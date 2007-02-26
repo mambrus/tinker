@@ -1,0 +1,15 @@
+*~
+*.bak
+*.obj
+*.o
+*.lib
+*.a
+*.pcs
+*.kdevses
+*.aux
+*.dvi
+*.lof
+*.log
+*.lot
+*.backup
+

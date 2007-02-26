@@ -17,41 +17,35 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <sys/stat.h>
-#include <tinker/hixs.h>
-#include <errno.h> 
-
-#include <filesys/inode.h>
+#include "filesys.h"
 
 
 #define RX_BUFFLEN	102 
 #define TX_BUFFLEN	102
 
-int fs_close(int file);
-int fs_fcntl (int files, int command, ...);
-int fs_fstat(int file, struct stat *st);
-int fs_isatty(int file);
-int fs_link(char *old, char *new);
-int fs_lseek(int file, int ptr, int dir);
-int fs_open(const char *filename, int flags, ...);
-int fs_read(int file, char *ptr, int len);
-int fs_stat(const char *file, struct stat *st);
-int fs_unlink(char *name);
-int fs_write(int file, char *ptr, int len);
 
 #include <assert.h>
 #include <string.h>
+#include <limits.h>
+#ifndef PATH_MAX
+#include <sys/syslimits.h>
+#endif
 
 tk_iohandle_t std_files[3];	//!< The thre standard handles (stdin,stdout & stderr)
 struct hixs_t old_syscalls;	//!< Storage for any old HIXS syscalls (previous initialization);
 extern struct hixs_t hixs;	//!< The call-stucture we know exist.
 
 tk_inode_t *root;
-int ___HIXS_fstat(int file, struct stat *st);
+static int icntr=0;
 
 int fs_init(){
 	assert(sizeof(void*) <= sizeof(int));
 	memcpy(&old_syscalls,&hixs,sizeof(struct hixs_t));
+	extern __drv_finit_f __DRVINIT_START__;
+	extern __drv_finit_f __DRVINIT_END__;
+	drv_finit_t drv_init_first = &__DRVINIT_START__;
+	drv_finit_t drv_init_last  = &__DRVINIT_END__;
+	drv_finit_t *drv_init_curr;
 
 	//Set new main-enty values for those we care about
 
@@ -71,17 +65,109 @@ int fs_init(){
 	std_files[1].write=old_syscalls.write; //Assign stdout with something usefull
 	std_files[2].write=old_syscalls.write; //Assign stderr with something usefull
 
-	//Create the root node
-	assert(root = (tk_inode_t*)malloc(sizeof(tk_inode_t)));
 
+	//Create the '/' node (directory) - this is a special case and cant be created with mknode
+	assure(root = (tk_inode_t*)calloc(1,sizeof(tk_inode_t)));	
+	root->id=icntr++;
+	root->mode=ISA_IFDIR;
+
+	//Create the '/dev' node (directory)
+	mknod("/dev",S_IFDIR,0);
+
+
+	//Start up the drivers
+	for (
+		drv_init_curr = drv_init_first;
+		drv_init_curr < drv_init_last;
+		drv_init_curr++
+	)
+		assure((*drv_init_curr)()==0);
+
+	
 	return 0;
 }
 
 int fs_fini(){
+	extern __drv_finit_f __DRVFINI_START__;
+	extern __drv_finit_f __DRVFINI_END__;	
+	drv_finit_t drv_fini_first = &__DRVFINI_START__;
+	drv_finit_t drv_fini_last = &__DRVFINI_END__;
+	drv_finit_t *drv_fini_curr;
+
+	//Close down the drivers
+	for (
+		drv_fini_curr = drv_fini_first;
+		drv_fini_curr < drv_fini_last;
+		drv_fini_curr++
+	)
+		assure((*drv_fini_curr)()==0);
+
+
 	free(root);
+	memcpy(&hixs,&old_syscalls,sizeof(struct hixs_t));
 
 	return 0;
 }
+
+char *getname(const char *s){
+	int i;
+	for (i=strlen(s);s[i]!='/';i--);
+	return (char *)&s[i+1];
+}
+
+void getpath(char *buff, const char *s){	
+	strncpy(buff,s,PATH_MAX);
+	getname(buff)[0]=0;
+}
+
+/*! Return the i-node associated with a name - or NULL uf none is found*/
+tk_inode_t *findinode(const char*s){
+}
+
+ int mknod(const char *filename, mode_t mode, dev_t dev){
+	char path[PATH_MAX];
+	char *name;
+	tk_inode_t *belong;
+	tk_inode_t *newNode;
+	tk_inode_t *seekNode;
+	int namelen;
+
+	getpath(path,filename);
+	name=getname(filename);
+
+	if (!((namelen=strnlen(name,NAME_MAX)) < NAME_MAX)){
+		errno=ENOSPC;	/*Breaking the naming rules - or something else is crashing...*/
+		return -1;
+	}
+	if (!(belong=findinode(filename))){
+		/*Owner path does not exist*/
+		errno=ENOENT;
+		return -1;
+	}
+	if (!(belong=findinode(path))){
+		/*Owner path does not exist, good error code is missing so we use a similar*/
+		errno=EEXIST;
+		return -1;
+	}
+	if (belong->mode =! ISA_IFDIR){
+		errno=ENOSPC;	/*Trying to create a node whos owner is not a directory*/
+		return -1;
+	}
+	
+	//Create the node
+	assure(newNode = (tk_inode_t*)calloc(1,sizeof(tk_inode_t)));
+	newNode->id=icntr++;
+	newNode->name=(char*)calloc(1,namelen);
+	strncpy(newNode->name,name,namelen);
+	newNode->belong=belong;
+	newNode->mode=mode;
+
+	for (seekNode=belong->next;seekNode->next;seekNode=seekNode->next);
+	seekNode->next=newNode;
+}
+
+
+
 
 /*   --- Main fs system calls follow ---  */
 

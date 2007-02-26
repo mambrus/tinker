@@ -29,7 +29,7 @@
 #undef TK_STI
 
 
-#if ( TK_DCPU == 860 )
+#if ( TK_DCPU == __tk_860__ )
 	
 	//Interrupt enabling/disabling is done via
 	//Machine State Register (MSR)
@@ -69,8 +69,8 @@
 
 #else
 	#warning Can't handle interrupts safly for this ARCH/ABI combination
-	#define TK_CLI /*Empty*/
-	#define TK_STI /*Empty*/
+	#define TK_CLI assert("Can't handle interrupts safly for this ARCH/ABI combination" == NULL)
+	#define TK_STI assert("Can't handle interrupts safly for this ARCH/ABI combination" == NULL)
 
 #endif
 

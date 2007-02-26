@@ -148,9 +148,10 @@ void __init_cpu(){
 		//Some initializers depend on that variables start with value zero
 		int *int_p;
 
-		extern char __SDATA_START__;
-		extern char __SBSS_START__;
-		extern char __SBSS_END__;
+/*NOTE Not sure about the dtata types below - samples usually show char */
+		extern int __SDATA_START__;
+		extern int __SBSS_START__;
+		extern int __SBSS_END__;
 		int *sbss_start = &__SBSS_START__;
 		int *sbss_end = &__SBSS_END__;
 		for (int_p=sbss_start; int_p <= sbss_end ; int_p++)
@@ -208,3 +209,4 @@ void __exeptions_enable_cpu(){
 
 void __exeptions_disable_cpu(){
 }
+

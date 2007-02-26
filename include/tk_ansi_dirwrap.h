@@ -36,7 +36,6 @@ kernel_reimpl_ansi
 
 */
 
-
 #ifndef YES
 #define YES 1
 #endif
@@ -51,18 +50,6 @@ of these OS'es that we don't care about. This will affect certain types and
 macros both for the kernel, but also for any application using the kernel 
 header structure
 
-NOTE VERY IMPORTANT
-Please make sure that your tool-chain is also building newlib with these 
-macros off (I.e. -U__rtems__ -U__svr4__ -U__CYGWIN__).
-
-If not, you will experiance problems when using funtions that
-take 'struct stat*' or dev_t as arguments (or any other type that is 
-differently specified depending on OS). Normally you would not need to 
-care about this, only if you use tools originally made for either of 
-these thre OS's. There exists cases where you'd  want to build kernel+tools
-with a tool-set originally tailored for any of these.
-
-*/
 #if defined(__rtems__)
 #undef __rtems__
 #endif
@@ -74,10 +61,19 @@ with a tool-set originally tailored for any of these.
 #if defined(__CYGWIN__)
 #undef __CYGWIN__
 #endif
-/*OS*/
+*/
 
+/*
+Below will do the same thing but it's safer (undefining the others is too crude 
+since they might be used for other datatypes like dev_t). 
 
-
+What the below setting does is preventing newlib headers to include
+the sys/features file, which is __rtems__ only specific and which sets
+_POSIX_THREADS among other pthread retated things.
+*/
+#ifndef _SYS_FEATURES_H
+#define _SYS_FEATURES_H
+#endif
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 #if defined(_WIN32) &&  defined(_MSC_VER)
@@ -143,6 +139,10 @@ with a tool-set originally tailored for any of these.
  * @ingroup CVSLOG
  *
  *  $Log: tk_ansi_dirwrap.h,v $
+ *  Revision 1.5  2007-02-26 14:16:53  ambrmi09
+ *  1) Drivers    - structure added
+ *  2) Filesystem - in progress
+ *
  *  Revision 1.4  2007-02-24 14:27:16  ambrmi09
  *  * i386-hixs-elf compiles and links properly
  *

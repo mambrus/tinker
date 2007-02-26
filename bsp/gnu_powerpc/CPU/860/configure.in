@@ -22,8 +22,7 @@ extras="../../../../lib/crt0.o"
 CRT0_OBJECT=exceptions.AO
 
 TINKER_CONFIGURE(../../../..)
-subdirs=
-AC_SUBST(subdirs)
+AC_CONFIG_SUBDIRS([])
 
 dnl Update config.h
 AC_CONFIG_HEADER(../../../../include/tinker/config.h)

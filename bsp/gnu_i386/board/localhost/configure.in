@@ -11,7 +11,7 @@ AC_CONFIG_AUX_DIR(../../../..)
 sources_c="initfini_board.c console.c"
 sources_asm=""
 
-extras="../../../../lib/ram_gnu.ld"
+extras="$extras ../../../../lib/ram_gnu.ld"
 extern_includes="../.."
 
 
@@ -20,10 +20,11 @@ extern_includes="../.."
 # relocate automagically instead
 sources_asm="startup.AO"
 
-# Provide it as a crt0.o anyway 8just to have something to provide)
-# Note that using it with libtinker will brak the link in our case (PowerPC/860)
-extras="../../../../lib/crt0.o"
-CRT0_OBJECT=startup.AO
+# Provide a crt0.o for being able to run on a linux host
+
+extras="$extras ../../../../lib/crt0.o"
+
+CRT0_OBJECT=crt1.o
 
 
 TINKER_CONFIGURE(../../../..)

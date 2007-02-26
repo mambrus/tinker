@@ -843,7 +843,7 @@ void _tk_wakeup_timedout_threads( void ){
    //fragmented.Explains also why the the whole table (pool) has to be 
    //travesesd, and not just [0..procs_in_use]
    for(i=0;i<TK_MAX_THREADS;i++){
-      if (proc_stat[i].valid){           
+      if (proc_stat[i].valid){
 
          if (proc_stat[i].state & SLEEP){  //This one is sleeping. Time to wake him up?
             //if ( act_time >= proc_stat[i].wakeuptime ){
@@ -1607,6 +1607,10 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
+ *  Revision 1.75  2007-02-26 14:16:53  ambrmi09
+ *  1) Drivers    - structure added
+ *  2) Filesystem - in progress
+ *
  *  Revision 1.74  2007-02-24 12:17:14  ambrmi09
  *  1) Sync PowerPC sources
  *  2) Add structure for i386-hixs-elf target. (Hopefully our new test-bed)

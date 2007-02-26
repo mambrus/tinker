@@ -15,8 +15,7 @@ extras="../../../../lib/ram_gnu.ld"
 extern_includes="../.."
 
 TINKER_CONFIGURE(../../../..)
-subdirs=
-AC_SUBST(subdirs)
+AC_CONFIG_SUBDIRS([])
 
 
 

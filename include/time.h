@@ -117,6 +117,20 @@ Wrapper macro until \ref PTIMER is ready
 #define usleep(t) ( tk_msleep( (unsigned long)t / 1000ul ) )
 
 
+#if defined (__GNUC__) && defined (TK_BOARD)
+//In this case we know and control our own time - still, make sure 
+//standard is respected.
+	#if defined(CLOCKS_PER_SEC)
+		#undef CLOCKS_PER_SEC
+	#endif
+	#if defined (CLK_TCK)
+		#undef CLK_TCK
+	#endif
+
+	#define CLOCKS_PER_SEC 1000000L
+	#define CLK_TCK CLOCKS_PER_SEC
+#endif 
+
 #if !defined (__GNUC__)
 
    #ifndef CLOCKS_PER_SEC
@@ -363,7 +377,11 @@ Wrapper macro until \ref PTIMER is ready
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
  *  $Log: time.h,v $
- *  Revision 1.29  2006-12-12 10:57:05  ambrmi09
+ *  Revision 1.30  2007-02-26 14:16:53  ambrmi09
+ *  1) Drivers    - structure added
+ *  2) Filesystem - in progress
+ *
+ *  Revision 1.29  2006/12/12 10:57:05  ambrmi09
  *  This adresses the second part of #1609064
  *
  *  Revision 1.28  2006/12/11 14:41:52  ambrmi09

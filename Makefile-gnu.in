@@ -44,7 +44,7 @@ LDFLAGS  := $(LDFLAGS) -L$(TINKER_PATH)/lib $(SUBLIBS)
 LIBOBJS_LIST   = $(patsubst %,-l%,$(LIBOBJS))
 
 ifeq ($(XCOMPILE),1)
-   CFLAGS := $(CFLAGS)  -D__tinker__ -DDEBUG -DBOARD=$(BOARD) -DABI=$(ABI) -DARCH=$(ARCH)
+   CFLAGS := $(CFLAGS)  -D__tinker__ -D_SYS_FEATURES_H -DDEBUG -DBOARD=$(BOARD) -DABI=$(ABI) -DARCH=$(ARCH)
    CFLAGS := $(CFLAGS) $(CPU_OPT) $(DCPU) -g -gstabs+ -D RUN_FROM_ROM
    CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(ALIAS_HOST)/include 
    CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include -I $(TINKER_PATH)/src $(EXTERN_INCL)
@@ -55,7 +55,7 @@ ifeq ($(XCOMPILE),1)
    LDFLAGS   := $(LDFLAGS) -nostdlib -nostartfiles
 
 else
-   CFLAGS   := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=_$(ARCH) -DDEBUG 
+   CFLAGS   := $(CFLAGS) -D__tinker__ -D_SYS_FEATURES_H -no-integrated-cpp -g3 -O0 -DARCH=_$(ARCH) -DDEBUG 
    CFLAGS   := $(CFLAGS) -Wall -I . -I $(TINKER_PATH)/include 
    LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
    

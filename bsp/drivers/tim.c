@@ -17,57 +17,105 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "filesys.h"
-#include "inode.h"
+#include <filesys/filesys.h>
+#include <filesys/inode.h>
 
 
-int fs_ififo_close(int file) {
+#define DRV_IO_NAME( x, y ) \
+	x ##y
+
+//NOTE driver name is set here and it affects the whole module
+#define DRV_IO( x ) \
+	DRV_IO_NAME( tim_ , x )
+
+
+#define DEV_FILE_NAME( x ) \
+	"/dev/tim" #x
+
+
+int DRV_IO(close)(int file) {
 	return -1;
 }
 
-int fs_ififo_fcntl (int file, int command, ...){
+int DRV_IO(fcntl)(int file, int command, ...){
 	errno = ENOSYS;
 	return -1;
 }
-	
-	
-int fs_ififo_fstat(int file, struct stat *st) {
+		
+int DRV_IO(fstat)(int file, struct stat *st) {
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 	
-int fs_ififo_isatty(int file) {
+int DRV_IO(isatty)(int file) {
 	return 1;
 }
 		
-int fs_ififo_link(char *old, char *new) {
+int DRV_IO(link)(char *old, char *new) {
+	errno=EMLINK;
 	return -1;
 }
 	
-int fs_ififo_lseek(int file, int ptr, int dir) {
+int DRV_IO(lseek)(int file, int ptr, int dir) {
 	return 0;
 }
 
-int fs_ififo_open(const char *filename, int flags, ...){
+int DRV_IO(open)(const char *filename, int flags, ...){
 	errno = ENOSYS;
 	return -1;
 }
 	
-int fs_ififo_read(int file, char *ptr, int len) {
+int DRV_IO(read)(int file, char *ptr, int len) {
 	return 0;
 }
 		
-int fs_ififo_stat(const char *file, struct stat *st) {
+int DRV_IO(stat)(const char *file, struct stat *st) {
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 		
-int fs_ififo_unlink(char *name) {
+int DRV_IO(unlink)(char *name) {
 	errno=ENOENT;
 	return -1;
 }
 	
-int fs_ififo_write(int file, char *ptr, int len) {
+int DRV_IO(write)(int file, char *ptr, int len) {
 	return len;
 }
+
+/*IO structure - pre-assigned*/
+static tk_iohandle_t DRV_IO(io) = {
+        DRV_IO(close),
+	//DRV_IO(execve),
+        DRV_IO(fcntl),
+        DRV_IO(fstat),
+        DRV_IO(isatty),
+        DRV_IO(link),
+        DRV_IO(lseek),
+        DRV_IO(open),
+        DRV_IO(read),
+        //DRV_IO(sbrk),
+        DRV_IO(stat),
+        DRV_IO(unlink),
+        DRV_IO(write)
+};
+
+/* Init function(s) */
+int DRV_IO(init_0__)() {
+	mknod(DEV_FILE_NAME(0),S_IFBLK, (dev_t)&DRV_IO(io));
+	return 0;
+}
+
+/* Fini function(s) */
+int DRV_IO(fini_0__)() {
+	//tdelete(DEV_FILE_NAME(0),S_IFBLK, &DRV_IO(io));
+	return 0;
+}
+
+/*Put the init/fini in corresponding sections so that filesys can pick them up */
+
+drv_finit_t DRV_IO(init_0) __attribute__ ((section (".drvinit"))) =DRV_IO(init_0__);
+drv_finit_t DRV_IO(fini_0) __attribute__ ((section (".drvfini"))) =DRV_IO(fini_0__);
+
+
 

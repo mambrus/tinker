@@ -1,0 +1,21 @@
+dnl This is the tinker/bsp/drivers configure.in file.
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.59])
+AC_INIT(drivers, [0.1.0])
+AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
+
+AC_CONFIG_AUX_DIR(../..)
+
+sources_c="tim.c con.c mem.c"
+sources_asm=""
+extras=""
+
+TINKER_CONFIGURE(../..)
+AC_CONFIG_SUBDIRS([])
+
+
+#dnl Update config.h
+#AC_CONFIG_HEADER(../../include/tinker/config.h)
+
+AC_OUTPUT(Makefile-gnu)

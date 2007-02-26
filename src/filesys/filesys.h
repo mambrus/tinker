@@ -19,6 +19,7 @@
  ***************************************************************************/
 #ifndef FILESYS_H
 #define FILESYS_H
+
 #include <assert.h>
 #include <_ansi.h>
 #include <_syslist.h>
@@ -28,6 +29,7 @@
 #include <tinker/hixs.h>
 #include <malloc.h>
 #include <sys/stat.h>
+#include "inode.h"
 
 #ifndef assure
 #define assure(x) assert(x)
@@ -35,6 +37,10 @@
 
 int fs_init();
 int fs_fini();
+
+/*Init/fini function pointer prototypes*/
+typedef int __drv_finit_f(void);
+typedef __drv_finit_f *drv_finit_t;
 
 /*Main system calls*/
 

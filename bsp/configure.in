@@ -32,4 +32,9 @@ case "${host}" in
     ;;
 esac
 
+if test $_TK_COMP_FILESYS == __tk_yes; then
+    AC_MSG_NOTICE([<<< FS drivers >>>])
+    AC_CONFIG_SUBDIRS([drivers])
+fi
+
 AC_OUTPUT(Makefile-gnu)

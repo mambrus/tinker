@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  *
+ *   Copyright (C) 2007 by Michael Ambrus                                  * 
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,27 +17,61 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef TK_IOHANDE_H
+#define TK_IOHANDE_H
 
-#include "console.h"
+#include <tinker/hixs.h>
 
-#include <board/board.h>
-#include <string.h>
+typedef struct{
+		pHIXS_close        close;
+		//pHIXS_execve       execve;
+		pHIXS_fcntl        fcntl;
+		pHIXS_fstat        fstat;
+		pHIXS_isatty       isatty;
+		pHIXS_link         link;
+		pHIXS_lseek        lseek;
+		pHIXS_open         open;
+		pHIXS_read         read;
+		//pHIXS_sbrk         sbrk;
+		pHIXS_stat         stat;
+		pHIXS_unlink       unlink;
+		pHIXS_write        write;
+}tk_iohandle_t;
 
-static char RX_BUFFER[RX_BUFFLEN];
-static char TX_BUFFER[TX_BUFFLEN];
+/*
+typedef struct{
+}op_ifdir_t;
 
-int console_init(int bpr, int nr_bits, int par, int nr_stop){
-	return 0; // i.e. OK
-}
+typedef struct{
+}op_ifblk_t;
 
-/* Simple reads and writes - ingore fancy stuff like IRQ handling and thread support for this example */
+typedef struct{
+}op_ifreg_t;
 
-int console_write(const char* buffer, int buff_len){
-	return buff_len;
-}
+typedef struct{
+}op_iflnk_t;
 
-int console_read(char* buffer, int max_len){
-	return 0;
-}
+typedef struct{
+}op_ifsock_t;
+
+typedef struct{
+}op_ififo_t;
+
+
+struct {
+	tk_iohandle_t iohandle;
+	union {
+		op_ifdir_t	op_ifdir;
+		op_ifblk_t	op_ifblk;
+		op_ifreg_t	op_ifreg;
+		op_iflnk_t	op_iflnk;
+		op_ifsock_t	op_ifsock;
+		op_ififo_t	op_ififo;
+	}operations;
+}tk_operations_t;
+
+*/
+
+#endif //TK_IOHANDE_H
 
 

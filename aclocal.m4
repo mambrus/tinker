@@ -66,7 +66,14 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
 		MAKEOPTS=""
 	)
 
+	dnl The following test will handle defaults but also permit specific argument values
+	if test "$DEPMAKE" == __tk_yes; then
+		DEPMAKE="Makefile-gnu Makefile"
+	elif test "$DEPMAKE" == __tk_no; then
+		DEPMAKE=""
+	fi
 	AC_SUBST(DEPMAKE)
+
 	AC_SUBST(MAKEOPTS)
 
 	if test -z $CRT0_OBJECT; then
@@ -448,14 +455,6 @@ AC_DEFUN([TINKER_CONFIGURE],
 				This option does no purpose...])
 		fi
 	fi
-
-	dnl The following test will handle defaults but also permit specific argument values
-	if test "$DEPMAKE" == yes; then
-		DEPMAKE="Makefile-gnu Makefile"
-	elif test "$DEPMAKE" == no; then
-		DEPMAKE=""
-	fi
-	AC_SUBST(DEPMAKE)
 
 	AC_PROG_INSTALL
 
