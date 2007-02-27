@@ -83,7 +83,7 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 }
 
 /*IO structure - pre-assigned*/
-static tk_iohandle_t DRV_IO(io) = {
+static const tk_iohandle_t DRV_IO(io) = {
         DRV_IO(close),
 	//DRV_IO(execve),
         DRV_IO(fcntl),
@@ -98,24 +98,26 @@ static tk_iohandle_t DRV_IO(io) = {
         DRV_IO(unlink),
         DRV_IO(write)
 };
+static const char DRV_IO(info_str0)[]="con_0 @ " DEV_FILE_NAME(0);
+static const char DRV_IO(info_str1)[]="con_1 @ " DEV_FILE_NAME(1);
 
 /* Init function(s) */
-int DRV_IO(init_0__)() {
+const char *DRV_IO(init_0__)() {
 	assure(mknod(DEV_FILE_NAME(0),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
-	return 0;
+	return DRV_IO(info_str0);
 }
-int DRV_IO(init_1__)() {
+const char *DRV_IO(init_1__)() {
 	assure(mknod(DEV_FILE_NAME(1),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
-	return 0;
+	return DRV_IO(info_str1);
 }
 
 /* Fini function(s) */
-int DRV_IO(fini_0__)() {
+const char *DRV_IO(fini_0__)() {
 	//tdelete(DEV_FILE_NAME(0),S_IFBLK, &DRV_IO(io));
-	return 0;
+	return DRV_IO(info_str0);
 }
-int DRV_IO(fini_1__)() {
-	return 0;
+const char *DRV_IO(fini_1__)() {
+	return DRV_IO(info_str1);
 }
 
 

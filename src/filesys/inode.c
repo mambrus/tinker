@@ -31,7 +31,8 @@
 
 
 tk_inode_t 	*__Rnod;		//!< The root node
-long long	__icntr=0;		//!< A counter used as node ID (unique)
+tk_id_t		__icntr=0;		//!< Number of active inodes
+tk_id_t		__ilid=0;		//!< A unique counter used as inode ID (global counter)
 
 /*! Returns the name part of a filename  */
 char *igetname(const char *s){
@@ -71,6 +72,10 @@ tk_inode_t *isearch(const char*s){
 	}
 
 	return ci;	
+}
+//FIXME needs more work---
+int tk_rmnod(const char *filename){
+	__icntr--;
 }
 
 /*!
@@ -114,11 +119,50 @@ int mknod(const char *filename, mode_t mode, dev_t dev){
 	
 	//Create the node
 	assure(newNode = (tk_inode_t*)calloc(1,sizeof(tk_inode_t)));
-	newNode->id=__icntr++;
+	__icntr++;
+	newNode->id=__ilid++;
 	newNode->name=(char*)calloc(1,namelen);
 	strncpy(newNode->name,name,namelen);
 	newNode->mode=mode;
-	newNode->iohandle=(tk_iohandle_t*)dev;
+	if (dev!=0) {
+		newNode->iohandle=(tk_iohandle_t*)dev;
+	}else{
+		// If no IO-device is passed, install a default
+		// according to the type (mode)
+		extern tk_iohandle_t fs_ifdir_io;
+		extern tk_iohandle_t fs_ifblk_io;
+		extern tk_iohandle_t fs_ifchr_io;
+		extern tk_iohandle_t fs_ifreg_io;
+		extern tk_iohandle_t fs_iflnk_io;
+		extern tk_iohandle_t fs_ifsock_io;
+		extern tk_iohandle_t fs_ififo_io;
+		tk_mode_t type = mode;
+
+		switch (type){
+			case ISA_IFDIR:
+				newNode->iohandle=&fs_ifdir_io;
+				break;
+			case ISA_IFCHR:
+				newNode->iohandle=&fs_ifchr_io;
+				break;
+			case ISA_IFBLK:
+				newNode->iohandle=&fs_ifblk_io;
+				break;
+			case ISA_IFREG:
+				newNode->iohandle=&fs_ifreg_io;
+				break;
+			case ISA_IFLNK:
+				newNode->iohandle=&fs_iflnk_io;
+				break;
+			case ISA_IFSOCK:
+				newNode->iohandle=&fs_ifsock_io;
+				break;
+			case ISA_IFIFO:
+				newNode->iohandle=&fs_ififo_io;
+				break;
+			assert("Can't figure out what kind of device you're trying to mknod"==NULL);
+		}
+	}
 
 	//Attach the link upwards
 	newNode->belong=belong;

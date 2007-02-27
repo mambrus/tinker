@@ -20,25 +20,37 @@
 #ifndef TK_INODE_H
 #define TK_INODE_H
 
-
 #include <tinker/config.h>
 #include <tinker/hixs.h>
+
 #include <filesys/iohandle.h>
 
+//! Identity typedef used in inode and fhandle stucts
+typedef int tk_id_t;
+
+/*!
+Pure mode names (to aid debugging - note that any mode variable 
+*theoretically* can be OR'ed among these which means any stabs info 
+will not be able to resolve the name.
+
+This is however very unlikely an is furthermore  of no concern for 
+the running code.
+*/
+
 typedef enum {
+	ISA_UNKNOWN	= 0,		//!< Unknown type
 	ISA_IFDIR	= S_IFDIR,	//!< directory file.
 	ISA_IFCHR	= S_IFCHR,	//!< character-oriented device file.
 	ISA_IFBLK	= S_IFBLK,	//!< block-oriented device file.
 	ISA_IFREG	= S_IFREG,	//!< regular file
 	ISA_IFLNK	= S_IFLNK,	//!< symbolic link
 	ISA_IFSOCK	= S_IFSOCK,	//!< socket
-	ISA_IFIFO	= S_IFIFO,	//!< FIFO or pipe
-	ISA_UNKNOWN			//!< Unknown type
+	ISA_IFIFO	= S_IFIFO	//!< FIFO or pipe	
 }tk_mode_t;
 
 
 typedef struct tk_inode_s{
-	int			id;		//!<  A "unique" ID number for this node (a counter)
+	tk_id_t			id;		//!<  A "unique" ID number for this node (a counter)
 	char			*name;		//!<  Name of the node
 	tk_mode_t		mode;		//!<  What kind of node this is
 	struct tk_inode_s 	*belong;	//!<  Whom this node belongs to

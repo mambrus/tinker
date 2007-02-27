@@ -17,9 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "filesys.h"
-
-#include <filesys/inode.h>
 #include <assert.h>
 #include <string.h>
 #include <limits.h>
@@ -27,25 +24,30 @@
 #include <sys/syslimits.h>
 #endif
 
-#define RX_BUFFLEN	102 
-#define TX_BUFFLEN	102
-
+#include <filesys/filesys.h>
 
 tk_iohandle_t std_files[3];	//!< The three standard handles (stdin,stdout & stderr)
 struct hixs_t old_syscalls;	//!< Storage for any old HIXS syscalls (previous initialization);
 extern struct hixs_t hixs;	//!< The call-stucture we know exist.
+tk_id_t		__fcntr=0;	//!< Number of open handles
+tk_id_t		__flid=0;	//!< Last allocated unique file handle ID (global counter)
+
 
 int fs_init(){
-	assert(sizeof(void*) <= sizeof(int));
+	assert(sizeof(void*) <= sizeof(int));	
+	assert(sizeof(void*) <= sizeof(dev_t));	
+	extern __drv_finit_f 	__DRVINIT_START__;
+	extern __drv_finit_f 	__DRVINIT_END__;
+	drv_finit_t 		drv_init_first 	= &__DRVINIT_START__;
+	drv_finit_t 		drv_init_last  	= &__DRVINIT_END__;
+	drv_finit_t 		*drv_init_curr;
+	int 			namelen;
+	extern tk_inode_t 	*__Rnod;
+	extern tk_id_t 		__icntr;
+	extern tk_id_t 		__ilid;
+
+	//Copy the current sys-calls structure
 	memcpy(&old_syscalls,&hixs,sizeof(struct hixs_t));
-	extern __drv_finit_f __DRVINIT_START__;
-	extern __drv_finit_f __DRVINIT_END__;
-	drv_finit_t drv_init_first = &__DRVINIT_START__;
-	drv_finit_t drv_init_last  = &__DRVINIT_END__;
-	drv_finit_t *drv_init_curr;
-	int namelen;
-	extern tk_inode_t *__Rnod;
-	extern long long __icntr;
 
 	//Set new main-enty values for those we care about
 	hixs.close        = fs_close;
@@ -67,7 +69,8 @@ int fs_init(){
 
 	//Create the '/' node (directory) - this is a special case and can't be created with mknode
 	assure(__Rnod = (tk_inode_t*)calloc(1,sizeof(tk_inode_t)));	
-	__Rnod->id=__icntr++;
+	__Rnod->id=__ilid++;
+	__icntr++;
 	namelen = sizeof("");
 	__Rnod->name=(char*)calloc(1,namelen);
 	strncpy(__Rnod->name,"",namelen);
@@ -87,12 +90,16 @@ int fs_init(){
 
 
 	//Start up the drivers
+	const char* dinfo;
 	for (
-		drv_init_curr = drv_init_first;
-		drv_init_curr < drv_init_last;
+		drv_init_curr = (drv_finit_t*)drv_init_first;
+		drv_init_curr < (drv_finit_t*)drv_init_last;
 		drv_init_curr++
-	)
-		assure((*drv_init_curr)()==0);
+	){
+		dinfo=(*drv_init_curr)();
+		assure(dinfo);
+		printf("Driver %-60s [started]\n",dinfo);
+	}
 
 	return 0;
 }
@@ -106,13 +113,16 @@ int fs_fini(){
 	extern tk_inode_t *__Rnod;
 
 	//Close down the drivers
+	const char* dinfo;
 	for (
-		drv_fini_curr = drv_fini_first;
-		drv_fini_curr < drv_fini_last;
+		drv_fini_curr = (drv_finit_t*)drv_fini_first;
+		drv_fini_curr < (drv_finit_t*)drv_fini_last;
 		drv_fini_curr++
-	)
-		assure((*drv_fini_curr)()==0);
-
+	){
+		dinfo=(*drv_fini_curr)();
+		assure(dinfo);
+		printf("Driver %-60s [stopped]\n",dinfo);
+	}
 
 	free(__Rnod);
 	memcpy(&hixs,&old_syscalls,sizeof(struct hixs_t));
@@ -120,81 +130,5 @@ int fs_fini(){
 	return 0;
 }
 
-/* Main fs entries follow */
-
-int fs_close(int file) {
-	return 0;
-}
-
-int fs_fcntl (int file, int command, ...){
-	va_list ap;
-	/*any local vars here...*/
-	va_start (ap, command);
-
-	_syscall_mon(fs_fcntl);
-	errno = ENOSYS;
-	return -1;
-}
-	
-int fs_fstat(int file, struct stat *st) {
-	st->st_mode = S_IFCHR;
-	st->st_blksize = TX_BUFFLEN;
-	return 0;
-}
-	
-int fs_isatty(int file) {
-	return 1;
-}
-		
-int fs_link(char *old, char *new) {
-	errno=EMLINK;
-	return -1;
-}
-	
-int fs_lseek(int file, int ptr, int dir) {
-	return 0;
-}
-
-/*!
-http://www.opengroup.org/onlinepubs/009695399/
-*/
-int fs_open(const char *filename, int oflag, ...){
-	va_list ap;
-	tk_inode_t *inode;	
-	va_start (ap, oflag);
-
-	inode=isearch(filename);
-	if (inode==0)		//Errno allready set by isearch
-		return -1;
-
-	assure(inode->iohandle);
-	assure(inode->iohandle->open);
-	return inode->iohandle->open(filename,oflag,ap);
-}
-	
-int fs_read(int file, char *ptr, int len) {
-
-	return 0;
-}
-		
-int fs_stat(const char *file, struct stat *st) {
-
-	st->st_mode = S_IFCHR;
-	return 0;
-}
-		
-int fs_unlink(char *name) {
-
-	errno=ENOENT;
-	return -1;
-}
-	
-int fs_write(int file, char *ptr, int len) {
-
-	if (file<3){
-		return std_files[file].write(file, ptr, len);
-	}
-	return len;
-}
 
 

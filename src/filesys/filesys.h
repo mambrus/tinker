@@ -29,20 +29,104 @@
 #include <tinker/hixs.h>
 #include <malloc.h>
 #include <sys/stat.h>
-#include "inode.h"
+#include <fcntl.h>
+
+#include <filesys/inode.h>
 
 #ifndef assure
 #define assure(x) assert(x)
 #endif
 
-int fs_init();
-int fs_fini();
 
-/*Init/fini function pointer prototypes*/
-typedef int __drv_finit_f(void);
+#define CHECK_FH_NOASSURE(hndl,fnk)				\
+	if (							\
+		((int)hndl 			== -1)   ||	\
+		(hndl 				== NULL) ||	\
+		(hndl->belong 			== NULL) ||	\
+		(hndl->belong->iohandle		== NULL) ||	\
+		(hndl->belong->iohandle->fnk	== NULL)	\
+	){							\
+		errno=EBADF;					\
+		return -1;					\
+	}							\
+
+#define CHECK_FH_ASSURE(hndl,fnk)				\
+	CHECK_FH_NOASSURE(hndl,fnk)				\
+	assure(hndl);						\
+	assure(hndl->belong);					\
+	assure(hndl->belong->iohandle);				\
+	assure(hndl->belong->iohandle->fnk);
+
+
+#define CHECK_FH CHECK_FH_ASSURE
+//#define CHECK_FH CHECK_FH_NOASSURE
+
+/*!
+Pure flag names (to aid debugging - note that any flag variable can be OR'ed
+among these - which means any stabs info will not be able to resolve the
+name (which however is of of concern for the running code).
+*/
+typedef enum{
+	ISA_FLG_UNKNWN 	= 0,
+	ISA_RDONLY 	= O_RDONLY,
+	ISA_WRONLY	= O_WRONLY,
+	ISA_RDWR	= O_RDWR,
+	ISA_APPEND	= O_APPEND,
+	ISA_CREAT	= O_CREAT,
+//	ISA_DSYNC	= O_DSYNC,
+	ISA_EXCL	= O_EXCL,
+	ISA_NOCTTY	= O_NOCTTY,
+	ISA_NONBLOCK	= O_NONBLOCK,
+//	ISA_RSYNC	= O_RSYNC,
+	ISA_SYNC	= O_SYNC,
+	ISA_TRUNC	= O_TRUNC
+}tk_flag_t;
+
+//! File handle type - this is the top-level type used as a file handle
+typedef struct {
+	tk_id_t		id;		//!< Unique ID (global counter)
+//	tk_id_t		lid; 		//!< Local ID  (local counter)
+	tk_inode_t 	*belong;	//!< Which inode this file-handle belongs to
+	tk_flag_t	flags;		//!< The flags for this node
+	void		*data;		//!< Optional data associated with a handle
+}tk_fhandle_t;
+
+/*! 
+Helper function to create a file handle
+
+An IO device "open" function would normally use this
+*/
+tk_fhandle_t *tk_new_handle(tk_inode_t *inode, tk_flag_t aflags);
+
+/*! 
+Helper function to destroy a file handle
+
+An IO devive "close" function would normally use this
+*/
+int tk_free_handle(tk_fhandle_t *);
+
+
+/*! 
+Main init function for the filesys component.
+
+This function will pick up drivers init functions which creates each driver
+*/
+int fs_init(void);
+
+/*! 
+Main fini function for the filesys component
+
+This function will pick up drivers fini functions which destroys each driver
+*/
+int fs_fini(void);
+
+//Local helper type - Not documented on purpose
+typedef const char* __drv_finit_f(void);
+
+//! Init/fini function pointer prototype (used for both)
 typedef __drv_finit_f *drv_finit_t;
 
-/*Main system calls*/
+// Main system calls
 
 int fs_close(int file);
 int fs_fcntl (int files, int command, ...);
@@ -57,31 +141,8 @@ int fs_unlink(char *name);
 int fs_write(int file, char *ptr, int len);
 
 
-/*
-Subcathegorized system calls - one for each of type of inode:
-ifdir
-ifchr
-ifblk
-ifreg
-iflnk
-ifsock
-ififo
 
-NOTE Not all of these make sense for each type of inode. 
-In case a stubbed dummy is but in its place so that we avoid 
-calling zero funtion pointes by misstake.
-
-fs_ifdir.c
-fs_ifchr.c
-fs_ifblk.c
-fs_ifreg.c
-fs_iflnk.c
-fs_ifsock.c
-fs_ififo.c
-
-*/
-
-
+// Subcathegorized system calls - one for each of type of inode:
 int fs_ifdir_close(int file) ;
 int fs_ifdir_fcntl (int file, int command, ...);
 int fs_ifdir_fstat(int file, struct stat *st) ;
@@ -167,4 +228,29 @@ int fs_ififo_unlink(char *name) ;
 int fs_ififo_write(int file, char *ptr, int len) ;
 
 #endif // FILESYS_H
+
+/*
+Subcathegorized system calls - one for each of type of inode:
+ifdir
+ifchr
+ifblk
+ifreg
+iflnk
+ifsock
+ififo
+
+NOTE Not all of these make sense for each type of inode. 
+In case a stubbed dummy is but in its place so that we avoid 
+calling zero funtion pointes by misstake.
+
+fs_ifdir.c
+fs_ifchr.c
+fs_ifblk.c
+fs_ifreg.c
+fs_iflnk.c
+fs_ifsock.c
+fs_ififo.c
+
+*/
+
 

@@ -1420,7 +1420,10 @@ int
        return fcntl (desc, F_SETFL, oldflags);
      }
 #endif
-
+#define _MSTR(x) \
+	#x
+#define MSTR(x) \
+	_MSTR(x)
 /*!
 @ingroup kernel_glue
 
@@ -1443,6 +1446,16 @@ void _tk_main( void ){
    _b_hook(tk_bsp_sysinit);
 
    printk(("BSP initialized\n"));
+
+   #if defined(__GNUC__)
+      printk(("TinKer running target : %s\n",MSTR(TK_ALIAS_HOST)));
+      printk(("GCC version           : %s\n",MSTR(TK_GCC_VERSION)));
+      printk(("Main architecture     : %s\n",MSTR(__TK_ARCH_up__)));
+      printk(("CPU variant           : %s\n",MSTR(__TK_DCPU_up__)));
+      printk(("Board                 : %s\n",MSTR(__TK_BOARD_up__)));
+      printk(("System                : %s\n",MSTR(__TK_SYSTEM_up__)));
+      printk(("Scheduling method     : %s\n",MSTR(TK_DISPATCH)));
+   #endif
 
    _b_hook(tk_create_kernel);
    tk_create_kernel();
@@ -1607,6 +1620,10 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
+ *  Revision 1.76  2007-02-27 23:28:25  ambrmi09
+ *  - Generic driver sceletons provided - good as starting points for custom drivers
+ *  - A sample LED driver fully functional (PowerPC 860/ESC only)
+ *
  *  Revision 1.75  2007-02-26 14:16:53  ambrmi09
  *  1) Drivers    - structure added
  *  2) Filesystem - in progress

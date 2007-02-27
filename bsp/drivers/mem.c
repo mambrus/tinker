@@ -84,7 +84,7 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 }
 
 /*IO structure - pre-assigned*/
-static tk_iohandle_t DRV_IO(io) = {
+static const tk_iohandle_t DRV_IO(io) = {
         DRV_IO(close),
 	//DRV_IO(execve),
         DRV_IO(fcntl),
@@ -99,6 +99,7 @@ static tk_iohandle_t DRV_IO(io) = {
         DRV_IO(unlink),
         DRV_IO(write)
 };
+static const char DRV_IO(info_str)[]="mem   @ " DEV_FILE_NAME()"[0-3]";
 
 /* Init function(s) */
 int DRV_IO(init_0__)() {
@@ -117,13 +118,13 @@ int DRV_IO(init_3__)() {
 	assure(mknod(DEV_FILE_NAME(3),S_IFCHR, (dev_t)&DRV_IO(io))	==0);
 	return 0;
 }
-int DRV_IO(init__)() {
+const char *DRV_IO(init__)() {
 	assure(mknod("/dev/mem",S_IFDIR, 0 )				==0);
 	DRV_IO(init_0__)();
 	DRV_IO(init_1__)();
 	DRV_IO(init_2__)();
 	DRV_IO(init_3__)();
-	return 0;
+	return DRV_IO(info_str);
 }
 
 
@@ -144,14 +145,15 @@ int DRV_IO(fini_3__)() {
 	//assure(rmnod(DEV_FILE_NAME(3));
 	return 0;
 }
-int DRV_IO(fini__)() {
+
+const char *DRV_IO(fini__)() {
 
 	DRV_IO(init_3__)();
 	DRV_IO(init_2__)();
 	DRV_IO(init_1__)();
 	DRV_IO(init_0__)();
 	//assure(rmnod("/dev/mem"));
-	return 0;
+	return DRV_IO(info_str);
 }
 
 /*Put the init/fini in corresponding sections so that filesys can pick them up */

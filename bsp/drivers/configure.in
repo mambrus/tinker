@@ -7,7 +7,7 @@ AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION 
 
 AC_CONFIG_AUX_DIR(../..)
 
-sources_c="tim.c con.c mem.c"
+sources_c="null.c tim.c timr.c con.c mem.c"
 sources_asm=""
 extras=""
 

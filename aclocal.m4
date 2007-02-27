@@ -104,7 +104,7 @@ dnl ----------------------------------------------------------------------------
 AC_DEFUN([TINKER_OPTIONS_CONFIG],
 [
 	AC_ARG_ENABLE(verbose-config,
-		AS_HELP_STRING([--verbose-config],[Configure - Shows exrea information while running configure script]),
+		AS_HELP_STRING([--enable-verbose-config],[Configure - Shows extra information while running configure script]),
 		CONF_VERBOSE=$enableval,
 		CONF_VERBOSE="no"
 	)

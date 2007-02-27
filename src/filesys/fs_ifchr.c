@@ -20,52 +20,92 @@
 #include "filesys.h"
 #include "inode.h"
 
-int fs_ifchr_close(int file) {
+#define DRV_IO_NAME( x, y ) \
+	x ##y
+
+//NOTE driver name is set here and it affects the whole module
+#define DRV_IO( x ) \
+	DRV_IO_NAME( fs_ifchr_ , x )
+
+static const char DRV_IO(assert_info)[]="The CHARACTER device you're trying to access in not registered correctly";
+
+int DRV_IO(close)(int file) {
+	assure(DRV_IO(assert_info) == NULL);
 	return -1;
 }
 
-int fs_ifchr_fcntl (int file, int command, ...){
+int DRV_IO(fcntl)(int file, int command, ...){
+	assure(DRV_IO(assert_info) == NULL);
 	errno = ENOSYS;
 	return -1;
 }
 	
-int fs_ifchr_fstat(int file, struct stat *st) {
+	
+int DRV_IO(fstat)(int file, struct stat *st) {
+	assure(DRV_IO(assert_info) == NULL);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 	
-int fs_ifchr_isatty(int file) {
+int DRV_IO(isatty)(int file) {
+	assure(DRV_IO(assert_info) == NULL);
 	return 1;
 }
 		
-int fs_ifchr_link(char *old, char *new) {
+int DRV_IO(link)(char *old, char *new) {
+	assure(DRV_IO(assert_info) == NULL);
 	errno=EMLINK;
 	return -1;
 }
 	
-int fs_ifchr_lseek(int file, int ptr, int dir) {
+int DRV_IO(lseek)(int file, int ptr, int dir) {
+	assure(DRV_IO(assert_info) == NULL);
 	return 0;
 }
 
-int fs_ifchr_open(const char *filename, int flags, ...){
+int DRV_IO(open)(const char *filename, int flags, ...){
+	assure(DRV_IO(assert_info) == NULL);
 	errno = ENOSYS;
 	return -1;
 }
 	
-int fs_ifchr_read(int file, char *ptr, int len) {
+int DRV_IO(read)(int file, char *ptr, int len) {
+	assure(DRV_IO(assert_info) == NULL);
 	return 0;
 }
 		
-int fs_ifchr_stat(const char *file, struct stat *st) {
+int DRV_IO(stat)(const char *file, struct stat *st) {
+	assure(DRV_IO(assert_info) == NULL);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 		
-int fs_ifchr_unlink(char *name) {
+int DRV_IO(unlink)(char *name) {
+	assure(DRV_IO(assert_info) == NULL);
 	errno=ENOENT;
 	return -1;
 }
 	
-int fs_ifchr_write(int file, char *ptr, int len) {
+int DRV_IO(write)(int file, char *ptr, int len) {
+	assure(DRV_IO(assert_info) == NULL);
 	return len;
 }
+
+
+const tk_iohandle_t DRV_IO(io) = {
+        DRV_IO(close),
+	//DRV_IO(execve),
+        DRV_IO(fcntl),
+        DRV_IO(fstat),
+        DRV_IO(isatty),
+        DRV_IO(link),
+        DRV_IO(lseek),
+        DRV_IO(open),
+        DRV_IO(read),
+        //DRV_IO(sbrk),
+        DRV_IO(stat),
+        DRV_IO(unlink),
+        DRV_IO(write)
+};
+
+
