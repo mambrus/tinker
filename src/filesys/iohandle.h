@@ -22,9 +22,9 @@
 
 #include <tinker/hixs.h>
 
-typedef struct{
+typedef struct tk_iohandle_s{
 		pHIXS_close        close;
-		//pHIXS_execve       execve;
+		//pHIXS_execve     execve;
 		pHIXS_fcntl        fcntl;
 		pHIXS_fstat        fstat;
 		pHIXS_isatty       isatty;
@@ -32,7 +32,7 @@ typedef struct{
 		pHIXS_lseek        lseek;
 		pHIXS_open         open;
 		pHIXS_read         read;
-		//pHIXS_sbrk         sbrk;
+		//pHIXS_sbrk       sbrk;
 		pHIXS_stat         stat;
 		pHIXS_unlink       unlink;
 		pHIXS_write        write;

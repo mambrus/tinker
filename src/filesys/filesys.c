@@ -19,11 +19,7 @@
  ***************************************************************************/
 #include "filesys.h"
 
-
-#define RX_BUFFLEN	102 
-#define TX_BUFFLEN	102
-
-
+#include <filesys/inode.h>
 #include <assert.h>
 #include <string.h>
 #include <limits.h>
@@ -31,12 +27,13 @@
 #include <sys/syslimits.h>
 #endif
 
-tk_iohandle_t std_files[3];	//!< The thre standard handles (stdin,stdout & stderr)
+#define RX_BUFFLEN	102 
+#define TX_BUFFLEN	102
+
+
+tk_iohandle_t std_files[3];	//!< The three standard handles (stdin,stdout & stderr)
 struct hixs_t old_syscalls;	//!< Storage for any old HIXS syscalls (previous initialization);
 extern struct hixs_t hixs;	//!< The call-stucture we know exist.
-
-tk_inode_t *root;
-static int icntr=0;
 
 int fs_init(){
 	assert(sizeof(void*) <= sizeof(int));
@@ -46,9 +43,11 @@ int fs_init(){
 	drv_finit_t drv_init_first = &__DRVINIT_START__;
 	drv_finit_t drv_init_last  = &__DRVINIT_END__;
 	drv_finit_t *drv_init_curr;
+	int namelen;
+	extern tk_inode_t *__Rnod;
+	extern long long __icntr;
 
 	//Set new main-enty values for those we care about
-
 	hixs.close        = fs_close;
 	hixs.fcntl        = fs_fcntl;
 	hixs.fstat        = fs_fstat; //HIXS_fstat; 
@@ -66,13 +65,25 @@ int fs_init(){
 	std_files[2].write=old_syscalls.write; //Assign stderr with something usefull
 
 
-	//Create the '/' node (directory) - this is a special case and cant be created with mknode
-	assure(root = (tk_inode_t*)calloc(1,sizeof(tk_inode_t)));	
-	root->id=icntr++;
-	root->mode=ISA_IFDIR;
+	//Create the '/' node (directory) - this is a special case and can't be created with mknode
+	assure(__Rnod = (tk_inode_t*)calloc(1,sizeof(tk_inode_t)));	
+	__Rnod->id=__icntr++;
+	namelen = sizeof("");
+	__Rnod->name=(char*)calloc(1,namelen);
+	strncpy(__Rnod->name,"",namelen);
+	__Rnod->mode=ISA_IFDIR;
+	__Rnod->belong=__Rnod;
+	__Rnod->down=__Rnod;
 
 	//Create the '/dev' node (directory)
-	mknod("/dev",S_IFDIR,0);
+	assure(mknod("/dev",S_IFDIR,0)			== 0);
+	assure(mknod("/tmp",S_IFDIR,0)			== 0);
+
+	//Some test nodes	
+	assert(mknod("/tmp/.ambrmi09",S_IFDIR,0) 	== 0);
+	assert(mknod("/tmp/afile",S_IFREG,0) 		== 0);
+	assert(mknod("/tmp/bfile",S_IFREG,0) 		== 0);
+	assert(mknod("/tmp/.ambrmi09/cfile",S_IFDIR,0)	== 0);
 
 
 	//Start up the drivers
@@ -83,7 +94,6 @@ int fs_init(){
 	)
 		assure((*drv_init_curr)()==0);
 
-	
 	return 0;
 }
 
@@ -93,6 +103,7 @@ int fs_fini(){
 	drv_finit_t drv_fini_first = &__DRVFINI_START__;
 	drv_finit_t drv_fini_last = &__DRVFINI_END__;
 	drv_finit_t *drv_fini_curr;
+	extern tk_inode_t *__Rnod;
 
 	//Close down the drivers
 	for (
@@ -103,124 +114,14 @@ int fs_fini(){
 		assure((*drv_fini_curr)()==0);
 
 
-	free(root);
+	free(__Rnod);
 	memcpy(&hixs,&old_syscalls,sizeof(struct hixs_t));
 
 	return 0;
 }
 
-char *getname(const char *s){
-	int i;
-	for (i=strlen(s);s[i]!='/';i--);
-	return (char *)&s[i+1];
-}
+/* Main fs entries follow */
 
-void getpath(char *buff, const char *s){	
-	strncpy(buff,s,PATH_MAX);
-	getname(buff)[0]=0;
-}
-
-/*! Return the i-node associated with a name - or NULL uf none is found*/
-tk_inode_t *findinode(const char*s){
-}
-
- int mknod(const char *filename, mode_t mode, dev_t dev){
-	char path[PATH_MAX];
-	char *name;
-	tk_inode_t *belong;
-	tk_inode_t *newNode;
-	tk_inode_t *seekNode;
-	int namelen;
-
-	getpath(path,filename);
-	name=getname(filename);
-
-	if (!((namelen=strnlen(name,NAME_MAX)) < NAME_MAX)){
-		errno=ENOSPC;	/*Breaking the naming rules - or something else is crashing...*/
-		return -1;
-	}
-	if (!(belong=findinode(filename))){
-		/*Owner path does not exist*/
-		errno=ENOENT;
-		return -1;
-	}
-	if (!(belong=findinode(path))){
-		/*Owner path does not exist, good error code is missing so we use a similar*/
-		errno=EEXIST;
-		return -1;
-	}
-	if (belong->mode =! ISA_IFDIR){
-		errno=ENOSPC;	/*Trying to create a node whos owner is not a directory*/
-		return -1;
-	}
-	
-	//Create the node
-	assure(newNode = (tk_inode_t*)calloc(1,sizeof(tk_inode_t)));
-	newNode->id=icntr++;
-	newNode->name=(char*)calloc(1,namelen);
-	strncpy(newNode->name,name,namelen);
-	newNode->belong=belong;
-	newNode->mode=mode;
-
-	for (seekNode=belong->next;seekNode->next;seekNode=seekNode->next);
-	seekNode->next=newNode;
-}
-
-
-
-
-/*   --- Main fs system calls follow ---  */
-
-/*
-int close (int filedes)  	Function
-The function close closes the file descriptor filedes. Closing a 
-file has the following consequences:
-
-    * The file descriptor is deallocated.
-    * Any record locks owned by the process on the file are 
-unlocked.
-    * When all file descriptors associated with a pipe or FIFO have 
-been closed, any unread data is discarded. 
-
-This function is a cancellation point in multi-threaded programs. 
-This is a problem if the thread allocates some resources (like 
-memory, file descriptors, semaphores or whatever) at the time close 
-is called. If the thread gets canceled these resources stay 
-allocated until the program ends. To avoid this, calls to close 
-should be protected using cancellation handlers.
-
-The normal return value from close is 0; a value of -1 is returned 
-in case of failure. The following errno error conditions are defined 
-for this function:
-
-EBADF
-    The filedes argument is not a valid file descriptor.
-EINTR
-    The close call was interrupted by a signal. See Interrupted 
-Primitives. Here is an example of how to handle EINTR properly:
-
-                   TEMP_FAILURE_RETRY (close (desc));
- 
-
-
-ENOSPC
-EIO
-EDQUOT
-    When the file is accessed by NFS, these errors from write can 
-sometimes not be detected until close. See I/O Primitives, for 
-details on their meaning. 
-
-Please note that there is no separate close64 function. This is not 
-necessary since this function does not determine nor depend on the 
-mode of the file. The kernel which performs the close operation 
-knows which mode the descriptor is used for and can handle this 
-situation.
-
-To close a stream, call fclose (see Closing Streams) instead of 
-trying to close its underlying file descriptor with close. This 
-flushes any buffered output and updates the stream object to 
-indicate that it is closed. 
-*/
 int fs_close(int file) {
 	return 0;
 }
@@ -254,13 +155,21 @@ int fs_lseek(int file, int ptr, int dir) {
 	return 0;
 }
 
-int fs_open(const char *filename, int file, ...){
+/*!
+http://www.opengroup.org/onlinepubs/009695399/
+*/
+int fs_open(const char *filename, int oflag, ...){
 	va_list ap;
-	/*any local vars here...*/
-	va_start (ap, file);
+	tk_inode_t *inode;	
+	va_start (ap, oflag);
 
-	errno = ENOSYS;
-	return -1;
+	inode=isearch(filename);
+	if (inode==0)		//Errno allready set by isearch
+		return -1;
+
+	assure(inode->iohandle);
+	assure(inode->iohandle->open);
+	return inode->iohandle->open(filename,oflag,ap);
 }
 	
 int fs_read(int file, char *ptr, int len) {

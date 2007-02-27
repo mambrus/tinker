@@ -101,11 +101,11 @@ static tk_iohandle_t DRV_IO(io) = {
 
 /* Init function(s) */
 int DRV_IO(init_0__)() {
-	mknod(DEV_FILE_NAME(0),S_IFBLK, (dev_t)&DRV_IO(io));
+	assure(mknod(DEV_FILE_NAME(0),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
 	return 0;
 }
 int DRV_IO(init_1__)() {
-	mknod(DEV_FILE_NAME(1),S_IFBLK, (dev_t)&DRV_IO(io));
+	assure(mknod(DEV_FILE_NAME(1),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
 	return 0;
 }
 

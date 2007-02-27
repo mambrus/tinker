@@ -30,7 +30,7 @@
 
 
 #define DEV_FILE_NAME( x ) \
-	"/dev/mem" #x
+	"/dev/mem/C" #x
 
 
 int DRV_IO(close)(int file) {
@@ -102,47 +102,60 @@ static tk_iohandle_t DRV_IO(io) = {
 
 /* Init function(s) */
 int DRV_IO(init_0__)() {
-	mknod(DEV_FILE_NAME(0),S_IFBLK, (dev_t)&DRV_IO(io));
+	assure(mknod(DEV_FILE_NAME(0),S_IFCHR, (dev_t)&DRV_IO(io))	==0);
 	return 0;
 }
 int DRV_IO(init_1__)() {
-	mknod(DEV_FILE_NAME(1),S_IFBLK, (dev_t)&DRV_IO(io));
+	assure(mknod(DEV_FILE_NAME(1),S_IFCHR, (dev_t)&DRV_IO(io))	==0);
 	return 0;
 }
 int DRV_IO(init_2__)() {
-	mknod(DEV_FILE_NAME(2),S_IFBLK, (dev_t)&DRV_IO(io));
+	assure(mknod(DEV_FILE_NAME(2),S_IFCHR, (dev_t)&DRV_IO(io))	==0);
 	return 0;
 }
 int DRV_IO(init_3__)() {
-	mknod(DEV_FILE_NAME(3),S_IFBLK, (dev_t)&DRV_IO(io));
+	assure(mknod(DEV_FILE_NAME(3),S_IFCHR, (dev_t)&DRV_IO(io))	==0);
+	return 0;
+}
+int DRV_IO(init__)() {
+	assure(mknod("/dev/mem",S_IFDIR, 0 )				==0);
+	DRV_IO(init_0__)();
+	DRV_IO(init_1__)();
+	DRV_IO(init_2__)();
+	DRV_IO(init_3__)();
 	return 0;
 }
 
 
 /* Fini function(s) */
 int DRV_IO(fini_0__)() {
+	//assure(rmod(DEV_FILE_NAME(0));
 	return 0;
 }
 int DRV_IO(fini_1__)() {
+	//assure(rmnod(DEV_FILE_NAME(1));
 	return 0;
 }
 int DRV_IO(fini_2__)() {
+	//assure(rmnod(DEV_FILE_NAME(2));
 	return 0;
 }
 int DRV_IO(fini_3__)() {
+	//assure(rmnod(DEV_FILE_NAME(3));
+	return 0;
+}
+int DRV_IO(fini__)() {
+
+	DRV_IO(init_3__)();
+	DRV_IO(init_2__)();
+	DRV_IO(init_1__)();
+	DRV_IO(init_0__)();
+	//assure(rmnod("/dev/mem"));
 	return 0;
 }
 
 /*Put the init/fini in corresponding sections so that filesys can pick them up */
-
-drv_finit_t DRV_IO(init_0) __attribute__ ((section (".drvinit"))) =DRV_IO(init_0__);
-drv_finit_t DRV_IO(init_1) __attribute__ ((section (".drvinit"))) =DRV_IO(init_1__);
-drv_finit_t DRV_IO(init_2) __attribute__ ((section (".drvinit"))) =DRV_IO(init_2__);
-drv_finit_t DRV_IO(init_3) __attribute__ ((section (".drvinit"))) =DRV_IO(init_3__);
-
-drv_finit_t DRV_IO(fini_0) __attribute__ ((section (".drvfini"))) =DRV_IO(fini_0__);
-drv_finit_t DRV_IO(fini_1) __attribute__ ((section (".drvfini"))) =DRV_IO(fini_1__);
-drv_finit_t DRV_IO(fini_2) __attribute__ ((section (".drvfini"))) =DRV_IO(fini_2__);
-drv_finit_t DRV_IO(fini_3) __attribute__ ((section (".drvfini"))) =DRV_IO(fini_3__);
+drv_finit_t DRV_IO(init) __attribute__ ((section (".drvinit"))) =DRV_IO(init__);
+drv_finit_t DRV_IO(fini) __attribute__ ((section (".drvfini"))) =DRV_IO(fini__);
 
 

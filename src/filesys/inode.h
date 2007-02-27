@@ -19,21 +19,6 @@
  ***************************************************************************/
 #ifndef TK_INODE_H
 #define TK_INODE_H
-/*
-
-			node
-			  |
-
-  ^|		  ^		  ^		  ^
-  |v		  |		  |		  |
-node  ->	node  ->	node  ->	node  ->	NULL
-		  |
-
-	^|		  ^		  ^		  ^
-	|v		  |		  |		  |
-	node  ->	node  ->	node  ->	node  ->	NULL
-
-*/
 
 
 #include <tinker/config.h>
@@ -58,19 +43,42 @@ typedef struct tk_inode_s{
 	tk_mode_t		mode;		//!<  What kind of node this is
 	struct tk_inode_s 	*belong;	//!<  Whom this node belongs to
 	struct tk_inode_s	*next;		//!<  Next node on the same level
-	//struct  tk_inode_s	*down;		//!<  Points to first inode that belongs to this one
-	struct tk_iohandle_s	*iohande;	//!<  Operations that can be made on this i-node
+	struct tk_inode_s	*down;		//!<  Points to first inode that belongs to this one
+	tk_iohandle_t	*iohandle;		//!<  Operations that can be made on this i-node
 }tk_inode_t;
 
+tk_inode_t 	*isearch	(const char*s);
+char 		*igetname	(const char *s);
+void 		igetpath	(char *buff, const char *s);
+
+
 #endif //TK_INODE_H
+
 
 /*
 ifdir
 ifblk
+ifchr
 ifreg
 iflnk
 ifsock
 ififo
+*/
+
+/*
+
+			node
+			  |
+
+  ^|		  ^		  ^		  ^
+  |v		  |		  |		  |
+node  ->	node  ->	node  ->	node  ->	NULL
+		  |
+
+	^|		  ^		  ^		  ^
+	|v		  |		  |		  |
+	node  ->	node  ->	node  ->	node  ->	NULL
+
 */
 
 
