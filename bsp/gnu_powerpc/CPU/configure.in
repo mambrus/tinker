@@ -1,0 +1,30 @@
+dnl This is the tinker/bsp/gnu_powerpc/CPU configure.in file.
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.59])
+
+AC_INIT(CPU, [0.1.0])
+AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
+
+AC_CONFIG_AUX_DIR(../../..)
+
+sources_c="cpu.c"
+sources_asm=""
+extras=""
+
+TINKER_CONFIGURE(../../..)
+
+case "${MCPU}" in
+  860)
+    AC_MSG_NOTICE([<<< CPU 860 is configured >>>])
+    AC_CONFIG_SUBDIRS([860])
+    ;;
+  *)
+    AC_MSG_ERROR([<<< Sorry, CPU $MCPU is not supported >>>])
+    ;;
+esac
+
+dnl Update config.h
+AC_CONFIG_HEADER(../../../include/tinker/config.h)
+
+AC_OUTPUT(Makefile-gnu)
