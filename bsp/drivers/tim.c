@@ -17,6 +17,43 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+/*!
+				TIME
+
+This is one of the simplest drivers possible but that shows some of the 
+things you can do, and also the basics for how to write device drivers. 
+
+  ** You're encouraged to copy this file and use it as a template **
+
+The TIME driver provides you with with the system up-time via a block 
+device (/dev/time) in the form of a clock_t data.
+
+Optionally, you can open the device for writing and set a reference time.
+If you write the current time to the device, each time you read from the
+device again the time you get will now be the delta between you wrote to 
+the device and when you read it.
+
+This difference is stored in the file-handle (fh) itself in the optional 
+"data" field. This has has the following implications.
+
+1) You can use the same driver to measure delta-times in independent 
+   threads. As long as you use a unique fh, the operations will not 
+   interfere with each other.
+
+2) To use the driver to measure delta-times, the same fh for reading 
+   has to be used that was once used for writing the reference time. I.e.
+   you have to open the file O_RDWR.
+
+@NOTE 
+Since this driver does not block or use any other syncronisation, it
+can be used without a kernel.
+
+@NOTE
+This simple driver will ignore flags that affect blocking and scheduling
+for the sake of simplicity. The drivers behavior is instead hard-coded 
+(if you want, you can implement that as an exercise youself).
+
+*/
 #include <filesys/filesys.h>
 #include <filesys/inode.h>
 #include <assert.h>
@@ -115,7 +152,7 @@ int DRV_IO(unlink)(char *name) {
 int DRV_IO(write)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	((DRV_IO(data_t)*)(hndl->data))->time_offset=clock();
-	return sizeof(DRV_IO(data_t));
+	return sizeof(len);
 }
 
 /*IO structure - pre-assigned*/
