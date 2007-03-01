@@ -17,7 +17,7 @@
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
-      <mainprogram>src/TinKerKernel</mainprogram>
+      <mainprogram>ktestapp-powerpc.elf</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs/>
@@ -71,7 +71,7 @@
   </kdevautoproject>
   <kdevdebugger>
     <general>
-      <dbgshell>libtool</dbgshell>
+      <dbgshell>gdb/gdb-kde-wrapper.sh</dbgshell>
       <programargs/>
       <gdbpath/>
       <configGdbScript/>
@@ -84,7 +84,7 @@
     <display>
       <staticmembers>false</staticmembers>
       <demanglenames>true</demanglenames>
-      <outputradix>10</outputradix>
+      <outputradix>16</outputradix>
     </display>
   </kdevdebugger>
   <kdevdoctreeview>

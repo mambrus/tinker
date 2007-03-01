@@ -333,15 +333,32 @@ int DRV_IO(write3)(int file, char *ptr, int len) {
 	return len;
 }
 
-void nop(void){
-	assert(DRV_IO(assert_info) == NULL);
+//=============================================================================
+// Buffered mode access determination
+//=============================================================================
+/*This should never need to be called, but provided just in case */	
+int DRV_IO(isatty)(int file) {
+	return 0;
 }
+
+int DRV_IO(fstat)(int file, struct stat *st) {
+	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
+	if (hndl->belong->mode != ISA_UNKNOWN)
+		st->st_mode = hndl->belong->mode;
+	else
+		st->st_mode = S_IFBLK;
+
+	st->st_blksize = sizeof(int);		//Should not be needed since blk & ubuff
+
+	return 0;
+}
+
 //=============================================================================
 // IO structures - pre-assigned
 //=============================================================================
 static const tk_iohandle_t DRV_IO(io0) = {
         DRV_IO(close0),
-	        fs_ifblk_fcntl,	fs_ifblk_fstat,	fs_ifblk_isatty,fs_ifblk_link,	fs_ifblk_lseek,
+	        fs_ifblk_fcntl,	DRV_IO(fstat),	DRV_IO(isatty),fs_ifblk_link,	fs_ifblk_lseek,
         DRV_IO(open0),
         DRV_IO(read0),
         	fs_ifblk_stat,	fs_ifblk_unlink,
@@ -349,7 +366,7 @@ static const tk_iohandle_t DRV_IO(io0) = {
 };
 static const tk_iohandle_t DRV_IO(io1) = {
         DRV_IO(close1),
-	        fs_ifblk_fcntl,	fs_ifblk_fstat,	fs_ifblk_isatty,fs_ifblk_link,	fs_ifblk_lseek,
+	        fs_ifblk_fcntl,	DRV_IO(fstat),	DRV_IO(isatty),fs_ifblk_link,	fs_ifblk_lseek,
         DRV_IO(open1),
         DRV_IO(read1),
         	fs_ifblk_stat,	fs_ifblk_unlink,
@@ -357,7 +374,7 @@ static const tk_iohandle_t DRV_IO(io1) = {
 };
 static const tk_iohandle_t DRV_IO(io2) = {
         DRV_IO(close2),
-	        fs_ifblk_fcntl,	fs_ifblk_fstat,	fs_ifblk_isatty,fs_ifblk_link,	fs_ifblk_lseek,
+	        fs_ifblk_fcntl,	DRV_IO(fstat),	DRV_IO(isatty),fs_ifblk_link,	fs_ifblk_lseek,
         DRV_IO(open2),
         DRV_IO(read2),
         	fs_ifblk_stat,	fs_ifblk_unlink,
@@ -365,7 +382,7 @@ static const tk_iohandle_t DRV_IO(io2) = {
 };
 static const tk_iohandle_t DRV_IO(io3) = {
         DRV_IO(close3),
-	        fs_ifblk_fcntl,	fs_ifblk_fstat,	fs_ifblk_isatty,fs_ifblk_link,	fs_ifblk_lseek,
+	        fs_ifblk_fcntl,	DRV_IO(fstat),	DRV_IO(isatty),fs_ifblk_link,	fs_ifblk_lseek,
         DRV_IO(open3),
         DRV_IO(read3),
         	fs_ifblk_stat,	fs_ifblk_unlink,

@@ -56,11 +56,21 @@ int fs_fcntl (int file, int command, ...){
 	
 	return rc;
 }
-	
-int fs_fstat(int file, struct stat *st) {	
-	st->st_mode = S_IFCHR;
-	st->st_blksize = TX_BUFFLEN;
-	return 0;
+
+/*
+NOTE fstat is called only if buffered access needs to be determined
+(i.e. if file was openwd with fopen). For low leve access (open, read, write
+e.t.a.) it's never called exept if called explicitly by the application.
+*/	
+int fs_fstat(int file, struct stat *st) {
+	if ((file>=0) && (file<=2)){
+		st->st_mode = S_IFCHR;
+		st->st_blksize = TX_BUFFLEN;
+		return 0;
+	}
+	tk_fhandle_t *hndl= (tk_fhandle_t *)file;
+	CHECK_FH(hndl,fstat);
+	return hndl->belong->iohandle->fstat(file, st);
 }
 	
 int fs_isatty(int file) {
