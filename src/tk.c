@@ -1172,6 +1172,8 @@ void _tk_construct_thread_scope(
    void          *inpar,    //!< Any variable or value to start of with
    thid_t         id        //!< The ID (needed to relate to the correct TCB)
 ){
+TK_CLI();
+
    //We're going to operate on a different stack, so we need 
    //to store away the arguments somewhere guaranteed not to 
    //be on any stack (needed so that we can reach their contents).
@@ -1202,12 +1204,12 @@ void _tk_construct_thread_scope(
    //keep the following  access simple by using a copy stored in the code seg.
    //(Note: stack_t is a form of pointer that is used to refer to the physical stack)
    SPS = proc_stat[t_id].curr_sp;     
-   TK_CLI();
+  //TK_CLI();
    PUSHALL();              // <--       // Make sure CPU context is ok
-   TK_STI();
-   TK_CLI();
+  //TK_STI();
+  //TK_CLI();
    _tk_half_switch(t_id, active_thread);
-   TK_STI();
+  //TK_STI();
 
    if (active_thread != t_id){      
       POPALL();            // <--      // ...since we're comming back via 
@@ -1224,7 +1226,7 @@ void _tk_construct_thread_scope(
    //value to access the whole stack (single value = the key to the whole = i.e.
    //the curren SP register value).   
    BIND_STACK( SPS, TEMP );
-   
+TK_STI();
    _tk_constructor(t_f, t_inpar, t_id);
 
 }
@@ -1620,6 +1622,10 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
+ *  Revision 1.77  2007-03-02 10:15:13  ambrmi09
+ *  Broaden the reagin interrups are dissaböed when creating threads. This
+ *  whole theing needs to be over-looked.
+ *
  *  Revision 1.76  2007-02-27 23:28:25  ambrmi09
  *  - Generic driver sceletons provided - good as starting points for custom drivers
  *  - A sample LED driver fully functional (PowerPC 860/ESC only)
