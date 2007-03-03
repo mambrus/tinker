@@ -56,7 +56,7 @@ int DRV_IO(fcntl)(int file, int command, ...){
 		
 int DRV_IO(fstat)(int file, struct stat *st) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	st->st_mode = hndl->belong->mode;;
+	st->st_mode = hndl->inode->mode;;
 	return 0;
 }
 	

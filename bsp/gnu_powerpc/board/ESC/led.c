@@ -343,8 +343,8 @@ int DRV_IO(isatty)(int file) {
 
 int DRV_IO(fstat)(int file, struct stat *st) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	if (hndl->belong->mode != ISA_UNKNOWN)
-		st->st_mode = hndl->belong->mode;
+	if (hndl->inode->mode != ISA_UNKNOWN)
+		st->st_mode = hndl->inode->mode;
 	else
 		st->st_mode = S_IFBLK;
 

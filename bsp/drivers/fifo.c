@@ -118,7 +118,7 @@ int DRV_IO(read)(int file, char *ptr, int len) {
 
 	rlen=mq_receive(
 		((DRV_IO(hndl_data_t)*)(hndl->data))->q,
-		&msg,
+		(char*)&msg,
 		sizeof(DRV_IO(msg_t)),
 		NULL);
 
@@ -150,7 +150,7 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 
 	assure(mq_send(
 		((DRV_IO(hndl_data_t)*)(hndl->data))->q,
-		&msg,
+		(char*)&msg,
 		sizeof(DRV_IO(msg_t)),
 		Q->prio) == 0);
 

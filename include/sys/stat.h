@@ -51,38 +51,13 @@ kernel_reimpl_ansi.
    #endif
 
 /*!
-The mknod function makes a special file with name filename. The 
-mode specifies the mode of the file, and may include the various 
-special file bits, such as S_IFCHR (for a character special file) 
-or S_IFBLK (for a block special file). See Testing File Type.
-
-The dev argument specifies which device the special file refers to. 
-Its exact interpretation depends on the kind of special file being 
-created.
-
-The return value is 0 on success and -1 on error. In addition to 
-the usual file name errors (see File Name Errors), the following 
-errno error conditions are defined for this function:
-
-EPERM
-    The calling process is not privileged. Only the superuser can 
-create special files.
-ENOSPC
-    The directory or file system that would contain the new file is 
-full and cannot be extended.
-EROFS
-    The directory containing the new file can't be modified because 
-it's on a read-only file system.
-EEXIST
-    There is already a file named filename. If you want to replace 
-this file, you must remove the old file explicitly first. 
-
 http://www.opengroup.org/onlinepubs/009695399/functions/mknod.html
 */
-
 int mknod(const char *filename, mode_t mode, dev_t dev);
-//int mknod (const char *filename, int mode, int dev);
-//int	_EXFUN(mknod,( const char *__path, mode_t __mode, dev_t __dev ));
+/*!
+http://www.opengroup.org/onlinepubs/009695399/functions/mkfifo.html
+*/
+int mkfifo(const char *path, mode_t mode);
 
 #endif
 
@@ -96,6 +71,14 @@ int mknod(const char *filename, mode_t mode, dev_t dev);
  * @defgroup CVSLOG_stat_h stat_h
  * @ingroup CVSLOG
  *  $Log: stat.h,v $
+ *  Revision 1.2  2007-03-03 23:42:21  ambrmi09
+ *  Tested fifo implementation. We seem to have problems with built in
+ *  qsort.
+ *
+ *  Eiter that or same prio messages get delivered in an undetermined order
+ *  due to that sort doesent take sent time into account. We might want to
+ *  look into that.
+ *
  *  Revision 1.1  2007-02-26 14:16:53  ambrmi09
  *  1) Drivers    - structure added
  *  2) Filesystem - in progress
