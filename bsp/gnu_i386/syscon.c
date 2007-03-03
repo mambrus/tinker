@@ -81,9 +81,10 @@ caddr_t x86_sbrk(int incr) {
    return (caddr_t) prev_heap_end;   
 }
 
+/*A simple up-counter to simulate a real clock*/
 clock_t x86_clock(){
 	static __uint32_t loop;
-	loop++;
+	loop+=10000;
 	return loop;
 }
 

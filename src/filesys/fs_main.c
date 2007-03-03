@@ -35,10 +35,18 @@ extern tk_id_t		__flid;
 
 extern tk_iohandle_t std_files[3];
 
+static const char assert_info[]="Something is wrong - please report this bug";
+
+/*!
+@brief http://www.opengroup.org/onlinepubs/009695399/
+*/
 int fs_close(int file) {
 	return 0;
 }
 
+/*!
+@brief http://www.opengroup.org/onlinepubs/009695399/
+*/
 int fs_fcntl (int file, int command, ...){
 	va_list ap;
 		tk_fhandle_t *hndl;
@@ -50,14 +58,16 @@ int fs_fcntl (int file, int command, ...){
 	hndl = (tk_fhandle_t *)file;
 	CHECK_FH(hndl,fcntl);
 
-	rc=hndl->belong->iohandle->fcntl(file,command,ap);
+	rc=hndl->inode->iohandle->fcntl(file,command,ap);
 
 	va_end(ap);
 	
 	return rc;
 }
 
-/*
+/*!
+@brief http://www.opengroup.org/onlinepubs/009695399/
+
 NOTE fstat is called only if buffered access needs to be determined
 (i.e. if file was openwd with fopen). For low leve access (open, read, write
 e.t.a.) it's never called exept if called explicitly by the application.
@@ -70,24 +80,36 @@ int fs_fstat(int file, struct stat *st) {
 	}
 	tk_fhandle_t *hndl= (tk_fhandle_t *)file;
 	CHECK_FH(hndl,fstat);
-	return hndl->belong->iohandle->fstat(file, st);
+	return hndl->inode->iohandle->fstat(file, st);
 }
 	
+/*!
+@brief http://www.opengroup.org/onlinepubs/009695399/
+*/
 int fs_isatty(int file) {
+	assert(assert_info == NULL);
 	return 1;
-}
-		
-int fs_link(char *old, char *new) {
-	errno=EMLINK;
-	return -1;
-}
-	
-int fs_lseek(int file, int ptr, int dir) {
-	return 0;
 }
 
 /*!
-http://www.opengroup.org/onlinepubs/009695399/
+@brief http://www.opengroup.org/onlinepubs/009695399/
+*/		
+int fs_link(char *old, char *new) {
+	assert(assert_info == NULL);
+	errno=EMLINK;
+	return -1;
+}
+
+/*!
+@brief http://www.opengroup.org/onlinepubs/009695399/
+*/	
+int fs_lseek(int file, int ptr, int dir) {
+	assert(assert_info == NULL);
+	return -1;
+}
+
+/*!
+@brief http://www.opengroup.org/onlinepubs/009695399/
 */
 int fs_open(const char *filename, int oflag, ...){
 	va_list ap;
@@ -105,7 +127,10 @@ int fs_open(const char *filename, int oflag, ...){
 	assure(inode->iohandle->open);
 	return inode->iohandle->open(filename,oflag,inode);
 }
-	
+
+/*!
+@brief http://www.opengroup.org/onlinepubs/009695399/
+*/	
 int fs_read(int file, char *ptr, int len) {
 	if ((file>=0) && (file<=2)){
 		return std_files[file].read(file, ptr, len);
@@ -114,33 +139,45 @@ int fs_read(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl= (tk_fhandle_t *)file;	
 	CHECK_FH(hndl,fcntl);
 
-	return hndl->belong->iohandle->read(file, ptr, len);
+	return hndl->inode->iohandle->read(file, ptr, len);
 }
-		
-int fs_stat(const char *file, struct stat *st) {
 
+/*!
+@brief http://www.opengroup.org/onlinepubs/009695399/
+*/		
+int fs_stat(const char *file, struct stat *st) {
+	assert(assert_info == NULL);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-		
-int fs_unlink(char *name) {
 
+/*!
+@brief http://www.opengroup.org/onlinepubs/009695399/
+*/		
+int fs_unlink(char *name) {
+	assert(assert_info == NULL);
 	errno=ENOENT;
 	return -1;
 }
-	
+
+/*!
+@brief http://www.opengroup.org/onlinepubs/009695399/
+*/	
 int fs_write(int file, char *ptr, int len) {
 	if ((file>=0) && (file<=2)){
 		return std_files[file].write(file, ptr, len);
 	}
 	tk_fhandle_t *hndl= (tk_fhandle_t *)file;
 	CHECK_FH(hndl,fcntl);
-	return hndl->belong->iohandle->write(file, ptr, len);
+	return hndl->inode->iohandle->write(file, ptr, len);
 }
 
 
 /* Helper functions */
 
+/*!
+Creates a new handle
+*/
 tk_fhandle_t *tk_new_handle(tk_inode_t *inode, tk_flag_t aflags){
 	tk_fhandle_t *hndl;
 	
@@ -148,9 +185,13 @@ tk_fhandle_t *tk_new_handle(tk_inode_t *inode, tk_flag_t aflags){
 	__fcntr++;
 	hndl->id=__flid++;
 	hndl->flags=aflags;
-	hndl->belong=inode;
+	hndl->inode=inode;
+	return hndl;
 }
 
+/*!
+Frees a handle
+*/
 
 int tk_free_handle(tk_fhandle_t *fhndl){
 	free(fhndl);

@@ -102,58 +102,67 @@ static const tk_iohandle_t DRV_IO(io) = {
 static const char DRV_IO(info_str)[]="mem   @ " DEV_FILE_NAME()"[0-3]";
 
 /* Init function(s) */
-int DRV_IO(init_0__)() {
+void *DRV_IO(init_0__)(void *inarg) {
+	assert(inarg==NULL);
 	assure(mknod(DEV_FILE_NAME(0),S_IFCHR, (dev_t)&DRV_IO(io))	==0);
-	return 0;
+	return NULL;
 }
-int DRV_IO(init_1__)() {
+void *DRV_IO(init_1__)(void *inarg) {
+	assert(inarg==NULL);
 	assure(mknod(DEV_FILE_NAME(1),S_IFCHR, (dev_t)&DRV_IO(io))	==0);
-	return 0;
+	return NULL;
 }
-int DRV_IO(init_2__)() {
+void *DRV_IO(init_2__)(void *inarg) {
+	assert(inarg==NULL);
 	assure(mknod(DEV_FILE_NAME(2),S_IFCHR, (dev_t)&DRV_IO(io))	==0);
-	return 0;
+	return NULL;
 }
-int DRV_IO(init_3__)() {
+void *DRV_IO(init_3__)(void *inarg) {
+	assert(inarg==NULL);
 	assure(mknod(DEV_FILE_NAME(3),S_IFCHR, (dev_t)&DRV_IO(io))	==0);
-	return 0;
+	return NULL;
 }
-const char *DRV_IO(init__)() {
+void *DRV_IO(init__)(void *inarg) {
+	assert(inarg==NULL);
 	assure(mknod("/dev/mem",S_IFDIR, 0 )				==0);
-	DRV_IO(init_0__)();
-	DRV_IO(init_1__)();
-	DRV_IO(init_2__)();
-	DRV_IO(init_3__)();
-	return DRV_IO(info_str);
+	DRV_IO(init_0__)(inarg);
+	DRV_IO(init_1__)(inarg);
+	DRV_IO(init_2__)(inarg);
+	DRV_IO(init_3__)(inarg);
+	return (void*)DRV_IO(info_str);
 }
 
 
 /* Fini function(s) */
-int DRV_IO(fini_0__)() {
+void *DRV_IO(fini_0__)(void *inarg) {
+	assert(inarg==NULL);
 	//assure(rmod(DEV_FILE_NAME(0));
-	return 0;
+	return NULL;
 }
-int DRV_IO(fini_1__)() {
+void *DRV_IO(fini_1__)(void *inarg) {
+	assert(inarg==NULL);
 	//assure(rmnod(DEV_FILE_NAME(1));
-	return 0;
+	return NULL;
 }
-int DRV_IO(fini_2__)() {
+void *DRV_IO(fini_2__)(void *inarg) {
+	assert(inarg==NULL);
 	//assure(rmnod(DEV_FILE_NAME(2));
-	return 0;
+	return NULL;
 }
-int DRV_IO(fini_3__)() {
+void *DRV_IO(fini_3__)(void *inarg) {
+	assert(inarg==NULL);
 	//assure(rmnod(DEV_FILE_NAME(3));
-	return 0;
+	return NULL;
 }
 
-const char *DRV_IO(fini__)() {
-
-	DRV_IO(init_3__)();
-	DRV_IO(init_2__)();
-	DRV_IO(init_1__)();
-	DRV_IO(init_0__)();
+void *DRV_IO(fini__)(void *inarg) {
+	assert(inarg==NULL);
+	DRV_IO(init_3__)(inarg);
+	DRV_IO(init_2__)(inarg);
+	DRV_IO(init_1__)(inarg);
+	DRV_IO(init_0__)(inarg);
 	//assure(rmnod("/dev/mem"));
-	return DRV_IO(info_str);
+	return (void*)DRV_IO(info_str);
 }
 
 /*Put the init/fini in corresponding sections so that filesys can pick them up */

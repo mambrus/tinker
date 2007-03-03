@@ -80,12 +80,12 @@ typedef struct{
 	clock_t		time_ref;
 	pthread_t	tmr_thread;
 	op_mode_t	op_mode;
-}DRV_IO(data_t);
+}DRV_IO(hndl_data_t);
 
 
 void *timr_thread(void *inpar){
 	tk_fhandle_t *hndl = inpar;
-	DRV_IO(data_t)	*op_data=hndl->data;
+	DRV_IO(hndl_data_t)	*op_data=hndl->data;
 	clock_t ctime=clock();
 
 	switch (op_data->op_mode){
@@ -97,8 +97,8 @@ void *timr_thread(void *inpar){
 			break;
 	}
 	ctime=clock();
-	ctime-=op_data->time_ref;
-	return ctime;
+	ctime-=op_data->time_ref;	
+	return (void*)ctime;
 }
 
 
@@ -115,7 +115,7 @@ int DRV_IO(fcntl)(int file, int command, ...){
 		
 int DRV_IO(fstat)(int file, struct stat *st) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	st->st_mode = hndl->belong->mode;;
+	st->st_mode = hndl->inode->mode;;
 	return 0;
 }
 	
@@ -145,24 +145,24 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 
 	hndl=tk_new_handle(inode,(tk_flag_t)flags);	
 
-	hndl->data=calloc(1,sizeof(DRV_IO(data_t)));
-	((DRV_IO(data_t)*)(hndl->data))->time_open	= clock();
-	((DRV_IO(data_t)*)(hndl->data))->time_ref	= (clock_t)10000000uL;
+	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
+	((DRV_IO(hndl_data_t)*)(hndl->data))->time_open	= clock();
+	((DRV_IO(hndl_data_t)*)(hndl->data))->time_ref	= (clock_t)10000000uL;
 
 	return (int)hndl;
 }
 	
 int DRV_IO(read)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	DRV_IO(data_t)	*op_data = (DRV_IO(data_t)*)(hndl->data);
+	DRV_IO(hndl_data_t)	*op_data = (DRV_IO(hndl_data_t)*)(hndl->data);
 
 	clock_t ctime=clock();
 	assure( pthread_create(
-		&(((DRV_IO(data_t)*)(hndl->data))->tmr_thread),
+		&(((DRV_IO(hndl_data_t)*)(hndl->data))->tmr_thread),
 		NULL,
 		timr_thread, 
 		file) == 0);
-	pthread_join(((DRV_IO(data_t)*)(hndl->data))->tmr_thread,&ctime);
+	pthread_join(((DRV_IO(hndl_data_t)*)(hndl->data))->tmr_thread,&ctime);
 
 	memcpy(ptr,&ctime,sizeof(clock_t));
 	return sizeof(clock_t);
@@ -181,10 +181,10 @@ int DRV_IO(unlink)(char *name) {
 }
 	
 int DRV_IO(write)(int file, char *ptr, int len) {
-	tk_fhandle_t *hndl = file;
-	DRV_IO(data_t)	*op_data = (DRV_IO(data_t)*)(hndl->data);
+	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
+	DRV_IO(hndl_data_t)	*op_data = (DRV_IO(hndl_data_t)*)(hndl->data);
 
-	((DRV_IO(data_t)*)(hndl->data))->time_ref=*(clock_t*)ptr;
+	((DRV_IO(hndl_data_t)*)(hndl->data))->time_ref=*(clock_t*)ptr;
 	return sizeof(len);
 }
 
@@ -208,15 +208,18 @@ static const tk_iohandle_t DRV_IO(io) = {
 static const char DRV_IO(info_str)[]="timer @ " DEV_FILE_NAME();
 
 /* Init function(s) */
-const char *DRV_IO(init_0__)() {
+void *DRV_IO(init_0__)(void *inarg) {
+	assert(sizeof(clock_t)<=sizeof(void*));
+	assert(inarg==NULL);
 	assure(mknod(DEV_FILE_NAME(),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
-	return DRV_IO(info_str);
+	return (void*)DRV_IO(info_str);
 }
 
 /* Fini function(s) */
-const char *DRV_IO(fini_0__)() {
+void *DRV_IO(fini_0__)(void *inarg) {
+	assert(inarg==NULL);
 	//tdelete(DEV_FILE_NAME(0),S_IFBLK, &DRV_IO(io));
-	return DRV_IO(info_str);
+	return (void*)DRV_IO(info_str);
 }
 
 /*Put the init/fini in corresponding sections so that filesys can pick them up */

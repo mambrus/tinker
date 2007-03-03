@@ -56,6 +56,8 @@ typedef struct tk_inode_s{
 	struct tk_inode_s 	*belong;	//!<  Whom this node belongs to
 	struct tk_inode_s	*next;		//!<  Next node on the same level
 	struct tk_inode_s	*down;		//!<  Points to first inode that belongs to this one
+	void			*idata;		/*!<  Certain IO can instanciate driver multiple times. 
+						      This field is for instance specific driver data.*/
 	tk_iohandle_t	*iohandle;		//!<  Operations that can be made on this i-node
 }tk_inode_t;
 

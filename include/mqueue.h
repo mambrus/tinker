@@ -49,6 +49,7 @@ POSIX_RT
  * include files
  *****************************************************************************/
 #include <sys/types.h>
+#include <sys/fcntl.h>
 #include <stddef.h>
 
 /*****************************************************************************
@@ -69,15 +70,6 @@ typedef int mqd_t;
 #else
 
 #endif
-
-
-#define O_RDONLY     0x01
-#define O_WRONLY     0x02
-#define O_RDWR       0x04
-
-#define O_CREAT      0x10
-#define O_EXCL       0x20
-#define O_NONBLOCK   0x40
 
 struct mq_attr{
    size_t mq_msgsize;
@@ -179,6 +171,9 @@ int mq_unlink(
  * @defgroup CVSLOG_mqueue_h mqueue_h
  * @ingroup CVSLOG
  *  $Log: mqueue.h,v $
+ *  Revision 1.11  2007-03-03 23:01:32  ambrmi09
+ *  Added driver support for FIFO's
+ *
  *  Revision 1.10  2006-12-12 10:57:05  ambrmi09
  *  This adresses the second part of #1609064
  *

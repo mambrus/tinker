@@ -28,27 +28,9 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #ifndef TK_HWSYS_GNU_i386_H
 #define TK_HWSYS_GNU_i386_H
 
+#include <tinker/config.h>
+
 #define EXTRA_MARGIN 20                //<! Define SP this below the theoretical top (some compilers require it)
-
-int bsp_printf(char *formatstr, ...);
-/*!
-How printk is implemented on this target. Alternate between the two followin. printf is prefered, but it sometimes doesnt work under Linux GDB
-*/
-//#define printk(x) bsp_printf x
-#define printk(x) printf x
-
-//The following variant is prefered for Linux while running inde GDB since GDB for linux works in buffered mode. 
-//But this causes a compilation error if macro is used an unscopyed 'if' statement before the 'case' 
-
-#define printk(x) { printf x; fflush(stdout); }
-
-/*!
-How initializing the BSP is done on this target (Only needed for bare bone targets).
-In this case, the kernal is intended to run under Linux and no special case has been handled
-for bare-bone systems (since we have no port it yet/ever).
-*/
-#define tk_bsp_sysinit() ((void*)0)
-
 
 /*!
 @name Mapping stack allocation API for this target

@@ -33,10 +33,11 @@ _Reserved_0_exception:
 
 .func _System_reset_interrupt_exception
 _System_reset_interrupt_exception:
-			mov	%eax,_TOS	
-#			mov     %eax,0x100000
-			sub	%eax,4
-			mov	%esp,%eax
+#			mov	%eax,_TOS	
+			lea     0x500000,%eax
+			lea	0x20,%ebx
+			sub	%ebx,%eax
+			mov	%eax,%esp
 			xor	%eax,%eax
 			xor	%ebx,%ebx
 			xor	%ecx,%ecx

@@ -17,10 +17,20 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+/*!
+				NULL
+
+A /dev/null driver character device
+
+@NOTE 
+Since this driver does not block or use any other syncronisation, it
+can be used without a kernel.
+
+*/
+
 #include <filesys/filesys.h>
 #include <filesys/inode.h>
 #include <assert.h>
-#include <time.h>
 #include <string.h>
 
 #define DRV_IO_NAME( x, y ) \
@@ -38,9 +48,7 @@
 static const char DRV_IO(assert_info)[]="You're trying to access a non implemented function";
 
 typedef struct{
-	clock_t		time_open;
-	clock_t		time_offset;
-}DRV_IO(data_t);
+}DRV_IO(hndl_data_t);
 
 
 int DRV_IO(close)(int file) {
@@ -56,7 +64,7 @@ int DRV_IO(fcntl)(int file, int command, ...){
 		
 int DRV_IO(fstat)(int file, struct stat *st) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	st->st_mode = hndl->belong->mode;;
+	st->st_mode = hndl->inode->mode;;
 	return 0;
 }
 	
@@ -86,18 +94,13 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 
 	hndl=tk_new_handle(inode,(tk_flag_t)flags);	
 
-	hndl->data=calloc(1,sizeof(DRV_IO(data_t)));
-	((DRV_IO(data_t)*)(hndl->data))->time_open=clock();
-
 	return (int)hndl;
 }
 	
 int DRV_IO(read)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	clock_t ctime=clock();
-	ctime-=((DRV_IO(data_t)*)(hndl->data))->time_offset;
-	memcpy(ptr,&ctime,sizeof(clock_t));
-	return sizeof(clock_t);
+	memset(ptr,0,len);
+	return len;
 }
 		
 int DRV_IO(stat)(const char *file, struct stat *st) {
@@ -113,9 +116,8 @@ int DRV_IO(unlink)(char *name) {
 }
 	
 int DRV_IO(write)(int file, char *ptr, int len) {
-	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	((DRV_IO(data_t)*)(hndl->data))->time_offset=clock();
-	return sizeof(DRV_IO(data_t));
+	//Just swallow - in effect we send to oblivion
+	return len;
 }
 
 /*IO structure - pre-assigned*/
@@ -138,15 +140,17 @@ static const tk_iohandle_t DRV_IO(io) = {
 static const char DRV_IO(info_str)[]="NULL  @ " DEV_FILE_NAME();
 
 /* Init function(s) */
-const char *DRV_IO(init_0__)() {
-	assure(mknod(DEV_FILE_NAME(),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
-	return DRV_IO(info_str);
+void *DRV_IO(init_0__)(void *inarg) {
+	assert(inarg==NULL);
+	assure(mknod(DEV_FILE_NAME(),S_IFCHR, (dev_t)&DRV_IO(io))	==0);
+	return (void*)DRV_IO(info_str);
 }
 
 /* Fini function(s) */
-const char *DRV_IO(fini_0__)() {
+void *DRV_IO(fini_0__)(void *inarg) {
+	assert(inarg==NULL);
 	//tdelete(DEV_FILE_NAME(0),S_IFBLK, &DRV_IO(io));
-	return DRV_IO(info_str);
+	return (void*)DRV_IO(info_str);
 }
 
 /*Put the init/fini in corresponding sections so that filesys can pick them up */

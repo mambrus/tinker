@@ -109,3 +109,12 @@ const tk_iohandle_t DRV_IO(io) = {
 };
 
 
+//#include <sys/stat.h>
+extern drv_finit_t fifo_init;
+/*! Creates a new fifo. Use unlink to destroy it.*/ 
+int mkfifo(const char *path, mode_t mode){
+	//start up a new instance of the fifo driver
+	assure(fifo_init(path) != NULL);
+	return 0;
+}
+

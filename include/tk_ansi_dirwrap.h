@@ -112,7 +112,7 @@ _POSIX_THREADS among other pthread retated things.
       #endif
    #endif
    #ifdef i386
-      #warning Workaround enabled for GCC builtin macro bug: i386
+//      #warning Workaround enabled for GCC builtin macro bug: i386
       #undef i386
       #ifndef __i386__
          #define __i386__
@@ -139,6 +139,9 @@ _POSIX_THREADS among other pthread retated things.
  * @ingroup CVSLOG
  *
  *  $Log: tk_ansi_dirwrap.h,v $
+ *  Revision 1.6  2007-03-03 23:01:32  ambrmi09
+ *  Added driver support for FIFO's
+ *
  *  Revision 1.5  2007-02-26 14:16:53  ambrmi09
  *  1) Drivers    - structure added
  *  2) Filesystem - in progress

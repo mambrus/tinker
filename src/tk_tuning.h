@@ -223,6 +223,20 @@ these is done by using either
 	#   error Can't handle requested option for printk
 	#endif
 
+	#if (!(TK_SYSTEM == __SYS_HIXS__))
+	
+		/*! How to initializing the BSP is done on this target (Only needed 
+		    for bare bone targets). If the kernal is intended to run under 
+		    Linux or Cygwin we don't need/want this function. */
+	
+		#define tk_bsp_sysinit() ((void*)0)
+	#endif
+
+	/*
+	NOTE For Linux/Cygwin, the following might be required
+	#define printk(x) { printf x; fflush(stdout); } 
+	*/
+
 #endif //if defined(__GNUC__)
 #endif //TK_TUNING_H_ROOT_HEADER
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -233,6 +247,9 @@ these is done by using either
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $
+ *  Revision 1.3  2007-03-03 23:01:32  ambrmi09
+ *  Added driver support for FIFO's
+ *
  *  Revision 1.2  2007-02-21 21:18:41  ambrmi09
  *  Nasty bug fixed. Turns out setjump/jongjum is more sensitive for interrupt
  *  interference than the old techique. Will be reluctant to change back though

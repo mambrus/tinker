@@ -583,8 +583,13 @@ thid_t tk_create_thread(
    procs_in_use++;
 
    #ifdef DEBUG
-   for (i=0;i<stack_size;i++)
-      STACK_PTR(proc_stat[proc_idx].stack_begin)[i] = (unsigned char)proc_idx;
+   #if defined (HAVE_MEMSET)
+      #include <string.h>
+      memset(STACK_PTR(proc_stat[proc_idx].stack_begin),(unsigned char)proc_idx,stack_size-8);
+   #else
+      for (i=0;i<stack_size;i++)
+         STACK_PTR(proc_stat[proc_idx].stack_begin)[i] = (unsigned char)proc_idx;
+   #endif
    #endif
 
    _tk_construct_thread_scope( f, inpar, proc_idx );
@@ -1622,6 +1627,9 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
+ *  Revision 1.78  2007-03-03 23:01:32  ambrmi09
+ *  Added driver support for FIFO's
+ *
  *  Revision 1.77  2007-03-02 10:15:13  ambrmi09
  *  Broaden the reagin interrups are dissaböed when creating threads. This
  *  whole theing needs to be over-looked.

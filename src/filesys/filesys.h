@@ -42,9 +42,9 @@
 	if (							\
 		((int)hndl 			== -1)   ||	\
 		(hndl 				== NULL) ||	\
-		(hndl->belong 			== NULL) ||	\
-		(hndl->belong->iohandle		== NULL) ||	\
-		(hndl->belong->iohandle->fnk	== NULL)	\
+		(hndl->inode 			== NULL) ||	\
+		(hndl->inode->iohandle		== NULL) ||	\
+		(hndl->inode->iohandle->fnk	== NULL)	\
 	){							\
 		errno=EBADF;					\
 		return -1;					\
@@ -53,9 +53,9 @@
 #define CHECK_FH_ASSURE(hndl,fnk)				\
 	CHECK_FH_NOASSURE(hndl,fnk)				\
 	assure(hndl);						\
-	assure(hndl->belong);					\
-	assure(hndl->belong->iohandle);				\
-	assure(hndl->belong->iohandle->fnk);
+	assure(hndl->inode);					\
+	assure(hndl->inode->iohandle);				\
+	assure(hndl->inode->iohandle->fnk);
 
 
 #define CHECK_FH CHECK_FH_ASSURE
@@ -86,7 +86,7 @@ typedef enum{
 typedef struct {
 	tk_id_t		id;		//!< Unique ID (global counter)
 //	tk_id_t		lid; 		//!< Local ID  (local counter)
-	tk_inode_t 	*belong;	//!< Which inode this file-handle belongs to
+	tk_inode_t 	*inode;		//!< Which inode this file-handle belongs to
 	tk_flag_t	flags;		//!< The flags for this node
 	void		*data;		//!< Optional data associated with a handle
 }tk_fhandle_t;
@@ -120,10 +120,32 @@ This function will pick up drivers fini functions which destroys each driver
 */
 int fs_fini(void);
 
-//Local helper type - Not documented on purpose
-typedef const char* __drv_finit_f(void);
+/*! 
+Init/fini function prototype. Any ini/fini functions must follow this 
+prototype.
 
-//! Init/fini function pointer prototype (used for both)
+Both input argument and return value are implementation specific and depends 
+on the driver. Each driver must however respect the following rules.
+
+- If function succeeds, a non NULL value must be returned. If the return 
+  contains data that is not a textstring, the first element must be '\0'.
+- Even if the driver expects an input argument, it must also accept (and detect) 
+  NULL. NULL is passed by the fs_init main startup and this can't know what each 
+  driver expects as an input argument. If the argument is null, the driver
+  should instansiate a default IO.
+
+Normally the input argument is either NULL a string describing a file-name.
+
+Normally the output is a informative textstring that can be passed to printf.
+
+*/
+typedef void* __drv_finit_f(void*);
+
+/*! 
+Init/fini function pointer (same is used for both)
+
+@see __drv_finit_f
+*/
 typedef __drv_finit_f *drv_finit_t;
 
 // Main system calls

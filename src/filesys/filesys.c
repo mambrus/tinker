@@ -34,6 +34,10 @@ tk_id_t		__flid=0;	//!< Last allocated unique file handle ID (global counter)
 
 
 int fs_init(){
+	int v = sizeof(void*);
+	int i = sizeof(int);
+	int d = sizeof(dev_t);
+
 	assert(sizeof(void*) <= sizeof(int));	
 	assert(sizeof(void*) <= sizeof(dev_t));	
 	extern __drv_finit_f 	__DRVINIT_START__;
@@ -96,7 +100,7 @@ int fs_init(){
 		drv_init_curr < (drv_finit_t*)drv_init_last;
 		drv_init_curr++
 	){
-		dinfo=(*drv_init_curr)();
+		dinfo=(*drv_init_curr)(NULL);
 		assure(dinfo);
 		printf("Driver %-60s [started]\n",dinfo);
 	}
@@ -119,7 +123,7 @@ int fs_fini(){
 		drv_fini_curr < (drv_finit_t*)drv_fini_last;
 		drv_fini_curr++
 	){
-		dinfo=(*drv_fini_curr)();
+		dinfo=(*drv_fini_curr)(NULL);
 		assure(dinfo);
 		printf("Driver %-60s [stopped]\n",dinfo);
 	}

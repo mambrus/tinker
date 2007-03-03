@@ -102,22 +102,26 @@ static const char DRV_IO(info_str0)[]="con_0 @ " DEV_FILE_NAME(0);
 static const char DRV_IO(info_str1)[]="con_1 @ " DEV_FILE_NAME(1);
 
 /* Init function(s) */
-const char *DRV_IO(init_0__)() {
+void *DRV_IO(init_0__)(void *inarg) {
+	assert(inarg==NULL);
 	assure(mknod(DEV_FILE_NAME(0),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
-	return DRV_IO(info_str0);
+	return (void*)DRV_IO(info_str0);
 }
-const char *DRV_IO(init_1__)() {
+void *DRV_IO(init_1__)(void *inarg) {
+	assert(inarg==NULL);
 	assure(mknod(DEV_FILE_NAME(1),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
-	return DRV_IO(info_str1);
+	return (void*)DRV_IO(info_str1);
 }
 
 /* Fini function(s) */
-const char *DRV_IO(fini_0__)() {
+void *DRV_IO(fini_0__)(void *inarg) {
+	assert(inarg==NULL);
 	//tdelete(DEV_FILE_NAME(0),S_IFBLK, &DRV_IO(io));
-	return DRV_IO(info_str0);
+	return (void*)DRV_IO(info_str0);
 }
-const char *DRV_IO(fini_1__)() {
-	return DRV_IO(info_str1);
+void *DRV_IO(fini_1__)(void *inarg) {
+	assert(inarg==NULL);
+	return (void*)DRV_IO(info_str1);
 }
 
 

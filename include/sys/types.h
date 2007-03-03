@@ -42,6 +42,7 @@ kernel_reimpl_ansi.
    #include <tk_ansi.h>
    #include <tk_ansi_dirwrap.h>
 
+   #define __DEV_T void*
    #include BUILDCHAIN(sys/types.h)
 #endif
 
@@ -117,6 +118,9 @@ normal pthread names (very nifty!).
  * @defgroup CVSLOG_types_h types_h
  * @ingroup CVSLOG
  *  $Log: types.h,v $
+ *  Revision 1.13  2007-03-03 23:01:32  ambrmi09
+ *  Added driver support for FIFO's
+ *
  *  Revision 1.12  2007-02-19 17:34:37  ambrmi09
  *  Tinker will now compile for target powerpc-hixs-rtems
  *

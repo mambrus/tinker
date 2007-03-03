@@ -35,7 +35,7 @@
 
 typedef struct{
 	int 		handle_data;
-}DRV_IO(data_t);
+}DRV_IO(hndl_data_t);
 
 int ledstat_0=0;
 int ledstat_1=0;
@@ -91,8 +91,8 @@ int DRV_IO(open0)(const char *filename, int flags, ...){
 
 	hndl=tk_new_handle(inode,(tk_flag_t)flags);	
 
-	hndl->data=calloc(1,sizeof(DRV_IO(data_t)));
-	((DRV_IO(data_t)*)(hndl->data))->handle_data=0x00;
+	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
+	((DRV_IO(hndl_data_t)*)(hndl->data))->handle_data=0x00;
 
 	return (int)hndl;
 }
@@ -106,8 +106,8 @@ int DRV_IO(open1)(const char *filename, int flags, ...){
 
 	hndl=tk_new_handle(inode,(tk_flag_t)flags);	
 
-	hndl->data=calloc(1,sizeof(DRV_IO(data_t)));
-	((DRV_IO(data_t)*)(hndl->data))->handle_data=0x01;
+	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
+	((DRV_IO(hndl_data_t)*)(hndl->data))->handle_data=0x01;
 
 	return (int)hndl;
 }
@@ -121,8 +121,8 @@ int DRV_IO(open2)(const char *filename, int flags, ...){
 
 	hndl=tk_new_handle(inode,(tk_flag_t)flags);	
 
-	hndl->data=calloc(1,sizeof(DRV_IO(data_t)));
-	((DRV_IO(data_t)*)(hndl->data))->handle_data=0x02;
+	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
+	((DRV_IO(hndl_data_t)*)(hndl->data))->handle_data=0x02;
 
 	return (int)hndl;
 }
@@ -136,8 +136,8 @@ int DRV_IO(open3)(const char *filename, int flags, ...){
 
 	hndl=tk_new_handle(inode,(tk_flag_t)flags);	
 
-	hndl->data=calloc(1,sizeof(DRV_IO(data_t)));
-	((DRV_IO(data_t)*)(hndl->data))->handle_data=0x03;
+	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
+	((DRV_IO(hndl_data_t)*)(hndl->data))->handle_data=0x03;
 
 	return (int)hndl;
 }
@@ -392,50 +392,60 @@ static const tk_iohandle_t DRV_IO(io3) = {
 static const char DRV_IO(info_str)[]="led   @ " DEV_FILE_NAME()"[0-4]";
 
 /* Init function(s) */
-int DRV_IO(init_0__)() {
+void *DRV_IO(init_0__)(void *inarg) {
+	assert(inarg==NULL);
 	assure(mknod(DEV_FILE_NAME(0_red),S_IFBLK, (dev_t)&DRV_IO(io0))	==0);
 	return 0;
 }
-int DRV_IO(init_1__)() {
+void *DRV_IO(init_1__)(void *inarg) {
+	assert(inarg==NULL);
 	assure(mknod(DEV_FILE_NAME(0_green),S_IFBLK, (dev_t)&DRV_IO(io1))	==0);
 	return 0;
 }
-int DRV_IO(init_2__)() {
+void *DRV_IO(init_2__)(void *inarg) {
+	assert(inarg==NULL);
 	assure(mknod(DEV_FILE_NAME(1_red),S_IFBLK, (dev_t)&DRV_IO(io2))	==0);
 	return 0;
 }
-int DRV_IO(init_3__)() {
+void *DRV_IO(init_3__)(void *inarg) {
+	assert(inarg==NULL);
 	assure(mknod(DEV_FILE_NAME(1_green),S_IFBLK, (dev_t)&DRV_IO(io3))	==0);
 	return 0;
 }
 
-const char *DRV_IO(init__)() {
-	DRV_IO(init_0__)();
-	DRV_IO(init_1__)();
-	DRV_IO(init_2__)();
-	DRV_IO(init_3__)();
-	return DRV_IO(info_str);
+void *DRV_IO(init__)(void *inarg) {
+	assert(inarg==NULL);
+	DRV_IO(init_0__)(NULL);
+	DRV_IO(init_1__)(NULL);
+	DRV_IO(init_2__)(NULL);
+	DRV_IO(init_3__)(NULL);
+	return (void*)DRV_IO(info_str);
 }
 
 /* Fini function(s) */
-int DRV_IO(fini_0__)() {
+void *DRV_IO(fini_0__)(void *inarg) {
+	assert(inarg==NULL);
 	return 0;
 }
-int DRV_IO(fini_1__)() {
+void *DRV_IO(fini_1__)(void *inarg) {
+	assert(inarg==NULL);
 	return 0;
 }
-int DRV_IO(fini_2__)() {
+void *DRV_IO(fini_2__)(void *inarg) {
+	assert(inarg==NULL);
 	return 0;
 }
-int DRV_IO(fini_3__)() {
+void *DRV_IO(fini_3__)(void *inarg) {
+	assert(inarg==NULL);
 	return 0;
 }
-const char *DRV_IO(fini__)() {
-	DRV_IO(fini_0__)();
-	DRV_IO(fini_1__)();
-	DRV_IO(fini_2__)();
-	DRV_IO(fini_3__)();
-	return DRV_IO(info_str);
+void *DRV_IO(fini__)(void *inarg) {
+	assert(inarg==NULL);
+	DRV_IO(fini_0__)(NULL);
+	DRV_IO(fini_1__)(NULL);
+	DRV_IO(fini_2__)(NULL);
+	DRV_IO(fini_3__)(NULL);
+	return (void*)DRV_IO(info_str);
 }
 
 /*Put the main init/fini in corresponding sections so that filesys can pick them up */
