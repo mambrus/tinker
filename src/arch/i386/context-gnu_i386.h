@@ -152,9 +152,6 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #define REINIT_STACKADDR( ADDR, size ) \
    (ADDR.stack_size = size)
 
-//Just a stub ATM - TBD
-#define TRAP( NUM )                                                           \
-   exit( NUM )
 
 #endif
 

@@ -17,14 +17,14 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
+
 /*! 
 @file 
 @ingroup SCHED    
 
-@brief Tinker inner-most \e"guts"
+@brief TinKer kernel life"
 
-This comonent is not selectable as the others normally are
+@note This is a mandatory file as part of the \ref SCHED component
 
 For in-depth discussions about this component, see \ref
 SCHED
@@ -97,8 +97,12 @@ any of them.   errno.h
    #include <mqueue.h>
 #endif
 
+#if defined (TK_SYSTEM) && (TK_SYSTEM == __SYS_HIXS__)
+   #include <tinker/hixs.h>
+#endif
+
 #if defined(TK_COMP_FILESYS) && (TK_COMP_FILESYS==1)
-   #ifndef __GNUC__
+   #if (!(TK_SYSTEM == __SYS_HIXS__))
       #error Component TK_COMP_FILESYS is only available for HIXS adapted GNU targets
    #endif
    #include <filesys/filesys.h>
@@ -1313,101 +1317,6 @@ void tk_yield_event( void ){
    TK_STI();
 }
 
-/*!
-
-Last thing that is called when a thread gives up live freely or when an
-error of some sort happened (either kernel internal or user program
-specific).
-
-In case of en error, this function also acts as a critical error-handler
-entr point (critical = execution is deemed to stop).
-
-*/
-void tk_exit( int ec ) { 
-   if (ec==0){
-      printk(("tk: Program terminated normally"));
-   } else {
-      printk(("tk: Warning - Program terminated with errorcode [%d]",ec));
-   }
-   while (1) {
-      TRAP(ec);
-   }
-}
-
-/*A simple conversion from a number to string*/
-void ntos(char *outst, int number, int maxlen){
-	int i,div,d,j,a=0;
-
-	for (i=0;i<maxlen;i++)
-		outst[i]=0;
-
-	for (d=10000000,i=0,j=0;d;i++,d/=10){
-		div=number/d;
-		if (a || div){
-			a=1;
-			outst[j]='0'+div;
-			number=number-(div*d);
-			j++;
-		}
-	}
-}
-
-/*!
-@ingroup kernel_glue
-
-Works as the assert macro exept that you have to use the __file_ and __line_
-explicitlly. Typically the assert macro will be defined to call this function 
-on targets that do not have assert implemented by TinKer.
-
-*/
-void _tk_assertfail(  
-	char *assertstr, 
-	char *filestr, 
-	int line
-) {
-#if defined(TK_USE_EMRGCY_CONSOLE)
-	static const char* asrt_txt="tk: Error - Assertion failed: ";
-	static const char* file_txt="file: ";
-	static const char* line_txt="line: ";
-	#define MAX_LEN 80
-	#if (TK_USE_EMRGCY_CONSOLE == __tk_yes)
-		char astr[MAX_LEN];
-		console_write( asrt_txt, strnlen(asrt_txt, MAX_LEN));
-		
-		console_write(assertstr,strlen(assertstr));
-		console_write("\n\r",2);
-		
-		console_write(file_txt,strlen(file_txt));
-		console_write(filestr,strlen(filestr));
-		console_write("\n\r",2);
-		
-		console_write(line_txt,strlen(line_txt));
-		ntos(astr,line,MAX_LEN);
-		console_write(astr,strlen(astr));
-		console_write("\n\r",2);
-	#else
-		char astr[MAX_LEN];
-		TK_USE_EMRGCY_CONSOLE( asrt_txt, strnlen(asrt_txt, MAX_LEN));
-		
-		TK_USE_EMRGCY_CONSOLE(assertstr,strlen(assertstr));
-		TK_USE_EMRGCY_CONSOLE("\n\r",2);
-		
-		TK_USE_EMRGCY_CONSOLE(file_txt,strlen(file_txt));
-		TK_USE_EMRGCY_CONSOLE(filestr,strlen(filestr));
-		TK_USE_EMRGCY_CONSOLE("\n\r",2);
-		
-		TK_USE_EMRGCY_CONSOLE(line_txt,strlen(line_txt));
-		ntos(astr,line,MAX_LEN);
-		TK_USE_EMRGCY_CONSOLE(astr,strlen(astr));
-		TK_USE_EMRGCY_CONSOLE("\n\r",2);
-
-	#endif
-#else
-	printk(("tk: Error - Assertion failed: %s,\nfile: %s,\nline: %d\n",assertstr,filestr,line));
-#endif
-	tk_exit( TC_ERR_ASSERT );
-}
-
 
 #if defined(TK_COMP_FILESYS) && TK_COMP_FILESYS
 //#include <unistd.h>
@@ -1447,7 +1356,9 @@ things at least:
 void _tk_main( void ){
    _b_hook(_tk_main);
    #if defined (TK_SYSTEM) && (TK_SYSTEM == __SYS_HIXS__)
-   _syscall_mon(_tk_main);
+      _syscall_mon(_tk_main);
+      extern struct hixs_t hixs;
+      hixs.exit = tk_exit;
    #endif
    tk_bsp_sysinit();      //For emulation targets, this is ment to be nothing 
    _b_hook(tk_bsp_sysinit);
@@ -1510,7 +1421,8 @@ void _tk_main( void ){
       //set_fflags(stdout,O_NONBLOCK);
       //set_fflags(stderr,O_NONBLOCK);
 
-      fprintf(stderr,"Filesystem initialized!\n");
+      fprintf(stderr,"Filesystem initialized! (1)\n");
+      printk(("Filesystem initialized! (2)\n"));
    #endif
 
 
@@ -1600,7 +1512,6 @@ int main(int argc, char **argv){
    */
 
    //assert("This is an intentional faliure..." == NULL);
-
    //BOOT_HOOK;
    _b_hook(main);
     _tk_main();
@@ -1627,6 +1538,19 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
+ *  Revision 1.79  2007-03-04 19:07:25  ambrmi09
+ *  1) Error handling refined - will handle error from different
+ *     cathegories:
+ *     - errno (perror)
+ *     - TK errors
+ *     - TK traps codes
+ *     - exit handling can differ beween user exit codes and kernel
+ *       trap codes.
+ *  2) Extracted fluffy & un-critical code from tk.c (the error and exit
+ *     stuff)
+ *  3) Preparing to partition even further into tk_switch.c (saving this
+ *     until next ci though).
+ *
  *  Revision 1.78  2007-03-03 23:01:32  ambrmi09
  *  Added driver support for FIFO's
  *

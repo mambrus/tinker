@@ -17,30 +17,48 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
+#ifndef STDIO_H_TK
+#define STDIO_H_TK
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-#ifndef TK_TUNING_H
-#define TK_TUNING_H
+/*!
+@file
+@ingroup kernel_reimpl_ansi
 
-#if defined(__GNUC__)
-   #include <tinker/config.h>
+@brief stdio.h file <b>IMPORTANT:</b> See the note in the detailed section!
+
+@note Wrap out incompatible definitions/functions in C library
+
+For in-depth discussions about re-implementing ANSI functions, see \ref
+kernel_reimpl_ansi.
+
+@see kernel_reimpl_ansi
+
+<HR>
+*/
+
+/*Always part of ANSI -> always wrap*/
+#include <tk_ansi.h>
+#include <tk_ansi_dirwrap.h>
+
+#include BUILDCHAIN(stdio.h)
+
+
+#if defined (__GNUC__)
+	#define perror tk_perror
+#else
+	void perror (const char *message);
 #endif
 
-#define TRAP( NUM )     \
-   tk_trap( NUM )
 
-/* No need to set any more tunings here. This port exists only for GNU and configure.in 
-at this level contains all the defaults we need. */
 
-#endif  //TK_TUNING_H
+#endif //SYS_TYPES_H_TK
 
-  
-/*! 
- * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
+
+/*!
+ * @defgroup CVSLOG_stdio_h stdio_h
  * @ingroup CVSLOG
- *  $Log: tk_tuning.h,v $
- *  Revision 1.7  2007-03-04 19:07:25  ambrmi09
+ *  $Log: stdio.h,v $
+ *  Revision 1.1  2007-03-04 19:07:25  ambrmi09
  *  1) Error handling refined - will handle error from different
  *     cathegories:
  *     - errno (perror)
@@ -53,26 +71,6 @@ at this level contains all the defaults we need. */
  *  3) Preparing to partition even further into tk_switch.c (saving this
  *     until next ci though).
  *
- *  Revision 1.6  2007-02-21 21:18:41  ambrmi09
- *  Nasty bug fixed. Turns out setjump/jongjum is more sensitive for interrupt
- *  interference than the old techique. Will be reluctant to change back though
- *  since I really like this design. Saving context in the beginnig of each
- *  pool might be a better solution. For now the issue is solved with interrupt
- *  enable/disable protection (which should go there sooner or later anyway, I
- *  would just feel better if the mentioned fix would be implemented also as a
- *  double precaution).
  *
- *  Revision 1.5  2007-02-19 17:34:37  ambrmi09
- *  Tinker will now compile for target powerpc-hixs-rtems
- *
- *******************************************************************/
-
-
-
-
-
-
-
-
-
+ */
 

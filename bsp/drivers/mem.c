@@ -157,10 +157,10 @@ void *DRV_IO(fini_3__)(void *inarg) {
 
 void *DRV_IO(fini__)(void *inarg) {
 	assert(inarg==NULL);
-	DRV_IO(init_3__)(inarg);
-	DRV_IO(init_2__)(inarg);
-	DRV_IO(init_1__)(inarg);
-	DRV_IO(init_0__)(inarg);
+	DRV_IO(fini_3__)(inarg);
+	DRV_IO(fini_2__)(inarg);
+	DRV_IO(fini_1__)(inarg);
+	DRV_IO(fini_0__)(inarg);
 	//assure(rmnod("/dev/mem"));
 	return (void*)DRV_IO(info_str);
 }

@@ -172,9 +172,6 @@ http://www.arm.com/miscPDFs/9658.pdf
 #define REINIT_STACKADDR( ADDR, size ) \
    (ADDR.stack_size = size)
 
-//Just a stub ATM - TBD
-#define TRAP( NUM )                                                           \
-   exit( NUM )   
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 

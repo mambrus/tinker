@@ -24,7 +24,7 @@
 @file
 @ingroup kernel_reimpl_ansi
 
-@brief ANSI sys/stat.h file <b>IMPORTANT:</b> See the note in the detailed section!
+@brief ANSI sys/fcntl.h file <b>IMPORTANT:</b> See the note in the detailed section!
 
 @note Needed to wrap out incompatible definitions in newlib
 
@@ -66,6 +66,19 @@ kernel_reimpl_ansi.
  * @defgroup CVSLOG_fcntl_h fcntl_h
  * @ingroup CVSLOG
  *  $Log: fcntl.h,v $
+ *  Revision 1.2  2007-03-04 19:07:25  ambrmi09
+ *  1) Error handling refined - will handle error from different
+ *     cathegories:
+ *     - errno (perror)
+ *     - TK errors
+ *     - TK traps codes
+ *     - exit handling can differ beween user exit codes and kernel
+ *       trap codes.
+ *  2) Extracted fluffy & un-critical code from tk.c (the error and exit
+ *     stuff)
+ *  3) Preparing to partition even further into tk_switch.c (saving this
+ *     until next ci though).
+ *
  *  Revision 1.1  2007-03-03 23:01:32  ambrmi09
  *  Added driver support for FIFO's
  *

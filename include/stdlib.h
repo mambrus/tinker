@@ -48,6 +48,10 @@ pointers will most likelly break in RUN-TIME*/
 #ifndef STDLIB_H_TK
 #define STDLIB_H_TK
 
+//Always use TinKer exit 
+#define exit     \
+   tk_exit
+
 #include <stddef.h>  //Needed for size_t
 #if (!defined(TK_USE_BUILTIN_SORT) || (TK_USE_BUILTIN_SORT==1))
 	#define TINKER_SEARCH_SORT //!< Opional define, use to debug qsort & bsearch. Undefine to use tool-chains own versions
@@ -137,6 +141,19 @@ int  _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );
  * @defgroup CVSLOG_stdlib_h stdlib_h
  * @ingroup CVSLOG
  *  $Log: stdlib.h,v $
+ *  Revision 1.7  2007-03-04 19:07:25  ambrmi09
+ *  1) Error handling refined - will handle error from different
+ *     cathegories:
+ *     - errno (perror)
+ *     - TK errors
+ *     - TK traps codes
+ *     - exit handling can differ beween user exit codes and kernel
+ *       trap codes.
+ *  2) Extracted fluffy & un-critical code from tk.c (the error and exit
+ *     stuff)
+ *  3) Preparing to partition even further into tk_switch.c (saving this
+ *     until next ci though).
+ *
  *  Revision 1.6  2006-12-12 10:57:05  ambrmi09
  *  This adresses the second part of #1609064
  *

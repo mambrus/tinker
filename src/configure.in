@@ -14,7 +14,7 @@ TINKER_CONFIGURE(..)
 
 AC_CONFIG_HEADER(../include/tinker/config.h)
 
-sources_c="tk.c time.c"
+sources_c="tk.c tk_error.c tk_switch.c time.c"
 
 if test $CONF_VERBOSE == "yes"; then
 	echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"

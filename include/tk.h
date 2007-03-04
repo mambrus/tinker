@@ -153,30 +153,35 @@ TK_COMP_ITC=1,TK_COMP_PTIMER=1,TK_COMP_KMEM=1,TK_COMP_PTHREAD=1,TK_COMP_POSIX_RT
 When TinKer itself dies (i.e. exits), it will do so using a exit code
 telling about the reason of the exit.
 
+TinKer exit-codes (Trap Codes) are bit addressable. This means an exit-code
+can contain multiple reasons for exit. To distinguish from normal errno and
+TK_ERROR codes, most significan bit is set.
+
 @note Per \b kernel and \b not per \b thread codes
 */
 //@{
-#define TC_NOERR           0x0000   //!< Termination without errors
+#define TC_ISA_ERR         0x8000                 //!< Mark that this is a TinKer exit-code ( "TC" = Trap Code) error
+#define TC_NOERR           (0x0000 | TC_ISA_ERR)  //!< Termination without errors
 
-#define TC_MAX_THREADS     0x0001   //!< Total amount of threads would exceed limit
-#define TC_ERR_ASSERT      0x0002   //!< Assertion failed
-#define TC_MAX_PRIO_LEVELS 0x0004   //!< Chosen priority too high
-#define TC_ERR_4           0x0008
+#define TC_MAX_THREADS     (0x0001 | TC_ISA_ERR)  //!< Total amount of threads would exceed limit
+#define TC_ERR_ASSERT      (0x0002 | TC_ISA_ERR)  //!< Assertion failed
+#define TC_MAX_PRIO_LEVELS (0x0004 | TC_ISA_ERR)  //!< Chosen priority too high
+#define TC_ERR_4           (0x0008 | TC_ISA_ERR)
 
-#define TC_ERR_STACK       0x0010   //!< Stack out of bounds check faliure
-#define TC_ERR_STKINT      0x0020   //!< Stack integrity faliure detected
-#define TC_THREADS_AT_PRIO 0x0040   //!< To many threads at this prio
-#define TC_AMOK            0x0080   //!< Kernel running amok detected
+#define TC_ERR_STACK       (0x0010 | TC_ISA_ERR)  //!< Stack out of bounds check faliure
+#define TC_ERR_STKINT      (0x0020 | TC_ISA_ERR)  //!< Stack integrity faliure detected
+#define TC_THREADS_AT_PRIO (0x0040 | TC_ISA_ERR)  //!< To many threads at this prio
+#define TC_AMOK            (0x0080 | TC_ISA_ERR)  //!< Kernel running amok detected
 
-#define TC_NAME_LEN        0x0100   //!< Thread-name to long
-#define TC_NOMEM           0x0200   //!< No memory left for allocation
-#define TC_TCB_INVALID     0x0400   //!< Invalid TCB detected
-#define TC_ERR_12          0x0800
+#define TC_NAME_LEN        (0x0100 | TC_ISA_ERR)  //!< Thread-name to long
+#define TC_NOMEM           (0x0200 | TC_ISA_ERR)  //!< No memory left for allocation
+#define TC_TCB_INVALID     (0x0400 | TC_ISA_ERR)  //!< Invalid TCB detected
+#define TC_ERR_12          (0x0800 | TC_ISA_ERR)
 
-#define TC_ERR_13          0x1000
-#define TC_ERR_14          0x2000
-#define TC_ERR_HW          0x4000   //!< Some HW driver detected a fatal error
-#define TC_UNKNOWN         0x8000   //!< Unknown (or undefined) termination reason
+#define TC_ERR_13          (0x1000 | TC_ISA_ERR)
+#define TC_ERR_14          (0x2000 | TC_ISA_ERR)
+#define TC_ERR_HW          (0x4000 | TC_ISA_ERR)  //!< HW driver detected a fatal error
+#define TC_UNKNOWN         (0x8000 | TC_ISA_ERR)  //!< Unknown (or undefined) termination reason
 //@}
 
 typedef enum{TK_FALSE,TK_TRUE}TK_BOOL;
@@ -284,6 +289,19 @@ extern int     tk_bsp_sysinit(void);
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
+ *  Revision 1.48  2007-03-04 19:07:25  ambrmi09
+ *  1) Error handling refined - will handle error from different
+ *     cathegories:
+ *     - errno (perror)
+ *     - TK errors
+ *     - TK traps codes
+ *     - exit handling can differ beween user exit codes and kernel
+ *       trap codes.
+ *  2) Extracted fluffy & un-critical code from tk.c (the error and exit
+ *     stuff)
+ *  3) Preparing to partition even further into tk_switch.c (saving this
+ *     until next ci though).
+ *
  *  Revision 1.47  2007-02-26 14:16:53  ambrmi09
  *  1) Drivers    - structure added
  *  2) Filesystem - in progress

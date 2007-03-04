@@ -71,6 +71,8 @@
 #define TK_HOWTO_PRINTK 		TK_FNK_RENAMED
 #define TK_HOWTO_ASSERT 		TK_FNK_RENAMED      
 
+#define TRAP( NUM )     \
+   tk_trap( NUM )
 
 #endif  //TK_TUNING_H
 
@@ -79,6 +81,19 @@
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $
+ *  Revision 1.6  2007-03-04 19:07:25  ambrmi09
+ *  1) Error handling refined - will handle error from different
+ *     cathegories:
+ *     - errno (perror)
+ *     - TK errors
+ *     - TK traps codes
+ *     - exit handling can differ beween user exit codes and kernel
+ *       trap codes.
+ *  2) Extracted fluffy & un-critical code from tk.c (the error and exit
+ *     stuff)
+ *  3) Preparing to partition even further into tk_switch.c (saving this
+ *     until next ci though).
+ *
  *  Revision 1.5  2006-11-30 10:58:16  ambrmi09
  *  bug #1605910 (solved)
  *

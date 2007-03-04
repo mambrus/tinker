@@ -126,9 +126,6 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #define REINIT_STACKADDR( ADDR, size ) \
    (ADDR.stack_size = size)
 
-//Just a stub ATM - Should really go to a TinKer exit handler ( FIXME )
-#define TRAP( NUM )		\
-   exit( NUM )
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
