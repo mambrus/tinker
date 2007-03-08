@@ -54,22 +54,11 @@ extern "C" {
 
 typedef unsigned long sem_t;
 
-int sem_init (sem_t * sem,
-	      int pshared,
-	      unsigned int value
-	      );
-
-int sem_destroy (sem_t * sem
-		 );
-
-int sem_trywait (sem_t * sem
-		 );
-
-int sem_wait (sem_t * sem
-	      );
-
-int sem_post (sem_t * sem
-	      );
+int sem_init (sem_t * sem, int pshared, unsigned int value );
+int sem_destroy (sem_t * sem );
+int sem_trywait (sem_t * sem );
+int sem_wait (sem_t * sem );
+int sem_post (sem_t * sem);
 
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 }
@@ -81,6 +70,9 @@ int sem_post (sem_t * sem
  * @defgroup CVSLOG_semaphore_h semaphore_h
  * @ingroup CVSLOG
  *  $Log: semaphore.h,v $
+ *  Revision 1.9  2007-03-08 23:28:35  ambrmi09
+ *  Minor changes made in TinKer headers for TiNa code ceneration to work
+ *
  *  Revision 1.8  2006-12-12 10:57:05  ambrmi09
  *  This adresses the second part of #1609064
  *

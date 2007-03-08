@@ -87,8 +87,12 @@ int fs_fstat(int file, struct stat *st) {
 @brief http://www.opengroup.org/onlinepubs/009695399/
 */
 int fs_isatty(int file) {
-	assert(assert_info == NULL);
-	return 1;
+	if ((file>=0) && (file<=2)){
+		return 1;
+	}
+	tk_fhandle_t *hndl= (tk_fhandle_t *)file;
+	CHECK_FH(hndl,isatty);
+	return hndl->inode->iohandle->isatty(file);
 }
 
 /*!

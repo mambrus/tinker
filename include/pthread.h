@@ -271,6 +271,11 @@ int pthread_create_named_np (
    char                    *threadName
 );
 /*
+Compacted form for for TiNa
+int pthread_create_named_np (pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine)  (void *), void * arg, char *threadName);
+*/
+
+/*
 Implemented as a macro to be able to provide TinKer with a thread-name.
 
 Otherwise it behaves exactlly identical to the function standard specification.
@@ -289,12 +294,7 @@ Otherwise it behaves exactlly identical to the function standard specification.
 pthread_t pthread_self (void);
 
 int pthread_equal(pthread_t t1, pthread_t t2); 
-
-int pthread_once (
-   pthread_once_t          *once_control,
-   void (*init_routine)    (void)
-);
-
+int pthread_once (pthread_once_t *once_control, void (*init_routine) (void));
 
 int pthread_cancel   (pthread_t);
 int pthread_join     (pthread_t, void**);
@@ -309,6 +309,11 @@ int pthread_getschedparam (pthread_t thread,
 			   int *policy,
 			   struct sched_param *param);
 
+/*
+Compacted form for TiNa
+int pthread_setschedparam (pthread_t thread, int policy, const struct sched_param *param);
+int pthread_getschedparam (pthread_t thread, int *policy, struct sched_param *param);
+*/
 
 
 /* Attributes */
@@ -337,8 +342,7 @@ int pthread_attr_setstacksize (pthread_attr_t *, size_t);
 http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_init.html
 */
 //@{
-int pthread_mutex_init (pthread_mutex_t *mutex,
-       const pthread_mutexattr_t *attr);
+int pthread_mutex_init (pthread_mutex_t *mutex, const pthread_mutexattr_t *attr);
 int pthread_mutex_destroy(pthread_mutex_t *mutex);
 //@}
 /*!
@@ -356,8 +360,7 @@ int pthread_mutex_unlock (pthread_mutex_t *__mutex);
 http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_timedlock.html
 */
 //@{
-int pthread_mutex_timedlock(pthread_mutex_t *mutex,
-       const struct timespec *abs_timeout);
+int pthread_mutex_timedlock(pthread_mutex_t *mutex,const struct timespec *abs_timeout);
 //@}
 
 /*
@@ -1068,6 +1071,9 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
+ *  Revision 1.22  2007-03-08 23:28:35  ambrmi09
+ *  Minor changes made in TinKer headers for TiNa code ceneration to work
+ *
  *  Revision 1.21  2006-12-12 10:57:05  ambrmi09
  *  This adresses the second part of #1609064
  *

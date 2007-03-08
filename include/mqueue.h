@@ -167,10 +167,25 @@ int mq_unlink(
 
 #endif
 
+
+/*
+//Compact format so that TiNa can find the functions
+int mq_close(mqd_t mq);
+int mq_getattr(mqd_t mq, struct mq_attr *attrbuf);
+mqd_t mq_open(const char *mq_name, int oflags,mode_t mode,struct mq_attr *mq_attr);
+size_t mq_receive(mqd_t mq,char *msg_buffer,size_t buflen,unsigned int *msgprio);
+int mq_setattr(mqd_t mqdes, const struct mq_attr *new_attrs,struct mq_attr *old_attrs);
+int mq_send(mqd_t mq, const char *msg, size_t msglen, unsigned int msgprio);
+int mq_unlink(const char *mq_name);
+*/
+
 /*!
  * @defgroup CVSLOG_mqueue_h mqueue_h
  * @ingroup CVSLOG
  *  $Log: mqueue.h,v $
+ *  Revision 1.12  2007-03-08 23:28:35  ambrmi09
+ *  Minor changes made in TinKer headers for TiNa code ceneration to work
+ *
  *  Revision 1.11  2007-03-03 23:01:32  ambrmi09
  *  Added driver support for FIFO's
  *

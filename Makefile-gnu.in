@@ -1,4 +1,5 @@
 OUTFILENAME    = @TINKER_PATH@/lib/lib@PACKAGE_NAME@.a
+PACK_ID        = @PACKAGE_NAME@-@host_alias@
 CC             = @CC@
 CXX            = @CXX@
 LD             = @LD@
@@ -31,7 +32,7 @@ CPU_OPT        = @CPU_OPT@
 DCPU           = @DCPU@
 
 
-.PHONY: all subdirs info depend link clean cleanall cleanhard install rebuild flashit console
+.PHONY: all subdirs info depend link clean cleanall cleanhard install tryinstall rebuild flashit console
 
 MAKE_SUBDIRS_ALL   := $(patsubst %, make -f Makefile-gnu all @MAKEOPTS@ -C % &&, $(MAKE_SUBDIRS))
 MAKE_SUBDIRS_CLEAN := $(patsubst %, make -f Makefile-gnu clean @MAKEOPTS@ -C % &&, $(MAKE_SUBDIRS))
@@ -140,6 +141,12 @@ cleanall: clean
 	@echo "<<- Target [@PACKAGE_NAME@] installation removed! ->>"
 	@echo "======================================================"
 
+
+.installed-$(PACK_ID): $(TOOLDIR)/$(ALIAS_HOST)/lib/lib@PACKAGE_NAME@.a
+	make -f Makefile-gnu install
+
+tryinstall: .installed-$(PACK_ID)
+
 install: all
 	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
 	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/
@@ -152,6 +159,7 @@ install: all
 	cp -dprv @TINKER_PATH@/include/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/
 	cp -dprv @TINKER_PATH@/include/tinker/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/tinker/
 	cp -dprv @TINKER_PATH@/include/sys/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/sys/
+	touch .installed-$(PACK_ID)
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] installed! ->>"
 	@echo "======================================================"

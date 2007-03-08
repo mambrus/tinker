@@ -111,6 +111,7 @@ $(MODULES):
 configure:
 	rm -f config.*
 	rm -f install-sh
+	rm -f .installed-*
 	rm -rf autom4te.cache
 	autoheader
 	#rm -f aclocal.m4 
