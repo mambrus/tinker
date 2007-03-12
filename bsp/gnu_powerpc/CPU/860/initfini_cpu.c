@@ -83,7 +83,9 @@ void __init_cpu(){
 		#define COM_HALF 	0x01	//01 Clock output enabled half-strength output buffer.
 						//10 Reserved.
 		#define COM_DISABLED	0x03	//11 Clock output disabled.
-		sccr_p->f.COM=COM_DISABLED;
+		//sccr_p->f.COM=COM_DISABLED;
+		//sccr_p->f.COM=0xc0000000;
+		sccr_p->f.COM=COM_ENABLED;
 	}
 
 
