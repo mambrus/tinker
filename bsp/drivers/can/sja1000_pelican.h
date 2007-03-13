@@ -25,7 +25,7 @@
 
 /*!
 @file
-
+@verbatim.
 Table 11 Reset mode conﬁguration; notes 1 and 2
                                                                                          VALUE
                                                                                             SETTING MOD.0
@@ -145,10 +145,12 @@ address
 Clock divider          CDR          Clock Divider Register    00000000 Intel; X
                                                               00000101
                                                               Motorola
+@endverbatim.
 */
 
 
 /*!
+@verbatim.
 Table 12 Bit interpretation of the mode register (MOD); CAN address ‘0’
    BIT       SYMBOL                 NAME               VALUE                           FUNCTION
             −             −                              −
@@ -175,6 +177,7 @@ Table 12 Bit interpretation of the mode register (MOD); CAN address ‘0’
                                                                   received
                                                          0        normal; an acknowledge is required for successful
                                                                   transmission
+@endverbatim.
 */
 
 
@@ -193,6 +196,7 @@ typedef struct{
 A command bit initiates an action within the transfer layer of the CAN controller. This register is write only, all bits will
 return a logic 0 when being read. Between two commands at least one internal clock cycle is needed in order to proceed.
 The internal clock is half of the external oscillator frequency.
+@verbatim.
 Table 13 Bit interpretation of the command register (CMR); CAN address 1
     BIT       SYMBOL                NAME                   VALUE                          FUNCTION
               −                                               −      −
@@ -221,7 +225,7 @@ Table 13 Bit interpretation of the command register (CMR); CAN address 1
  CMR.0        TR           Transmission Request;              1      present; a message shall be transmitted
                            notes 6 and 2                             − (absent)
                                                               0
-
+@endverbatim.
 */
 typedef struct{ 
 	__uint8_t padd:3; 	//!< Padding
@@ -237,6 +241,7 @@ typedef struct{
 6.4.5
 The content of the status register reflects the status of the CAN controller. The status register appears to the CPU as a
 read only memory.
+@verbatim.
 Table 14 Bit interpretation of the status register (SR); CAN address 2
     BIT      SYMBOL                NAME                    VALUE                           FUNCTION
  SR.7       BS            Bus Status; note 1                  1       bus-off; the CAN controller is not involved in bus
@@ -273,7 +278,7 @@ SR.0 RBS Receive Buffer Status; 1 full; one or more complete messages are availa
          note 7                   in the RXFIFO
                                 0 empty; no message is available
 
-
+@endverbatim.
 */
 typedef struct{ 
 	__uint8_t BS:1; 	//!< Bus Status
@@ -287,6 +292,7 @@ typedef struct{
 }sja1000_pelican_sr_t;
 
 /*!
+@verbatim.
 IR.7 BEI Bus Error Interrupt        1 set; this bit is set when the CAN controller detects
                                       an error on the CAN-bus and the BEIE bit is set
                                       within the interrupt enable register
@@ -324,7 +330,7 @@ IR.0 RI  Receive Interrupt; note 2  1 set; this bit is set while the receive FIF
                                       enable register
                                     0 reset; no more message is available within the
                                       RXFIFO
-
+@endverbatim.
 */
 typedef struct{ 
 	__uint8_t BEI:1; 	//!< Bus Error Interrupt
@@ -338,6 +344,7 @@ typedef struct{
 }sja1000_pelican_ir_t;
 
 /*!
+@verbatim.
 Table 16 Bit interpretation of the interrupt enable register (IER); CAN address 4
     BIT      SYMBOL                 NAME                  VALUE                            FUNCTION
  IER.7      BEIE          Bus Error Interrupt                1        enabled; if an bus error has been detected, the
@@ -371,7 +378,7 @@ Table 16 Bit interpretation of the interrupt enable register (IER); CAN address 
  IER.0      RIE           Receive Interrupt                  1        enabled; when the receive buffer status is ‘full’ the
                           Enable; note 1                              CAN controller requests the respective interrupt
                                                              0        disabled
-
+@endverbatim.
 */
 typedef struct{ 
 	__uint8_t BEIE:1; 	//!< Bus Error Interrupt Enable
@@ -385,6 +392,7 @@ typedef struct{
 }sja1000_pelican_ier_t;
 
 /*!
+@verbatim.
 Table 17 Bit interpretation of the arbitration lost capture register (ALC); CAN address 11
     BIT        SYMBOL               NAME                           VALUE                   FUNCTION
               −
@@ -395,7 +403,7 @@ Table 17 Bit interpretation of the arbitration lost capture register (ALC); CAN 
  ALC.2        BITNO2       bit number 2
  ALC.1        BITNO1       bit number 1
  ALC.0        BITNO0       bit number 0
-
+@endverbatim.
 */
 typedef struct{ 
 	__uint8_t padd:3; 	//!< Padding
@@ -404,6 +412,7 @@ typedef struct{
 
 
 /*!
+@verbatim.
 Table 19 Bit interpretation of the error code capture register (ECC); CAN address 12
    BIT       SYMBOL                 NAME                VALUE                            FUNCTION
                                                             −         −
@@ -423,7 +432,8 @@ Table 19 Bit interpretation of the error code capture register (ECC); CAN addres
                                                             −         −
  ECC.0(2)   SEG0          Segment 0
 
-
+@endverbatim.
+@verbatim.
 Table 20 Bit interpretation of bits ECC.7 and ECC.6
                                   BIT ECC.6
        BIT ECC.7                                                       FUNCTION
@@ -432,7 +442,8 @@ Table 20 Bit interpretation of bits ECC.7 and ECC.6
            1                          0            stuff error
            1                          1            other type of error
 
-
+@endverbatim.
+@verbatim.
 Table 21 Bit interpretation of bits ECC.4 to ECC.0; note 1
  BIT ECC.4 BIT ECC.3 BIT ECC.2 BIT ECC.1 BIT ECC.0                              FUNCTION
 
@@ -467,7 +478,7 @@ Table 21 Bit interpretation of bits ECC.4 to ECC.0; note 1
 1A     11010 	end of frame
 1B     11011 	acknowledge delimiter
 1C     11100 	overload ﬂag
-
+@endverbatim.
 */
 typedef struct{ 
 	__uint8_t ERRC:2; 	//!< 
@@ -476,10 +487,11 @@ typedef struct{
 }sja1000_pelican_ecc_t;
 
 /*!
+@verbatim.
 Table 25 TX frame information (SFF); CAN address 16
     BIT 7         BIT 6         BIT 5        BIT 4   BIT 3    BIT 2    BIT 1    BIT 0
     FF(1)        RTR(2)          X(3)         X(3)  DLC.3(4) DLC.2(4) DLC.1(4) DLC.0(4)
-
+@endverbatim.
 */
 
 typedef	struct{
@@ -502,17 +514,6 @@ typedef	struct{
 		__uint8_t	data[8];
 	}sja1000_pelican_frame_EFF_t;
 
-/*
-struct sja1000_pelican_frame_st{
-	sja1000_pelican_frame_info_t frame_info;
-	union{
-		sja1000_pelican_frame_SFF_t SFF;
-		sja1000_pelican_frame_EFF_t EFF;
-	}format;
-}__attribute__((__packed__));
-
-typedef struct sja1000_pelican_frame_st sja1000_pelican_frame_t;
-*/
 
 typedef struct {
 	sja1000_pelican_frame_info_t frame_info;
