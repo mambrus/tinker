@@ -101,6 +101,7 @@ void isr_external(){
 		alignement_issue();
 	else
 		isr_table[idx]();
+
 #ifndef DONT_FECKUP_ON_PURPOSE
 //feck up un purpose to check that context is fully saved and resored
 	SET_SPR(_CTR,0xFFFF);
