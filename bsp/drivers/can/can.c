@@ -22,6 +22,7 @@
 #include <assert.h>
 #include <time.h>
 #include <string.h>
+#include <sja1000.h>
 
 #define DRV_IO_NAME( x, y ) \
 	x ##y
@@ -38,13 +39,12 @@
 static const char DRV_IO(assert_info)[]="You're trying to access a non implemented function";
 
 typedef struct{
-	clock_t		time_open;
-	clock_t		time_offset;
 }DRV_IO(hndl_data_t);
 
 
 int DRV_IO(close)(int file) {
-	assert(DRV_IO(assert_info) == NULL);
+	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
+	free(hndl->data);
 	return -1;
 }
 
@@ -87,16 +87,14 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 	hndl=tk_new_handle(inode,(tk_flag_t)flags);	
 
 	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
-	((DRV_IO(hndl_data_t)*)(hndl->data))->time_open=clock();
-
+	
 	return (int)hndl;
 }
 	
 int DRV_IO(read)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	clock_t ctime=clock();
-	ctime-=((DRV_IO(hndl_data_t)*)(hndl->data))->time_offset;
-	memcpy(ptr,&ctime,sizeof(clock_t));
+
+	return sja1000_read(ptr,len);	
 	return sizeof(clock_t);
 }
 		
@@ -114,8 +112,7 @@ int DRV_IO(unlink)(char *name) {
 	
 int DRV_IO(write)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	((DRV_IO(hndl_data_t)*)(hndl->data))->time_offset=clock();
-	return sizeof(DRV_IO(hndl_data_t));
+	return sja1000_write(ptr,len);	
 }
 
 /*IO structure - pre-assigned*/
@@ -135,11 +132,12 @@ static const tk_iohandle_t DRV_IO(io) = {
         DRV_IO(write)
 };
 
-static const char DRV_IO(info_str)[]="can   @ " DEV_FILE_NAME(0);
+static const char DRV_IO(info_str)[]="can   @ " DEV_FILE_NAME(0) " - SJA1000 pelican mode";
 
 /* Init function(s) */
 void *DRV_IO(init_0__)(void *inarg) {
 	assert(inarg==NULL);
+	assure(sja1000_init(0x20000000,1,1,500000,0,0xffffffff) == 0);
 	assure(mknod(DEV_FILE_NAME(0),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
 	return (void*)DRV_IO(info_str);
 }

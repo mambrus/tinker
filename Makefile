@@ -62,6 +62,7 @@ cleanhard:
 	find -iname "*.d" -exec rm '{}' ';'
 	find -iname "*.o" -exec rm '{}' ';'
 	find -iname "*~" -exec rm '{}' ';'
+	rm -f .installed-*
 	@echo "======================================================"
 	@echo "<<- All is hard-cleaned from garbage! ->>"
 	@echo "======================================================"

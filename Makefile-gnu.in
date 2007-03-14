@@ -127,6 +127,7 @@ cleanhard:
 	find -iname "*.d" -exec rm '{}' ';'
 	find -iname "*.o" -exec rm '{}' ';'
 	find -iname "*~" -exec rm '{}' ';'
+	rm -f .installed-*
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] hard-cleaned from garbage! ->>"
 	@echo "======================================================"
@@ -137,6 +138,7 @@ cleanall: clean
 	rm -rf @TINKER_PATH@/lib/crt*.o $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
 	rm $(TOOLDIR)/$(ALIAS_HOST)/lib/lib@PACKAGE_NAME@.a
 	rm -rf $(TOOLDIR)/$(ALIAS_HOST)/include/tinker
+	rm -f .installed-$(PACK_ID)
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] installation removed! ->>"
 	@echo "======================================================"

@@ -12,7 +12,7 @@ sources_asm=""
 extras=""
 
 TINKER_CONFIGURE(../..)
-AC_CONFIG_SUBDIRS([])
+AC_CONFIG_SUBDIRS([can])
 
 
 #dnl Update config.h
