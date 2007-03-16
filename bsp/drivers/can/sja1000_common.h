@@ -106,10 +106,10 @@ Table 47 Interpretation of OCMODE bits
 */
 typedef struct{ 
 	__uint8_t OCTP1:1; 	//!< 
-	__uint8_t OCN1:1; 	//!< 
+	__uint8_t OCTN1:1; 	//!< 
 	__uint8_t OCPOL1:1; 	//!< 
 	__uint8_t OCTP0:1; 	//!< 
-	__uint8_t OCN0:1; 	//!< 
+	__uint8_t OCTN0:1; 	//!< 
 	__uint8_t OCPOL0:1; 	//!< 
 	__uint8_t OCMODE:2; 	//!< 
 }sja1000_ocr_t;

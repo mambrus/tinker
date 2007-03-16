@@ -305,7 +305,7 @@ typedef struct{
 	sja1000_basic_buffer_t	txb;	//!< transmit buffer; CAN address 10-19
 	sja1000_basic_buffer_t	rxb;	//!< transmit buffer; CAN address 20-29
 	__uint8_t		padd;	//!< padding; CAN address 30
- 	sja1000_cdr_t		cdr	//!< clock divider register (CDR); CAN address 31
+ 	sja1000_cdr_t		cdr;	//!< clock divider register (CDR); CAN address 31
 }sja1000_basic_t;
 
 #endif //SJA1000_BASIC_H
