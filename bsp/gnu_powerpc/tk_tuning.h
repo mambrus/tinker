@@ -30,6 +30,29 @@
 #define TRAP( NUM )     \
    tk_trap( NUM )
 
+
+#include <arch/powerpc/bits.h>
+#include "CPU/860/mmap_regs.h"
+
+
+/*!
+Called by handler to notify inerrupt controller that ISR is finished (or interrupt is handled).
+
+   If the interrupt source is IRQx edge-triggered, clear the service bit
+   in the SI Pending Register(SIPEND). Bit is cleared by writing a
+   one to it.
+
+@note Assuming all external IRQ[0..7] are edge trigged
+
+@note This function/macro is mandatory by TinKer API 
+
+@attention Bit is <b>cleared</b> by writing <b>ONE</b> to it (@!# Motorola ;( )
+
+*/
+#define tk_isr_eoi(level) \
+		bitset(SIPEND,level);
+
+
 /* No need to set any more tunings here. This port exists only for GNU and configure.in 
 at this level contains all the defaults we need. */
 
@@ -40,6 +63,10 @@ at this level contains all the defaults we need. */
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $
+ *  Revision 1.8  2007-03-19 17:07:55  ambrmi09
+ *  Interrupt structure/handling reworked - Motorola is wacked, clear IRQ by
+ *  setting allready bit in SIPEND (!)
+ *
  *  Revision 1.7  2007-03-04 19:07:25  ambrmi09
  *  1) Error handling refined - will handle error from different
  *     cathegories:

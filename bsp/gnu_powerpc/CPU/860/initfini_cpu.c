@@ -55,7 +55,7 @@ extern char _sizeof_t, _sizeof_d, _sizeof_b;
 extern char heap_end;
 
 void __init_cpu(){
-
+	SIMASK=0x0; //Dissallow interrupts in case perepherials have not been reseted properly
 	{
 		plprcr_t *plprcr_p = (plprcr_t *)&PLPRCR;
 		ictrl_t ictrl;
@@ -129,7 +129,7 @@ void __init_cpu(){
 			msr.f.IP = 0;
 			SET_MSR(msr);
 		}
-	}
+	}	
 	{
 		//Initialize memory /*cleaning .sbss*/
 
@@ -186,6 +186,7 @@ void __fini_cpu(){
 }
 
 void __exeptions_enable_cpu(){
+	__uint32_t *_simask = &SIMASK;
 	/* Enable external exeptions */
 	{
 		msr_t msr;
@@ -201,8 +202,9 @@ void __exeptions_enable_cpu(){
 		SET_SPR(_EIE,0xFF);	//External interrupt enable (command to the SIU, normally in prologe code)
 	
 		
-		//SIMASK=0xFFFF0000;	//Allow all kinds of IRQ	
-		bitset(SIMASK,LVL3);	//Set only LVL3 interrupts
+//		SIMASK=0xFFFF0000;	//Allow all kinds of IRQ	
+		bitset(SIMASK,LVL3);	//Set LVL3 interrupts
+		bitset(SIMASK,IRQ3);	//Set IRQ3 interrupts (CAN)
 		//SIEL=0x00000000;	//IRQ on level, no wakeup from low-pow
 		SIEL=0xFFFF0000;	//IRQ on edge, do wakeup from low-pow
 	}

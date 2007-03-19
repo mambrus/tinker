@@ -134,10 +134,30 @@ static const tk_iohandle_t DRV_IO(io) = {
 
 static const char DRV_IO(info_str)[]="can   @ " DEV_FILE_NAME(0) " - SJA1000 pelican mode";
 
+//! @TODO This is for 860/ESC and should not really be here - we need to make this more transparent
+typedef enum {
+	lvl_IRQ_0=0,
+	lvl_Intrnl_0,
+	lvl_IRQ_1,
+	lvl_Intrnl_1,
+	lvl_IRQ_2,
+	lvl_Intrnl_2,
+	lvl_IRQ_3,
+	lvl_Intrnl_3,
+	lvl_IRQ_4_,
+	lvl_Intrnl_4,
+	lvl_IRQ_5,
+	lvl_Intrnl_5,
+	lvl_IRQ_6,
+	lvl_Intrnl_6,
+	lvl_IRQ_7,
+	lvl_Intrnl_7
+}irq_level;
+
 /* Init function(s) */
 void *DRV_IO(init_0__)(void *inarg) {
 	assert(inarg==NULL);
-	assure(sja1000_init(0x20000000,1,1,500000,0,0xffffffff) == 0);
+	assure(sja1000_init(0x20000000,lvl_IRQ_3,1,1,500000,0,0xffffffff) == 0);
 	assure(mknod(DEV_FILE_NAME(0),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
 	return (void*)DRV_IO(info_str);
 }

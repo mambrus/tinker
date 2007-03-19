@@ -29,7 +29,8 @@ Notes: See chapter 10.11 for details
 #include <mmap_regs.h>
 #include <sys/types.h>
 #include <systimer.h>
-
+#include <assert.h>
+#define MAXIMUN_PENDING_ISR 100
 
 
 #ifdef NEVER
@@ -52,6 +53,7 @@ void alignement_issue(){
 void possible_starvation(){
 	idx++;
 	idx--;
+	assert(n_isr<=MAXIMUN_PENDING_ISR);
 };
 
 __uint32_t exc_id;
@@ -64,7 +66,7 @@ void exception_invalid(){
 }
 
 
-handler_function isr_table[16]={
+isr_handler isr_table[16]={
 	default_handler,
 	default_handler,
 	default_handler,
@@ -88,8 +90,10 @@ void isr_external(){
 	//PUSHALL;
 	__uint32_t stack_ptr;
 	__uint32_t cr;
+	//__uint32_t *sipend = &SIPEND;
 	idx=*(__int8_t*)(&SIVEC);
-	idx = (idx/4)-1;
+	//idx = (idx/4)-1;
+	idx = (idx/4);
 	
 	GET_GPR(1,stack_ptr);
 
@@ -109,9 +113,20 @@ void isr_external(){
 	GET_CR(cr);
 	SET_CR(0xFFFFFFFF);
 #endif
-	SET_SPR(_EIE,0xFF);	//permit nested interrupts
+	if (SIPEND & 0x5555)		//If internal interrupt (i.e. lvl_Intrnl_0 to lvl_Intrnl_7)
+		SET_SPR(_EIE,0xFF);	//permit nested interrupts
 	n_isr--;
 	//POPALL;
 }
+/*! 
+Attach an interrupt handler routine to a certain IRQ (IRQ=level)
+@note This function is mandatory by TinKer API 
+*/
+int tk_isr_install(int level, isr_handler isr){
+	isr_table[level]=isr;
+	return 0;
+};
+
+
 
 

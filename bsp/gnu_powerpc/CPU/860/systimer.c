@@ -118,7 +118,8 @@ void systimer_init(){
 
 	piscr->f.PIRQ=Intrnl_3;	// Set IRQ level
 	// Place the handler in our vector table
-	isr_table[IRQ_3_handler]=systimer_Handler_3; 
+	//isr_table[IRQ_3_handler]=systimer_Handler_3; 
+	isr_table[lvl_Intrnl_3]=systimer_Handler_3; 
 
 	piscr->f.PS=0x01;	// Reset pending PIT interrupt
 	piscr->f.ZERO=0x0;	// Fill the padding with zeros

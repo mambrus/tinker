@@ -582,8 +582,8 @@ typedef struct{
 	sja1000_pelican_mod_t	mod;	//!< MODE REGISTER (MOD)
 	sja1000_pelican_cmr_t	cmr;	//!< command register (CMR); CAN address 1
 	sja1000_pelican_sr_t	sr;	//!< status register (SR); CAN address 2
-	sja1000_pelican_ir_t	ir;	//!< interrupt register (IR); CAN address 3
-	sja1000_pelican_ier_t	ier;	//!< INTERRUPT ENABLE REGISTER (IER); CAN address 4
+	__uint8_t		ir;	//!< interrupt register (IR); CAN address 3
+	__uint8_t		ier;	//!< INTERRUPT ENABLE REGISTER (IER); CAN address 4
 	__uint8_t		_rsrvd0;//!< Reserved; CAN address 5
 	__uint8_t		btr0_raw;//!< BUS TIMING REGISTER 0 (BTR0); CAN address 6
 	__uint8_t		btr1_raw;//!< BUS TIMING REGISTER 1 (BTR1); CAN address 7

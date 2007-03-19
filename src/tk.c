@@ -1317,7 +1317,6 @@ void tk_yield_event( void ){
    TK_STI();
 }
 
-
 #if defined(TK_COMP_FILESYS) && TK_COMP_FILESYS
 //#include <unistd.h>
 #include <fcntl.h>
@@ -1538,6 +1537,10 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
+ *  Revision 1.80  2007-03-19 17:07:55  ambrmi09
+ *  Interrupt structure/handling reworked - Motorola is wacked, clear IRQ by
+ *  setting allready bit in SIPEND (!)
+ *
  *  Revision 1.79  2007-03-04 19:07:25  ambrmi09
  *  1) Error handling refined - will handle error from different
  *     cathegories:

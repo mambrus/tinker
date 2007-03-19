@@ -20,6 +20,7 @@
 
 #ifndef ISR_H
 #define ISR_H
+#include <tk.h>
 
 
 /*
@@ -59,32 +60,34 @@ Internal Level 7 0011_1100
 #define      IRQ_7        0x38  /* 0011_1000 */
 #define Intrnl_7          0x3C  /* 0011_1100 */
 
-
+/*
 typedef void handler_function_t();
 typedef handler_function_t *handler_function;
-extern handler_function isr_table[16];
+*/
+extern isr_handler isr_table[16];
 
 typedef enum {
-	IRQ_0_handler=0,
-	Intrnl_0_handler,
-	IRQ_1_handler,
-	Intrnl_1_handler,
-	IRQ_2_handler,
-	Intrnl_2_handler,
-	IRQ_3_handler,
-	Intrnl_3_handler,
-	IRQ_4_handler,
-	Intrnl_4_handler,
-	IRQ_5_handler,
-	Intrnl_5_handler,
-	IRQ_6_handler,
-	Intrnl_6_handler,
-	IRQ_7_handler,
-	Intrnl_7_handler,
-}isr_handler;
+	lvl_IRQ_0=0,
+	lvl_Intrnl_0,
+	lvl_IRQ_1,
+	lvl_Intrnl_1,
+	lvl_IRQ_2,
+	lvl_Intrnl_2,
+	lvl_IRQ_3,
+	lvl_Intrnl_3,
+	lvl_IRQ_4_,
+	lvl_Intrnl_4,
+	lvl_IRQ_5,
+	lvl_Intrnl_5,
+	lvl_IRQ_6,
+	lvl_Intrnl_6,
+	lvl_IRQ_7,
+	lvl_Intrnl_7
+}irq_level;
 
 
 /*
+   0101010101010101
    0    1    2    3    4    5    6    7    8    9    10  11    12  13    14  15
  IRQ0 LVL0 IRQ1 LVL1 IRQ2 LVL2 IRQ3 LVL3 IRQ4 LVL4 IRQ5 LVL5 IRQ6 LVL6 IRQ7 LVL7
 */

@@ -37,9 +37,10 @@ typedef union{
 	sja1000_pelican_t pelican;	//!< Registers in pelican mode
 }sja1000_t;
 
-int sja1000_init(__uint32_t baddr, int pmode, int xmode, int bps, __uint32_t ac, __uint32_t am);
+int sja1000_init(__uint32_t baddr, int IRQn, int pmode, int xmode, int bps, __uint32_t ac, __uint32_t am);
 int sja1000_read(const char* buffer, int buff_len);
 int sja1000_write(char* buffer, int max_len);
+void sja1000_Handler( void );
 
 
 #endif //SJA1000_H

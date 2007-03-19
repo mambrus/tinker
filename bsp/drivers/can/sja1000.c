@@ -44,16 +44,33 @@ Pins 2, 3, 4, and 7 are protected by 250 mA fuses.
 #include <sja1000.h>
 #include <string.h>
 #include <assert.h>
+#include <tk.h>
+#include <tk_tuning.h>
 #define f_xtal 48000000
 
 //NOTE Below: to be removed
 //#define SEF_TEST_MODE 1
 
-static int			_pmode;
-static int			_xmode;
-static sja1000_t		*_sja1000;
-static sja1000_pelican_raw_t	*_sja1000_raw;
-static sja1000_pelican_frame_t	*_pelican_txbuff;
+static int			_pmode;			//!< Mode of operation (Peliacn =1, Normal=0) 
+static int			_IRQ;			//!< IRQ number for the driver
+static int			_xmode;			//!< Extended or basic frames
+static sja1000_t		*_sja1000;		//!< Address of SJA1000 (chip mapped on struct)
+static sja1000_pelican_raw_t	*_sja1000_raw;		//!< Address of SJA1000 (chip mapped on raw struct)
+static sja1000_pelican_frame_t	*_pelican_txbuff;	//!< Address of internal Tx buffer (mapped on message struct)
+
+
+/*! Interrupt counters */
+static struct {
+	__uint32_t BEI; //!< Bus Error Interrupt Enable
+	__uint32_t ALI; //!< Arbitration Lost Interrupt
+	__uint32_t EPI; //!< Error Passive Interrupt
+	__uint32_t WUI; //!< Wake-Up Interrupt
+	__uint32_t DOI; //!< Data Overrun Interrupt
+	__uint32_t EI;  //!< Error Warning Interrupt
+	__uint32_t TI;  //!< Transmit Interrupt
+	__uint32_t RI;  //!< Receive Interrupt
+}icntr;
+
 
 /*!
 Initializes the circuit and puts it into operting mode
@@ -63,6 +80,7 @@ or extended frames are used.
 */
 int sja1000_init(
 	__uint32_t baddr,	//!< Base address of the circuit
+	int IRQn,		//!< Interrupt number for the main CAN handler
 	int pmode,		//!< 1=pelican mode, 0=basic mode
 	int xmode,		//!< 1=extended frame (i.e. 29 bits header), 0=basic frame (i.e. 11 bits header)
 	int bps,		//!< Speed of the bus, nominal speed is 500 Kbps
@@ -137,6 +155,24 @@ int sja1000_init(
 	//_sja1000_raw->btr0_raw=0x81;;		//Kock info - Bitrate 500khz, Jump width 2
 	//_sja1000_raw->btr1_raw=0x23;;		//Kock info - TSEG ???
 	_sja1000_raw->ocr_raw=0xDB;		//Kock info
+
+/*Set-up the interrupts*/
+	_IRQ=IRQn;
+	memset(&icntr,0,sizeof(icntr));
+	tk_isr_install(IRQn,sja1000_Handler);
+	//tk_isr_install(IRQn,sja1000_Handler);
+	//isr_table[IRQ_3_handler]=sja1000_Handler;
+/*
+	_sja1000->pelican.ier.BEIE=1;	//Bus Error Interrupt Enable
+	_sja1000->pelican.ier.ALIE=1;	//Arbitration Lost Interrupt Enable
+	_sja1000->pelican.ier.EPIE=1;	//Error Passive Interrupt Enable
+	_sja1000->pelican.ier.WUIE=1;	//Wake-Up Interrupt Enable
+	_sja1000->pelican.ier.DOIE=1;	//Data Overrun Interrupt Enable
+	_sja1000->pelican.ier.EIE=1;	//Error Warning Interrupt Enable
+*/
+	_sja1000->pelican.ier.TIE=1;	//Transmit Interrupt Enable
+//	_sja1000->pelican.ier.RIE=1;	//Receive Interrupt Enable
+
 
 	while (_sja1000->pelican.mod.RM) {
 		int loop=0;
@@ -217,4 +253,74 @@ int sja1000_write(char* buffer, int max_len){
 
 	return 0;
 }
+
+
+/* ISR - Interrupt handlers */ 
+/*! Bus Error Interrupt*/
+void isr_BEI(){
+	icntr.BEI++;
+};
+
+/*! Arbitration Lost Interrupt */
+void isr_ALI(){
+	icntr.ALI++;
+};
+
+/*! Error Passive Interrupt */
+void isr_EPI(){
+	icntr.EPI++;
+};
+
+/*! Wake-Up Interrupt */
+void isr_WUI(){
+	icntr.WUI++;
+};
+
+/*! Data Overrun Interrupt */
+void isr_DOI(){
+	icntr.DOI++;
+};
+
+/*! Error Warning Interrupt */
+void isr_EI(){
+	icntr.EI++;
+};
+
+/*! Transmit Interrupt */
+void isr_TI(){
+	icntr.TI++;
+	//_sja1000->pelican.ier.TIE=0;	
+};
+
+/*! Receive Interrupt */
+void isr_RI(){
+	//CMR.2 RRB Release Receive Buffer
+	icntr.RI++;
+};
+
+/*"Main SJA1000 interrupt handler*/
+void sja1000_Handler( void )
+{
+	sja1000_pelican_ir_t ir = _sja1000->pelican.ir;
+
+	if (ir.BEI)
+		isr_BEI();
+	if (ir.ALI)
+		isr_ALI();
+	if (ir.EPI)
+		isr_EPI();
+	if (ir.WUI)
+		isr_WUI();
+	if (ir.DOI)
+		isr_DOI();
+	if (ir.EI)
+		isr_EI();
+	if (ir.TI)
+		isr_TI();
+	if (ir.RI)
+		isr_RI();
+	tk_isr_eoi(_IRQ);	//Tell system handler is done
+	//_sja1000->pelican.mod.RM=1;			//Reset the circuit in case it's not allready
+}
+
 
