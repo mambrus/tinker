@@ -19,6 +19,17 @@
  ***************************************************************************/
 #ifndef CAN_H
 #define CAN_H
+
+#define RX_BUFFSZ 0x100
+
+/*! Data structure recomended to be used for communicating with the driver
+(both in and out) 
+*/
+typedef struct {
+			__uint32_t 	id;
+			__uint8_t 	data[8];
+}can_t;
+
 int can_init();
 
 #endif // CAN_H

@@ -44,19 +44,34 @@ Pins 2, 3, 4, and 7 are protected by 250 mA fuses.
 #include <sja1000.h>
 #include <string.h>
 #include <assert.h>
+#include <can.h>
 #include <tk.h>
 #include <tk_tuning.h>
+#include <semaphore.h>
+
 #define f_xtal 48000000
 
 //NOTE Below: to be removed
 //#define SEF_TEST_MODE 1
 
+//Local variables
 static int			_pmode;			//!< Mode of operation (Peliacn =1, Normal=0) 
 static int			_IRQ;			//!< IRQ number for the driver
 static int			_xmode;			//!< Extended or basic frames
 static sja1000_t		*_sja1000;		//!< Address of SJA1000 (chip mapped on struct)
 static sja1000_pelican_raw_t	*_sja1000_raw;		//!< Address of SJA1000 (chip mapped on raw struct)
 static sja1000_pelican_frame_t	*_pelican_txbuff;	//!< Address of internal Tx buffer (mapped on message struct)
+
+//Variables shared among the files for this driver
+sja1000_pelican_frame_t _can_RxBuff[RX_BUFFSZ];	/*!< Drivers recieve buffer. Neede to ease RT requirements
+							     and to permit blocking reads. */
+
+int _can_rxidx_in=0;				//!< Points to the next free Rx message storage in ring buffer
+int _can_rxidx_out=0;				//!< Points to current message to read from ring-buffer
+int _can_nrx=0;				//!< Number of messages waiting in ringbuffer
+
+//Variables defied by other files belonging to this driver
+sem_t _can_rx_sem;
 
 
 /*! Interrupt counters */
@@ -96,6 +111,8 @@ int sja1000_init(
 
 	if (pmode!=1)
 		assert("This driver has only been implemented for pelican mode (so far...)" == 0);;
+
+	assure(sem_init(&_can_rx_sem, 0, 0) == 0);
 
 	_sja1000->pelican.mod.RM=1;			//Reset the circuit in case it's not allready
 
@@ -162,16 +179,15 @@ int sja1000_init(
 	tk_isr_install(IRQn,sja1000_Handler);
 	//tk_isr_install(IRQn,sja1000_Handler);
 	//isr_table[IRQ_3_handler]=sja1000_Handler;
-/*
+
 	_sja1000->pelican.ier.BEIE=1;	//Bus Error Interrupt Enable
 	_sja1000->pelican.ier.ALIE=1;	//Arbitration Lost Interrupt Enable
 	_sja1000->pelican.ier.EPIE=1;	//Error Passive Interrupt Enable
 	_sja1000->pelican.ier.WUIE=1;	//Wake-Up Interrupt Enable
 	_sja1000->pelican.ier.DOIE=1;	//Data Overrun Interrupt Enable
 	_sja1000->pelican.ier.EIE=1;	//Error Warning Interrupt Enable
-*/
 	_sja1000->pelican.ier.TIE=1;	//Transmit Interrupt Enable
-//	_sja1000->pelican.ier.RIE=1;	//Receive Interrupt Enable
+	_sja1000->pelican.ier.RIE=1;	//Receive Interrupt Enable
 
 
 	while (_sja1000->pelican.mod.RM) {
@@ -192,10 +208,51 @@ int sja1000_init(
 /*!
 Read incomming RX buffer including header
 
-Returns the nuber of received bytes including the header
+Returns the number of received bytes including the header
 */
 int sja1000_read(const char* buffer, int buff_len){
-	return buff_len;
+	int nRx;
+	can_t *frmtbuff = buffer;
+	int dlc,psz;
+
+	_sja1000->pelican.ier.RIE = 0;
+	nRx = _can_nrx;
+	_sja1000->pelican.ier.RIE = 1;	
+	assert(nRx<RX_BUFFSZ);
+
+	
+	sem_wait(&_can_rx_sem);
+	
+	dlc = _can_RxBuff[_can_rxidx_out].frinfo.DLC;
+	psz = dlc + sizeof(__uint32_t);
+
+	assert(buff_len>=psz);
+
+	if (_can_RxBuff[_can_rxidx_out].frinfo.FF) {
+		frmtbuff->id = _can_RxBuff[_can_rxidx_out].format.EFF.id;
+		memcpy(
+			frmtbuff->data,
+			_can_RxBuff[_can_rxidx_out].format.EFF.data,
+			dlc
+		);
+	}else{
+		frmtbuff->id = _can_RxBuff[_can_rxidx_out].format.SFF.id;
+		memcpy(
+			frmtbuff->data,
+			_can_RxBuff[_can_rxidx_out].format.SFF.data,
+			dlc
+		);
+
+	};
+
+	_can_rxidx_out++;
+	_can_rxidx_out = _can_rxidx_out % RX_BUFFSZ;
+
+	_sja1000->pelican.ier.RIE = 0;
+	_can_nrx--;
+	_sja1000->pelican.ier.RIE = 1;
+
+	return psz;
 }
 
 /*!
@@ -278,6 +335,7 @@ void isr_WUI(){
 
 /*! Data Overrun Interrupt */
 void isr_DOI(){
+	_sja1000->pelican.cmr.bits.CDO=1;
 	icntr.DOI++;
 };
 
@@ -295,7 +353,20 @@ void isr_TI(){
 /*! Receive Interrupt */
 void isr_RI(){
 	//CMR.2 RRB Release Receive Buffer
+
 	icntr.RI++;
+	_can_nrx++;
+
+	memcpy(
+		&_can_RxBuff[_can_rxidx_in],
+		&_sja1000->pelican.fracc.frame,
+		sizeof(sja1000_pelican_frame_t)
+	);
+	_sja1000->pelican.cmr.bits.RRB=1;
+	_can_rxidx_in++;
+	_can_rxidx_in = _can_rxidx_in % RX_BUFFSZ;
+
+	sem_post(&_can_rx_sem);
 };
 
 /*"Main SJA1000 interrupt handler*/

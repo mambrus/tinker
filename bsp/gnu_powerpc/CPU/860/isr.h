@@ -87,7 +87,7 @@ typedef enum {
 
 
 /*
-   0101010101010101
+   0101010101010101 = 0x5555 = mask all internal interrupts
    0    1    2    3    4    5    6    7    8    9    10  11    12  13    14  15
  IRQ0 LVL0 IRQ1 LVL1 IRQ2 LVL2 IRQ3 LVL3 IRQ4 LVL4 IRQ5 LVL5 IRQ6 LVL6 IRQ7 LVL7
 */

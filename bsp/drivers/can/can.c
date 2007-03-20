@@ -20,7 +20,7 @@
 #include <filesys/filesys.h>
 #include <filesys/inode.h>
 #include <assert.h>
-#include <time.h>
+#include <semaphore.h>
 #include <string.h>
 #include <sja1000.h>
 
@@ -37,6 +37,8 @@
 
 
 static const char DRV_IO(assert_info)[]="You're trying to access a non implemented function";
+
+sem_t __can_rx_sem;
 
 typedef struct{
 }DRV_IO(hndl_data_t);
@@ -156,7 +158,7 @@ typedef enum {
 
 /* Init function(s) */
 void *DRV_IO(init_0__)(void *inarg) {
-	assert(inarg==NULL);
+	assert(inarg==NULL); 	
 	assure(sja1000_init(0x20000000,lvl_IRQ_3,1,1,500000,0,0xffffffff) == 0);
 	assure(mknod(DEV_FILE_NAME(0),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
 	return (void*)DRV_IO(info_str);

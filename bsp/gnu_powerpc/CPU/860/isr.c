@@ -61,7 +61,7 @@ __uint32_t exc_id;
 void exception_invalid(){
 	GET_GPR(0,exc_id);
 	exc_id = exc_id & 0x0000000F;
-
+	assert("Invalid exeption detected" == 0);
 	while(1);
 }
 
