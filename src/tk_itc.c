@@ -501,93 +501,93 @@ Doc TBD
 @todo documet this
 */
 static unsigned long _lock_stage_ny(
-   unsigned long qid, 
-   unsigned long timeout) 
+	unsigned long qid, 
+	unsigned long timeout) 
 {
-   tk_tcb_t *MySelf;       /* A pointer to my own process PCB */
-   clock_t act_time;
-   clock_t timeout_time;   /* When to timeout if timeoutable */
-   unsigned int mark_idx;
-   
-   act_time = clock()/CLK_TCK*1000;
-   MySelf = _tk_current_tcb();
-   
-   if ( ipc_array[qid]->token > 0 ) {  /*  */
-      /* Wow, gone tru */
-      ipc_array[qid]->token --;
-      return(ERR_OK);
-   }else {
-      /* Hrrm, someone else was here before me */
-      /* Can I block? */
-      if (abs(ipc_array[qid]->token) < (TK_MAX_BLOCKED_ON_Q - 1) ) {
-         ipc_array[qid]->token--;   
-      }else
-         return(ERR_BLOCKLIMIT);
-         
-      /* Put myself on the fifo list */
-      ipc_array[qid]->blocked_procs[ipc_array[qid]->in_idx] = MySelf;
-      ipc_array[qid]->in_idx++;
-      ipc_array[qid]->in_idx %= TK_MAX_BLOCKED_ON_Q;
-      /* Put myself om the "waiting" list */
-      if (timeout == 0) {
-         //assert(0);
-         MySelf->state = (PROCSTATE)( (MySelf->state) | _____Q__);
-         MySelf->wakeupEvent = E_NONE;
-         //tk_yield();
-         /* OK, I've been blocked and now I'm free*/     
-         return(ERR_OK);
-      }else {
-         p_bQ(40,21,qid);
-         MySelf->state = (PROCSTATE)( (MySelf->state) | _____QS_);
-         timeout_time = act_time + timeout;
-         MySelf->wakeuptime = timeout_time;
-         /*In case need to remove from list (timerelease)*/
-         mark_idx = ipc_array[qid]->in_idx; /*One to far, correct later*/
-         //tk_yield();
-         
-         /* who waked me?*/
-         if (MySelf->wakeupEvent == E_TIMER) {
-            /* Take process away from "que blocked" list*/
-            mark_idx--;
-            if (mark_idx > TK_MAX_BLOCKED_ON_Q) {
-               mark_idx = TK_MAX_BLOCKED_ON_Q - 1; 
-            }
-            
-            /*Scan block list for any more procs that has been released by timer*/
-            
-            if (ipc_array[qid]->token >= 0)
-               return(ERR_TIMEOUT); /*DUNNO WHY*/
-            
-            removeBlocked(ipc_array[qid],mark_idx);
-            
-            if (ipc_array[qid]->token >= 0)
-               return(ERR_TIMEOUT); /* Last one */ 
-               
-            mark_idx = ipc_array[qid]->out_idx;
-            do {
-               /*What happens if last one?? Good question!! solved above?*/
-               if (
-                  ipc_array[qid]->blocked_procs[mark_idx]->state == READY &&
-                  ipc_array[qid]->blocked_procs[mark_idx]->wakeupEvent == E_TIMER
-               ) {
-                  /*Tag it, preventing succesiv removal*/
-                  ipc_array[qid]->blocked_procs[mark_idx]->wakeupEvent = E_ITC2;
-                  /*Remove it from blocked list */
-                  removeBlocked(ipc_array[qid],mark_idx);  
-               }
-               if (mark_idx == ipc_array[qid]->in_idx)
-                  break;
-               mark_idx++; mark_idx %= TK_MAX_BLOCKED_ON_Q;
-            }
-            while(ipc_array[qid]->token < 0 && mark_idx != ipc_array[qid]->in_idx);
-            p_bQ(40,21,qid);
-            return(ERR_TIMEOUT);
-            
-         }else if (MySelf->wakeupEvent == E_ITC2)
-            return(ERR_TIMEOUT);
-         return(ERR_OK);
-      }
-   }  
+	tk_tcb_t *MySelf;       /* A pointer to my own process PCB */
+	clock_t act_time;
+	clock_t timeout_time;   /* When to timeout if timeoutable */
+	unsigned int mark_idx;
+	
+	act_time = clock()/CLK_TCK*1000;
+	MySelf = _tk_current_tcb();
+	
+	if ( ipc_array[qid]->token > 0 ) {  /*  */
+		/* Wow, gone tru */
+		ipc_array[qid]->token --;
+		return(ERR_OK);
+	}else {
+		/* Hrrm, someone else was here before me */
+		/* Can I block? */
+		if (abs(ipc_array[qid]->token) < (TK_MAX_BLOCKED_ON_Q - 1) ) {
+			ipc_array[qid]->token--;   
+		}else
+			return(ERR_BLOCKLIMIT);
+		
+	/* Put myself on the fifo list */
+	ipc_array[qid]->blocked_procs[ipc_array[qid]->in_idx] = MySelf;
+	ipc_array[qid]->in_idx++;
+	ipc_array[qid]->in_idx %= TK_MAX_BLOCKED_ON_Q;
+	/* Put myself om the "waiting" list */
+	if (timeout == 0) {
+		//assert(0);
+		MySelf->state = (PROCSTATE)( (MySelf->state) | _____Q__);
+		MySelf->wakeupEvent = E_NONE;
+		//tk_yield();
+		/* OK, I've been blocked and now I'm free*/     
+		return(ERR_OK);
+	} else {
+		p_bQ(40,21,qid);
+		MySelf->state = (PROCSTATE)( (MySelf->state) | _____QS_);
+		timeout_time = act_time + timeout;
+		MySelf->wakeuptime = timeout_time;
+		/*In case need to remove from list (timerelease)*/
+		mark_idx = ipc_array[qid]->in_idx; /*One to far, correct later*/
+		//tk_yield();
+		
+		/* who waked me?*/
+		if (MySelf->wakeupEvent == E_TIMER) {
+			/* Take process away from "que blocked" list*/
+			mark_idx--;
+			if (mark_idx > TK_MAX_BLOCKED_ON_Q) {
+				mark_idx = TK_MAX_BLOCKED_ON_Q - 1; 
+			}
+		
+			/*Scan block list for any more procs that has been released by timer*/
+			
+			if (ipc_array[qid]->token >= 0)
+				return(ERR_TIMEOUT); /*DUNNO WHY*/
+			
+			removeBlocked(ipc_array[qid],mark_idx);
+			
+			if (ipc_array[qid]->token >= 0)
+				return(ERR_TIMEOUT); /* Last one */ 
+			
+			mark_idx = ipc_array[qid]->out_idx;
+			do {
+				/*What happens if last one?? Good question!! solved above?*/
+				if (
+					ipc_array[qid]->blocked_procs[mark_idx]->state == READY &&
+					ipc_array[qid]->blocked_procs[mark_idx]->wakeupEvent == E_TIMER
+				) {
+					/*Tag it, preventing succesiv removal*/
+					ipc_array[qid]->blocked_procs[mark_idx]->wakeupEvent = E_ITC2;
+					/*Remove it from blocked list */
+					removeBlocked(ipc_array[qid],mark_idx);  
+				}
+				if (mark_idx == ipc_array[qid]->in_idx)
+					break;
+				mark_idx++; mark_idx %= TK_MAX_BLOCKED_ON_Q;
+			}
+			while(ipc_array[qid]->token < 0 && mark_idx != ipc_array[qid]->in_idx);
+			p_bQ(40,21,qid);
+			return(ERR_TIMEOUT);
+			
+		}else if (MySelf->wakeupEvent == E_ITC2)
+			return(ERR_TIMEOUT);
+		return(ERR_OK);
+		}
+	}  
 }
 
 /******************************************************************************
@@ -615,78 +615,78 @@ Doc TBD
 @todo documet this
 */
 static unsigned long _unlock_stage_ny(
-   unsigned long qid) 
+	unsigned long qid) 
 {  
-   tk_tcb_t *Him;       /* A pointer to the process to release  */
-   unsigned int i;
-   unsigned int t_idx,t_prio = TK_MAX_PRIO_LEVELS + 2;
-   
-   if (ipc_array[qid]->token < 0)  { /* Oops someone is perhaps waiting for me */
-      if (ipc_array[qid]->flags & PRIOR) {
-         
-         /*Tidying away timerreleased processes*/ 
-         for (
-            i=ipc_array[qid]->out_idx;
-            i!=ipc_array[qid]->in_idx; /*This is important, the last index can expire*/
-            i++,i %= TK_MAX_BLOCKED_ON_Q)
-         {
-            if (!(ipc_array[qid]->blocked_procs[i]->state & _____Q__))  { 
-               /*Oops, found one!*/
-               
-               p_bQ(40,21,qid);
+	tk_tcb_t *Him;       /* A pointer to the process to release  */
+	unsigned int i;
+	unsigned int t_idx,t_prio = TK_MAX_PRIO_LEVELS + 2;
 
-               //_removeBlocked_ny(ipc_array[qid],i); 
-            }
-            if (ipc_array[qid]->in_idx == i)
-               break;
-         }
-         //assert(ipc_array[qid]->token<0);
-         if ((ipc_array[qid]->in_idx - ipc_array[qid]->out_idx) == 0) { /*ipc_array[qid]->token==0*/
-            /*printk(("Hubba i �at\n"));
-            while(1);*/
-            return(ERR_OK);
-            
-         }
-                     
-         /*Find the highest waiting process*/ 
-         for (
-            i=ipc_array[qid]->out_idx;
-            i!=ipc_array[qid]->in_idx;
-            i++,i %= TK_MAX_BLOCKED_ON_Q)
-         {
-            if (ipc_array[qid]->blocked_procs[i]->Prio < t_prio) {
-               t_prio = ipc_array[qid]->blocked_procs[i]->Prio;
-               t_idx = i;
-            }
-         }
-         
-         /*Now the highest waiting process should be found*/
-         p_bQ(40,21,qid);
-         assert(t_prio != (TK_MAX_PRIO_LEVELS + 2)); /*Could not find anyone to release*/
-         ipc_array[qid]->blocked_procs[t_idx]->state = (PROCSTATE)(ipc_array[qid]->blocked_procs[t_idx]->state & ~_____QST); 
-         ipc_array[qid]->blocked_procs[t_idx]->wakeupEvent = E_ITC;
-         //ipc_array[qid]->token++;
-         removeBlocked(ipc_array[qid],t_idx);  
-         //tk_yield(); 
-         
-      }else {
-         do {
-            Him = ipc_array[qid]->blocked_procs[ipc_array[qid]->out_idx];
-            ipc_array[qid]->out_idx++,
-            ipc_array[qid]->out_idx %= TK_MAX_BLOCKED_ON_Q;
-            ipc_array[qid]->token++;
-         }while(!(Him->state & _____Q__) && ipc_array[qid]->token < 0);
-          /*Above can happen if made ready by timer */                           
-          /*but has not runned (had the oppotunity */                         
-          /*to remove from this list)*/                           
-          /*Should be obsolite now, but is not*/
-         Him->state = (PROCSTATE)( (Him->state) & ~_____QST); /* In case of timeout active release that to */
-         Him->wakeupEvent = E_ITC;
-         //tk_yield(); /*In case the one you've just released has higher prio, run it*/   
-      }
-   }else               
-      ipc_array[qid]->token++;   /* Increase number of tokens anyway */    
-   return(ERR_OK);               
+	if (ipc_array[qid]->token < 0)  { /* Oops someone is perhaps waiting for me */
+	if (ipc_array[qid]->flags & PRIOR) {
+		
+		/*Tidying away timerreleased processes*/ 
+		for (
+			i=ipc_array[qid]->out_idx;
+			i!=ipc_array[qid]->in_idx; /*This is important, the last index can expire*/
+			i++,i %= TK_MAX_BLOCKED_ON_Q)
+		{
+			if (!(ipc_array[qid]->blocked_procs[i]->state & _____Q__))  { 
+				/*Oops, found one!*/
+				
+				p_bQ(40,21,qid);
+			
+				//_removeBlocked_ny(ipc_array[qid],i); 
+			}
+			if (ipc_array[qid]->in_idx == i)
+			break;
+		}
+		//assert(ipc_array[qid]->token<0);
+		if ((ipc_array[qid]->in_idx - ipc_array[qid]->out_idx) == 0) { /*ipc_array[qid]->token==0*/
+			/*printk(("Hubba i �at\n"));
+			while(1);*/
+			return(ERR_OK);
+		
+		}
+			
+		/*Find the highest waiting process*/ 
+		for (
+			i=ipc_array[qid]->out_idx;
+			i!=ipc_array[qid]->in_idx;
+			i++,i %= TK_MAX_BLOCKED_ON_Q)
+		{
+			if (ipc_array[qid]->blocked_procs[i]->Prio < t_prio) {
+				t_prio = ipc_array[qid]->blocked_procs[i]->Prio;
+				t_idx = i;
+			}
+		}
+		
+		/*Now the highest waiting process should be found*/
+		p_bQ(40,21,qid);
+		assert(t_prio != (TK_MAX_PRIO_LEVELS + 2)); /*Could not find anyone to release*/
+		ipc_array[qid]->blocked_procs[t_idx]->state = (PROCSTATE)(ipc_array[qid]->blocked_procs[t_idx]->state & ~_____QST); 
+		ipc_array[qid]->blocked_procs[t_idx]->wakeupEvent = E_ITC;
+		//ipc_array[qid]->token++;
+		removeBlocked(ipc_array[qid],t_idx);  
+		//tk_yield(); 
+		
+	}else {
+		do {
+			Him = ipc_array[qid]->blocked_procs[ipc_array[qid]->out_idx];
+			ipc_array[qid]->out_idx++,
+			ipc_array[qid]->out_idx %= TK_MAX_BLOCKED_ON_Q;
+			ipc_array[qid]->token++;
+		}while(!(Him->state & _____Q__) && ipc_array[qid]->token < 0);
+		/*Above can happen if made ready by timer */
+		/*but has not runned (had the oppotunity */
+		/*to remove from this list)*/
+		/*Should be obsolite now, but is not*/
+		Him->state = (PROCSTATE)( (Him->state) & ~_____QST); /* In case of timeout active release that to */
+		Him->wakeupEvent = E_ITC;
+		//tk_yield(); /*In case the one you've just released has higher prio, run it*/   
+	}
+	}else
+		ipc_array[qid]->token++;   /* Increase number of tokens anyway */    
+	return(ERR_OK);
 }
 
 /*************************************************************************************************************
@@ -699,8 +699,7 @@ Doc TBD
 @todo documet this
 */
 unsigned long tk_itc( void ){
-    
-    unsigned int i;
+	unsigned int i;
 	
 	ipc_idx = 0;
 	
@@ -733,7 +732,7 @@ unsigned long tk_itc_destruct( void ){
 			free( ipc_array[i] );
 		}
 	} 
-   return ERR_OK;
+	return ERR_OK;
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -742,11 +741,11 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_vcreate(
-   char name[4],            
-   unsigned long flags,     
-   unsigned long count,     
-   unsigned long mmlen,     
-   unsigned long *qid       
+	char name[4],
+	unsigned long flags,
+	unsigned long count,
+	unsigned long mmlen,
+	unsigned long *qid
 ){
 	unsigned long rc;
 	
@@ -888,14 +887,14 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_create(
-   char name[4],         
-   unsigned long count,  
-   unsigned long flags,  
-   unsigned long *qid    
+	char name[4],
+	unsigned long count,
+	unsigned long flags,
+	unsigned long *qid
 ){
 	unsigned long rc;
 	
-   if ((rc =sm_create(name,0,flags,qid)) != ERR_OK)
+	if ((rc =sm_create(name,0,flags,qid)) != ERR_OK)
 		return(rc);
 	/* Allocate memory for the message queue */
 	if ((ipc_array[ipc_idx]->m.q = (q_t*)calloc(count,sizeof(q_t)) ) == NULL) {
@@ -1114,29 +1113,29 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_vcreate_ny(
-   char name[4],         
-   unsigned long flags,  
-   unsigned long count,  
-   unsigned long mmlen,  
-   unsigned long *qid    
+	char name[4],
+	unsigned long flags,
+	unsigned long count,
+	unsigned long mmlen,
+	unsigned long *qid
 ){
    unsigned long rc;
    
-    if ((rc =sm_create(name,0,flags,qid)) != ERR_OK)
-      return(rc);
-   /* Allocate memory for the message queue */
-   if ((ipc_array[ipc_idx]->m.qv = (qv_t*)calloc(count,sizeof(qv_t)) ) == NULL) {
-      sm_delete(*qid);
-      return(ERR_NOMEM);
-   }
-   /* Complete the transformation to a complex message queue */
-   ipc_array[ipc_idx]->sizeof_q     = count;
-   /*ipc_array[ipc_idx]->sizeof_m      = 0ul;*/
-   ipc_array[ipc_idx]->maxSizeof_m  = mmlen;
-   ipc_array[ipc_idx]->b_type       = V_QUEUE;
-   ipc_array[ipc_idx]->min_idx      = 0;
-   ipc_array[ipc_idx]->mout_idx     = 0;
-   return(ERR_OK);
+	if ((rc =sm_create(name,0,flags,qid)) != ERR_OK)
+		return(rc);
+	/* Allocate memory for the message queue */
+	if ((ipc_array[ipc_idx]->m.qv = (qv_t*)calloc(count,sizeof(qv_t)) ) == NULL) {
+		sm_delete(*qid);
+		return(ERR_NOMEM);
+	}
+	/* Complete the transformation to a complex message queue */
+	ipc_array[ipc_idx]->sizeof_q     = count;
+	/*ipc_array[ipc_idx]->sizeof_m      = 0ul;*/
+	ipc_array[ipc_idx]->maxSizeof_m  = mmlen;
+	ipc_array[ipc_idx]->b_type       = V_QUEUE;
+	ipc_array[ipc_idx]->min_idx      = 0;
+	ipc_array[ipc_idx]->mout_idx     = 0;
+	return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -1145,17 +1144,17 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_vdelete_ny(
-   unsigned long qid       /* id */
+	unsigned long qid       /* id */
 ) {
-   unsigned long rc;
-   unsigned int i;
-   
-   for ( i=0; i<ipc_array[qid]->sizeof_q ; i++) {
-      free(ipc_array[qid]->m.qv[i].mb);         /*Delete evry messsage*/
-   }
-   free(ipc_array[qid]->m.qv);                  /*Delete message table*/
-   rc = sm_delete(qid);
-   return (rc);
+	unsigned long rc;
+	unsigned int i;
+	
+	for ( i=0; i<ipc_array[qid]->sizeof_q ; i++) {
+		free(ipc_array[qid]->m.qv[i].mb);         /*Delete evry messsage*/
+	}
+	free(ipc_array[qid]->m.qv);                  /*Delete message table*/
+	rc = sm_delete(qid);
+	return (rc);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -1164,48 +1163,48 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_vreceive_ny(
-   unsigned long qid,      
-   unsigned long flags,    
-   unsigned long timeout,  
-   void *msg_buf,
-   unsigned long buf_len,  /* The size of your allocated buffer */
-    unsigned long *msg_len
+	unsigned long qid,
+	unsigned long flags,
+	unsigned long timeout,
+	void *msg_buf,
+	unsigned long buf_len,  /* The size of your allocated buffer */
+	unsigned long *msg_len
 ){
-   unsigned long rc;
-   
-   /* Test if the id is valid */
-   if (ipc_array[qid] == NULL )
-      return(ERR_OBJDEL);
-   if (ipc_array[qid]->b_type != V_QUEUE )
-      return(ERR_OBJTYPE);
-   if (ipc_array[qid]->token <= 0 && flags & NOWAIT )
-      return(ERR_NOSEM);
-   if (ipc_array[qid]->maxSizeof_m < buf_len )
-      return(ERR_BUFSIZ);
-         
-   /* OK Semaphore is valid, back to buisiness */
-   rc = _lock_stage_ny(qid, timeout);
-   if (!(proveConcistency(qid)))
-      assert(0);
-   if (rc != ERR_OK)
-      return(rc);
-
-   /* If execution reached here it means there is a message in the queue */
-   /*gotoxy(1,20);
-   printk(("%s \n",msg_buf));
-   printk(("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb));*/
-   memcpy(
-      msg_buf, 
-      ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].mb,
-      ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].s + 1
-   ); 
-   *msg_len = ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].s;
-   /*The message is delivered, free the slot*/  
-   free(ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].mb);
-   
-   ipc_array[qid]->mout_idx++;
-   ipc_array[qid]->mout_idx %= ipc_array[qid]->sizeof_q;
-   return(ERR_OK);
+	unsigned long rc;
+	
+	/* Test if the id is valid */
+	if (ipc_array[qid] == NULL )
+		return(ERR_OBJDEL);
+	if (ipc_array[qid]->b_type != V_QUEUE )
+		return(ERR_OBJTYPE);
+	if (ipc_array[qid]->token <= 0 && flags & NOWAIT )
+		return(ERR_NOSEM);
+	if (ipc_array[qid]->maxSizeof_m < buf_len )
+		return(ERR_BUFSIZ);
+		
+	/* OK Semaphore is valid, back to buisiness */
+	rc = _lock_stage_ny(qid, timeout);
+	if (!(proveConcistency(qid)))
+		assert(0);
+	if (rc != ERR_OK)
+		return(rc);
+	
+	/* If execution reached here it means there is a message in the queue */
+	/*gotoxy(1,20);
+	printk(("%s \n",msg_buf));
+	printk(("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb));*/
+	memcpy(
+		msg_buf, 
+		ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].mb,
+		ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].s + 1
+	); 
+	*msg_len = ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].s;
+	/*The message is delivered, free the slot*/  
+	free(ipc_array[qid]->m.qv[ipc_array[qid]->mout_idx].mb);
+	
+	ipc_array[qid]->mout_idx++;
+	ipc_array[qid]->mout_idx %= ipc_array[qid]->sizeof_q;
+	return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -1214,44 +1213,44 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_vsend_ny(
-   unsigned long qid,      
-   void *msg_buf,
-   unsigned long msg_len
+	unsigned long qid,      
+	void *msg_buf,
+	unsigned long msg_len
 ){
-   unsigned long rc;
-   
-   /* Test if the id is valid */
-   if (ipc_array[qid] == NULL )
-      return(ERR_OBJDEL);
-   if (ipc_array[qid]->b_type != V_QUEUE )
-      return(ERR_OBJTYPE);
-   if (ipc_array[qid]->token > 0)
-      if (!(ipc_array[qid]->token < (int)ipc_array[qid]->sizeof_q)) //Cast on the right side is important
-         return(ERR_FULL);
-      
-   
-   /* Allocate memory to store message */
-   if ((ipc_array[ipc_idx]->m.qv[ipc_array[qid]->min_idx].mb = 
-      malloc(msg_len + 1)) == NULL) 
-   {
-      return(ERR_NOMEM);
-   }
-   /* put the message in the message queue */
-   memcpy(ipc_array[qid]->m.qv[ipc_array[qid]->min_idx].mb, msg_buf, msg_len + 1);
-   ipc_array[qid]->m.qv[ipc_array[qid]->min_idx].s = msg_len;
-   
-   ipc_array[qid]->min_idx++;
-   ipc_array[qid]->min_idx %= ipc_array[qid]->sizeof_q; 
-   //gotoxy(1,19);
-   printk(("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb));
-
-   
-   rc = _unlock_stage_ny(qid);
-   if (!(proveConcistency(qid)))
-      assert(0);
-   if (rc !=  ERR_OK)
-      return(rc);
-   return(ERR_OK);
+	unsigned long rc;
+	
+	/* Test if the id is valid */
+	if (ipc_array[qid] == NULL )
+	return(ERR_OBJDEL);
+	if (ipc_array[qid]->b_type != V_QUEUE )
+	return(ERR_OBJTYPE);
+	if (ipc_array[qid]->token > 0)
+	if (!(ipc_array[qid]->token < (int)ipc_array[qid]->sizeof_q)) //Cast on the right side is important
+		return(ERR_FULL);
+	
+	
+	/* Allocate memory to store message */
+	if ((ipc_array[ipc_idx]->m.qv[ipc_array[qid]->min_idx].mb = 
+		malloc(msg_len + 1)) == NULL) 
+	{
+		return(ERR_NOMEM);
+	}
+	/* put the message in the message queue */
+	memcpy(ipc_array[qid]->m.qv[ipc_array[qid]->min_idx].mb, msg_buf, msg_len + 1);
+	ipc_array[qid]->m.qv[ipc_array[qid]->min_idx].s = msg_len;
+	
+	ipc_array[qid]->min_idx++;
+	ipc_array[qid]->min_idx %= ipc_array[qid]->sizeof_q; 
+	//gotoxy(1,19);
+	printk(("%s \n",ipc_array[qid]->m.qv[ipc_array[ipc_array[qid]->mout_idx]->mout_idx].mb));
+	
+	
+	rc = _unlock_stage_ny(qid);
+	if (!(proveConcistency(qid)))
+		assert(0);
+	if (rc !=  ERR_OK)
+		return(rc);
+	return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -1260,27 +1259,27 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_create_ny(
-   char name[4],         
-   unsigned long count,  
-   unsigned long flags,  
-   unsigned long *qid    
+	char name[4],
+	unsigned long count,
+	unsigned long flags,
+	unsigned long *qid
 ){
-   unsigned long rc;
-   
-   if ((rc =sm_create(name,0,flags,qid)) != ERR_OK)
-      return(rc);
-   /* Allocate memory for the message queue */
-   if ((ipc_array[ipc_idx]->m.q = (q_t*)calloc(count,sizeof(q_t)) ) == NULL) {
-      sm_delete(*qid);
-      return(ERR_NOMEM);
-   }
-   /* Complete the transformation to a simple message queue */
-   ipc_array[ipc_idx]->sizeof_q = count;
-   /*ipc_array[ipc_idx]->sizeof_m = 4;*/
-   ipc_array[ipc_idx]->b_type = S_QUEUE;
-   ipc_array[ipc_idx]->min_idx  = 0;
-   ipc_array[ipc_idx]->mout_idx = 0;
-   return(ERR_OK);
+	unsigned long rc;
+	
+	if ((rc =sm_create(name,0,flags,qid)) != ERR_OK)
+	return(rc);
+	/* Allocate memory for the message queue */
+	if ((ipc_array[ipc_idx]->m.q = (q_t*)calloc(count,sizeof(q_t)) ) == NULL) {
+		sm_delete(*qid);
+		return(ERR_NOMEM);
+	}
+	/* Complete the transformation to a simple message queue */
+	ipc_array[ipc_idx]->sizeof_q = count;
+	/*ipc_array[ipc_idx]->sizeof_m = 4;*/
+	ipc_array[ipc_idx]->b_type = S_QUEUE;
+	ipc_array[ipc_idx]->min_idx  = 0;
+	ipc_array[ipc_idx]->mout_idx = 0;
+	return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -1289,13 +1288,13 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_delete_ny(
-   unsigned long qid       /* id */
+	unsigned long qid       /* id */
 ) {
-   unsigned long rc;
-   
-   free(ipc_array[qid]->m.q);
-   rc = sm_delete(qid);
-   return (rc);
+	unsigned long rc;
+	
+	free(ipc_array[qid]->m.q);
+	rc = sm_delete(qid);
+	return (rc);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -1304,33 +1303,33 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_receive_ny(
-   unsigned long qid,      
-   unsigned long flags,    
-   unsigned long timeout,  
-   unsigned long msg_buf[4]
+	unsigned long qid,      
+	unsigned long flags,    
+	unsigned long timeout,  
+	unsigned long msg_buf[4]
 ){
-   unsigned long rc;
-   
-   /* Test if the id is valid */
-   if (ipc_array[qid] == NULL )
-      return(ERR_OBJDEL);
-   if (ipc_array[qid]->b_type != S_QUEUE )
-      return(ERR_OBJTYPE);
-   if (ipc_array[qid]->token <= 0 && flags & NOWAIT )
-      return(ERR_NOSEM);
-         
-   /* OK Semaphore is valid, back to buisiness */
-   rc = _lock_stage_ny(qid, timeout);
-   if (!(proveConcistency(qid)))
-      assert(0);
-   if (rc != ERR_OK)
-      return(rc);
-
-   /* If execution reached here it means there is a message in the queue */
-   memcpy(msg_buf, ipc_array[qid]->m.q[ipc_array[qid]->mout_idx], sizeof(q_t));
-   ipc_array[qid]->mout_idx++;
-   ipc_array[qid]->mout_idx %= ipc_array[qid]->sizeof_q;
-   return(ERR_OK);
+	unsigned long rc;
+	
+	/* Test if the id is valid */
+	if (ipc_array[qid] == NULL )
+		return(ERR_OBJDEL);
+	if (ipc_array[qid]->b_type != S_QUEUE )
+		return(ERR_OBJTYPE);
+	if (ipc_array[qid]->token <= 0 && flags & NOWAIT )
+		return(ERR_NOSEM);
+		
+	/* OK Semaphore is valid, back to buisiness */
+	rc = _lock_stage_ny(qid, timeout);
+	if (!(proveConcistency(qid)))
+		assert(0);
+	if (rc != ERR_OK)
+		return(rc);
+	
+	/* If execution reached here it means there is a message in the queue */
+	memcpy(msg_buf, ipc_array[qid]->m.q[ipc_array[qid]->mout_idx], sizeof(q_t));
+	ipc_array[qid]->mout_idx++;
+	ipc_array[qid]->mout_idx %= ipc_array[qid]->sizeof_q;
+	return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -1339,34 +1338,34 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_send_ny(
-   unsigned long qid,      
-   unsigned long msg_buf[4]
+	unsigned long qid,
+	unsigned long msg_buf[4]
 ){
-   unsigned long rc;
-   TK_CLI();
-   
-   /* Test if the id is valid */
-   if (ipc_array[qid] == NULL )
-      { return(ERR_OBJDEL); TK_STI(); }
-   if (ipc_array[qid]->b_type != S_QUEUE )
-      { return(ERR_OBJTYPE); TK_STI(); }
-   if (ipc_array[qid]->token > 0)
-      if (!(ipc_array[qid]->token < (int)ipc_array[qid]->sizeof_q)) //Cast on the right side is important
-         { return(ERR_FULL); TK_STI(); }
-      
-   
-   /* put the message in the message queue */
-   memcpy(ipc_array[qid]->m.q[ipc_array[qid]->min_idx], msg_buf, sizeof(q_t));
-   ipc_array[qid]->min_idx++;
-   ipc_array[qid]->min_idx %= ipc_array[qid]->sizeof_q; 
-   
-   rc = _unlock_stage_ny(qid);
-   if (!(proveConcistency(qid)))
-      assert(0);
-   if (rc !=  ERR_OK)
-      { return(rc); TK_STI(); }
-   TK_STI();
-   return(ERR_OK);
+	unsigned long rc;
+	TK_CLI();
+	
+	/* Test if the id is valid */
+	if (ipc_array[qid] == NULL )
+		{ return(ERR_OBJDEL); TK_STI(); }
+	if (ipc_array[qid]->b_type != S_QUEUE )
+		{ return(ERR_OBJTYPE); TK_STI(); }
+	if (ipc_array[qid]->token > 0)
+		if (!(ipc_array[qid]->token < (int)ipc_array[qid]->sizeof_q)) //Cast on the right side is important
+			{ return(ERR_FULL); TK_STI(); }
+	
+	
+	/* put the message in the message queue */
+	memcpy(ipc_array[qid]->m.q[ipc_array[qid]->min_idx], msg_buf, sizeof(q_t));
+	ipc_array[qid]->min_idx++;
+	ipc_array[qid]->min_idx %= ipc_array[qid]->sizeof_q; 
+	
+	rc = _unlock_stage_ny(qid);
+	if (!(proveConcistency(qid)))
+		assert(0);
+	if (rc !=  ERR_OK)
+		{ return(rc); TK_STI(); }
+	TK_STI();
+	return(ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -1374,40 +1373,40 @@ Doc TBD
 
 @todo documet this
 */
-unsigned long sm_create_ny(	  
-   char name[4],           
-   unsigned long count,    
-   unsigned long flags,    
-   unsigned long *qid      
+unsigned long sm_create_ny(
+	char name[4],
+	unsigned long count,
+	unsigned long flags,
+	unsigned long *qid
 ) {
-   unsigned int rc,i;
-
-   if ((rc = findNextEmpySlot()) != ERR_OK) {
-      if (rc==ERR_OBJFULL) {
-         return(rc); 
-      }                 
-   }else if ((ipc_array[ipc_idx] = (itc_t*)malloc(sizeof(itc_t)) ) == NULL) {
-      return(ERR_NOMEM);
-   /* Allocate memory for pointertable of tk_tcb_t pointers */
-   }else if ((ipc_array[ipc_idx]->blocked_procs = (tk_tcb_t**)malloc(TK_MAX_BLOCKED_ON_Q * sizeof(tk_tcb_t*)) ) == NULL) {
-         return(ERR_NOMEM);
-   }
-   
-   /* Clean pointertable of blocked procs*/
-   for (i=0; i<TK_MAX_BLOCKED_ON_Q; i++) {
-      ipc_array[ipc_idx]->blocked_procs[i] = NULL;
-   }
-   strncpy(ipc_array[ipc_idx]->name,name,4);
-   ipc_array[ipc_idx]->token =  count;
-   ipc_array[ipc_idx]->flags = flags;
-   ipc_array[ipc_idx]->sizeof_q = 0;
-   /*ipc_array[ipc_idx]->sizeof_m = 0;*/
-   ipc_array[ipc_idx]->b_type = SEM;
-   ipc_array[ipc_idx]->in_idx  = 0;
-   ipc_array[ipc_idx]->out_idx = 0;
-   
-   *qid = ipc_idx;
-   return (ERR_OK);
+	unsigned int rc,i;
+	
+	if ((rc = findNextEmpySlot()) != ERR_OK) {
+		if (rc==ERR_OBJFULL) {
+			return(rc); 
+		}
+	}else if ((ipc_array[ipc_idx] = (itc_t*)malloc(sizeof(itc_t)) ) == NULL) {
+		return(ERR_NOMEM);
+		/* Allocate memory for pointertable of tk_tcb_t pointers */
+	}else if ((ipc_array[ipc_idx]->blocked_procs = (tk_tcb_t**)malloc(TK_MAX_BLOCKED_ON_Q * sizeof(tk_tcb_t*)) ) == NULL) {
+		return(ERR_NOMEM);
+	}
+	
+	/* Clean pointertable of blocked procs*/
+	for (i=0; i<TK_MAX_BLOCKED_ON_Q; i++) {
+		ipc_array[ipc_idx]->blocked_procs[i] = NULL;
+	}
+	strncpy(ipc_array[ipc_idx]->name,name,4);
+	ipc_array[ipc_idx]->token =  count;
+	ipc_array[ipc_idx]->flags = flags;
+	ipc_array[ipc_idx]->sizeof_q = 0;
+	/*ipc_array[ipc_idx]->sizeof_m = 0;*/
+	ipc_array[ipc_idx]->b_type = SEM;
+	ipc_array[ipc_idx]->in_idx  = 0;
+	ipc_array[ipc_idx]->out_idx = 0;
+	
+	*qid = ipc_idx;
+	return (ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -1416,14 +1415,14 @@ Doc TBD
 @todo documet this
 */
 unsigned long sm_delete_ny(
-   unsigned long qid       /* id */
+	unsigned long qid       /* id */
 ) {
-   /* Check if ITC exists */
-   /* Check if anyone is blocked (those are not freed but zombified)*/
-   free(ipc_array[qid]->blocked_procs);
-   free(ipc_array[qid]);
-   ipc_array[qid] = NULL;
-   return (ERR_OK);
+	/* Check if ITC exists */
+	/* Check if anyone is blocked (those are not freed but zombified)*/
+	free(ipc_array[qid]->blocked_procs);
+	free(ipc_array[qid]);
+	ipc_array[qid] = NULL;
+	return (ERR_OK);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -1431,24 +1430,24 @@ Doc TBD
 
 @todo documet this
 */
-unsigned long sm_p_ny(        /* sm_receive or sm_get */
-   unsigned long qid,         /* id */
-   unsigned long flags,       /* attrib */
-   unsigned long timeout      /* timeout in clock ticks !?vafan */
+unsigned long sm_p_ny( 			/* sm_receive or sm_get */
+	unsigned long qid,		/* id */
+	unsigned long flags,		/* attrib */
+	unsigned long timeout		/* timeout in clock ticks !?vafan */
 ) {
-   unsigned long rc;
-   
-   /* Test if the id is valid */
-   if (ipc_array[qid] == NULL )
-      return(ERR_OBJDEL);
-   if (ipc_array[qid]->b_type != SEM )
-      return(ERR_OBJTYPE);
-   if (ipc_array[qid]->token <= 0 && flags & NOWAIT )
-      return(ERR_NOSEM);
-         
-   /* OK Semaphore is valid, back to buisiness */
-   rc = _lock_stage_ny(qid, timeout);
-   return(rc);
+	unsigned long rc;
+	
+	/* Test if the id is valid */
+	if (ipc_array[qid] == NULL )
+		return(ERR_OBJDEL);
+	if (ipc_array[qid]->b_type != SEM )
+		return(ERR_OBJTYPE);
+	if (ipc_array[qid]->token <= 0 && flags & NOWAIT )
+		return(ERR_NOSEM);
+		
+	/* OK Semaphore is valid, back to buisiness */
+	rc = _lock_stage_ny(qid, timeout);
+	return(rc);
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -1457,20 +1456,20 @@ Doc TBD
 @todo documet this
 */
 unsigned long sm_v_ny(  /* sm_send or sm_put */
-   unsigned long qid    /* id */
+	unsigned long qid    /* id */
 ) {
-   unsigned long rc;
-      
-   /* Test if the id is valid */ /*#$-NOTE:C001-$#*/
-   if (ipc_array[qid] == NULL )
-      return(ERR_OBJDEL);
-   if (ipc_array[qid]->b_type != SEM )
-      return(ERR_OBJTYPE);
-      
-   rc = _unlock_stage_ny(qid);
-   return(rc);
-     
-   
+	unsigned long rc;
+	
+	/* Test if the id is valid */ /*#$-NOTE:C001-$#*/
+	if (ipc_array[qid] == NULL )
+		return(ERR_OBJDEL);
+	if (ipc_array[qid]->b_type != SEM )
+		return(ERR_OBJTYPE);
+	
+	rc = _unlock_stage_ny(qid);
+	return(rc);
+	
+	
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 #endif
@@ -1535,6 +1534,9 @@ pointer anyway).
  * @ingroup CVSLOG
  *
  *  $Log: tk_itc.c,v $
+ *  Revision 1.31  2007-03-22 09:08:31  ambrmi09
+ *  Intendation fixed to the code standard
+ *
  *  Revision 1.30  2006-12-11 14:41:53  ambrmi09
  *  Solves #1609064 (part1)
  *
