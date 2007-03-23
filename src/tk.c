@@ -152,7 +152,7 @@ been used. I would have wanted a Thid range that is much bigger and a lookup-
 table (gives greater uniqueness - specially useful for \ref ITC) but that
 is costly (I think)...
 
-@note that this is only the pool of TCB's, the schedule itself is \ref theSchedule 
+@note that this is only the pool of TCB's, the schedule itself is \ref __tk_schedule 
 
 coord_t lookUpTable[TK_MAX_THREADS];
 
@@ -161,7 +161,7 @@ coord_t lookUpTable[TK_MAX_THREADS];
 components use acces functions instead (locking issue).
 
 */
-       struct tcb_t_ proc_stat[TK_MAX_THREADS];  
+	struct tcb_t_ __tk_threadPool[TK_MAX_THREADS];  
 
 
 /*!
@@ -181,8 +181,8 @@ Matrix layout
 components use acces functions instead (locking issue).
 
 */
-       thid_t theSchedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
-       
+	thid_t __tk_schedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
+
 /*!
 A index to the schedule. Contains information about how many threads are in 
 the schedule at each lvl and which index is currently executing (important 
@@ -192,15 +192,16 @@ for load balancing and RR)
 (additional needed to be implemented). Important for preemtable mode that 
 components use acces functions instead (locking issue).
 
-*/       
-       struct stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
+*/
+	struct stat_t __tk_roundrobin_prio_idxs[TK_MAX_PRIO_LEVELS];
 
 
-static thid_t active_thread;        //!< Deliberatlly left uninitialized to support post mortem analysis
-static thid_t thread_to_run   = 0;
-static thid_t procs_in_use    = 0;
-static thid_t proc_idx;             //!< Points at the last TCB created in the \ref proc_stat pool
-static thid_t idle_Thid;            //!< Idle_Thid must be known, therefor public in this module (file)
+	thid_t __tk_active_thread;		//!< Deliberatlly left uninitialized to support post mortem analysis
+	#define active_thread __tk_active_thread
+	thid_t __tk_thread_to_run   = 0;
+	thid_t __tk_procs_in_use    = 0;
+	thid_t __tk_proc_idx;			//!< Points at the last TCB created in the \ref __tk_threadPool pool
+static	thid_t idle_Thid;			//!< Idle_Thid must be known, therefor public in this module (file)
 
 
 /*! 
@@ -235,7 +236,7 @@ void tk_delete_kernel( void ){
 }
 
 thid_t tk_thread_id( void ){
-   return(active_thread);
+   return(__tk_active_thread);
 }
 
 /*!
@@ -251,7 +252,7 @@ a way for different layers of TinKer to interact.
 
 */
 tk_tcb_t *_tk_current_tcb( void ){
-   return(&proc_stat[active_thread]);
+   return(&__tk_threadPool[__tk_active_thread]);
 }
 
 /*!
@@ -261,7 +262,7 @@ Same as tk_current_tcb but gets info for a specific thread
 */
 
 tk_tcb_t *_tk_specific_tcb( thid_t id ){
-   return(&proc_stat[id]);
+   return(&__tk_threadPool[id]);
 }
 
 /*! 
@@ -273,7 +274,7 @@ variable.
 @see errno
 */
 int *_tk_errno(){
-   return &(proc_stat[active_thread]._errno_);
+   return &(__tk_threadPool[__tk_active_thread]._errno_);
 }
 
 /*!
@@ -302,7 +303,7 @@ void tk_create_kernel( void ){
    if (strncmp(testPatt,testArea,TSTSZ) == 0){   
       printk(("Error: Kernel running amok detected\n"));
       printk(("Broken thread was ID=%d (name=\"%s\"))\n",\
-         active_thread,proc_stat[active_thread].name);
+         __tk_active_thread,__tk_threadPool[__tk_active_thread].name);
       memset (testArea, '\0', TSTSZ);     //Clear area then wait for reset
       tk_exit(TC_AMOK);
    }else{
@@ -311,60 +312,60 @@ void tk_create_kernel( void ){
    */
 
    for (i=0; i<TK_MAX_THREADS; i++){
-      proc_stat[i].state                        = ZOMBI;
-      proc_stat[i].bOnId.kind                   = BON_SCHED; 
-      proc_stat[i].bOnId.entity.tcb             = NULL;
-      proc_stat[i].wakeuptime                   = 0;
-      proc_stat[i].valid                        = TK_FALSE;
-      proc_stat[i].name[TK_THREAD_NAME_LEN]     = 0;
-      proc_stat[i].Gid                          = 0;
-      proc_stat[i].Thid                         = 0;
-      proc_stat[i].noChilds                     = 0;
-      proc_stat[i]._errno_                      = 0;
-      proc_stat[i].stack_size                   = 0;
-      STACK_PTR(proc_stat[i].stack_begin)       = NULL;
-      STACK_PTR(proc_stat[i].curr_sp)           = NULL;
-      proc_stat[i].stack_crc                    = 0;
-      proc_stat[i].wakeupEvent                  = E_NONE;
-      proc_stat[i].retval                       = (void*)0;
+      __tk_threadPool[i].state                        = ZOMBI;
+      __tk_threadPool[i].bOnId.kind                   = BON_SCHED; 
+      __tk_threadPool[i].bOnId.entity.tcb             = NULL;
+      __tk_threadPool[i].wakeuptime                   = 0;
+      __tk_threadPool[i].valid                        = TK_FALSE;
+      __tk_threadPool[i].name[TK_THREAD_NAME_LEN]     = 0;
+      __tk_threadPool[i].Gid                          = 0;
+      __tk_threadPool[i].Thid                         = 0;
+      __tk_threadPool[i].noChilds                     = 0;
+      __tk_threadPool[i]._errno_                      = 0;
+      __tk_threadPool[i].stack_size                   = 0;
+      STACK_PTR(__tk_threadPool[i].stack_begin)       = NULL;
+      STACK_PTR(__tk_threadPool[i].curr_sp)           = NULL;
+      __tk_threadPool[i].stack_crc                    = 0;
+      __tk_threadPool[i].wakeupEvent                  = E_NONE;
+      __tk_threadPool[i].retval                       = (void*)0;
 
 /*
-      proc_stat[i].start_funct                  = NULL;
-      proc_stat[i].init_funct                   = NULL;
-      proc_stat[i].prmtRetAddr                  = NULL;
+      __tk_threadPool[i].start_funct                  = NULL;
+      __tk_threadPool[i].init_funct                   = NULL;
+      __tk_threadPool[i].prmtRetAddr                  = NULL;
 */
    }
    //The Root proc is already created but must be registred
-   proc_stat[0].state = READY;
-   proc_stat[0].valid = TK_TRUE;
-   strcpy(proc_stat[0].name,"tk_root");
-   procs_in_use = 1;
-   proc_idx = 0;
+   __tk_threadPool[0].state = READY;
+   __tk_threadPool[0].valid = TK_TRUE;
+   strcpy(__tk_threadPool[0].name,"tk_root");
+   __tk_procs_in_use = 1;
+   __tk_proc_idx = 0;
    //Clear the tables (before creating idle - thread)
    for (i=0; i<TK_MAX_PRIO_LEVELS; i++){
       //Clear the help table
-      scheduleIdxs[i].procs_at_prio = 0;
-      scheduleIdxs[i].curr_idx = 0;
+      __tk_roundrobin_prio_idxs[i].procs_at_prio = 0;
+      __tk_roundrobin_prio_idxs[i].curr_idx = 0;
       for (j=0; j<TK_MAX_THREADS_AT_PRIO; j++){
          //init the table to root everywhere
-         theSchedule[i][j]=0;
+         __tk_schedule[i][j]=0;
       }
    }
    //Create a Idle thread, whoes sole purpose is to burn up time
    //when nobody else is running
    idle_Thid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,(void*)NULL,TK_MINIMUM_STACK_SIZE);
    //IdleProc must like root, i.e. bee owned by itself
-   proc_stat[proc_stat[idle_Thid].Gid].noChilds--;
+   __tk_threadPool[__tk_threadPool[idle_Thid].Gid].noChilds--;
    //Awkward way to say that root has created one process less than it has
-   proc_stat[idle_Thid].Gid = proc_stat[idle_Thid].Thid;
+   __tk_threadPool[idle_Thid].Gid = __tk_threadPool[idle_Thid].Thid;
    //Idle ownde by it self
    //Init shedule tables
    //Put the root in the scedule
-   scheduleIdxs[0].procs_at_prio = 1;
-   theSchedule[0][0]=0;
+   __tk_roundrobin_prio_idxs[0].procs_at_prio = 1;
+   __tk_schedule[0][0]=0;
    //Put idle thread in shedule at lowest prio
    /*
-   scheduleIdxs[TK_MAX_PRIO_LEVELS - 1].procs_at_prio = 1;
+   __tk_roundrobin_prio_idxs[TK_MAX_PRIO_LEVELS - 1].procs_at_prio = 1;
    theScedule[TK_MAX_PRIO_LEVELS - 1][0]=idle_Thid;
    */ /* NOT NEEDED, DONE ALREADY */
 }
@@ -402,21 +403,21 @@ In either case, this is more complicated. But also much more robust.
 void *_tk_destructor( void *retval ){
 
    #ifdef DEBUG
-   //printk(("Dieing thread [id=%d] is returning! Return value is: 0x%lX\n\n",active_thread,retval));  
+   //printk(("Dieing thread [id=%d] is returning! Return value is: 0x%lX\n\n",__tk_active_thread,retval));  
    #endif
 
-   proc_stat[active_thread].state  = ZOMBI;
-   proc_stat[active_thread].retval = (void*)retval;
-   _tk_detach_children(active_thread); 
+   __tk_threadPool[__tk_active_thread].state  = ZOMBI;
+   __tk_threadPool[__tk_active_thread].retval = (void*)retval;
+   _tk_detach_children(__tk_active_thread); 
 
    /*Finalize the destruction*/
-   //tk_delete_thread(active_thread);
+   //tk_delete_thread(__tk_active_thread);
    //tk_yield();
 
    while (TK_TRUE){
       tk_msleep(1000);
       #ifdef DEBUG
-      printk(("Dead thread [id=%d] still waiting for Nirvana! \n",active_thread));
+      printk(("Dead thread [id=%d] still waiting for Nirvana! \n",__tk_active_thread));
       #endif
    }
    //return(0);
@@ -436,40 +437,40 @@ int tk_delete_thread(
    unsigned int Prio,Idx,i;
    int bury_it = TK_TRUE;
    
-   if ( proc_stat[Thid].valid == TK_FALSE )  {
+   if ( __tk_threadPool[Thid].valid == TK_FALSE )  {
       //The process you are trying to delete does not exist
       return(TK_ERROR);    
    }
 
    
-   if (!(proc_stat[Thid].state & ZOMBI)){ //If not self terminated, but killed explicitlly - we need to perform some duties
-      proc_stat[Thid].state = ZOMBI;
+   if (!(__tk_threadPool[Thid].state & ZOMBI)){ //If not self terminated, but killed explicitlly - we need to perform some duties
+      __tk_threadPool[Thid].state = ZOMBI;
       _tk_detach_children(Thid); 
       bury_it = _tk_try_detach_parent(Thid, TK_FALSE); 
    }
    
    if (bury_it){   //Can we buy the damned thing allready? or do we have to try another round?
-      Prio = proc_stat[Thid].Prio;
-      Idx = proc_stat[Thid].Idx;
-      assert(theSchedule[Prio][Idx] == Thid);
-      procs_in_use--;
-      //Take away the process from theSchedule and compress gap at prio
-      for(i=Idx; i < scheduleIdxs[Prio].procs_at_prio; i++){
-         theSchedule[Prio][i] = theSchedule[Prio][i+1];
-         proc_stat[theSchedule[Prio][i]].Idx = i;
+      Prio = __tk_threadPool[Thid].Prio;
+      Idx = __tk_threadPool[Thid].Idx;
+      assert(__tk_schedule[Prio][Idx] == Thid);
+      __tk_procs_in_use--;
+      //Take away the process from __tk_schedule and compress gap at prio
+      for(i=Idx; i < __tk_roundrobin_prio_idxs[Prio].procs_at_prio; i++){
+         __tk_schedule[Prio][i] = __tk_schedule[Prio][i+1];
+         __tk_threadPool[__tk_schedule[Prio][i]].Idx = i;
       }
       //#if DEBUG
       // not needed, could cause problems if procs last.. 
-      //theSchedule[Prio][i] = 0;
+      //__tk_schedule[Prio][i] = 0;
       //#endif
-      //Take away the process fom scheduleIdxs
-      scheduleIdxs[Prio].procs_at_prio --;
-      if (scheduleIdxs[Prio].curr_idx >= scheduleIdxs[Prio].procs_at_prio){
-         scheduleIdxs[Prio].curr_idx = 0;
+      //Take away the process fom __tk_roundrobin_prio_idxs
+      __tk_roundrobin_prio_idxs[Prio].procs_at_prio --;
+      if (__tk_roundrobin_prio_idxs[Prio].curr_idx >= __tk_roundrobin_prio_idxs[Prio].procs_at_prio){
+         __tk_roundrobin_prio_idxs[Prio].curr_idx = 0;
       }
       //Make it final - remove it's primary resource: it's stack
-      stalloc_free( STACK_PTR(proc_stat[Thid].stack_begin) );
-      proc_stat[Thid].valid = TK_FALSE;
+      stalloc_free( STACK_PTR(__tk_threadPool[Thid].stack_begin) );
+      __tk_threadPool[Thid].valid = TK_FALSE;
    }
    
    return(TK_OK);
@@ -478,10 +479,10 @@ int tk_delete_thread(
 int tk_detach(
    thid_t Thid              //!< Threads identity
 ){
-   if ( proc_stat[Thid].valid != TK_TRUE)
+   if ( __tk_threadPool[Thid].valid != TK_TRUE)
       return ESRCH;
       
-   if ( proc_stat[Thid].Gid != -1)
+   if ( __tk_threadPool[Thid].Gid != -1)
       return EINVAL;
       
    _tk_try_detach_parent(Thid, TK_TRUE); //forcefully detach
@@ -509,16 +510,16 @@ thid_t tk_create_thread(
    void          *inpar,    //!< Any variable or value to start of with
    size_t         stack_size//!< Stack size
 ){
-   //where in theScheduler to put thread id
-   thid_t   slot_idx = scheduleIdxs[prio].procs_at_prio;
+   //where in __tk_scheduler to put thread id
+   thid_t   slot_idx = __tk_roundrobin_prio_idxs[prio].procs_at_prio;
    unsigned int   error = 0;
    #ifdef DEBUG
    unsigned int   i;
    #endif
 
    //Error handling needs improvment (don't forget taking special care of
-   //proc_idx)
-   if (procs_in_use >= TK_MAX_THREADS){
+   //__tk_proc_idx)
+   if (__tk_procs_in_use >= TK_MAX_THREADS){
       printk(("tk: Error - Total amount of threads would exceed limit\n"));
       error |= TC_MAX_THREADS;   
    }
@@ -528,7 +529,7 @@ thid_t tk_create_thread(
       error |= TC_MAX_PRIO_LEVELS;   
    }
    //Check if there will be enough room at that prio
-   if (TK_MAX_THREADS_AT_PRIO <= ( scheduleIdxs[prio].procs_at_prio ) ){
+   if (TK_MAX_THREADS_AT_PRIO <= ( __tk_roundrobin_prio_idxs[prio].procs_at_prio ) ){
       printk(("tk: Error - To many threads at this prio\n"));
       error |= TC_THREADS_AT_PRIO;   
    }
@@ -538,86 +539,86 @@ thid_t tk_create_thread(
    
    //Find next empty slot - which is also the CREATED Thid
    do{
-      proc_idx++;
-      proc_idx %= TK_MAX_THREADS;
-   }while (proc_stat[proc_idx].valid == TK_TRUE);
+      __tk_proc_idx++;
+      __tk_proc_idx %= TK_MAX_THREADS;
+   }while (__tk_threadPool[__tk_proc_idx].valid == TK_TRUE);
 
    //Test if the assigned name fits   
    //In case highly optimized kernel, no names stored at all and no timly string copy
    #if TK_THREAD_NAME_LEN
       if (strlen(name)<TK_THREAD_NAME_LEN)
-         strncpy(proc_stat[proc_idx].name,name,TK_THREAD_NAME_LEN);
+         strncpy(__tk_threadPool[__tk_proc_idx].name,name,TK_THREAD_NAME_LEN);
       else{
          printk(("tk: Error - Thread-name to long\n"));
          tk_exit(TC_NAME_LEN);
       }
    #endif
-   proc_stat[proc_idx].name[TK_THREAD_NAME_LEN] = 0; //Terminate string just in case it's needed. Note, there is one extra byte so indexing like this is OK.
+   __tk_threadPool[__tk_proc_idx].name[TK_THREAD_NAME_LEN] = 0; //Terminate string just in case it's needed. Note, there is one extra byte so indexing like this is OK.
    
    //Try to allocate memory for stack
-   if (( STACK_PTR(proc_stat[proc_idx].stack_begin) = (char *) stalloc(stack_size)) == NULL){
+   if (( STACK_PTR(__tk_threadPool[__tk_proc_idx].stack_begin) = (char *) stalloc(stack_size)) == NULL){
        printk(("tk: Error - Can't create process (can't allocate memory for stack)\n"));
        tk_exit(TC_NOMEM);  // terminate program if out of memory
    }
 
-   REINIT_STACKADDR( proc_stat[proc_idx].stack_begin, stack_size );
+   REINIT_STACKADDR( __tk_threadPool[__tk_proc_idx].stack_begin, stack_size );
    
-   proc_stat[proc_idx].valid              = TK_TRUE;
-   proc_stat[proc_idx].state              = READY;
-   proc_stat[proc_idx].bOnId.kind         = BON_SCHED;
-   proc_stat[proc_idx].bOnId.entity.tcb   = NULL;
-   proc_stat[proc_idx].Thid               = proc_idx;    //for future compability with lage Thid:s
-   proc_stat[proc_idx].Gid                = active_thread; //Owned by..   
-   proc_stat[proc_idx].noChilds           = 0;
-   proc_stat[proc_idx]._errno_            = 0;
-   proc_stat[proc_idx].stack_size         = stack_size;
-   proc_stat[proc_idx].Prio               = prio;
-   proc_stat[proc_idx].Idx                = slot_idx;
-   proc_stat[proc_idx].stack_crc          = 0;
+   __tk_threadPool[__tk_proc_idx].valid              = TK_TRUE;
+   __tk_threadPool[__tk_proc_idx].state              = READY;
+   __tk_threadPool[__tk_proc_idx].bOnId.kind         = BON_SCHED;
+   __tk_threadPool[__tk_proc_idx].bOnId.entity.tcb   = NULL;
+   __tk_threadPool[__tk_proc_idx].Thid               = __tk_proc_idx;    //for future compability with lage Thid:s
+   __tk_threadPool[__tk_proc_idx].Gid                = __tk_active_thread; //Owned by..   
+   __tk_threadPool[__tk_proc_idx].noChilds           = 0;
+   __tk_threadPool[__tk_proc_idx]._errno_            = 0;
+   __tk_threadPool[__tk_proc_idx].stack_size         = stack_size;
+   __tk_threadPool[__tk_proc_idx].Prio               = prio;
+   __tk_threadPool[__tk_proc_idx].Idx                = slot_idx;
+   __tk_threadPool[__tk_proc_idx].stack_crc          = 0;
 
-   proc_stat[proc_idx].wakeupEvent        = E_NONE;
-   proc_stat[proc_idx].retval             = inpar;  //This is convention and covers a special case
+   __tk_threadPool[__tk_proc_idx].wakeupEvent        = E_NONE;
+   __tk_threadPool[__tk_proc_idx].retval             = inpar;  //This is convention and covers a special case
    /*
-   proc_stat[proc_idx].start_funct  = f;
-   proc_stat[proc_idx].init_funct   = NULL;
-   proc_stat[proc_idx].prmtRetAddr  = NULL;
+   __tk_threadPool[__tk_proc_idx].start_funct  = f;
+   __tk_threadPool[__tk_proc_idx].init_funct   = NULL;
+   __tk_threadPool[__tk_proc_idx].prmtRetAddr  = NULL;
    */
 
-   proc_stat[active_thread].noChilds++;
-   procs_in_use++;
+   __tk_threadPool[__tk_active_thread].noChilds++;
+   __tk_procs_in_use++;
 
    #ifdef DEBUG
    #if defined (HAVE_MEMSET)
       #include <string.h>
-      memset(STACK_PTR(proc_stat[proc_idx].stack_begin),(unsigned char)proc_idx,stack_size-8);
+      memset(STACK_PTR(__tk_threadPool[__tk_proc_idx].stack_begin),(unsigned char)__tk_proc_idx,stack_size-8);
    #else
       for (i=0;i<stack_size;i++)
-         STACK_PTR(proc_stat[proc_idx].stack_begin)[i] = (unsigned char)proc_idx;
+         STACK_PTR(__tk_threadPool[__tk_proc_idx].stack_begin)[i] = (unsigned char)__tk_proc_idx;
    #endif
    #endif
 
-   _tk_construct_thread_scope( f, inpar, proc_idx );
+   _tk_construct_thread_scope( f, inpar, __tk_proc_idx );
    
    //Put process in scedule - assume tight tight schedule
-   theSchedule[prio][slot_idx] = proc_idx;
+   __tk_schedule[prio][slot_idx] = __tk_proc_idx;
    //Increase the amount of procs at same prio
-   scheduleIdxs[prio].procs_at_prio++;
+   __tk_roundrobin_prio_idxs[prio].procs_at_prio++;
    
    //Make a integrity certification on the stack of this thread
-   //INTEGRITY_CERTIFY_STACK(proc_stat[proc_idx], ct_temp3);
-   return proc_idx ;
+   //INTEGRITY_CERTIFY_STACK(__tk_threadPool[__tk_proc_idx], ct_temp3);
+   return __tk_proc_idx ;
 }
 
 int tk_join(thid_t PID, void ** value_ptr){
-   if ( proc_stat[PID].Gid != active_thread)    //Only threads own children can be joined in TinKer (restrictive)
+   if ( __tk_threadPool[PID].Gid != __tk_active_thread)    //Only threads own children can be joined in TinKer (restrictive)
       return EINVAL;                            
       
-   if ( proc_stat[PID].valid != TK_TRUE)
+   if ( __tk_threadPool[PID].valid != TK_TRUE)
       return ESRCH;
       
-   if (proc_stat[PID].state & ZOMBI){ //Thread is finished allready. no need to block AND we can safelly read it's return value
+   if (__tk_threadPool[PID].state & ZOMBI){ //Thread is finished allready. no need to block AND we can safelly read it's return value
       if (value_ptr != NULL) {
-         *value_ptr = proc_stat[PID].retval;
+         *value_ptr = __tk_threadPool[PID].retval;
       }
       //Also release it for cancelling. This is done by breaking it's 
       //parent-child relationship
@@ -625,15 +626,15 @@ int tk_join(thid_t PID, void ** value_ptr){
 
    }else{
       //prepare to block   
-      proc_stat[active_thread].bOnId.kind       = BON_SCHED;
-      proc_stat[active_thread].bOnId.entity.tcb = &proc_stat[PID];
-      proc_stat[active_thread].state = (PROCSTATE)(proc_stat[active_thread].state | TERM);
+      __tk_threadPool[__tk_active_thread].bOnId.kind       = BON_SCHED;
+      __tk_threadPool[__tk_active_thread].bOnId.entity.tcb = &__tk_threadPool[PID];
+      __tk_threadPool[__tk_active_thread].state = (PROCSTATE)(__tk_threadPool[__tk_active_thread].state | TERM);
       tk_yield();  //Will block
-      assert(proc_stat[active_thread].wakeupEvent == E_CHILDDEATH);
+      assert(__tk_threadPool[__tk_active_thread].wakeupEvent == E_CHILDDEATH);
       if (value_ptr != NULL) {
          //We can't read the TCB of the thread we were just blocked on. It migt allready be cancelled
          //However, It knew about this case when it awoke us - and made a copy in *our* retval instead. 
-         *value_ptr = proc_stat[active_thread].retval;
+         *value_ptr = __tk_threadPool[__tk_active_thread].retval;
       }      
    }
          
@@ -728,11 +729,11 @@ void tk_msleep( unsigned int time_ms ){
    //wkp_time_us    = act_time_us + time_ms*1000uL;
 
    //need a function t_diff that handles wraparound (done 060225, note kept for ref.)
-   proc_stat[active_thread].wakeuptime = wkp_time_us;
-   proc_stat[active_thread].state = (PROCSTATE)(proc_stat[active_thread].state | SLEEP);
+   __tk_threadPool[__tk_active_thread].wakeuptime = wkp_time_us;
+   __tk_threadPool[__tk_active_thread].state = (PROCSTATE)(__tk_threadPool[__tk_active_thread].state | SLEEP);
    /*
    Hmm... don't do the following unless zombie is checked. Pointless info, so we'll skip it
-   proc_stat[active_thread].bOnId = active_thread;
+   __tk_threadPool[__tk_active_thread].bOnId = __tk_active_thread;
    */
    tk_yield();
 }
@@ -749,7 +750,7 @@ int tk_change_prio(thid_t tid, int newPrio){
    int error = 0;
    int i;
    
-   if ( proc_stat[tid].valid != TK_TRUE){
+   if ( __tk_threadPool[tid].valid != TK_TRUE){
       printk(("tk: Error - Invalid TCB detected\n"));
       error |= TC_TCB_INVALID;   
    }       
@@ -760,7 +761,7 @@ int tk_change_prio(thid_t tid, int newPrio){
       error |= TC_MAX_PRIO_LEVELS;   
    }
    //Check if there will be enough room at that prio
-   if (TK_MAX_THREADS_AT_PRIO <= ( scheduleIdxs[newPrio].procs_at_prio ) ){
+   if (TK_MAX_THREADS_AT_PRIO <= ( __tk_roundrobin_prio_idxs[newPrio].procs_at_prio ) ){
       printk(("tk: Error - To many threads at this prio\n"));
       error |= TC_THREADS_AT_PRIO;   
    }
@@ -768,42 +769,42 @@ int tk_change_prio(thid_t tid, int newPrio){
       tk_exit(error);
    }
          
-   oldPrio = proc_stat[tid].Prio;
-   oldIdx =  proc_stat[tid].Idx;
+   oldPrio = __tk_threadPool[tid].Prio;
+   oldIdx =  __tk_threadPool[tid].Idx;
       
    if (oldPrio == newPrio)          //No need to do anything
       return 0;
          
-   if (proc_stat[tid].state != READY)
+   if (__tk_threadPool[tid].state != READY)
       y = 0;
    else{
       if (newPrio > oldPrio)          //is yield recomended after completion?
          y = 1;
-      else if (active_thread == tid)
+      else if (__tk_active_thread == tid)
          y = 1;
       else 
          y = 0;                       
    }
    
-   //Take away the process from theSchedule and compress gap at prio
-   for(i=oldIdx; i < scheduleIdxs[oldPrio].procs_at_prio; i++){
-      theSchedule[oldPrio][i] = theSchedule[oldPrio][i+1];
-      proc_stat[theSchedule[oldPrio][i]].Idx = i;
+   //Take away the process from __tk_schedule and compress gap at prio
+   for(i=oldIdx; i < __tk_roundrobin_prio_idxs[oldPrio].procs_at_prio; i++){
+      __tk_schedule[oldPrio][i] = __tk_schedule[oldPrio][i+1];
+      __tk_threadPool[__tk_schedule[oldPrio][i]].Idx = i;
    }
-   scheduleIdxs[oldPrio].procs_at_prio --;
-   if (scheduleIdxs[oldPrio].curr_idx >= scheduleIdxs[oldPrio].procs_at_prio){ //Uncertain about this.. Same issue in kill_thread
-      scheduleIdxs[oldPrio].curr_idx = 0;
+   __tk_roundrobin_prio_idxs[oldPrio].procs_at_prio --;
+   if (__tk_roundrobin_prio_idxs[oldPrio].curr_idx >= __tk_roundrobin_prio_idxs[oldPrio].procs_at_prio){ //Uncertain about this.. Same issue in kill_thread
+      __tk_roundrobin_prio_idxs[oldPrio].curr_idx = 0;
    }
    
    //Put the thread in the schedule in it's new position   
-   newIdx = scheduleIdxs[newPrio].procs_at_prio;
+   newIdx = __tk_roundrobin_prio_idxs[newPrio].procs_at_prio;
    
-   theSchedule[newPrio][newIdx] = tid;
-   scheduleIdxs[newPrio].procs_at_prio++;
+   __tk_schedule[newPrio][newIdx] = tid;
+   __tk_roundrobin_prio_idxs[newPrio].procs_at_prio++;
    
    //Finalize by correcting the TCB also
-   proc_stat[tid].Prio = newPrio;
-   proc_stat[tid].Idx  = newIdx;
+   __tk_threadPool[tid].Prio = newPrio;
+   __tk_threadPool[tid].Idx  = newIdx;
    
    return y;
    
@@ -850,22 +851,22 @@ void _tk_wakeup_timedout_threads( void ){
    act_time_us    = tk_clock() * (1000000uL/CLOCKS_PER_SEC);
    //Note: The following is not just a sanity check, the list might be 
    //fragmented.Explains also why the the whole table (pool) has to be 
-   //travesesd, and not just [0..procs_in_use]
+   //travesesd, and not just [0..__tk_procs_in_use]
    for(i=0;i<TK_MAX_THREADS;i++){
-      if (proc_stat[i].valid){
+      if (__tk_threadPool[i].valid){
 
-         if (proc_stat[i].state & SLEEP){  //This one is sleeping. Time to wake him up?
-            //if ( act_time >= proc_stat[i].wakeuptime ){
-            //if ( (signed long)(act_time - proc_stat[i].wakeuptime) >= 0 ){
-            if ( (signed long)(difftime(act_time_us,proc_stat[i].wakeuptime) ) >= 0 ){
-               proc_stat[i].state = (PROCSTATE)(proc_stat[i].state & ~_____QS_); /*Release ques also (but not the TERM bit)*/
-               proc_stat[i].wakeupEvent = E_TIMER;
+         if (__tk_threadPool[i].state & SLEEP){  //This one is sleeping. Time to wake him up?
+            //if ( act_time >= __tk_threadPool[i].wakeuptime ){
+            //if ( (signed long)(act_time - __tk_threadPool[i].wakeuptime) >= 0 ){
+            if ( (signed long)(difftime(act_time_us,__tk_threadPool[i].wakeuptime) ) >= 0 ){
+               __tk_threadPool[i].state = (PROCSTATE)(__tk_threadPool[i].state & ~_____QS_); /*Release ques also (but not the TERM bit)*/
+               __tk_threadPool[i].wakeupEvent = E_TIMER;
             }
          }
 
          //This thread wants to die (zombied). But make sure someone else is doing it 
          //(otherwize we would remove our own stack, which is both ugly and dangerous)
-         if ((proc_stat[i].state & ZOMBI) && (i != active_thread)){ 
+         if ((__tk_threadPool[i].state & ZOMBI) && (i != __tk_active_thread)){ 
 
             //We shuld not really need to do the following line. Should 
             //have been done in any canceling mechanism of the thread.
@@ -917,12 +918,12 @@ void _tk_detach_children(
 ){
    thid_t j;
    
-   if (  proc_stat[thid].noChilds > 0 ){  //Dang! We must make our own children parentless ;(
-      for(j=0;(proc_stat[thid].noChilds>0) && (j<TK_MAX_THREADS);j++){
-         if (proc_stat[j].valid && proc_stat[j].Gid == thid){
+   if (  __tk_threadPool[thid].noChilds > 0 ){  //Dang! We must make our own children parentless ;(
+      for(j=0;(__tk_threadPool[thid].noChilds>0) && (j<TK_MAX_THREADS);j++){
+         if (__tk_threadPool[j].valid && __tk_threadPool[j].Gid == thid){
             /*Foud a poor sod*/
-            proc_stat[j].Gid = -1;
-            proc_stat[thid].noChilds--;
+            __tk_threadPool[j].Gid = -1;
+            __tk_threadPool[thid].noChilds--;
          }           
       }
    }
@@ -972,11 +973,11 @@ int _tk_try_detach_parent(
 ){
    int succeded_unblocking_parent = TK_FALSE;      
    
-   if (  proc_stat[thid].Gid == -1 )
+   if (  __tk_threadPool[thid].Gid == -1 )
       return TK_TRUE;                     //allready orphan
       
    // (if con't) Yes, I have a parent, but is it waiting for my death or not?         
-   assert (proc_stat[proc_stat[thid].Gid].valid);  //sanity check
+   assert (__tk_threadPool[__tk_threadPool[thid].Gid].valid);  //sanity check
    //We must have faith now, that the Gid is actually the one that created us, and 
    //not a reused identity (which should not be possible to happen - mybe invent a 
    //snity check for this?)
@@ -984,33 +985,33 @@ int _tk_try_detach_parent(
                   
    //If waiting for me (not my bro or sis) death, unblock the parent. (i.e. parent executed a tk_join)
    if (
-      (proc_stat[proc_stat[thid].Gid].state & TERM) && 
-      proc_stat[proc_stat[thid].Gid].bOnId.entity.tcb == &proc_stat[thid] )
+      (__tk_threadPool[__tk_threadPool[thid].Gid].state & TERM) && 
+      __tk_threadPool[__tk_threadPool[thid].Gid].bOnId.entity.tcb == &__tk_threadPool[thid] )
    {
-      proc_stat[proc_stat[thid].Gid].state = (PROCSTATE)(proc_stat[proc_stat[thid].Gid].state & ~_______T); //Release the waiting parent
-      proc_stat[proc_stat[thid].Gid].wakeupEvent = E_CHILDDEATH;
+      __tk_threadPool[__tk_threadPool[thid].Gid].state = (PROCSTATE)(__tk_threadPool[__tk_threadPool[thid].Gid].state & ~_______T); //Release the waiting parent
+      __tk_threadPool[__tk_threadPool[thid].Gid].wakeupEvent = E_CHILDDEATH;
       //Special case, if both ___S_ and ____T (i.e. timeoutable join)
-      if (proc_stat[proc_stat[thid].Gid].state == READY) { //What must be left is __S_
-         proc_stat[proc_stat[thid].Gid].bOnId.entity.tcb = NULL;
-         proc_stat[proc_stat[thid].Gid].bOnId.kind       = BON_SCHED;
+      if (__tk_threadPool[__tk_threadPool[thid].Gid].state == READY) { //What must be left is __S_
+         __tk_threadPool[__tk_threadPool[thid].Gid].bOnId.entity.tcb = NULL;
+         __tk_threadPool[__tk_threadPool[thid].Gid].bOnId.kind       = BON_SCHED;
       }else{
-         proc_stat[proc_stat[thid].Gid].bOnId.entity.tcb = &proc_stat[thid];
-         proc_stat[proc_stat[thid].Gid].bOnId.kind       = BON_SCHED;
+         __tk_threadPool[__tk_threadPool[thid].Gid].bOnId.entity.tcb = &__tk_threadPool[thid];
+         __tk_threadPool[__tk_threadPool[thid].Gid].bOnId.kind       = BON_SCHED;
       }
 
       succeded_unblocking_parent = TK_TRUE;
       //We are likelly to get out of context before the parent can read our retval. Therefore make an
       //active copy to the parent's retval instead. The parent will know of this case and use that one 
       //instead of trying to read a potentially invalid TCB.
-      proc_stat[proc_stat[thid].Gid].retval = proc_stat[thid].retval;
+      __tk_threadPool[__tk_threadPool[thid].Gid].retval = __tk_threadPool[thid].retval;
       
    } else
       succeded_unblocking_parent = TK_FALSE;
       
    if ( (succeded_unblocking_parent == TK_TRUE) || (force == TK_TRUE) ) {
-      proc_stat[proc_stat[thid].Gid].noChilds--;
-      assert(proc_stat[proc_stat[thid].Gid].noChilds >= 0);
-      proc_stat[thid].Gid = -1;
+      __tk_threadPool[__tk_threadPool[thid].Gid].noChilds--;
+      assert(__tk_threadPool[__tk_threadPool[thid].Gid].noChilds >= 0);
+      __tk_threadPool[thid].Gid = -1;
       return TK_TRUE;
    } 
    
@@ -1032,17 +1033,17 @@ thid_t _tk_next_runable_thread(){
    found        = TK_FALSE;
 
    for(prio=0;prio<TK_MAX_PRIO_LEVELS && !found;prio++){ //prio from highets to lowest
-      p_at_p = scheduleIdxs[prio].procs_at_prio;
+      p_at_p = __tk_roundrobin_prio_idxs[prio].procs_at_prio;
       if (p_at_p != 0){ //No procs at prio to run.. prevent division by zero
          //Manual RR from current to next ready
-         idx =(scheduleIdxs[prio].curr_idx);
-         cidx = scheduleIdxs[prio].curr_idx;
-         nbTry = scheduleIdxs[prio].procs_at_prio;                             
+         idx =(__tk_roundrobin_prio_idxs[prio].curr_idx);
+         cidx = __tk_roundrobin_prio_idxs[prio].curr_idx;
+         nbTry = __tk_roundrobin_prio_idxs[prio].procs_at_prio;                             
          for(  loop = 0;
                loop < nbTry && !found;
                loop++){
-            if (proc_stat[theSchedule[prio][idx]].state == READY){
-               return_Thid = theSchedule[prio][idx];
+            if (__tk_threadPool[__tk_schedule[prio][idx]].state == READY){
+               return_Thid = __tk_schedule[prio][idx];
                found = TK_TRUE;
             }
             //Next proc at this prio that should try to run
@@ -1089,8 +1090,8 @@ void _tk_context_switch_to_thread(
    TK_NO_WARN_ARG(cswTEMP);
    TK_NO_WARN_ARG(cswTEMP2);
 
-   //TRY_CATCH_STACK_ERROR( proc_stat[SID].stack_begin, cswTEMP2 );
-   //INTEGRITY_CERTIFY_STACK( proc_stat[SID], cswTEMP2 ); //Certify the stack we're leaving from
+   //TRY_CATCH_STACK_ERROR( __tk_threadPool[SID].stack_begin, cswTEMP2 );
+   //INTEGRITY_CERTIFY_STACK( __tk_threadPool[SID], cswTEMP2 ); //Certify the stack we're leaving from
 
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );
    
@@ -1098,14 +1099,14 @@ void _tk_context_switch_to_thread(
    if (cswTEMP==0)
    #endif
    {
-      STACK_PTR( proc_stat[SID].curr_sp ) = cswTSP;
+      STACK_PTR( __tk_threadPool[SID].curr_sp ) = cswTSP;
    
-      cswTSP = STACK_PTR( proc_stat[RID].curr_sp ); 
+      cswTSP = STACK_PTR( __tk_threadPool[RID].curr_sp ); 
 
-      active_thread=RID;
+      __tk_active_thread=RID;
       CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );
    }
-   //TRY_CATCH_STACK_INTEGRITY_VIOLATION( proc_stat[active_thread], cswTEMP2 ); //Check integrity is OK before running 
+   //TRY_CATCH_STACK_INTEGRITY_VIOLATION( __tk_threadPool[__tk_active_thread], cswTEMP2 ); //Check integrity is OK before running 
 }
 
 void _tk_half_switch (
@@ -1121,8 +1122,8 @@ void _tk_half_switch (
    TK_NO_WARN_ARG(cswTEMP2);
 
 
-   //TRY_CATCH_STACK_ERROR( proc_stat[SID].stack_begin, cswTEMP2 );
-   //INTEGRITY_CERTIFY_STACK( proc_stat[SID], cswTEMP2 ); //Certify the stack we're leaving from
+   //TRY_CATCH_STACK_ERROR( __tk_threadPool[SID].stack_begin, cswTEMP2 );
+   //INTEGRITY_CERTIFY_STACK( __tk_threadPool[SID], cswTEMP2 ); //Certify the stack we're leaving from
    
 
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );
@@ -1131,13 +1132,13 @@ void _tk_half_switch (
    if (cswTEMP==0)
    #endif
    {
-      STACK_PTR( proc_stat[SID].curr_sp ) = cswTSP;
-      cswTSP = STACK_PTR( proc_stat[SID].curr_sp );
+      STACK_PTR( __tk_threadPool[SID].curr_sp ) = cswTSP;
+      cswTSP = STACK_PTR( __tk_threadPool[SID].curr_sp );
 
-      active_thread=RID;
+      __tk_active_thread=RID;
       CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );
    }
-   //TRY_CATCH_STACK_INTEGRITY_VIOLATION( proc_stat[active_thread], cswTEMP2 ); //Check integrity is OK before running 
+   //TRY_CATCH_STACK_INTEGRITY_VIOLATION( __tk_threadPool[__tk_active_thread], cswTEMP2 ); //Check integrity is OK before running 
 }
 
 
@@ -1158,7 +1159,7 @@ void _tk_constructor(
    //Instead we start by "context" switching back to the
    //thread that created us.
    
-   //_tk_context_switch_to_thread(active_thread, id); //Note both arguments *seems* wrong (but they are correct).
+   //_tk_context_switch_to_thread(__tk_active_thread, id); //Note both arguments *seems* wrong (but they are correct).
    //When the above function returns - it will return to the caller *and not to us* (important)
 
    tk_yield();
@@ -1203,8 +1204,8 @@ TK_CLI();
    
    //Set initial value of the SP in TCB (does not affect register SP)
    INIT_SP(
-      proc_stat[t_id].curr_sp, 
-      proc_stat[t_id].stack_begin
+      __tk_threadPool[t_id].curr_sp, 
+      __tk_threadPool[t_id].stack_begin
    );
 
    //The following variable is used by the BIND_STACK macro.
@@ -1212,15 +1213,15 @@ TK_CLI();
    //manipulating and cant access complex structures without them. Therfoe
    //keep the following  access simple by using a copy stored in the code seg.
    //(Note: stack_t is a form of pointer that is used to refer to the physical stack)
-   SPS = proc_stat[t_id].curr_sp;     
+   SPS = __tk_threadPool[t_id].curr_sp;     
   //TK_CLI();
    PUSHALL();              // <--       // Make sure CPU context is ok
   //TK_STI();
   //TK_CLI();
-   _tk_half_switch(t_id, active_thread);
+   _tk_half_switch(t_id, __tk_active_thread);
   //TK_STI();
 
-   if (active_thread != t_id){      
+   if (__tk_active_thread != t_id){      
       POPALL();            // <--      // ...since we're comming back via 
       return;                          // another function (might not be using
                                        // exactlly the same regs, base-
@@ -1228,7 +1229,7 @@ TK_CLI();
    }
    
    //Do the acual stack change (CPU register level)
-   aSP = STACK_PTR( proc_stat[t_id].curr_sp );
+   aSP = STACK_PTR( __tk_threadPool[t_id].curr_sp );
    CHANGE_STACK( aSP, TEMP );
       
    //Some targets need a certain binding of the stack until we can use a single
@@ -1286,9 +1287,9 @@ void tk_yield( void ){
    
    //Do not premit interrupts between the following two. Proc statuses 
    //(i.e. thread statuses) frozen in time.
-   thread_to_run = _tk_next_runable_thread();
+   __tk_thread_to_run = _tk_next_runable_thread();
    _tk_context_switch_to_thread(
-      thread_to_run,active_thread
+      __tk_thread_to_run,__tk_active_thread
    );   
    
    POPALL();
@@ -1309,9 +1310,9 @@ and to be called from an event source (i.e. ISR).
 void tk_yield_event( void ){
    TK_CLI();
    PUSHALL();
-   thread_to_run = _tk_next_runable_thread();
+   __tk_thread_to_run = _tk_next_runable_thread();
    _tk_context_switch_to_thread(
-      thread_to_run,active_thread
+      __tk_thread_to_run,__tk_active_thread
    );   
    POPALL();
    TK_STI();
@@ -1537,6 +1538,10 @@ int main(int argc, char **argv){
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
  *  $Log: tk.c,v $
+ *  Revision 1.81  2007-03-23 20:42:11  ambrmi09
+ *  Major renaming of shared (to be) variables that will be shared among several
+ *  files. This is due to the need to partition tk.c
+ *
  *  Revision 1.80  2007-03-19 17:07:55  ambrmi09
  *  Interrupt structure/handling reworked - Motorola is wacked, clear IRQ by
  *  setting allready bit in SIPEND (!)
