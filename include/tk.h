@@ -238,6 +238,7 @@ thid_t         tk_thread_id( void );
 int            tk_change_prio(thid_t tid, int newPrio);
 int            tk_isr_install(int level, isr_handler isr);
 void           tk_isr_eoi(int level);
+void           tk_preemplist(thid_t);
 
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 }
@@ -295,6 +296,10 @@ extern int     tk_bsp_sysinit(void);
  * @ingroup CVSLOG
  *
  *  $Log: tk.h,v $
+ *  Revision 1.50  2007-03-23 20:27:23  ambrmi09
+ *  1) Reorganization of ITC into several smaller files
+ *  2) Component pthread now supports 3,5,9 and 16 priorities
+ *
  *  Revision 1.49  2007-03-19 17:07:55  ambrmi09
  *  Interrupt structure/handling reworked - Motorola is wacked, clear IRQ by
  *  setting allready bit in SIPEND (!)

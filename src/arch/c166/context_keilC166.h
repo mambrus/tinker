@@ -257,12 +257,12 @@ void _do_trap (unsigned int num);
 
 #define OBSOLETE_TK_CLI()                                                     \
    __asm{ BCLR PSW_IEN }                                                      \
-   Tk_IntFlagCntr++;
+   _tk_IntFlagCntr++;
 
 
 #define OBSOLETE_TK_STI()	                                              \
-   Tk_IntFlagCntr--;  /*Is ok since CLI is active no one can interfere*/      \
-   if (Tk_IntFlagCntr == 0)                                                   \
+   _tk_IntFlagCntr--;  /*Is ok since CLI is active no one can interfere*/      \
+   if (_tk_IntFlagCntr == 0)                                                   \
       __asm{ BSET PSW_IEN }
 
 #define TK_CLI()                                                              \
@@ -357,6 +357,10 @@ TBD
  * @ingroup CVSLOG
  *
  *  $Log: context_keilC166.h,v $
+ *  Revision 1.3  2007-03-23 20:27:24  ambrmi09
+ *  1) Reorganization of ITC into several smaller files
+ *  2) Component pthread now supports 3,5,9 and 16 priorities
+ *
  *  Revision 1.2  2006-11-09 12:31:35  ambrmi09
  *  Fixed macros with line cont. last (broke build after indent)
  *

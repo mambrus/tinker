@@ -36,7 +36,7 @@ fi
 
 dnl Components & packake usage deduction 
 if test $_TK_COMP_ITC != __tk_no; then
-   sources_c="$sources_c tk_itc.c tk_sysqueues.c"
+   sources_c="$sources_c tk_itc.c tk_itcny.c tk_itcshared.c tk_sysqueues.c"
    if test $_TK_USE_BUILTIN_SORT != __tk_no; then
       sources_c="$sources_c tk_ansi_search.c"
    fi

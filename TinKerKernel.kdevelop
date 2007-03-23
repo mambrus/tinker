@@ -9,7 +9,7 @@
     <ignoreparts/>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
+    <description></description>
   </general>
   <kdevautoproject>
     <general>
@@ -44,7 +44,7 @@
           <envvar value="--enable-debug=full --host=arm-hixs-elf MCPU=arm7tdmi BOARD=lpc21xxx" name="confopts_ARM" />
           <envvar value="--enable-debug=full --host=i386-hixs-elf MCPU=i386 BOARD=localhost --enable-makeopts=-'S -w' --disable-cplusplus --enable-verbose-config --enable-how-to-printk=ORIGINAL --enable-filesys --enable-min_stack=0x20000 --enable-norm_stack=0x20000" name="confopts_i386" />
           <envvar value="--enable-debug=full --host=powerpc-eabisim MCPU=860 BOARD=generic" name="confopts_PPC" />
-          <envvar value="--enable-debug=full --host=powerpc-hixs-elf MCPU=860 BOARD=ESC --enable-makeopts=-'S -w' --disable-cplusplus --enable-verbose-config --enable-how-to-printk=ORIGINAL --enable-filesys --enable-min_stack=0x20000 --enable-norm_stack=0x20000 " name="confopts_PPC_ESC" />
+          <envvar value="--enable-emrgcy-console=console_write_emergency --enable-debug=full --host=powerpc-hixs-elf MCPU=860 BOARD=ESC --enable-makeopts='-S -w' --disable-cplusplus --enable-verbose-config --enable-how-to-printk=ORIGINAL --enable-filesys --enable-min_stack=0x20000 --enable-norm_stack=0x20000 " name="confopts_PPC_ESC" />
         </envvars>
         <topsourcedir/>
         <cppflags/>
@@ -72,11 +72,11 @@
   <kdevdebugger>
     <general>
       <dbgshell>gdb/gdb-kde-wrapper.sh</dbgshell>
-      <programargs/>
-      <gdbpath/>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <programargs></programargs>
+      <gdbpath></gdbpath>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
@@ -152,7 +152,7 @@
     <qt>
       <used>false</used>
       <version>3</version>
-      <root/>
+      <root></root>
     </qt>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
@@ -167,7 +167,7 @@
       <headerCompletionDelay>250</headerCompletionDelay>
     </codecompletion>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>

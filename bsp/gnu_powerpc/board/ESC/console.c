@@ -14,6 +14,7 @@
 #include "console.h"
 
 #include <board/board.h>
+#include <tk.h>
 #include "hwboard.h"
 
 #include <string.h>
@@ -319,8 +320,59 @@ int console_write(const char* buffer, int buff_len){
 	int wcount=0;
 
 	if (buff_len <= TX_BUFFLEN){
-		while (TxBD->BD_Status.SMC_TX.f.R_Ready); 	//Wait for pending write to finish
+		while (TxBD->BD_Status.SMC_TX.f.R_Ready) 	//Wait for pending write to finish
+			usleep(1000);
 
+		
+		while (!smce1->f.TX && wcount<100000)		//Wait for FIFO to finish
+			wcount++;				//Sometimes TX is never set (FIXME: BUG)
+
+		TxBD->BD_Length = buff_len;
+		memcpy(TX_BUFFER,buffer,buff_len);
+
+		while (((cpcr_t*)&CPCR)->f.FLG);		//Wait for any pending CP commands to finish
+		cpcr.raw=0;
+		cpcr.f.OPCODE=STOP_TX;				//Stop transmitting, but finish what's in FIFO
+		cpcr.f.CH_NUM=CHAN_SMC1;
+		*((cpcr_t *)&CPCR)=cpcr;			//Actuate the command
+
+		//Do not do this... transmitter killed before bits in FIFO has reached the output it seems
+		//Use the command below instead
+		//smcmr1_p->uart.f.TEN=0; 	 		//inhibit further output
+		
+		
+		while (((cpcr_t*)&CPCR)->f.FLG);		//Wait for any pending CP commands to finish
+		cpcr.raw=0;
+		cpcr.f.OPCODE=INIT_TX_PARAMS;
+		cpcr.f.CH_NUM=CHAN_SMC1;
+		TxBD->BD_Status.SMC_TX.f.R_Ready=1;
+
+		*((cpcr_t *)&CPCR)=cpcr;			//Actuate the command
+
+
+		SMCE1 = 0xFF; // Write 0xFF to the SMCE register to clear any previous events.	
+		SMCM1 = 0x17; // Write 0x17 to the SMCM register to enable all possible SMC interrupts.
+
+		//Don't do this - Same reason as above
+		//smcmr1_p->uart.f.TEN=1; 			//Enable the Tx output
+	}else{
+	}
+	return buff_len;
+}
+/*!
+Has a busy wait loop. Never ever use this from a normal program. Only to be used by the kernel internally.
+*/
+int __tk_console_write_emergency(const char* buffer, int buff_len){
+	bd_smc_t *TxBD=(bd_smc_t *)(DP_BD_0+8);
+	cpcr_t *cpcr_p = (cpcr_t*)&CPCR;
+	smcmr_t *smcmr1_p = (smcmr_t*)&SMCMR1;
+	smce_smcm_t *smce1=(smce_smcm_t *)&SMCE1;
+	//smce_smcm_t *smcm1=(smce_smcm_t *)&SMCM1;
+	cpcr_t cpcr;
+	int wcount=0;
+
+	if (buff_len <= TX_BUFFLEN){
+		while (TxBD->BD_Status.SMC_TX.f.R_Ready); 	//Wait for pending write to finish
 		
 		while (!smce1->f.TX && wcount<100000)		//Wait for FIFO to finish
 			wcount++;				//Sometimes TX is never set (FIXME: BUG)

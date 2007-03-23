@@ -37,6 +37,7 @@ Notes: See chapter 10.11 for details
 //#define PERT 950
 //#define PERT 994
 #define PERT 999
+//#define PERT 3023
 //#define PERT 12000
 
 /* Select the clock source*/
@@ -53,15 +54,8 @@ Notes: See chapter 10.11 for details
 __uint32_t __sys_mickey;
 __uint32_t __sys_mackey;
 
-
-#ifdef NEVER
-
-FIXME: 
-1) Connect to internal clck source			(done)
-2) Figure out where to put the interrupt function	(done)
-3) Why doesn't OCM as clk-source work?
-#endif
-
+//Enable this to div 512 run slower clock interrupts
+//#define PRESCALED_CLOCK 1
 
 /* Exsamples of handlers - They all do the same thing,
   only coding flavour differs */
@@ -114,7 +108,9 @@ void systimer_init(){
 
 
 	pitc->f.COUNT=PERT;
-	//bitset(SCCR,RTDIV);	// Prescaler is 512 (enable this line for testing only)
+	#if defined(PRESCALED_CLOCK)
+	bitset(SCCR,RTDIV);	// Prescaler is 512 (enable this line for testing only)
+	#endif
 
 	piscr->f.PIRQ=Intrnl_3;	// Set IRQ level
 	// Place the handler in our vector table
@@ -148,6 +144,10 @@ clock_t ppc_clock           (){
 	long long Tcl = ((TmickS_high << 32) + TmickS_low ) * MRATIO;
 	#endif
 	
+	#if defined(PRESCALED_CLOCK)
+	return (clock_t)(Tcl*512);
+	#else
 	return (clock_t)Tcl; //Possibly trunc it... (best we can do anyway)	
+	#endif
 }
 

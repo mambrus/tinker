@@ -189,11 +189,14 @@ void           _tk_main( void );
 /*- public data **/
 
 /*- private data **/
-extern int Tk_IntFlagCntr;
+extern int _tk_IntFlagCntr;
 
-
-
-
+#if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
+	clock_t clock_stubbed();
+	#define tk_clock()  clock_stubbed()
+#else
+	#define tk_clock()  clock()
+#endif
 
 #endif /* _IMPLEMENT_PTHREAD_H */
 
@@ -202,6 +205,10 @@ extern int Tk_IntFlagCntr;
  * @defgroup CVSLOG_implement_tk_h implement_tk_h
  * @ingroup CVSLOG
  *  $Log: implement_tk.h,v $
+ *  Revision 1.13  2007-03-23 20:27:23  ambrmi09
+ *  1) Reorganization of ITC into several smaller files
+ *  2) Component pthread now supports 3,5,9 and 16 priorities
+ *
  *  Revision 1.12  2006-12-11 14:41:52  ambrmi09
  *  Solves #1609064 (part1)
  *

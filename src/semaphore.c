@@ -99,8 +99,14 @@ int sem_trywait (sem_t * sem){
 */
 int sem_wait (sem_t * sem){
    unsigned int rc;
-   
-   rc = sm_p(*sem,WAIT,TK_FOREVER);
+   extern int _tk_IntFlagCntr;
+
+/*
+   if (_tk_IntFlagCntr)
+      rc = sm_p_ny(*sem,WAIT,TK_FOREVER);
+   else*/
+      rc = sm_p(*sem,WAIT,TK_FOREVER);
+
    errno = rc;
    
    if (rc==ERR_OK)
@@ -117,9 +123,14 @@ int sem_wait (sem_t * sem){
 @see http://www.opengroup.org/onlinepubs/009695399/functions/sem_post.html
 */
 int sem_post (sem_t * sem){
-      unsigned int rc;
-   
-   rc = sm_v(*sem);
+   unsigned int rc;
+   extern int _tk_IntFlagCntr;
+
+/*   if (_tk_IntFlagCntr)
+      rc = sm_v_ny(*sem);
+   else*/
+      rc = sm_v(*sem);
+
    errno = rc;
    
    if (rc==ERR_OK)
@@ -134,6 +145,10 @@ int sem_post (sem_t * sem){
  * @defgroup CVSLOG_semaphore_c semaphore_c
  * @ingroup CVSLOG
  *  $Log: semaphore.c,v $
+ *  Revision 1.13  2007-03-23 20:27:23  ambrmi09
+ *  1) Reorganization of ITC into several smaller files
+ *  2) Component pthread now supports 3,5,9 and 16 priorities
+ *
  *  Revision 1.12  2006-11-27 22:29:24  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
  *  to some name clashed with user space naming conventions.

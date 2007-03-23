@@ -59,6 +59,10 @@ char * strerror (int errnum);      //Should go int string.h
 	#define EC_STRING( x ) EC_STRING_VERBOSE( x )
 #endif
 
+#if defined(TK_USE_EMRGCY_CONSOLE)
+int TK_USE_EMRGCY_CONSOLE(const char* buffer, int buff_len);
+#endif
+
 static const char *errno_srings[] = {
 	EC_STRING( TK_OK ),
 	EC_STRING( TK_ERROR ),
@@ -475,6 +479,10 @@ void _tk_assertfail(
  *  @defgroup CVSLOG_tk_error_c tk_error_c
  *  @ingroup CVSLOG
  *  $Log: tk_error.c,v $
+ *  Revision 1.2  2007-03-23 20:27:23  ambrmi09
+ *  1) Reorganization of ITC into several smaller files
+ *  2) Component pthread now supports 3,5,9 and 16 priorities
+ *
  *  Revision 1.1  2007-03-04 19:07:25  ambrmi09
  *  1) Error handling refined - will handle error from different
  *     cathegories:

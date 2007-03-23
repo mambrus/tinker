@@ -48,6 +48,7 @@ Pins 2, 3, 4, and 7 are protected by 250 mA fuses.
 #include <tk.h>
 #include <tk_tuning.h>
 #include <semaphore.h>
+#include <tinker/config.h>
 
 #define f_xtal 48000000
 
@@ -63,12 +64,12 @@ static sja1000_pelican_raw_t	*_sja1000_raw;		//!< Address of SJA1000 (chip mappe
 static sja1000_pelican_frame_t	*_pelican_txbuff;	//!< Address of internal Tx buffer (mapped on message struct)
 
 //Variables shared among the files for this driver
-sja1000_pelican_frame_t _can_RxBuff[RX_BUFFSZ];	/*!< Drivers recieve buffer. Neede to ease RT requirements
+sja1000_pelican_frame_t _can_RxBuff[CAN_RX_BUFFSZ];	/*!< Drivers recieve buffer. Neede to ease RT requirements
 							     and to permit blocking reads. */
 
 int _can_rxidx_in=0;				//!< Points to the next free Rx message storage in ring buffer
 int _can_rxidx_out=0;				//!< Points to current message to read from ring-buffer
-int _can_nrx=0;				//!< Number of messages waiting in ringbuffer
+    _can_nrx=0;				//!< Number of messages waiting in ringbuffer
 
 //Variables defied by other files belonging to this driver
 sem_t _can_rx_sem;
@@ -85,6 +86,12 @@ static struct {
 	__uint32_t TI;  //!< Transmit Interrupt
 	__uint32_t RI;  //!< Receive Interrupt
 }icntr;
+
+#if defined(TK_USE_EMRGCY_CONSOLE)
+	#define con_write(x) TK_USE_EMRGCY_CONSOLE(x,strlen(x));	
+#else
+	#define con_write(x) console_write( x, strlen(x));
+#endif
 
 
 /*!
@@ -218,7 +225,7 @@ int sja1000_read(const char* buffer, int buff_len){
 	_sja1000->pelican.ier.RIE = 0;
 	nRx = _can_nrx;
 	_sja1000->pelican.ier.RIE = 1;	
-	assert(nRx<RX_BUFFSZ);
+	assert(nRx<CAN_RX_BUFFSZ);
 
 	
 	sem_wait(&_can_rx_sem);
@@ -246,7 +253,7 @@ int sja1000_read(const char* buffer, int buff_len){
 	};
 
 	_can_rxidx_out++;
-	_can_rxidx_out = _can_rxidx_out % RX_BUFFSZ;
+	_can_rxidx_out = _can_rxidx_out % CAN_RX_BUFFSZ;
 
 	_sja1000->pelican.ier.RIE = 0;
 	_can_nrx--;
@@ -267,7 +274,8 @@ int sja1000_write(char* buffer, int max_len){
 	//sja1000_pelican_frinfo_t frinfo;
 	sja1000_pelican_frame_t	frame;
 
-	while (!_sja1000->pelican.sr.TBS);			//Wait for transfer buffer to become free. NOTE This is a busy wait and might need improvement
+	while (!_sja1000->pelican.sr.TBS)			//Wait for transfer buffer to become free. NOTE This is a busy wait and might need improvement
+		usleep(1000);
 
 	if (_xmode){
 		assure(max_len>=4);
@@ -315,32 +323,38 @@ int sja1000_write(char* buffer, int max_len){
 /* ISR - Interrupt handlers */ 
 /*! Bus Error Interrupt*/
 void isr_BEI(){
+	con_write("SJA1000: Bus Error Interrupt\r\n");
 	icntr.BEI++;
 };
 
 /*! Arbitration Lost Interrupt */
 void isr_ALI(){
+	con_write("SJA1000: Arbitration Lost Interrupt\r\n");
 	icntr.ALI++;
 };
 
 /*! Error Passive Interrupt */
 void isr_EPI(){
+	con_write("SJA1000: Error Passive Interrupt\r\n");
 	icntr.EPI++;
 };
 
 /*! Wake-Up Interrupt */
 void isr_WUI(){
+	con_write("SJA1000: Wake-Up Interrupt\r\n");
 	icntr.WUI++;
 };
 
 /*! Data Overrun Interrupt */
 void isr_DOI(){
 	_sja1000->pelican.cmr.bits.CDO=1;
+	con_write("SJA1000: Data Overrun Interrupt\r\n");
 	icntr.DOI++;
 };
 
 /*! Error Warning Interrupt */
 void isr_EI(){
+	con_write("SJA1000: Error Warning Interrupt\r\n");	
 	icntr.EI++;
 };
 
@@ -356,6 +370,7 @@ void isr_RI(){
 
 	icntr.RI++;
 	_can_nrx++;
+	assert(_can_nrx<CAN_RX_BUFFSZ);
 
 	memcpy(
 		&_can_RxBuff[_can_rxidx_in],
@@ -363,8 +378,9 @@ void isr_RI(){
 		sizeof(sja1000_pelican_frame_t)
 	);
 	_sja1000->pelican.cmr.bits.RRB=1;
+
 	_can_rxidx_in++;
-	_can_rxidx_in = _can_rxidx_in % RX_BUFFSZ;
+	_can_rxidx_in = _can_rxidx_in % CAN_RX_BUFFSZ;
 
 	sem_post(&_can_rx_sem);
 };

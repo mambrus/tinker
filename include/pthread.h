@@ -38,14 +38,17 @@ PTHREAD
 #define _PTHREAD_H
 
 #if defined(__GNUC__)
-   #include <tinker/config.h>
-   #if (!defined(TK_COMP_PTHREAD) || TK_COMP_PTHREAD==0 ) && !defined(ECODES_ONLY)
-   #error "pthread.h" belongs to a component that your build of TinKer didn't include. Please reconfigure and rebuild TinKer.
-   #endif
+	#include <tinker/config.h>
+	#if (!defined(TK_COMP_PTHREAD) || TK_COMP_PTHREAD==0 ) && !defined(ECODES_ONLY)
+	#error "pthread.h" belongs to a component that your build of TinKer didn't include. Please reconfigure and rebuild TinKer.
+	#endif
+	#define _PTHREAD_PRIOS TK_MAX_PRIO_LEVELS
+#else
+	#define TK_MAX_THREADS 16
 #endif
 
 #ifndef TK_MAX_THREADS
-#error TK_MAX_THREADS not defined. Did you --enable-max_threads=<val> properly?
+	#error TK_MAX_THREADS not defined. Did you --enable-max_threads=<val> properly?
 #endif
 
 //#include <sched.h>
@@ -61,7 +64,9 @@ PTHREAD
 #define SCHED_FIFO  1
 #define SCHED_RR    2
 
-#define _PTHREAD_PRIOS 0x10  //!< Match this with TK_MAX_PRIO_LEVELS. Intentionally not set equal sice some static arrays init needs adjustment. see \ref PTHREAD_RWLOCK_INITIALIZER further down in this file. Easy to fix, but haven't had time yet... For now, just kae sure it will build on a 16 priority system only.
+//#define _PTHREAD_PRIOS 0x10  //!< Match this with TK_MAX_PRIO_LEVELS. Intentionally not set equal sice some static arrays init needs adjustment. see \ref PTHREAD_RWLOCK_INITIALIZER further down in this file. Easy to fix, but haven't had time yet... For now, just kae sure it will build on a 16 priority system only.
+
+#define _PTHREAD_PRIOS TK_MAX_PRIO_LEVELS
 
 #define _PTHREAD_NO_WARN_VAR(x) ((void)x)  //!< Used in stubbed functions to avoid lots of warnings
 
@@ -114,19 +119,72 @@ typedef enum {
 
 /*!
 RW lock structure static initializer
+@Note: Needs to mach number of prios in system 
 */
+#if (_PTHREAD_PRIOS == 3 )
 #define PTHREAD_RWLOCK_INITIALIZER {\
-   0,                               \
-   0,                               \
-   0,                               \
-   0,                               \
-   PTHREAD_MUTEX_INITIALIZER,       \
-   PTHREAD_COND_INITIALIZER,        \
-   PTHREAD_COND_INITIALIZER,        \
-   _PTHREAD_RWLOCKATTR_DEFAULT,     \
-   {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, /*Note: Needs to mach number of prios in system */\
-   1                                \
+	0,				\
+	0,				\
+	0,				\
+	0,				\
+	PTHREAD_MUTEX_INITIALIZER,	\
+	PTHREAD_COND_INITIALIZER,	\
+	PTHREAD_COND_INITIALIZER,	\
+	_PTHREAD_RWLOCKATTR_DEFAULT,	\
+	{0,0,0},			\
+	1				\
 }
+
+
+#elif  (_PTHREAD_PRIOS == 5 )
+#define PTHREAD_RWLOCK_INITIALIZER {\
+	0,				\
+	0,				\
+	0,				\
+	0,				\
+	PTHREAD_MUTEX_INITIALIZER,	\
+	PTHREAD_COND_INITIALIZER,	\
+	PTHREAD_COND_INITIALIZER,	\
+	_PTHREAD_RWLOCKATTR_DEFAULT,	\
+	{0,0,0,0,0},			\
+	1				\
+}
+
+
+#elif (_PTHREAD_PRIOS == 9 )
+#define PTHREAD_RWLOCK_INITIALIZER {\
+	0,				\
+	0,				\
+	0,				\
+	0,				\
+	PTHREAD_MUTEX_INITIALIZER,	\
+	PTHREAD_COND_INITIALIZER,	\
+	PTHREAD_COND_INITIALIZER,	\
+	_PTHREAD_RWLOCKATTR_DEFAULT,	\
+	{0,0,0,0,0,0,0,0,0},		\
+	1				\
+}
+
+
+#elif (_PTHREAD_PRIOS == 16 )
+#define PTHREAD_RWLOCK_INITIALIZER {\
+	0,				\
+	0,				\
+	0,				\
+	0,				\
+	PTHREAD_MUTEX_INITIALIZER,	\
+	PTHREAD_COND_INITIALIZER,	\
+	PTHREAD_COND_INITIALIZER,	\
+	_PTHREAD_RWLOCKATTR_DEFAULT,	\
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},\
+	1				\
+}
+
+
+#else
+	#Error Number of supported priorities for pthread component is wrong. Supported number is 3,5,9 and 16
+#endif
+
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
@@ -1071,6 +1129,10 @@ pthread_t
  * @defgroup CVSLOG_pthread_h pthread_h
  * @ingroup CVSLOG
  *  $Log: pthread.h,v $
+ *  Revision 1.23  2007-03-23 20:27:23  ambrmi09
+ *  1) Reorganization of ITC into several smaller files
+ *  2) Component pthread now supports 3,5,9 and 16 priorities
+ *
  *  Revision 1.22  2007-03-08 23:28:35  ambrmi09
  *  Minor changes made in TinKer headers for TiNa code ceneration to work
  *
