@@ -50,24 +50,24 @@ POSIX_RT
 @see http://www.opengroup.org/onlinepubs/009695399/functions/sem_init.html
 */
 int sem_init (
-   sem_t          *sem,
-   int            pshared,
-   unsigned int   value
+	sem_t          *sem,
+	int            pshared,
+	unsigned int   value
 ){
-   unsigned int rc;
-   
-   if (pshared != 0)
-      return EINVAL;
-   
-   rc = sm_create("PS", value, FIFO, sem);    
-   errno = rc;
-   
-   if (rc==ERR_OK)
-      return 0;
-   else
-      return EINVAL;
-
-   return 0;
+	unsigned int rc;
+	
+	if (pshared != 0)
+		return EINVAL;
+	
+	rc = sm_create("PS", value, FIFO, sem);    
+	errno = rc;
+	
+	if (rc==ERR_OK)
+		return 0;
+	else
+		return EINVAL;
+	
+	return 0;
 }
 
 /*!
@@ -76,9 +76,9 @@ int sem_init (
 @see http://www.opengroup.org/onlinepubs/009695399/functions/sem_destroy.html
 */
 int sem_destroy (sem_t * sem){
-   assert("sem_destroy - Not implemented" == NULL);
-   
-   return 0;
+	assert("sem_destroy - Not implemented" == NULL);
+	
+	return 0;
 }
 
 /*!
@@ -87,9 +87,9 @@ int sem_destroy (sem_t * sem){
 @see http://www.opengroup.org/onlinepubs/009695399/functions/sem_trywait.html
 */
 int sem_trywait (sem_t * sem){
-   assert("sem_trywait - Not implemented" == NULL);
-   
-   return 0;
+	assert("sem_trywait - Not implemented" == NULL);
+	
+	return 0;
 }
 
 /*!
@@ -98,23 +98,23 @@ int sem_trywait (sem_t * sem){
 @see http://www.opengroup.org/onlinepubs/009695399/functions/sem_wait.html
 */
 int sem_wait (sem_t * sem){
-   unsigned int rc;
-   extern int _tk_IntFlagCntr;
-
-/*
-   if (_tk_IntFlagCntr)
-      rc = sm_p_ny(*sem,WAIT,TK_FOREVER);
-   else*/
-      rc = sm_p(*sem,WAIT,TK_FOREVER);
-
-   errno = rc;
-   
-   if (rc==ERR_OK)
-      return 0;
-   else
-      return EINVAL;
-   
-   return 0;
+	unsigned int rc;
+	extern int __tk_IntFlagCntr;
+	
+	
+	if (__tk_IntFlagCntr)
+		rc = sm_p_ny(*sem,WAIT,TK_FOREVER);
+	else
+		rc = sm_p(*sem,WAIT,TK_FOREVER);
+	
+	errno = rc;
+	
+	if (rc==ERR_OK)
+		return 0;
+	else
+		return EINVAL;
+	
+	return 0;
 }
 
 /*!
@@ -123,28 +123,32 @@ int sem_wait (sem_t * sem){
 @see http://www.opengroup.org/onlinepubs/009695399/functions/sem_post.html
 */
 int sem_post (sem_t * sem){
-   unsigned int rc;
-   extern int _tk_IntFlagCntr;
-
-/*   if (_tk_IntFlagCntr)
-      rc = sm_v_ny(*sem);
-   else*/
-      rc = sm_v(*sem);
-
-   errno = rc;
-   
-   if (rc==ERR_OK)
-      return 0;
-   else
-      return EINVAL;
-   
-   return 0;
+	unsigned int rc;
+	extern int __tk_IntFlagCntr;
+	
+	if (__tk_IntFlagCntr)
+		rc = sm_v_ny(*sem);
+	else
+		rc = sm_v(*sem);
+	
+	errno = rc;
+	
+	if (rc==ERR_OK)
+		return 0;
+	else
+		return EINVAL;
+	
+	return 0;
 }
 
 /*!
  * @defgroup CVSLOG_semaphore_c semaphore_c
  * @ingroup CVSLOG
  *  $Log: semaphore.c,v $
+ *  Revision 1.14  2007-04-04 08:12:45  ambrmi09
+ *  Improvement to lower latency in collaborative mode. Might need
+ *  concideration because it alters the priority rule-set.
+ *
  *  Revision 1.13  2007-03-23 20:27:23  ambrmi09
  *  1) Reorganization of ITC into several smaller files
  *  2) Component pthread now supports 3,5,9 and 16 priorities

@@ -30,7 +30,7 @@ Notes: See chapter 10.11 for details
 #include <sys/types.h>
 #include <systimer.h>
 #include <assert.h>
-#define MAXIMUN_PENDING_ISR 3
+#define MAXIMUN_PENDING_ISR 10
 
 
 #ifdef NEVER
@@ -88,10 +88,10 @@ isr_handler isr_table[16]={
 #define DONT_FECKUP_ON_PURPOSE 1
 void isr_external(){	
 	//PUSHALL;
-	//+;extern int _tk_IntFlagCntr;
+	extern int __tk_IntFlagCntr;
 	__uint32_t stack_ptr;
 	__uint32_t cr;
-	//+;_tk_IntFlagCntr++;
+	__tk_IntFlagCntr++;
 	//__uint32_t *sipend = &SIPEND;
 	idx=*(__int8_t*)(&SIVEC);
 	//idx = (idx/4)-1;
@@ -118,7 +118,7 @@ void isr_external(){
 	if (SIPEND & 0x5555)		//If internal interrupt (i.e. lvl_Intrnl_0 to lvl_Intrnl_7)
 		SET_SPR(_EIE,0xFF);	//permit nested interrupts
 	n_isr--;
-	//+;_tk_IntFlagCntr--;
+	__tk_IntFlagCntr--;
 	//POPALL;
 }
 /*! 

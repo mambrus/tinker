@@ -198,13 +198,17 @@ extern int _tk_IntFlagCntr;
 	#define tk_clock()  clock()
 #endif
 
-#endif /* _IMPLEMENT_PTHREAD_H */
+#endif /* _IMPLEMENT_TK_H */
 
 
 /*!
  * @defgroup CVSLOG_implement_tk_h implement_tk_h
  * @ingroup CVSLOG
  *  $Log: implement_tk.h,v $
+ *  Revision 1.14  2007-04-04 08:12:45  ambrmi09
+ *  Improvement to lower latency in collaborative mode. Might need
+ *  concideration because it alters the priority rule-set.
+ *
  *  Revision 1.13  2007-03-23 20:27:23  ambrmi09
  *  1) Reorganization of ITC into several smaller files
  *  2) Component pthread now supports 3,5,9 and 16 priorities
