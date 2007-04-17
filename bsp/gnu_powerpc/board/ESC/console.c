@@ -16,13 +16,21 @@
 #include <board/board.h>
 #include <tk.h>
 #include "hwboard.h"
-
+#include <CPU/860/isr.h>
+#include <CPU/860/asm/si.h>
 #include <string.h>
+#include <assert.h>
 
 #define CHAN_SMC1 	0x09
 
-static char RX_BUFFER[RX_BUFFLEN];
-static char TX_BUFFER[TX_BUFFLEN];
+static char RX_BD_BUFFER[SMC_BD_RX_BUFFLEN]; 
+static char TX_BD_BUFFER[SMC_BD_TX_BUFFLEN];
+
+#define SMC_CHAR_BUFFLEN	1024	//!< Lengt of intermediate buffert (between ISR and FS)
+
+static char RX_CHAR_BUFFER[SMC_CHAR_BUFFLEN];
+static int rx_inIdx=0;
+static int rx_outIdx=0;
 
 #ifdef NEVER
 29.3.13 SMC UART Controller Programming Example
@@ -79,6 +87,73 @@ static char test_str[]="\n\rHello world! \n\rmpc860 is a @#&! micro-controller b
 
 
 /*
+Notes on how to handle CM interrupts:
+1. Set the CIVR[IACK].
+2. Read CIVR[VN] to determine the vector number for the interrupt handler.
+3. Immediately read the SCC2 event register into a temporary location.
+4. Decide which events in the SCCE2 must be handled and clear those bits as soon as
+   possible. SCCE bits are cleared by writing ones.
+5. Handle the events in the SCC2 Rx BD or Tx BD tables.
+6. Clear CISR[SCC2].
+
+*/
+
+static int nn_rx 	= 0;
+static int nn_tx 	= 0;
+static int nn_bsy 	= 0;
+static int nn_brk 	= 0;
+static int nn_brke 	= 0;
+
+void _console_rx_handler();
+void _console_tx_handler();
+void _console_bsy_handler();
+void _console_brk_handler();
+void _console_brke_handler();
+
+void console_Handler( void ){
+	smce_smcm_t *smce_smcm_p = (smce_smcm_t*)&SMCE1;
+	smcmr_t *smcmr_p = (smcmr_t*)&SMCMR1;
+	smc_param_t *smc_param=(smc_param_t *)DP_PARA_SMC1;
+	__uint8_t smce1 = SMCE1;
+
+	if (smce1 & SMCE_RX) {
+		nn_rx++;
+		smce_smcm_p->f.RX=1;
+		_console_rx_handler();
+		//SMCE1 |= SMCE_RX;
+	}
+/*
+	if (smce1 & SMCE_TX) {
+		nn_tx++;
+		smce_smcm_p->f.TX=1;
+		_console_tx_handler();
+		//SMCE1 |= SMCE_TX;
+	}
+*/
+	if (smce1 & SMCE_BSY) {
+		nn_bsy++;
+		smce_smcm_p->f.BSY=1;
+		_console_bsy_handler();
+		//SMCE1 |= SMCE_BSY;
+	}
+
+	if (smce1 & SMCE_BRK) {
+		nn_brk++;
+		smce_smcm_p->f.BRK=1;
+		_console_brk_handler();
+		//SMCE1 |= SMCE_BRK;
+	}
+	if (smce1 & SMCE_BRKE) {
+		nn_brke++;
+		smce_smcm_p->f.BRKE=1;	
+		_console_brke_handler();
+		//SMCE1 |= SMCE_BRKE;
+	}
+
+}
+
+
+/*
 The function should be able to figure out BRG[CD] divisor settings by itself based on
 the OSCCLK constant and PLPRCR[MF] & SCCR[DFBRG] setting
 
@@ -92,15 +167,17 @@ BRGCLK freq = ---------------------------------------
 */
 int console_init(int bpr, int nr_bits, int par, int nr_stop){
 //Clean the buffers
+	//bpr = 9600;
+
 	{
-		char *RxTemp=RX_BUFFER;
-		char *TxTemp=TX_BUFFER;
+		char *RxTemp=RX_BD_BUFFER;
+		char *TxTemp=TX_BD_BUFFER;
 		int i;
-		for (i=0;i<RX_BUFFLEN;i++){
-			RX_BUFFER[i]='R';
+		for (i=0;i<SMC_BD_RX_BUFFLEN;i++){
+			RX_BD_BUFFER[i]='R';
 		}
-		for (i=0;i<TX_BUFFLEN;i++){
-			TX_BUFFER[i]='T';
+		for (i=0;i<SMC_BD_TX_BUFFLEN;i++){
+			TX_BD_BUFFER[i]='T';
 		}
 	}
 	cpcr_t *cpcr_p = (cpcr_t*)&CPCR;
@@ -108,6 +185,15 @@ int console_init(int bpr, int nr_bits, int par, int nr_stop){
 	brgc_t *brgc1_p = (brgc_t*)&BRGC1;
 	sccr_t *sccr_p = (sccr_t*)&SCCR;
 	plprcr_t *plprcr_p = (plprcr_t*)&PLPRCR;
+
+	cicr_t *cicr_p = (cicr_t*)&CICR;
+	civr_t *civr_p = (civr_t*)&CIVR;
+
+	ciid_t *cipr_p = (ciid_t*)&CIPR;
+	ciid_t *cimr_p = (ciid_t*)&CIMR;
+	ciid_t *cisr_p = (ciid_t*)&CISR;
+
+	simode_t *simode_p = (simode_t*)&SIMODE;
 
 // Baud rate generator stuff (page 20.4.1)
 
@@ -137,8 +223,22 @@ int console_init(int bpr, int nr_bits, int par, int nr_stop){
 // 3)
 // SI mode (page 20.2.4.2)
 //Connect BRG1 to SMC1 using the SI. Clear SIMODE[SMC1, SMC1CS]. 
+/*
 	bitclear(SIMODE,16);  //NMSI - I.e. dedicated pin, no multiplex 
 	bitclear(SIMODE,17); //Clock source is BRG1 FIXME: this is 3 bits long 
+*/
+	simode_p->f.SMC1	=0x0; //NMSI - I.e. dedicated pin, no multiplex 
+	simode_p->f.SMC1CS	=0x0; //Clock source is BRG1 (=0)
+//Optional
+	simode_p->f.SDMa 	= 0; //Diagnositc mode. =1 should be Automatic echo - doesn't work ;(
+	simode_p->f.RFSDa 	= 0;
+	simode_p->f.DSCa 	= 0;
+	simode_p->f.CRTa 	= 0;
+	simode_p->f.STZa 	= 0;
+	simode_p->f.CEa 	= 0;
+	simode_p->f.FEa 	= 0;
+	simode_p->f.GMa 	= 0;
+	simode_p->f.TFSDa 	= 0;
 // 4)
 /*
 4. Assuming one RxBD at the beginning of dual-port RAM followed by one TxBD,
@@ -166,21 +266,34 @@ int console_init(int bpr, int nr_bits, int par, int nr_stop){
 	SDCR = 0x0001;
 
 // 7. Write RFCR and TFCR with 0x10 for normal operation.
+//Eeh? Some SDMA function code and byte ordering stuff...
+// See 29.2.3.1 SMC Function Code Registers (RFCR/TFCR)
 
+/*
 	smc_param->RFCR.raw = 0x10;
 	smc_param->TFCR.raw = 0x10;
-
+*/
+	smc_param->RFCR.f.BO = 0x2;		//True big endian
+	smc_param->RFCR.f.AT = 0x0;		//Address type (SDMA fynction code)
+	smc_param->TFCR.f.BO = 0x2;
+	smc_param->TFCR.f.AT = 0x0;
 
 //8. Write MRBLR with the maximum number of bytes per receive buffer. Assume 16
 //	bytes, so MRBLR = 0x0010.
+// Maximum receive buffer length. Deﬁnes the maximum number of bytes the CP writes
+// to a receive buffer before it goes to the next buffer.
 
-	smc_param->MRBLR = 0x0010;
+
+	//smc_param->MRBLR = 0x0010;
+	smc_param->MRBLR = 0x0001;
 
 
 //9. Write MAX_IDL with 0x0000 in the SMC UART-speciﬁc parameter RAM to
 //    disable the MAX_IDL functionality for this example.
 	
 	smc_param->PROTO.SMC_UART.MAX_IDL=0x0000;
+	//smc_param->PROTO.SMC_UART.MAX_IDL=0x0005;
+	smc_param->PROTO.SMC_UART.R_MASK=0x0000;
 
 
 //10. Clear BRKLN and BRKEC in the SMC UART-speciﬁc parameter RAM.
@@ -198,30 +311,59 @@ int console_init(int bpr, int nr_bits, int par, int nr_stop){
 
 	RxBD->BD_Status.raw = 0xB000;
 	RxBD->BD_Length = 0;
-	RxBD->BD_Pointer = (__uint32_t)RX_BUFFER;
-	//RxBD->BD_Pointer = 0x10000000;
+	RxBD->BD_Pointer = (__uint32_t)RX_BD_BUFFER;
+	//RxBD->BD_Status.SMC_RX.f.CM_Continuous_mode = 1; //Avoid having to RxBD->BD_Status.SMC_RX.f.E_Empty = 1; in _console_rx_handler()
+	//RxBD->BD_Pointer = 0x10000000; //Old stuff for debugging (obsolete)
 
 //13. Assuming the Tx buffer is at 0x00002000 in main memory and contains ﬁve 8-bit
 //    characters, write 0xB000 to Tx_BD_Status, 0x0005 to Tx_BD_Length, and
 //    0x00002000 to Tx_BD_Pointer.
 
 	TxBD->BD_Status.raw = 0xB000;
-	//TxBD->BD_Length = TX_BUFFLEN;
+	//TxBD->BD_Length = SMC_BD_TX_BUFFLEN;
 	TxBD->BD_Length = 0x0005;
-	TxBD->BD_Pointer = (__uint32_t)TX_BUFFER;
-	//TxBD->BD_Pointer = 0x100000a0;
+	TxBD->BD_Pointer = (__uint32_t)TX_BD_BUFFER;
+	//TxBD->BD_Status.SMC_TX.f.I_Interrupt = 0;  //Don't set Interrupt status on send. Makes it slow. BD busy?
+	//TxBD->BD_Status.SMC_TX.f.CM_Continuous_mode = 1; //Not a good idea at all. Will never stop sending the BD
+
+	//TxBD->BD_Pointer = 0x100000a0; //Old stuff for debugging (obsolete)
+
+
+//Install ISR before any further bit-mipps
+	CM_isr_install(cmid_SMC1,console_Handler);
+
 
 //14. Write 0xFF to the SMCE register to clear any previous events.	
 	SMCE1 = 0xFF;
 
-//15. Write 0x17 to the SMCM register to enable all possible SMC interrupts.
+//15. DONT! Write 0x17 to the SMCM register to enable all possible SMC interrupts.
 
-	SMCM1 = 0x17;
+//	SMCM1 = 0x17;
+
+// All but TX instead (batter and faster)
+
+	smcm1->f.RX=1;
+	smcm1->f.TX=0;
+	smcm1->f.BSY=1;
+	smcm1->f.BRK=1;
+	smcm1->f.BRKE=1;	
+
 
 //16. Write 0x00000010 to the CIMR so the SMC1 can generate a system interrupt.
-//    Initialize the CICR.
 	CIMR = 0x00000010;
 
+//16.b    Initialize the CICR.
+/*
+Now done as part of CM_Init():	
+	cicr_p->f.IRL=5;
+	cicr_p->f.IEN=1;
+
+	civr_t civr_temp;
+	civr_temp.raw=0;
+	civr_temp.f.VN = CPMIV_SMC1;
+	civr_temp.f.IACK=1;
+	CIVR = civr_temp.raw;
+*/
 /*
 NOTE 
 34.5.1 CPM Interrupt Conﬁguration Register (CICR)
@@ -290,7 +432,7 @@ This shorter sequence reinitializes transmit parameters to the state they had af
 		for (i=0;i<1;i++){
 			bsleep(10000);
 			smcmr1_p->uart.f.TEN=0; 
-			strcpy(TX_BUFFER,test_str);
+			strcpy(TX_BD_BUFFER,test_str);
 			TxBD->BD_Length = strlen(test_str);
 			cpcr.raw=0;
 			cpcr.f.OPCODE=INIT_TX_PARAMS;
@@ -315,11 +457,18 @@ int console_write(const char* buffer, int buff_len){
 	cpcr_t *cpcr_p = (cpcr_t*)&CPCR;
 	smcmr_t *smcmr1_p = (smcmr_t*)&SMCMR1;
 	smce_smcm_t *smce1=(smce_smcm_t *)&SMCE1;
-	//smce_smcm_t *smcm1=(smce_smcm_t *)&SMCM1;
+	smce_smcm_t *smcm1=(smce_smcm_t *)&SMCM1;
 	cpcr_t cpcr;
 	int wcount=0;
 
-	if (buff_len <= TX_BUFFLEN){
+	cicr_t *cicr_p = (cicr_t*)&CICR;
+	civr_t *civr_p = (civr_t*)&CIVR;
+
+	ciid_t *cipr_p = (ciid_t*)&CIPR;
+	ciid_t *cimr_p = (ciid_t*)&CIMR;
+	ciid_t *cisr_p = (ciid_t*)&CISR;
+
+	if (buff_len <= SMC_BD_TX_BUFFLEN){
 		while (TxBD->BD_Status.SMC_TX.f.R_Ready) 	//Wait for pending write to finish
 			usleep(1000);
 
@@ -328,7 +477,7 @@ int console_write(const char* buffer, int buff_len){
 			wcount++;				//Sometimes TX is never set (FIXME: BUG)
 
 		TxBD->BD_Length = buff_len;
-		memcpy(TX_BUFFER,buffer,buff_len);
+		memcpy(TX_BD_BUFFER,buffer,buff_len);
 
 		while (((cpcr_t*)&CPCR)->f.FLG);		//Wait for any pending CP commands to finish
 		cpcr.raw=0;
@@ -350,8 +499,10 @@ int console_write(const char* buffer, int buff_len){
 		*((cpcr_t *)&CPCR)=cpcr;			//Actuate the command
 
 
-		SMCE1 = 0xFF; // Write 0xFF to the SMCE register to clear any previous events.	
-		SMCM1 = 0x17; // Write 0x17 to the SMCM register to enable all possible SMC interrupts.
+		//SMCE1 = 0xFF; // Write 0xFF to the SMCE register to clear any previous events.	
+		//SMCM1 = 0x17; // Write 0x17 to the SMCM register to enable all possible SMC interrupts.
+
+		SMCE1 = 0x02; //Set Tx bit - i.e. acknolage the interrupt before it happens
 
 		//Don't do this - Same reason as above
 		//smcmr1_p->uart.f.TEN=1; 			//Enable the Tx output
@@ -371,14 +522,14 @@ int __tk_console_write_emergency(const char* buffer, int buff_len){
 	cpcr_t cpcr;
 	int wcount=0;
 
-	if (buff_len <= TX_BUFFLEN){
+	if (buff_len <= SMC_BD_TX_BUFFLEN){
 		while (TxBD->BD_Status.SMC_TX.f.R_Ready); 	//Wait for pending write to finish
 		
 		while (!smce1->f.TX && wcount<100000)		//Wait for FIFO to finish
 			wcount++;				//Sometimes TX is never set (FIXME: BUG)
 
 		TxBD->BD_Length = buff_len;
-		memcpy(TX_BUFFER,buffer,buff_len);
+		memcpy(TX_BD_BUFFER,buffer,buff_len);
 
 		while (((cpcr_t*)&CPCR)->f.FLG);		//Wait for any pending CP commands to finish
 		cpcr.raw=0;
@@ -416,7 +567,88 @@ int console_read(char* buffer, int max_len){
 	smcmr_t *smcmr1_p = (smcmr_t*)&SMCMR1;
 	cpcr_t cpcr;
 
+	cicr_t *cicr_p = (cicr_t*)&CICR;
+	civr_t *civr_p = (civr_t*)&CIVR;
+
+	ciid_t *cipr_p = (ciid_t*)&CIPR;
+	ciid_t *cimr_p = (ciid_t*)&CIMR;
+	ciid_t *cisr_p = (ciid_t*)&CISR;
+
 	return 0;
 }
 
+//01010010
+//11110010
+
+//#define FAST_RX 1
+#define RX_LED_DEBUG 1
+/*
+29.2.4.4 SMC Receiver Shortcut Sequence
+This shorter sequence reinitializes receive parameters to their state after reset.
+   1. Clear SMCMR[REN].
+   2. Make any changes, then issue an INIT RX PARAMETERS command.
+   3. Set SMCMR[REN].
+
+*/
+void _console_rx_handler(){
+	bd_smc_t *RxBD=(bd_smc_t *)DP_BD_0;
+	cpcr_t *cpcr_p = (cpcr_t*)&CPCR;	
+	smcmr_t *smcmr1_p = (smcmr_t*)&SMCMR1;
+	cpcr_t cpcr;
+	int len;
+	static ledstat = 0;
+
+	#ifndef FAST_RX
+		smcmr1_p->uart.f.REN=0; 
+	#endif
+
+	len = RxBD->BD_Length;
+	memcpy(&RX_CHAR_BUFFER[rx_inIdx],RX_BD_BUFFER,len);	
+	RxBD->BD_Status.SMC_RX.f.E_Empty = 1;		//This @#! wasn't documented! ;( Same as 'RxBD->BD_Status.raw = 0xB000;'
+
+	rx_inIdx+=len;
+	rx_inIdx %= SMC_CHAR_BUFFLEN;
+
+	#ifndef FAST_RX
+		while (((cpcr_t*)&CPCR)->f.FLG);		//Wait for any pending CP commands to finish
+	
+		cpcr.raw=0;
+		cpcr.f.OPCODE=INIT_RX_PARAMS;
+		//cpcr.f.OPCODE=CLOSE_RX_BD;
+		cpcr.f.CH_NUM=CHAN_SMC1;
+		*((cpcr_t *)&CPCR)=cpcr;			//Actuate the command
+	#endif
+
+	#ifndef FAST_RX
+		smcmr1_p->uart.f.REN=1; 
+	#endif
+	//console_write(RX_BD_BUFFER,len); //For local echo. Bad idea - only use for debugging
+	#ifdef RX_LED_DEBUG
+		#include <board/ESC/led.h>
+		if (!ledstat){
+			ledstat=1;
+			led_on(LED_1, LED_GREEN);
+		}else{
+			ledstat=0;
+			led_off(LED_1, LED_GREEN);
+		}
+	#endif
+
+};
+
+void _console_tx_handler(){
+	assure("Console BD handles TX (ehh?) - Config fekkup?" == 0);
+};
+
+void _console_bsy_handler(){
+	assure("Console BD is busy - input to fast?" == 0);
+};
+
+void _console_brk_handler(){
+	assure("Console BD detected brk - Config fekkup?" == 0);
+};
+
+void _console_brke_handler(){
+	assure("Console BD detected brke - Config fekkup?" == 0);
+};
 

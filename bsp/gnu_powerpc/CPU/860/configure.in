@@ -8,7 +8,7 @@ AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION 
 
 AC_CONFIG_AUX_DIR(../../../..)
 
-sources_c="systimer.c isr.c initfini_cpu.c"
+sources_c="systimer.c cm.c isr.c initfini_cpu.c"
 extern_includes="../.."
 
 # By putting the start module in the library we don't have to use crt0.o

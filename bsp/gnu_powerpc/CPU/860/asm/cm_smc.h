@@ -366,6 +366,14 @@ Bits Name                                               Description
 
 */
 
+
+#define SMCE_BRKE			(1<<6)
+
+#define SMCE_BRK			(1<<4)
+
+#define SMCE_BSY			(1<<2)
+#define SMCE_TX				(1<<1)
+#define SMCE_RX				(1<<0)
 typedef union{ 
 	__uint8_t raw; 
 	

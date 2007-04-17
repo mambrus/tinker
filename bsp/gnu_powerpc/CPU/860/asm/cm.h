@@ -399,5 +399,272 @@ typedef union{
 		__uint32_t DIV16		:1;
 	}f;
 }brgc_t;
+
+//=============================================================================
+// CPIC registers follow (registers for controlling interrupts btw SIU and CM)
+// Even though these registers are not strict CPM registers they relate 
+// only to CM which is the reason why they are defined in this header file.
+//=============================================================================
+/*
+34.5 CPIC Registers
+There are four CPIC registers:
+   •  CPM interrupt conﬁguration register (CICR)—Deﬁnes CPM interrupt attributes.
+   •  CPM interrupt pending register (CIPR)—Indicates which CPM interrupt sources
+      require interrupt service.
+   • CPM interrupt mask register (CIMR)—Can be used to mask CPM interrupt sources.
+   4. CPM interrupt in-service register (CISR)—Allows nesting interrupt requests within
+      the CPM interrupt level.
+*/
+
+//CICR --
+
+/*
+34.5.1 CPM Interrupt Conﬁguration Register (CICR)
+The CPM interrupt conﬁguration register (CICR) deﬁnes CPM interrupt request levels, the
+priority between the SCCs, and the highest priority interrupt.
+          0   1     2    3     4   5    6    7      8     9   10    11   12   13 14   15
+   Field                    —                        SCdP       SCcP      SCbP    SCaP
+  Reset                               0000_0000_0000_0000
+   R/W                                         R/W
+   Addr                                       0x940
+         16   17   18    19   20  21   22   23     24    25   26    27   28   29 30   31
+   Field     IRL                 HP               IEN                  —             SPS
+  Reset                               0000_0000_0000_0000
+   R/W                                         R/W
+   Addr                                       0x942
+              Figure 34-3. CPM Interrupt Conﬁguration Register (CICR)
+This register is affected by HRESET but is not affected by SRESET. CICR bits are
+described in Table 34-3.
+
+
+                                    Table 34-3. CICR Field Descriptions
+   Bits   Name                                                    Description
+  0–7       —       Reserved, should be cleared.
+          SCdP 1 SCCd priority order. Deﬁnes which SCCs asserts its request in the SCCd priority position.
+   8–9
+                   00 SCC1 asserts its request in the SCCd position.
+                   01 SCC2 asserts its request in the SCCd position.
+                   10 SCC3 asserts its request in the SCCd position.
+                   11 SCC4 asserts its request in the SCCd position.
+          SCcP1 SCCc priority order. Deﬁnes which SCCs asserts its request in the SCCc priority position.
+  10–11
+                   00 SCC1 asserts its request in the SCCc position.
+                   01 SCC2 asserts its request in the SCCc position.
+                   10 SCC3 asserts its request in the SCCc position.
+                   11 SCC4 asserts its request in the SCCc position.
+          SCbP1 SCCb priority order. Deﬁnes which SCCs that asserts its request in the SCCb priority position.
+  12–13
+                   00 SCC1 asserts its request in the SCCb position.
+                   01 SCC2 asserts its request in the SCCb position.
+                   10 SCC3 asserts its request in the SCCb position.
+                   11 SCC4 asserts its request in the SCCb position.
+          SCaP1 SCCa priority order. Deﬁnes which SCCs that asserts its request in the SCCa priority position.
+  14–15
+                   00 SCC1 asserts its request in the SCCa position.
+                   01 SCC2 asserts its request in the SCCa position.
+                   10 SCC3 asserts its request in the SCCa position.
+                   11 SCC4 asserts its request in the SCCa position.
+  16–18    IRL     Interrupt request level. Contains the priority request level of the interrupt from the CPM that is sent
+                   to the SIU. Level 0 indicates highest priority. IRL is initialized to zero during reset. In most systems,
+                   value 0b100 is a good value to choose for IRL.
+  19–23     HP     Highest priority. Speciﬁes the 5-bit interrupt number of the CPIC interrupt source that is advanced to
+                   the highest priority in the table. These bits can be modiﬁed dynamically. (Programming HP =
+                   0b11111 keeps PC15 the highest priority source for external interrupts to the core.)
+    24     IEN     Interrupt enable. Master enable for CPM interrupts.
+                   0 CPM interrupts are disabled
+                   1 CPM interrupts are enabled
+  25–30     —      Reserved
+    31     SPS     Spread priority scheme. Selects the relative priority scheme; cannot be changed dynamically.
+                   0 Grouped. The SCCs are grouped by priority at the top of the table.
+                   1 Spread. The SCCs are spread by priority in the table.
+1  Note: Do not program the same SCC to more than one priority position (a, b, c, or d). These bits can be changed
+   dynamically. Also, the bit pattern 11 should be used for the combination that is not implemented.
+
+*/
+
+typedef union{ 
+	__uint32_t raw; 
+	struct {		
+		__uint32_t PADD_0:8;
+		__uint32_t SCdP:2;
+		__uint32_t SCcP:2;
+		__uint32_t SCbP:2;
+		__uint32_t SCaP:2;
+		__uint32_t IRL:3;
+		__uint32_t HP:5;
+		__uint32_t IEN:1;
+		__uint32_t PADD_1:6;
+		__uint32_t SPS:1;
+	}f;
+}cicr_t;
+
+
+
+#define CPMIV_Parallel_I_O_PC15 	0x1F
+#define CPMIV_SCC1 			0x1E
+#define CPMIV_SCC2 			0x1D
+#define CPMIV_SCC3 			0x1C
+#define CPMIV_SCC4 			0x1B
+#define CPMIV_Parallel_I_O_PC14 	0x1A
+#define CPMIV_Timer_1 			0x19
+#define CPMIV_Parallel_I_O_PC13 	0x18
+#define CPMIV_Parallel_I_O_PC12 	0x17
+#define CPMIV_SDMA_channel_bus_error 	0x16 
+#define CPMIV_IDMA1 			0x15
+#define CPMIV_IDMA2 			0x14
+//0x13       Reserved
+#define CPMIV_Timer_2 			0x12
+#define CPMIV_RISC_timer_table 		0x11
+#define CPMIV_I2C 			0x10
+#define CPMIV_Parallel_I_O_PC11		0x0F
+#define CPMIV_Parallel_I_O_PC10		0x0E
+//0x0D     Reserved
+#define CPMIV_Timer_3			0x0c
+#define CPMIV_Parallel_I_O_PC9 		0x0B
+#define CPMIV_Parallel_I_O_PC8	 	0x0A
+#define CPMIV_Parallel_I_O_PC7		0x09
+//0x08     Reserved
+#define CPMIV_Timer_4			0x07
+#define CPMIV_Parallel_I_O_PC6		0x06
+#define CPMIV_SPI			0x05
+#define CPMIV_SMC1			0x04
+#define CPMIV_SMC2_PIP			0x03
+#define CPMIV_Parallel_I_O_PC5		0x02
+#define CPMIV_Parallel_I_O_PC4		0x01 
+#define CPMIV_Error			0x00
+
+typedef enum{
+	cme_Error,
+	cmid_Parallel_I_O_PC4,
+	cmid_Parallel_I_O_PC5,
+	cmid_SMC2_PIP,
+	cmid_SMC1,
+	cmid_SPI,
+
+	cmid_Parallel_I_O_PC6,
+	cmid_Timer_4,
+	Reserved_0,
+
+	cmid_Parallel_I_O_PC7,
+	cmid_Parallel_I_O_PC8,
+	cmid_Parallel_I_O_PC9,
+	cmid_Timer_3,
+	Reserved_1,
+
+	cmid_Parallel_I_O_PC10,
+	cmid_Parallel_I_O_PC11,
+
+	cmid_I2C,
+	cmid_RISC_timer_table,
+	cmid_Timer_2,
+	Reserved_2,
+	cmid_IDMA2,
+	cmid_IDMA1,
+	cmid_SDMA_channel_bus_error,
+
+	cmid_Parallel_I_O_PC12,
+	cmid_Parallel_I_O_PC13,
+
+	cmid_Timer_1,
+
+
+	cmid_Parallel_I_O_PC14,
+	cmid_SCC4,
+	cmid_SCC3,
+	cmid_SCC2,
+	cmid_SCC1,
+
+	cmid_Parallel_I_O_PC15
+}cpmid_t;
+
+
+/*
+34.5.5 CPM Interrupt Vector Register (CIVR)
+The CPM interrupt vector register (CIVR) is used to identify an interrupt source. The core
+uses the IACK bit to acknowledge an interrupt. CIVR can be read at any time. This register
+is affected by HRESET and SRESET.
+
+0–4   VN  Vector number. Identiﬁes the interrupt source. These values are listed in Table 34-2.
+5–14   —  Reserved. Writing to bits 5-15 has no effect because they are always read as zeros.
+ 15  IACK Interrupt acknowledge. When the core sets IACK, CIVR[VN] is updated with a 5-bit vector
+          corresponding to the sub-block with the highest current priority. IACK is cleared after one clock cycle.
+*/
+
+
+typedef union{ 
+	__uint16_t raw; 
+	struct {
+		__uint16_t VN:5;
+		__uint16_t PADD_0:10;
+		__uint16_t IACK:1;
+	}f;
+}civr_t;
+
+/*
+        0     1    2     3     4    5      6     7      8      9    10    11  12      13   14  15
+ Field PC15 SCC1 SCC2 SCC3 SCC4 PC14 TIMER1 PC13      PC12  SDMA IDMA1 IDMA2  —    TIMER2 RTT I2C
+Reset                                      0000_0000_0000_0000
+ R/W                                               R/W
+ Addr                            0x944 (CIPR), 0x948 (CIMR), 0x94C (CISR)
+        16   17   18    19    20   21     22    23     24     25    26    27  28      29   30  31
+ Field PC11 PC10  —   TIMER3 PC9  PC8    PC7    —   TIMER4 PC6     SPI  SMC1 SMC2/   PC5  PC4  —
+                                                                              PIP
+Reset                                      0000_0000_0000_0000
+ R/W                                               R/W
+ Addr                            0x946 (CIPR), 0x94A (CIMR), 0x94E (CISR)
+Figure 34-4. CPM Interrupt Pending/Mask/In-Service Registers (CIPR/CIMR/CISR)
+
+*/
+
+
+typedef union{ 
+	__uint32_t raw; 
+	struct {		
+		__uint32_t PC15:1;
+		__uint32_t SCC1:1;
+		__uint32_t SCC2:1;
+		__uint32_t SCC3:1;
+		__uint32_t SCC4:1;
+		__uint32_t PC14:1;
+		__uint32_t TIMER1:1;
+		__uint32_t PC13:1;
+
+		__uint32_t PC12:1;
+		__uint32_t SDMA:1;
+		__uint32_t IDMA1:1;
+		__uint32_t IDMA2:1;
+		__uint32_t _rsv_0:1;
+		__uint32_t TIMER2:1;
+		__uint32_t RTT:1;
+		__uint32_t I2C:1;
+
+		__uint32_t PC11:1;
+		__uint32_t PC10:1;
+		__uint32_t _rsv_1:1;
+		__uint32_t TIMER3:1;
+		__uint32_t PC9:1;
+		__uint32_t PC8:1;
+		__uint32_t PC7:1;
+		__uint32_t _rsv_2:1;
+
+		__uint32_t TIMER4:1;
+		__uint32_t PC6:1;
+		__uint32_t SPI:1;
+		__uint32_t SMC1:1;
+		__uint32_t SMC2_PIP:1;
+		__uint32_t PC5:1;
+		__uint32_t PC4:1;
+		__uint32_t _rsv_3:1;
+
+	}f;
+}ciid_t;
+
+#include <CPU/860/isr.h>
+void CM_init();
+void CM_Handler( void );
+int  CM_isr_install(int level, isr_handler isr);
+
+
+
 #endif //CM_H
 

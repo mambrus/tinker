@@ -179,6 +179,7 @@ void __init_cpu(){
 	}
 	/*Other internal self contained perepherials*/
 	systimer_init();
+	CM_init();
 
 }
 
@@ -205,6 +206,10 @@ void __exeptions_enable_cpu(){
 //		SIMASK=0xFFFF0000;	//Allow all kinds of IRQ	
 		bitset(SIMASK,LVL3);	//Set LVL3 interrupts
 		bitset(SIMASK,IRQ3);	//Set IRQ3 interrupts (CAN)
+
+		bitset(SIMASK,LVL5);	//Set LVL5 interrupts (CPM)		
+
+
 		//SIEL=0x00000000;	//IRQ on level, no wakeup from low-pow
 		SIEL=0xFFFF0000;	//IRQ on edge, do wakeup from low-pow
 	}

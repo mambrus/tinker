@@ -21,8 +21,10 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#define RX_BUFFLEN	160
-#define TX_BUFFLEN	160
+#define SMC_BD_RX_BUFFLEN	160	//!< RX length of the buffert in DPRAM BD
+#define SMC_BD_TX_BUFFLEN	160	//!< TX length of the buffert in DPRAM BD
+
+
 
 /*Example 9600 8N1 
 console_init(9600, 8,'N',1);

@@ -92,7 +92,8 @@ void __init_board(){
 
 /* Initialize perephrials according to application specifics */
 	//console_init(9600, 8,'N',1);
-	console_init(115200, 8,'N',1);
+	//console_init(115200, 8,'N',1);
+	console_init(57600, 8,'N',1);
 }
 
 #else
