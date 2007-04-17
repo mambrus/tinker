@@ -21,8 +21,10 @@
 console_init(9600, 8,'N',1);
 */
 int console_init(int bpr, int nr_bits, int par, int nr_stop);
+int console_stdio_init();
 int console_write(const char* buffer, int buff_len);
 int console_read(char* buffer, int max_len);
+
 
 #endif //CONSOLE_H
 

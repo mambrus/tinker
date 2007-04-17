@@ -62,6 +62,18 @@ int ppc_write (int file, char *ptr, int len){
 	return len; /*Wrote it all (say...)*/
 };
 
+
+int ppc_read (int file, char *ptr, int len) {
+	int rc_len;
+	extern int _con_stdio_init;
+	if (!_con_stdio_init)
+		console_stdio_init();
+
+	rc_len = console_read(ptr, len);	// Ignore the file ID - read from console regardless
+	return rc_len;
+}
+
+
 //=====================================
 char* myheap_end = (char*)0x10080000;   //<- NOTE: Test purpose only, dont use this unless you know what you're doing
 //=====================================
@@ -127,7 +139,7 @@ int tk_bsp_sysinit (void){
 	hixs.link         = hixs.link;
 	hixs.lseek        = hixs.lseek;
 	hixs.open         = ppc_open;		// <- NOTE
-	hixs.read         = hixs.read;
+	hixs.read         = ppc_read;		// <- NOTE
 	//hixs.sbrk         = ppc_sbrk;		// <- NOTE use built in -it's OK
 	hixs.settimeofday = hixs.settimeofday;
 	hixs.stat         = hixs.stat;

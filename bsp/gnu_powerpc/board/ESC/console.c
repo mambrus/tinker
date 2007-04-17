@@ -20,6 +20,7 @@
 #include <CPU/860/asm/si.h>
 #include <string.h>
 #include <assert.h>
+#include <semaphore.h>
 
 #define CHAN_SMC1 	0x09
 
@@ -31,6 +32,11 @@ static char TX_BD_BUFFER[SMC_BD_TX_BUFFLEN];
 static char RX_CHAR_BUFFER[SMC_CHAR_BUFFLEN];
 static int rx_inIdx=0;
 static int rx_outIdx=0;
+
+
+sem_t _con_rx_sem;
+int _con_stdio_init = 0;
+
 
 #ifdef NEVER
 29.3.13 SMC UART Controller Programming Example
@@ -502,7 +508,7 @@ int console_write(const char* buffer, int buff_len){
 		//SMCE1 = 0xFF; // Write 0xFF to the SMCE register to clear any previous events.	
 		//SMCM1 = 0x17; // Write 0x17 to the SMCM register to enable all possible SMC interrupts.
 
-		SMCE1 = 0x02; //Set Tx bit - i.e. acknolage the interrupt before it happens
+		SMCE1 = 0x02; //Set Tx bit - i.e. acknolage the interrupt before it happens (has no effect?)
 
 		//Don't do this - Same reason as above
 		//smcmr1_p->uart.f.TEN=1; 			//Enable the Tx output
@@ -562,19 +568,36 @@ int __tk_console_write_emergency(const char* buffer, int buff_len){
 }
 
 int console_read(char* buffer, int max_len){
-	bd_smc_t *RxBD=(bd_smc_t *)DP_BD_0;
-	cpcr_t *cpcr_p = (cpcr_t*)&CPCR;
-	smcmr_t *smcmr1_p = (smcmr_t*)&SMCMR1;
-	cpcr_t cpcr;
+	int ret_len;
+	int total_len;
+	assert(_con_stdio_init);
+	sem_wait(&_con_rx_sem);
 
-	cicr_t *cicr_p = (cicr_t*)&CICR;
-	civr_t *civr_p = (civr_t*)&CIVR;
-
-	ciid_t *cipr_p = (ciid_t*)&CIPR;
-	ciid_t *cimr_p = (ciid_t*)&CIMR;
-	ciid_t *cisr_p = (ciid_t*)&CISR;
+	if(rx_inIdx>rx_outIdx){
+		total_len = rx_inIdx-rx_outIdx;
+		if (total_len<=max_len){
+			memcpy(buffer,&RX_CHAR_BUFFER[rx_outIdx],total_len);
+			ret_len=total_len;
+			rx_outIdx += ret_len;
+			rx_outIdx %= SMC_CHAR_BUFFLEN;
+			buffer[ret_len] = 0;				//This buffer is read to completion
+			return ret_len;
+		}else{
+			memcpy(buffer,&RX_CHAR_BUFFER[rx_outIdx],max_len);
+			ret_len=max_len;
+			rx_outIdx += ret_len;
+			rx_outIdx %= SMC_CHAR_BUFFLEN;
+			return ret_len;
+		}
+		
+	}
 
 	return 0;
+}
+
+int console_stdio_init(){
+	_con_stdio_init = 1;
+	assure(sem_init(&_con_rx_sem, 0, 0) == 0);
 }
 
 //01010010
@@ -595,7 +618,7 @@ void _console_rx_handler(){
 	cpcr_t *cpcr_p = (cpcr_t*)&CPCR;	
 	smcmr_t *smcmr1_p = (smcmr_t*)&SMCMR1;
 	cpcr_t cpcr;
-	int len;
+	int i,len,gotCR=0;
 	static ledstat = 0;
 
 	#ifndef FAST_RX
@@ -619,6 +642,12 @@ void _console_rx_handler(){
 		*((cpcr_t *)&CPCR)=cpcr;			//Actuate the command
 	#endif
 
+	
+	for (i=0; i<len && !gotCR; i++){
+		if (RX_BD_BUFFER[i] == '\r')
+			gotCR = 1;
+	}
+
 	#ifndef FAST_RX
 		smcmr1_p->uart.f.REN=1; 
 	#endif
@@ -633,6 +662,8 @@ void _console_rx_handler(){
 			led_off(LED_1, LED_GREEN);
 		}
 	#endif
+	if (gotCR)
+		sem_post(&_con_rx_sem);
 
 };
 
