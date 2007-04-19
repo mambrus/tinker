@@ -134,5 +134,11 @@ int fs_fini(){
 	return 0;
 }
 
+#include <sys/mount.h>
+int mount (const char *special_file, const char *dir, const char *fstype, unsigned long int options, const void *data){
+}
+int umount2 (const char *file, int flags){
+}
+
 
 

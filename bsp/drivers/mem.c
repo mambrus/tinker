@@ -26,11 +26,11 @@
 
 //NOTE driver name is set here and it affects the whole module
 #define DRV_IO( x ) \
-	DRV_IO_NAME( mem_ , x )
+	DRV_IO_NAME( ram_ , x )
 
 
 #define DEV_FILE_NAME( x ) \
-	"/dev/mem/C" #x
+	"/dev/ram" #x
 
 
 int DRV_IO(close)(int file) {

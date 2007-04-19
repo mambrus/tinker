@@ -53,6 +53,7 @@ typedef struct tk_inode_s{
 	tk_id_t			id;		//!<  A "unique" ID number for this node (a counter)
 	char			*name;		//!<  Name of the node
 	tk_mode_t		mode;		//!<  What kind of node this is
+	unsigned long int 	moptions;	//!<  If this is a mountpoint this field contains the mount options. If not, this is zero.
 	struct tk_inode_s 	*belong;	//!<  Whom this node belongs to
 	struct tk_inode_s	*next;		//!<  Next node on the same level
 	struct tk_inode_s	*down;		//!<  Points to first inode that belongs to this one

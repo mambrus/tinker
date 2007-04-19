@@ -119,6 +119,7 @@ int mknod(const char *filename, mode_t mode, dev_t dev){
 	
 	//Create the node
 	assure(newNode = (tk_inode_t*)calloc(1,sizeof(tk_inode_t)));
+	memset(newNode, 0, sizeof(tk_inode_t));
 	__icntr++;
 	newNode->id=__ilid++;
 	newNode->name=(char*)calloc(1,namelen);

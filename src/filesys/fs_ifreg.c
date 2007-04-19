@@ -29,6 +29,14 @@
 
 static const char DRV_IO(assert_info)[]="You're trying to access a non implemented function";
 
+typedef struct{
+}DRV_IO(drv_data_t);
+
+typedef struct{
+
+}DRV_IO(hndl_data_t);
+
+
 int DRV_IO(close)(int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return -1;
@@ -42,8 +50,14 @@ int DRV_IO(fcntl)(int file, int command, ...){
 	
 	
 int DRV_IO(fstat)(int file, struct stat *st) {
+/*
 	assert(DRV_IO(assert_info) == NULL);
 	st->st_mode = S_IFCHR;
+*/
+
+	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
+	st->st_mode = hndl->inode->mode;;
+
 	return 0;
 }
 	
@@ -57,16 +71,51 @@ int DRV_IO(link)(char *old, char *new) {
 	errno=EMLINK;
 	return -1;
 }
-	
+/*!
+Upon successful completion, the resulting offset, as measured in bytes from 
+the beginning of the file, shall be returned. Otherwise, (off_t)-1 shall be 
+returned, errno shall be set to indicate the error, and the file offset shall 
+remain unchanged.
+*/	
 int DRV_IO(lseek)(int file, int ptr, int dir) {
-	assert(DRV_IO(assert_info) == NULL);
+	switch (dir) {
+		case SEEK_SET:
+			//the file offset shall be set to offset bytes.
+		break;
+		case SEEK_CUR:
+			//the file offset shall be set to its current location plus offset.
+		break;
+		case SEEK_END:
+			//the file offset shall be set to the size of the file plus offset.
+		break;
+		default:
+			assert("Unknown direction for lseek" == 0);
+
+	}
 	return 0;
 }
 
 int DRV_IO(open)(const char *filename, int flags, ...){
+	va_list ap;
+		tk_fhandle_t *hndl;
+		tk_inode_t *inode;
+	va_start (ap, flags);
+		inode=va_arg(ap,tk_inode_t *);
+	va_end(ap);
+
+	hndl=tk_new_handle(inode,(tk_flag_t)flags);
+
+	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
+/*
+	((DRV_IO(hndl_data_t)*)(hndl->data))->q = 
+		mq_open( filename,flags,0666,NULL);
+*/
+	return (int)hndl;
+/*
 	assert(DRV_IO(assert_info) == NULL);
 	errno = ENOSYS;
 	return -1;
+*/
 }
 	
 int DRV_IO(read)(int file, char *ptr, int len) {

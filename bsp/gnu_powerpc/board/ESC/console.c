@@ -529,9 +529,12 @@ int __tk_console_write_emergency(const char* buffer, int buff_len){
 	int wcount=0;
 
 	if (buff_len <= SMC_BD_TX_BUFFLEN){
-		while (TxBD->BD_Status.SMC_TX.f.R_Ready); 	//Wait for pending write to finish
-		
-		while (!smce1->f.TX && wcount<100000)		//Wait for FIFO to finish
+		wcount=0;
+		while (TxBD->BD_Status.SMC_TX.f.R_Ready && wcount<0x10000) 	//Wait for pending write to finish
+			wcount++;
+
+		wcount=0;
+		while (!smce1->f.TX && wcount<0x10000)		//Wait for FIFO to finish
 			wcount++;				//Sometimes TX is never set (FIXME: BUG)
 
 		TxBD->BD_Length = buff_len;
@@ -557,8 +560,10 @@ int __tk_console_write_emergency(const char* buffer, int buff_len){
 		*((cpcr_t *)&CPCR)=cpcr;			//Actuate the command
 
 
-		SMCE1 = 0xFF; // Write 0xFF to the SMCE register to clear any previous events.	
-		SMCM1 = 0x17; // Write 0x17 to the SMCM register to enable all possible SMC interrupts.
+		//SMCE1 = 0xFF; // Write 0xFF to the SMCE register to clear any previous events.	
+		//SMCM1 = 0x17; // Write 0x17 to the SMCM register to enable all possible SMC interrupts.
+
+		SMCE1 = 0x02; //Set Tx bit - i.e. acknolage the interrupt before it happens (has no effect?)
 
 		//Don't do this - Same reason as above
 		//smcmr1_p->uart.f.TEN=1; 			//Enable the Tx output

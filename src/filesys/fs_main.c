@@ -26,6 +26,7 @@
 
 #include <filesys/filesys.h>
 
+
 //FIXME make these more transparent
 #define RX_BUFFLEN	102  
 #define TX_BUFFLEN	102
@@ -108,7 +109,13 @@ int fs_link(char *old, char *new) {
 @brief http://www.opengroup.org/onlinepubs/009695399/
 */	
 int fs_lseek(int file, int ptr, int dir) {
-	assert(assert_info == NULL);
+	if ((file>=0) && (file<=2)){
+		assert("lseek for sddin/out not supported" == NULL);
+	}
+	tk_fhandle_t *hndl= (tk_fhandle_t *)file;
+	CHECK_FH(hndl,lseek);
+	return hndl->inode->iohandle->lseek(file,ptr,dir);
+
 	return -1;
 }
 
@@ -123,9 +130,63 @@ int fs_open(const char *filename, int oflag, ...){
 	va_end(ap);
 	
 	inode=isearch(filename);
+/*
+O_RDONLY
+O_WRONLY
+O_RDWR
+O_APPEND
+O_CREAT
+O_DSYNC
+O_EXCL
+O_NOCTTY
+O_NONBLOCK
+O_RSYNC
+O_SYNC
+O_TRUNC
+*/
 
-	if (inode==NULL)		//Errno allready set by isearch
+	if (inode==NULL){
+		int rc = 0;
+		if (oflag & O_CREAT) {
+			if (filename[strnlen(filename,PATH_MAX)] == '/'){
+				//Create a directory
+				char tname[PATH_MAX];
+				strncpy(tname,filename,PATH_MAX);
+				tname[strnlen(tname,PATH_MAX)] = 0;
+				rc = mknod(tname,S_IFDIR,0);
+			}else{
+				//Create regular file
+				rc = mknod(filename,S_IFREG,0);
+			}
+			if ( rc == 0 ){
+				//reopen the newly created file
+				return fs_open(filename, oflag & ~O_CREAT);
+			}else{
+				//Errno is allready set appropriately
+				return -1;
+			}
+		}else{
+			errno = ENOENT;
+			return -1;
+		}
+
+		
+	}
+
+	if (inode!=NULL && strncmp(inode->name,igetname(filename),NAME_MAX)){
+		//Serach is returning a mounted directory
+		//Pass further to the sfs device driver
+		assure(inode->moptions !=0 );
+		assure(inode->iohandle);
+		assure(inode->iohandle->open);
+		return inode->iohandle->open(filename,oflag,inode);
+	}
+
+	if (inode!=NULL && (oflag & (O_CREAT|O_EXCL))){
+		errno = EEXIST;
 		return -1;
+
+	}
 
 	assure(inode->iohandle);
 	assure(inode->iohandle->open);

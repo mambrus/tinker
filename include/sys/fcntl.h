@@ -33,6 +33,12 @@ kernel_reimpl_ansi.
 
 
 @see kernel_reimpl_ansi
+@note that for Newlib
+#define	O_RDONLY	0		// +1 == FREAD 
+#define	O_WRONLY	1		// +1 == FWRITE
+#define	O_RDWR		2		// +1 == FREAD|FWRITE
+#define	O_APPEND	_FAPPEND
+I.e. we can safely redefine the first three (mqueu needs to test for O_RDONLY so it can't be =0)
 
 <HR>
 */
@@ -66,6 +72,9 @@ kernel_reimpl_ansi.
  * @defgroup CVSLOG_fcntl_h fcntl_h
  * @ingroup CVSLOG
  *  $Log: fcntl.h,v $
+ *  Revision 1.3  2007-04-19 15:25:57  ambrmi09
+ *  A fair bit of the internal storage fs completed (S_IFREG)
+ *
  *  Revision 1.2  2007-03-04 19:07:25  ambrmi09
  *  1) Error handling refined - will handle error from different
  *     cathegories:
