@@ -124,11 +124,15 @@ int fs_lseek(int file, int ptr, int dir) {
 */
 int fs_open(const char *filename, int oflag, ...){
 	va_list ap;
+		#if DEBUG
+		_tk_dbgflag_t dbgflags;
+		#endif;
 		tk_inode_t *inode;
 	va_start (ap, oflag);
 		/*No need, nothing to parse*/
 	va_end(ap);
 	
+	assert(tk_dbg_flags(&dbgflags,oflag) == 0);
 	inode=isearch(filename);
 /*
 O_RDONLY
@@ -159,8 +163,20 @@ O_TRUNC
 				rc = mknod(filename,S_IFREG,0);
 			}
 			if ( rc == 0 ){
+				inode=isearch(filename);
+				assure(inode->iohandle);
+				assure(inode->iohandle->open);
+				return inode->iohandle->open(filename,oflag,inode);
+
+				/*
 				//reopen the newly created file
-				return fs_open(filename, oflag & ~O_CREAT);
+				assure(fs_open(filename, oflag & ~O_CREAT) == 0);
+
+				assure(inode->iohandle);
+				assure(inode->iohandle->open);
+				return inode->iohandle->open(filename,oflag | O_CREAT,inode);
+				*/
+				
 			}else{
 				//Errno is allready set appropriately
 				return -1;
@@ -243,13 +259,13 @@ int fs_write(int file, char *ptr, int len) {
 /*!
 Creates a new handle
 */
-tk_fhandle_t *tk_new_handle(tk_inode_t *inode, tk_flag_t aflags){
+tk_fhandle_t *tk_new_handle(tk_inode_t *inode, int oflag){
 	tk_fhandle_t *hndl;
 	
 	assure( (hndl=(tk_fhandle_t*)calloc(1,sizeof(tk_fhandle_t))));
 	__fcntr++;
 	hndl->id=__flid++;
-	hndl->flags=aflags;
+	hndl->oflag=oflag;
 	hndl->inode=inode;
 	return hndl;
 }

@@ -66,6 +66,7 @@ Pure flag names (to aid debugging - note that any flag variable can be OR'ed
 among these - which means any stabs info will not be able to resolve the
 name (which however is of of concern for the running code).
 */
+/*
 typedef enum{
 	ISA_FLG_UNKNWN 	= 0,
 	ISA_RDONLY 	= O_RDONLY,
@@ -81,13 +82,30 @@ typedef enum{
 	ISA_SYNC	= O_SYNC,
 	ISA_TRUNC	= O_TRUNC
 }tk_flag_t;
+*/
+typedef struct{	
+	int _O_RDONLY;
+	int _O_WRONLY;
+	int _O_RDWR;
+	int _O_APPEND;
+	int _O_CREAT;
+//	int _O_DSYNC;
+	int _O_EXCL;
+	int _O_NOCTTY;
+	int _O_NONBLOCK;
+//	int _O_RSYNC;
+	int _O_SYNC;
+	int _O_TRUNC;
+}_tk_dbgflag_t;
+
+
 
 //! File handle type - this is the top-level type used as a file handle
 typedef struct {
 	tk_id_t		id;		//!< Unique ID (global counter)
 //	tk_id_t		lid; 		//!< Local ID  (local counter)
 	tk_inode_t 	*inode;		//!< Which inode this file-handle belongs to
-	tk_flag_t	flags;		//!< The flags for this node
+	int		oflag;		//!< The flags for this node
 	void		*data;		//!< Optional data associated with a handle
 }tk_fhandle_t;
 
@@ -96,7 +114,7 @@ Helper function to create a file handle
 
 An IO device "open" function would normally use this
 */
-tk_fhandle_t *tk_new_handle(tk_inode_t *inode, tk_flag_t aflags);
+tk_fhandle_t *tk_new_handle(tk_inode_t *inode, int oflag);
 
 /*! 
 Helper function to destroy a file handle
@@ -104,6 +122,15 @@ Helper function to destroy a file handle
 An IO devive "close" function would normally use this
 */
 int tk_free_handle(tk_fhandle_t *);
+
+/*!
+Helper function to unpack the operation flags (i.e. those set by open)
+
+If un unknown flag is set, the function will return a non-zero value
+else zero will be returned
+*/
+int tk_dbg_flags(_tk_dbgflag_t *flags, int oflag);
+
 
 
 /*! 

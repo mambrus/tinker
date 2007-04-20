@@ -92,7 +92,7 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 		inode=va_arg(ap,tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,(tk_flag_t)flags);	
+	hndl=tk_new_handle(inode,flags);	
 
 	return (int)hndl;
 }

@@ -134,6 +134,116 @@ int fs_fini(){
 	return 0;
 }
 
+
+int tk_dbg_flags(_tk_dbgflag_t *flags, int oflag){
+	int tmp_oflag = oflag;
+
+/*
+//testing the damned macros
+int mupp = oflag & (O_RDWR_NL|O_WRONLY_NL);
+int tupp = (O_RDWR_NL|O_WRONLY_NL);
+
+int fread = FREAD;
+int fwrite = FWRITE;
+int frw = (FREAD|FWRITE);
+
+int rdonly = O_RDONLY_NL;
+int wronly = O_WRONLY_NL;
+int rder = O_RDWR_NL;
+*/
+	memset(flags,0,sizeof(_tk_dbgflag_t));
+	
+	#ifdef O_RDONLY_NL
+	assert( (oflag & (O_RDWR_NL|O_WRONLY_NL)) !=  (O_RDWR_NL|O_WRONLY_NL) ); //We're counting on that this logic appiles (I.e. both can't be set)
+	if (tmp_oflag & O_RDWR_NL){
+		flags->_O_RDWR=1;
+		tmp_oflag &= ~O_RDWR_NL;
+	}else{
+		if (tmp_oflag & O_WRONLY_NL){
+			flags->_O_WRONLY=1;
+			tmp_oflag &= ~O_WRONLY_NL;
+		}else{
+			flags->_O_RDONLY=1;
+			tmp_oflag &= ~O_RDONLY_NL;
+		}
+	}
+	#else
+	if (tmp_oflag & O_RDONLY){
+		flags->_O_RDONLY=1;
+		tmp_oflag &= ~O_RDONLY;
+	};
+	if (tmp_oflag & O_WRONLY){
+		flags->_O_WRONLY=1;
+		tmp_oflag &= ~O_WRONLY;
+	};
+	if (tmp_oflag & O_RDWR){
+		flags->_O_RDWR=1;
+		tmp_oflag &= ~O_RDWR;
+	};
+	#endif
+	if (tmp_oflag & O_APPEND){
+		flags->_O_APPEND=1;
+		tmp_oflag &= ~O_APPEND;
+	};
+	if (tmp_oflag & O_CREAT){
+		flags->_O_CREAT=1;
+		tmp_oflag &= ~O_CREAT;
+	};
+/*
+	if (tmp_oflag & O_DSYNC){
+		flags->_O_DSYNC=1;
+		tmp_oflag &= ~O_DSYNC;
+	};
+*/
+	if (tmp_oflag & O_EXCL){
+		flags->_O_EXCL=1;
+		tmp_oflag &= ~O_EXCL;
+	};
+	if (tmp_oflag & O_NOCTTY){
+		flags->_O_NOCTTY=1;
+		tmp_oflag &= ~O_NOCTTY;
+	};
+	if (tmp_oflag & O_NONBLOCK){
+		flags->_O_NONBLOCK=1;
+		tmp_oflag &= ~O_NONBLOCK;
+	};
+/*
+	if (tmp_oflag & O_RSYNC){
+		flags->_O_RSYNC=1;
+		tmp_oflag &= ~O_RSYNC;
+	};
+*/
+	if (tmp_oflag & O_SYNC){
+		flags->_O_SYNC=1;
+		tmp_oflag &= ~O_SYNC;
+	};
+	if (tmp_oflag & O_TRUNC){
+		flags->_O_TRUNC=1;
+		tmp_oflag &= ~O_TRUNC;
+	};
+
+	//If all known flags are tested, return value should be 0	
+	return tmp_oflag;
+
+}
+
+
+typedef struct{	
+	int _O_RDONLY;
+	int _O_WRONLY;
+	int _O_RDWR;
+	int _O_APPEND;
+	int _O_CREAT;
+//	int _O_DSYNC;
+	int _O_EXCL;
+	int _O_NOCTTY;
+	int _O_NONBLOCK;
+//	int _O_RSYNC;
+	int _O_SYNC;
+	int _O_TRUNC;
+}_dbg_flag_t;
+
+
 #include <sys/mount.h>
 int mount (const char *special_file, const char *dir, const char *fstype, unsigned long int options, const void *data){
 }

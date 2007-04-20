@@ -143,7 +143,7 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 		inode=va_arg(ap,tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,(tk_flag_t)flags);	
+	hndl=tk_new_handle(inode,flags);	
 
 	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
 	((DRV_IO(hndl_data_t)*)(hndl->data))->time_open	= clock();

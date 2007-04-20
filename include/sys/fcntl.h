@@ -53,6 +53,11 @@ I.e. we can safely redefine the first three (mqueu needs to test for O_RDONLY so
 	#undef O_RDONLY
 	#undef O_WRONLY
 	#undef O_RDWR
+
+//The original values (we still need them)
+	#define O_RDONLY_NL	(FREAD-1)
+	#define O_WRONLY_NL	(FWRITE-1)
+	#define O_RDWR_NL	((FREAD|FWRITE) -1)
 	
 #else
 	#define O_CREAT      0x10
@@ -72,6 +77,9 @@ I.e. we can safely redefine the first three (mqueu needs to test for O_RDONLY so
  * @defgroup CVSLOG_fcntl_h fcntl_h
  * @ingroup CVSLOG
  *  $Log: fcntl.h,v $
+ *  Revision 1.4  2007-04-20 17:15:05  ambrmi09
+ *  oflags as int replaces _tk_flags. Wasn't a good ida in the first place.
+ *
  *  Revision 1.3  2007-04-19 15:25:57  ambrmi09
  *  A fair bit of the internal storage fs completed (S_IFREG)
  *
