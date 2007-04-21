@@ -31,6 +31,7 @@ struct hixs_t old_syscalls;	//!< Storage for any old HIXS syscalls (previous ini
 extern struct hixs_t hixs;	//!< The call-stucture we know exist.
 tk_id_t		__fcntr=0;	//!< Number of open handles
 tk_id_t		__flid=0;	//!< Last allocated unique file handle ID (global counter)
+int		__fs_alive=0;	//!< Trap will run fs_fini after normal termination. 
 
 
 int fs_init(){
@@ -105,32 +106,38 @@ int fs_init(){
 		printf("Driver %-60s [started]\n",dinfo);
 	}
 
+	__fs_alive = 1;
 	return 0;
 }
 
 int fs_fini(){
-	extern __drv_finit_f __DRVFINI_START__;
-	extern __drv_finit_f __DRVFINI_END__;	
-	drv_finit_t drv_fini_first = &__DRVFINI_START__;
-	drv_finit_t drv_fini_last = &__DRVFINI_END__;
-	drv_finit_t *drv_fini_curr;
-	extern tk_inode_t *__Rnod;
-
-	//Close down the drivers
-	const char* dinfo;
-	for (
-		drv_fini_curr = (drv_finit_t*)drv_fini_first;
-		drv_fini_curr < (drv_finit_t*)drv_fini_last;
-		drv_fini_curr++
-	){
-		dinfo=(*drv_fini_curr)(NULL);
-		assure(dinfo);
-		printf("Driver %-60s [stopped]\n",dinfo);
+	if (!__fs_alive){
+		printf("FS allready shut-down...\n");
+	}else{
+		extern __drv_finit_f __DRVFINI_START__;
+		extern __drv_finit_f __DRVFINI_END__;	
+		drv_finit_t drv_fini_first = &__DRVFINI_START__;
+		drv_finit_t drv_fini_last = &__DRVFINI_END__;
+		drv_finit_t *drv_fini_curr;
+		extern tk_inode_t *__Rnod;
+	
+		//Close down the drivers
+		const char* dinfo;
+		for (
+			drv_fini_curr = (drv_finit_t*)drv_fini_first;
+			drv_fini_curr < (drv_finit_t*)drv_fini_last;
+			drv_fini_curr++
+		){
+			dinfo=(*drv_fini_curr)(NULL);
+			assure(dinfo);
+			printf("Driver %-60s [stopped]\n",dinfo);
+		}
+	
+		free(__Rnod);
+		memcpy(&hixs,&old_syscalls,sizeof(struct hixs_t));
+	
+		__fs_alive=0;
 	}
-
-	free(__Rnod);
-	memcpy(&hixs,&old_syscalls,sizeof(struct hixs_t));
-
 	return 0;
 }
 

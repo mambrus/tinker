@@ -31,7 +31,8 @@
 static const char DRV_IO(assert_info)[]="You're trying to access a non implemented function";
 
 
-#define SECTOR_SIZE 128
+//#define SECTOR_SIZE 128
+#define SECTOR_SIZE 48
 struct sector_t{
 	struct sector_t *prev;					//Pointer to previous sector
 	char data[SECTOR_SIZE-2*sizeof(struct sector_t *)];	//The data in each sector
@@ -248,17 +249,17 @@ int DRV_IO(read)(int file, char *ptr, int len) {
 			if (nleft>slen){
 				memcpy(ptr,&hdata->csector->data[hdata->sidx],slen);
 				ptr+=slen;
+				n+=slen;
 				nleft-=slen;
 				hdata->sidx+=slen;
-				hdata->didx+=slen;
-				n+=slen;
+				hdata->didx+=slen;				
 			}else{
 				memcpy(ptr,&hdata->csector->data[hdata->sidx],nleft);
 				ptr+=nleft;
+				n+=nleft;
 				nleft=0;				
 				hdata->sidx+=nleft;
-				hdata->didx+=nleft;
-				n+=nleft;
+				hdata->didx+=nleft;				
 			}
 			if (nleft){
 				if (hdata->csector->next != NULL){
@@ -279,6 +280,7 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 	DRV_IO(hndl_data_t) *hdata;
 	DRV_IO(inode_data_t) *idata;
 	int oflag = ((tk_fhandle_t *)file)->oflag;
+	int n;
 	#if DEBUG
 	_tk_dbgflag_t flags;
 	#endif
@@ -293,12 +295,30 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 		return -1;
 	}
 
-	if (len+hdata->didx > idata->dsize){  //We want to grow the file
+	if (len+hdata->didx > idata->dsize){  //Would we need to grow the file?
 		//Are we allowed to grow?
 		if (oflag & O_APPEND){
 			//Do we also need to allocate more sectors?
 			if (len+hdata->didx > idata->maxsize){
-				assert("Allocating nore sectors for appended write - TBD" == NULL);
+				//assert("Allocating more sectors for appended write - TBD" == NULL);
+				int i;
+				struct sector_t *tsect;
+				//We can't assume that we're at the end of the file, so allocate and seek-end in conjunction
+				tsect=hdata->csector;
+				for (
+					i=0;
+					len+hdata->didx > idata->maxsize;
+					i++
+				){
+					if (tsect->next == NULL){
+						tsect->next = malloc(SECTOR_SIZE);
+						memset(tsect->next,0,SECTOR_SIZE);
+						idata->maxsize+=DATA_IN_SECTOR_SIZE;
+						tsect->next->prev=tsect;
+					}
+					tsect=tsect->next;
+				}
+				
 			}
 			if (DATA_IN_SECTOR_SIZE-hdata->sidx >= len){ 
 				// Room left in current sector for the whole string or 
@@ -307,10 +327,50 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 				hdata->ptr+=len;
 				hdata->didx+=len;
 				hdata->sidx+=len;
+				n=len;
 			}else{
-				assert("TBD"==NULL);
+				//assert("Write over several sectors (TBD)"==NULL);
+				int slen,nleft=len;
+				int _eof=0;
+				//We need to write the requested buffer over several sectors
+				//Write as much as possible to the current one first
+				for (
+					n=0,nleft=len,slen=DATA_IN_SECTOR_SIZE-hdata->sidx;
+					nleft && !_eof;
+					
+				){
+					if (nleft>slen){
+						memcpy(&hdata->csector->data[hdata->sidx],ptr,slen);
+						ptr+=slen;
+						n+=slen;
+						nleft-=slen;
+						hdata->sidx+=slen;
+						hdata->didx+=slen;
+						
+					}else{
+						memcpy(&hdata->csector->data[hdata->sidx],ptr,nleft);
+						ptr+=nleft;
+						n+=nleft;
+						nleft=0;				
+						hdata->sidx+=nleft;
+						hdata->didx+=nleft;						
+					}
+					if (nleft){
+						if (hdata->csector->next != NULL){
+							slen = DATA_IN_SECTOR_SIZE;
+							hdata->csector=hdata->csector->next;
+							hdata->sidx=0;
+						}else{
+							_eof=1;
+						}
+					}
+				}
+				//Since we're appending we should allready have a file that's large enough, i.e. EOF should never been passed
+				assert(_eof==0);
+				//Sanity check to make sure we calculated things right
+				assert(hdata->csector->next == NULL);
 			}
-			//Since we know we're appending, the following is also true
+			//Since we know we're appending, the following is also true			
 			idata->dsize = hdata->didx;
 		}else{
 			errno = ENOSPC;  //No space left and we're not allowd to grow the file
@@ -327,7 +387,8 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 	}
 	
 	//This implementation always write the whole (lengt if it succeeds at all)
-	return len;
+	assert(n==len);
+	return n;
 }
 
 int DRV_IO(fcntl)(int file, int command, ...){
