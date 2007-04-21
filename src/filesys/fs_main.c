@@ -42,7 +42,12 @@ static const char assert_info[]="Something is wrong - please report this bug";
 @brief http://www.opengroup.org/onlinepubs/009695399/
 */
 int fs_close(int file) {
-	return 0;
+	if ((file>=0) && (file<=2)){
+		assert("close for sddin/out not supported" == NULL);
+	}
+	tk_fhandle_t *hndl= (tk_fhandle_t *)file;
+	CHECK_FH(hndl,close);
+	return hndl->inode->iohandle->close(file);
 }
 
 /*!
@@ -115,18 +120,26 @@ int fs_lseek(int file, int ptr, int dir) {
 	tk_fhandle_t *hndl= (tk_fhandle_t *)file;
 	CHECK_FH(hndl,lseek);
 	return hndl->inode->iohandle->lseek(file,ptr,dir);
-
-	return -1;
 }
 
 /*!
 @brief http://www.opengroup.org/onlinepubs/009695399/
+
+@note We're always passing at least a third argument to the drivers open
+Unless the oflag contains O_CREATE, this is a pointer to the inode, in other 
+case this is the access permission bit-flags (mode_t). 
+This is a concequence of following the standard.
+
+@attention If O_CREATE, bit-flags (mode_t) are always set to zero. I.e. Drivers can't test on this
+
+@todo Current implementation does not care about acces permissions (mode_t)
 */
 int fs_open(const char *filename, int oflag, ...){
 	va_list ap;
 		#if DEBUG
 		_tk_dbgflag_t dbgflags;
 		#endif;
+		mode_t accessflgs = 0;
 		tk_inode_t *inode;
 	va_start (ap, oflag);
 		/*No need, nothing to parse*/
@@ -157,16 +170,16 @@ O_TRUNC
 				char tname[PATH_MAX];
 				strncpy(tname,filename,PATH_MAX);
 				tname[strnlen(tname,PATH_MAX)] = 0;
-				rc = mknod(tname,S_IFDIR,0);
+				rc = mknod(tname,S_IFDIR,accessflgs);
 			}else{
 				//Create regular file
-				rc = mknod(filename,S_IFREG,0);
+				rc = mknod(filename,S_IFREG,accessflgs);
 			}
 			if ( rc == 0 ){
 				inode=isearch(filename);
 				assure(inode->iohandle);
 				assure(inode->iohandle->open);
-				return inode->iohandle->open(filename,oflag,inode);
+				return inode->iohandle->open(filename,oflag,accessflgs,inode); //!< Note, 4 arguments
 
 				/*
 				//reopen the newly created file
