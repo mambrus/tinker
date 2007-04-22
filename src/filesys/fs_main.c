@@ -33,6 +33,7 @@
 
 extern tk_id_t		__fcntr;
 extern tk_id_t		__flid;
+extern tk_inode_t 	*__Rnod;
 
 extern tk_iohandle_t std_files[3];
 
@@ -138,7 +139,7 @@ int fs_open(const char *filename, int oflag, ...){
 	va_list ap;
 		#if DEBUG
 		_tk_dbgflag_t dbgflags;
-		#endif;
+		#endif
 		mode_t accessflgs = 0;
 		tk_inode_t *inode;
 	va_start (ap, oflag);
@@ -146,7 +147,7 @@ int fs_open(const char *filename, int oflag, ...){
 	va_end(ap);
 	
 	assert(tk_dbg_flags(&dbgflags,oflag) == 0);
-	inode=isearch(filename);
+	inode=isearch(__Rnod,filename);
 /*
 O_RDONLY
 O_WRONLY
@@ -162,7 +163,10 @@ O_SYNC
 O_TRUNC
 */
 
-	if (inode==NULL){
+	if (inode==NULL){	
+		//If inode is trunly not found, try see if we want to create it
+		//At this point we can safly assume this intention in such case is 
+		//to create it in the __Rnod tree
 		int rc = 0;
 		if (oflag & O_CREAT) {
 			if (filename[strnlen(filename,PATH_MAX)] == '/'){
@@ -170,13 +174,13 @@ O_TRUNC
 				char tname[PATH_MAX];
 				strncpy(tname,filename,PATH_MAX);
 				tname[strnlen(tname,PATH_MAX)] = 0;
-				rc = mknod(tname,S_IFDIR,accessflgs);
+				rc = imknod(__Rnod,tname,S_IFDIR,accessflgs);
 			}else{
 				//Create regular file
-				rc = mknod(filename,S_IFREG,accessflgs);
+				rc = imknod(__Rnod,filename,S_IFREG,accessflgs);
 			}
 			if ( rc == 0 ){
-				inode=isearch(filename);
+				inode=isearch(__Rnod,filename);
 				assure(inode->iohandle);
 				assure(inode->iohandle->open);
 				return inode->iohandle->open(filename,oflag,accessflgs,inode); //!< Note, 4 arguments

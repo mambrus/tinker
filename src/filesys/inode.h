@@ -62,7 +62,8 @@ typedef struct tk_inode_s{
 	tk_iohandle_t	*iohandle;		//!<  Operations that can be made on this i-node
 }tk_inode_t;
 
-tk_inode_t 	*isearch	(const char*s);
+int 		imknod		(tk_inode_t *ci, const char *filename, mode_t mode, dev_t dev);
+tk_inode_t 	*isearch	(tk_inode_t *ci, const char*s);
 char 		*igetname	(const char *s);
 void 		igetpath	(char *buff, const char *s);
 

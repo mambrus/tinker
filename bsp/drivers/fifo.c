@@ -222,9 +222,10 @@ static const char DRV_IO(info_str)[]="fifo  @ " DEV_FILE_NAME();
 
 /* Init function(s) */
 void *DRV_IO(init__)(void *inarg) {
-	tk_inode_t *inod;
-	char *path;
-	DRV_IO(drv_data_t) *Q;
+	tk_inode_t 		*inod;
+	char 			*path;
+	DRV_IO(drv_data_t) 	*Q;
+	extern tk_inode_t 	*__Rnod;
 
 	if (inarg==NULL){
 		path = DEV_FILE_NAME();
@@ -232,8 +233,8 @@ void *DRV_IO(init__)(void *inarg) {
 		path = (char*)inarg;
 	}
 
-	assure(mknod(path,S_IFIFO, (dev_t)&DRV_IO(io))	==0);
-	inod=isearch(path);
+	assure(imknod(__Rnod,path,S_IFIFO, (dev_t)&DRV_IO(io))	==0);
+	inod=isearch(__Rnod,path);
 	assert(inod);
 	inod->idata=(DRV_IO(drv_data_t)*)(calloc( 1, sizeof(DRV_IO(drv_data_t)) ));
 

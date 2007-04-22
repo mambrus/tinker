@@ -32,6 +32,7 @@ extern struct hixs_t hixs;	//!< The call-stucture we know exist.
 tk_id_t		__fcntr=0;	//!< Number of open handles
 tk_id_t		__flid=0;	//!< Last allocated unique file handle ID (global counter)
 int		__fs_alive=0;	//!< Trap will run fs_fini after normal termination. 
+tk_inode_t 	*__Rnod;	//!< The root node
 
 
 int fs_init(){
@@ -47,7 +48,7 @@ int fs_init(){
 	drv_finit_t 		drv_init_last  	= &__DRVINIT_END__;
 	drv_finit_t 		*drv_init_curr;
 	int 			namelen;
-	extern tk_inode_t 	*__Rnod;
+	//extern tk_inode_t 	*__Rnod;
 	extern tk_id_t 		__icntr;
 	extern tk_id_t 		__ilid;
 
@@ -119,7 +120,7 @@ int fs_fini(){
 		drv_finit_t drv_fini_first = &__DRVFINI_START__;
 		drv_finit_t drv_fini_last = &__DRVFINI_END__;
 		drv_finit_t *drv_fini_curr;
-		extern tk_inode_t *__Rnod;
+		//extern tk_inode_t *__Rnod;
 	
 		//Close down the drivers
 		const char* dinfo;
@@ -249,6 +250,14 @@ typedef struct{
 	int _O_SYNC;
 	int _O_TRUNC;
 }_dbg_flag_t;
+
+
+/*!
+http://www.opengroup.org/onlinepubs/009695399/
+*/
+int mknod(const char *filename, mode_t mode, dev_t dev){
+	return imknod(__Rnod, filename, mode, dev);
+}
 
 
 #include <sys/mount.h>

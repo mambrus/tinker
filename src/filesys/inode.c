@@ -30,7 +30,7 @@
 
 
 
-tk_inode_t 	*__Rnod;		//!< The root node
+//tk_inode_t 	*__Rnod;		//!< The root node
 tk_id_t		__icntr=0;		//!< Number of active inodes
 tk_id_t		__ilid=0;		//!< A unique counter used as inode ID (global counter)
 
@@ -46,11 +46,20 @@ void igetpath(char *buff, const char *s){
 	igetname(buff)[0]='\0';
 }
 
-/*! Return the i-node associated with a name - OR NULL if no valid node is found */
-tk_inode_t *isearch(const char*s){
+/*! 
+Find the i-node associated with a name (arg #2) from the i-node tree 
+structure pointed oit by arg #1
+
+@returns Three cases can appliy
+1. NULL if no valid node is found 
+2. The i-node seached for that matches the name exactly
+3. If a mount point is encountered on the seach-path, this one is returned instead
+
+*/
+tk_inode_t *isearch(tk_inode_t 	*ci, const char*s){
 	char		fname[PATH_MAX];	
 	char		*cd,*nd;
-	tk_inode_t 	*ci 		= __Rnod;
+	//tk_inode_t 	*ci 		= __Rnod;
 	
 	strncpy(fname,s,PATH_MAX);
 
@@ -79,9 +88,15 @@ int tk_rmnod(const char *filename){
 }
 
 /*!
-http://www.opengroup.org/onlinepubs/009695399/
+This function is identical to the ANSI mknod, except that you also pass along 
+the adress to which tree.
+
+This enables tinker to use several trees of inodes in memory, i.e. we can reuse 
+this function for various RAM-disk drivers and for the initial name-space tree.
+
+@see (also) http://www.opengroup.org/onlinepubs/009695399/
 */
-int mknod(const char *filename, mode_t mode, dev_t dev){
+int imknod(tk_inode_t *ci, const char *filename, mode_t mode, dev_t dev){
 	char path[PATH_MAX];
 	char *name;
 	tk_inode_t *belong;
@@ -102,12 +117,12 @@ int mknod(const char *filename, mode_t mode, dev_t dev){
 		return -1;
 	}
 
-	if (belong=isearch(filename)){
+	if (belong=isearch(ci,filename)){
 		/*File with that name exists allready*/
 		errno=EEXIST;
 		return -1;
 	}
-	if (!(belong=isearch(path))){
+	if (!(belong=isearch(ci,path))){
 		/*Owner path does not exist*/
 		errno=ENOENT;
 		return -1;
@@ -183,3 +198,4 @@ int mknod(const char *filename, mode_t mode, dev_t dev){
 	newNode->down=newNode;
 	return 0;
 }
+
