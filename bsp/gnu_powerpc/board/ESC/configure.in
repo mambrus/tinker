@@ -17,8 +17,6 @@ extern_includes="../.."
 TINKER_CONFIGURE(../../../..)
 AC_CONFIG_SUBDIRS([])
 
-
-
 dnl Tunings. Main reason they are here is to set defaults specific to this target.
 dnl This part will is an itermediate solution and takes over the rols of >>tk_tuning.h<<
 dnl Future solutions might me an ordinary text file that both GNU and non GNU build 
@@ -71,6 +69,12 @@ AC_ARG_ENABLE(max_q,
 	AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],$enableval),
 	AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],TK_MAX_THREADS)
 )
+AC_ARG_ENABLE(max_heaps,
+	AS_HELP_STRING([--enable-max_heaps=<val>],[Maximum number of heaps for the KMEM component]),
+	AC_DEFINE_UNQUOTED([TK_KMEM_NHEAPS],$enableval),
+	AC_DEFINE_UNQUOTED([TK_KMEM_NHEAPS],0x10)
+)
+
 
 # Set better default values than any previously set in either config.in earler in the 
 # chain or in any of the two levels of tk_tuning.h

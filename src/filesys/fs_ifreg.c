@@ -17,9 +17,36 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+/*!
+@file
+@ingroup FILE
+
+@brief Native regular file manager (ifreg)
+
+This code handles regular files in memory. It can be used either as to allow
+I/O to files stored on global heap (default), or as a RAM-disk driver
+where the memory is pointed out explicitly depending on how the file is 
+opened.
+
+In the latter case the drive has to be previously initialized with an
+mounting point name, and it has to have been mounted (initially on __Rnod
+or a submounted system).
+
+The open function will determine if the adjacent inode is a mount-point 
+or not. If it is, open will re-seek the inode in the RAM-disk inode list. 
+If not the file is assumed to reside in global heap.
+
+As driver we can't provide default init/fini since we don't know
+which memory to handle. Instead it is the resonsibility of each BSP.
+
+@note The code does not need to be used as driver. It will provide
+the filesystem with a default initial root FS managed on global heap.
+*/
+
 #include "filesys.h"
 #include "inode.h"
 #include <string.h>
+#include <tk_mem.h>
 
 #define DRV_IO_NAME( x, y ) \
 	x ##y
@@ -42,21 +69,28 @@ struct sector_t{
 #define DATA_IN_SECTOR_SIZE (SECTOR_SIZE-2*sizeof(struct sector_t *))
 
 typedef struct{
+	char		*start;		//!< Start address of memory region to use
+	int		size;		//!< Size of the memory region in bytes
+	int		sectorsize;	//!< Size of each sector
+	int		isratio;	//!< inode vs. sector ratio (normal is 10 sectors or more)	
+	int		opt;		//!< Driver specific options
+
+	heapid_t	inode_heap;	//!< KMEM heap of inodes
+	heapid_t	sector_heap;	//!< KMEM heap of sectors
 }DRV_IO(drv_data_t);
 
 typedef struct{
-	char *ptr;			//your handles in-file index
-	int sidx;			//Current in sector index
-	int didx;			//Current data index (reduntant info to csector/sidx, but makes logic easier)
-	struct sector_t *csector;	//Points at current sector (reduntant info to didx, but makes logic easier)
+	char *ptr;			//!< your handles in-file index
+	int sidx;			//!< Current in sector index
+	int didx;			//!< Current data index (reduntant info to csector/sidx, but makes logic easier)
+	struct sector_t *csector;	//!< Points at current sector (reduntant info to didx, but makes logic easier)
 }DRV_IO(hndl_data_t);
 
 typedef struct{
-	int maxsize;			//max number of data-bytes that currently fits in file
-	int dsize;			//number of data-bytes currently in file
-	struct sector_t *sectors;	//Points at first sector
+	int maxsize;			//!< max number of data-bytes that currently fits in file
+	int dsize;			//!< number of data-bytes currently in file
+	struct sector_t *sectors;	//!< Points at first sector
 }DRV_IO(inode_data_t);
-
 
 
 int DRV_IO(close)(int file) {
@@ -436,4 +470,96 @@ const tk_iohandle_t DRV_IO(io) = {
         DRV_IO(write)
 };
 
+/*!
+Create an instance of this driver as a RAM-disk. Returned value is a valid file 
+handle. 
 
+@Note that initialization can be done multiple times. A new driver instance 
+will be created each time and each instances private data will be connected 
+to the associated inode of each driver.
+*/
+int DRV_IO(init)(
+	char		*path,		//!< Driver path-name (mount point name)
+	char		*start,		//!< Start address of memory region to use
+	int		size,		//!< Size of the memory region in bytes
+	int		sectorsize,	//!< Size of each sector
+	int		isratio,	//!< inode vs. sector ratio (normal is 10 sectors or more)	
+	int		opt		//!< Driver specific options
+) {
+	int 			file;
+	tk_inode_t 		*inod;
+	DRV_IO(drv_data_t)	*drvdata;
+	int			ninodes; 	//Number of inodes that will fit
+	int			nsectors;	//Number of sectors that will fit
+	int 			rc;
+	extern	tk_inode_t 	*__Rnod;
+
+	assure(mknod(path,S_IFBLK, (dev_t)&DRV_IO(io))	==0);
+	inod=isearch(__Rnod,path);
+	assert(inod);
+	inod->idata=(DRV_IO(drv_data_t)*)(calloc( 1, sizeof(DRV_IO(drv_data_t)) ));
+
+	drvdata = (DRV_IO(drv_data_t)*)(inod->idata);
+	if (drvdata == NULL)
+		return ENOMEM;
+
+/*
+unsigned long  tk_create_heap ( 
+	heapid_t   *heapid,  //!< Returned heap ID
+	int         size,    //!< Size each element will have
+	int         num,     //!< Requested maximum number of elements
+	lock_f      lock,    //!< Function for un-locking acces when operation on the heap. NULL if no locking is needed.
+	unlock_f    unlock,  //!< Function for locking acces when operation on the heap. NULL if no locking is needed.
+	char       *heap_ptr //!< Memory address to use as heap, or NULL for global heap usage
+)*/
+
+	rc = tk_create_heap (
+		&drvdata->inode_heap,
+		sizeof(tk_inode_t),
+		ninodes,
+		NULL,
+		NULL,
+		start
+	);
+	if (rc!=0){
+		memset(drvdata,0,sizeof(DRV_IO(drv_data_t)));
+		free(drvdata);
+		return rc;
+	}
+
+	rc = tk_create_heap (
+		&drvdata->sector_heap,
+		sizeof(tk_inode_t),
+		nsectors,
+		NULL,
+		NULL,
+		drvdata->inode_heap->last
+	);
+	if (rc!=0){
+		tk_destroy_heap(drvdata->inode_heap);
+		memset(drvdata,0,sizeof(DRV_IO(drv_data_t)));
+		free(drvdata);
+		return rc;
+	}
+
+	drvdata->start		=start;
+	drvdata->size		=size;
+	drvdata->sectorsize	=sectorsize;
+	drvdata->isratio	=isratio;
+	drvdata->opt		=opt;
+
+}
+
+int DRV_IO(fini)(int file) {
+	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
+	DRV_IO(drv_data_t)	*drvdata;
+
+	drvdata = (DRV_IO(drv_data_t)*)(hndl->inode->idata);
+
+	tk_destroy_heap(drvdata->inode_heap);
+	tk_destroy_heap(drvdata->sector_heap);
+	memset(drvdata,0,sizeof(DRV_IO(drv_data_t)));
+	free(drvdata);
+
+	return unlink(hndl->inode->name);
+}

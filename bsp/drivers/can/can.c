@@ -43,6 +43,11 @@ sem_t __can_rx_sem;
 typedef struct{
 }DRV_IO(hndl_data_t);
 
+typedef struct{
+}DRV_IO(drv_data_t);
+
+typedef struct{
+}DRV_IO(inode_data_t);
 
 int DRV_IO(close)(int file) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
@@ -157,22 +162,64 @@ typedef enum {
 }irq_level;
 
 /* Init function(s) */
+/*!
+Default init (BOARD ESC) - obsolete
+*/
 void *DRV_IO(init_0__)(void *inarg) {
 	assert(inarg==NULL); 	
 	assure(sja1000_init(0x20000000,lvl_IRQ_3,1,1,500000,0,0xffffffff) == 0);
 	assure(mknod(DEV_FILE_NAME(0),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
 	return (void*)DRV_IO(info_str);
 }
+/*!
+Specific init
+*/
+int DRV_IO(init)(
+	__uint32_t baddr,	//!< Base address of the circuit
+	int IRQn,		//!< Interrupt number for the main CAN handler
+	int pmode,		//!< 1=pelican mode, 0=basic mode
+	int xmode,		//!< 1=extended frame (i.e. 29 bits header), 0=basic frame (i.e. 11 bits header)
+	int bps,		//!< Speed of the bus, nominal speed is 500 Kbps
+	__uint32_t ac, 		//!< Acceptance code @note MSB is the same either EFF or SFF
+	__uint32_t am		//!< Acceptance mask @note MSB is the same either EFF or SFF
+){
+	int rc;
+	extern	tk_inode_t 	*__Rnod;
 
-/* Fini function(s) */
+	assure(sja1000_init(baddr,IRQn,pmode,xmode,bps,ac,am) == 0);
+	rc = mknod(DEV_FILE_NAME(0),S_IFBLK, (dev_t)&DRV_IO(io));
+	return isearch(__Rnod,DEV_FILE_NAME(0));
+}
+
+
+/*! 
+Default fini function(s) - obsolete
+*/
 void *DRV_IO(fini_0__)(void *inarg) {
 	assert(inarg==NULL);
 	//tdelete(DEV_FILE_NAME(0),S_IFBLK, &DRV_IO(io));
 	return (void*)DRV_IO(info_str);
 }
 
-/*Put the init/fini in corresponding sections so that filesys can pick them up */
+/*!
+Specific fini 
+*/
+int DRV_IO(fini)(int file) {
+	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
+	DRV_IO(drv_data_t)	*drvdata;
 
+	drvdata = (DRV_IO(drv_data_t)*)(hndl->inode->idata);
+
+	memset(drvdata,0,sizeof(DRV_IO(drv_data_t)));
+	free(drvdata);
+
+	return unlink(hndl->inode->name);
+}
+
+
+/*Put the init/fini in corresponding sections so that filesys can pick them up */
+/*Obsolete. Board specific initialization must start these
 drv_finit_t DRV_IO(init_0) __attribute__ ((section (".drvinit"))) =DRV_IO(init_0__);
 drv_finit_t DRV_IO(fini_0) __attribute__ ((section (".drvfini"))) =DRV_IO(fini_0__);
+*/
 

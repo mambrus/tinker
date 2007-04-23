@@ -24,9 +24,41 @@
 
 @brief A better malloc
 
-TBD
+KMEM can be used both by TinKer internals and by drivers or even in 
+certain cases applications. It fullfills the following needs:
 
-For in-depth discussions about this component, see \ref
+* Provides TinKer internal dynamic allocation where a working malloc/free is
+not available.
+
+* Makes dynamic memory handling deterministic in cases where that is 
+desireable.
+
+* Provides a locking mechanism for heap accessing in cases this is needed.
+
+* Makes is possible to point out specific memory areas for each heap, which 
+is usefull in cases where the C-library is delibreratly held unknowing of 
+certain memory, for example storage disks (battery backupes RAM area) e.t.a.
+ 
+The basic idea of KMEM to have several heaps in memory, each of fixed size 
+elements. This makes managing each heap very fast but also determinisic
+(both functionally and in temporal space).
+
+The API for using each heap mimics the ANSI malloc and free, exept that each
+function takes an identifier as first argument to identify which heap you're
+accessing. I.e. the size argument for malloc must be a even multiple of
+the particular heaps element size.
+
+TinKer heaps can be located both on the global heap, but also in any memory
+pointed out by the creation of each heap. The latter permits heap to be 
+allocated and managed that the C-library is not aware of but that the linker
+script knows of (or it can in certain cases be the address of an global array).
+
+Each heap has a heap header. This header is located in a fixed size header 
+pool. This is to accommodate systems where no functional malloc/free are 
+available and provides the TinKer scheduler component with a working solution
+to create elements for internal usages without 
+
+For an further in-depth discussions about this component, see \ref
 KMEM
 
 @see KMEM
@@ -35,8 +67,24 @@ KMEM
 */
 #include <stdlib.h>
 #include <errno.h>
+#include <assert.h>
+#include <string.h>
 #include <tk_mem.h>
 
+#if defined (__GNUC__)
+   #include <tinker/config.h>
+#endif
+
+#ifndef TK_KMEM_NHEAPS
+/*! 
+Number of heaps managed by KMEM
+*/
+#define TK_KMEM_NHEAPS 0x8
+#endif //TK_KMEM_NHEAPS
+
+heap_t header_pool[TK_KMEM_NHEAPS];	//!< The heap-header pool
+int cheap_idx = 0; 			//!<Current heap-header allocation index
+int nheaps = 0; 			//!<Number of heaps in use
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*! @brief Constructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM
@@ -44,15 +92,18 @@ KMEM
 Constructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM 
 
 @note that we don't pass any size for the memory to handle. This is
-because only various constructors are supposed to create new heaps, and
-this is done at boot time anyway.
+because only various constructors are supposed to create new heaps.
 
 @see COMPONENTS 
 @see KMEM
 */
 
 unsigned long  tk_mem         ( void ){
-   return ERR_OK; 
+	int i;
+	for (i=0;i<TK_KMEM_NHEAPS;i++){
+		memset(&header_pool[i],0,sizeof(heap_t));
+	}
+	return ERR_OK; 
 }
 
 /*! @brief Destructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM
@@ -63,64 +114,92 @@ Destructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM
 @see KMEM
 */
 unsigned long  tk_mem_destruct( void ){
+	int i;
+	for (i=0;i<TK_KMEM_NHEAPS;i++){
+		if (header_pool[i].heap && header_pool[i].is_malloced)
+			free(header_pool[i].heap);
+	}
    return ERR_OK; 
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*! @brief Creates a new heap
 
-XXX
+Creates a new heap, returns a heap handler (heapid).
+
+@Note that the total memory usage will be larger than num*size.
 
 @see KMEM
 */
 unsigned long  tk_create_heap ( 
-   heapid_t*   heapid,  //!< Returned heap ID
-   int         size,    //!< Size each element will have
-   int         num,     //!< Requested maximum number of elements
-   lock_f      lock,    //!< Function for un-locking acces when operation on the heap. NULL if no locking is needed.
-   unlock_f    unlock   //!< Function for locking acces when operation on the heap. NULL if no locking is needed.
+	heapid_t   *heapid,  //!< Returned heap ID
+	int         size,    //!< Size each element will have
+	int         num,     //!< Requested maximum number of elements
+	lock_f      lock,    //!< Function for un-locking acces when operation on the heap. NULL if no locking is needed.
+	unlock_f    unlock,  //!< Function for locking acces when operation on the heap. NULL if no locking is needed.
+	char       *heap_ptr //!< Memory address to use as heap, or NULL for global heap usage
 ){
-   int i;
-   int esz;
-   void *ptr;
-   
-   esz = sizeof(int) + size;
-   
-   /* Allocate a heap "header" to act as a supervisory entity */
-   *heapid = malloc(sizeof(heap_t));
-   if (*heapid == NULL)
-      return ENOMEM;
-      
-   /* Allocate the actual heap. Note that one extra byte per element is alocated also*/
-   (*heapid)->heap = malloc( num*size );
+	int i,found;
+	int esz;
+	void *ptr;
+	
+	esz = sizeof(int) + size;
+	*heapid = NULL;
+	
+	if (nheaps>=TK_KMEM_NHEAPS){	
+		*heapid=NULL;
+		return ENOMEM;
+	}
 
-   if ((*heapid)->heap == NULL){
-      free (*heapid);
-      *heapid = NULL;
-      return ENOMEM;
-   }
-   
-   /*Fill in initial stuff in header*/
-   (*heapid)->lock   =  lock;
-   (*heapid)->unlock =  unlock;
-   
-   (*heapid)->self   = *heapid;
-   (*heapid)->size   =  size;
-   (*heapid)->num    =  num;  
-   (*heapid)->blocks =  0;     
-   (*heapid)->indx   =  0;
-   
-   
-   /*Blank the heap (or at least each first byte telling wheter each block is free or not)*/
-   //*(int*)((char*)ptr + i*esz) = 0;
+	for (i=0,found=0;i<TK_KMEM_NHEAPS && !found;i++){
+		if (header_pool[cheap_idx].heap==NULL){
+			*heapid=&header_pool[cheap_idx];
+		}
+		cheap_idx++;
+		cheap_idx%=TK_KMEM_NHEAPS;
+	}
+	assert(*heapid != NULL);
+	
+	/* Allocate the actual heap. Note that one extra sizeof(in) per element is also alocated */
+	if (heap_ptr==NULL){
+		(*heapid)->heap = malloc( num*size );
+		(*heapid)->is_malloced=1;
+	}else{
+		(*heapid)->heap = heap_ptr;
+		(*heapid)->is_malloced=0;
+	}
+	
+	if ((*heapid)->heap == NULL){
+		//Failiure to allocate memory for heap
+		//Release the handler again
+		memset(*heapid,0,sizeof(heap_t));
 
-   ptr = (*heapid)->heap;
-   for (i=0; i<num; i++){      
-      *(int*)ptr = 0;
-	  ptr = (char*)ptr + esz;
-   }
-      
-   return ERR_OK;   
+		*heapid = NULL;
+		return ENOMEM;
+	}
+	
+	/*Fill in initial stuff in header*/
+	(*heapid)->lock   =  lock;
+	(*heapid)->unlock =  unlock;
+	
+	(*heapid)->self   = *heapid;
+	(*heapid)->size   =  size;
+	(*heapid)->num    =  num;  
+	(*heapid)->blocks =  0;     
+	(*heapid)->indx   =  0;
+		
+	/*Blank the heap (or at least each first byte telling wheter each block is free or not)*/
+	//*(int*)((char*)ptr + i*esz) = 0;
+	
+	ptr = (*heapid)->heap;
+	for (i=0; i<num; i++){
+		*(int*)ptr = 0;
+		ptr = (char*)ptr + esz;
+	}
+	(*heapid)->last   =  ptr;
+	nheaps++;
+	
+	return ERR_OK;
 }
 
 /*! @brief Destroys a heap
@@ -137,17 +216,21 @@ This function is typically invoced on system shutdown only.
 unsigned long  tk_destroy_heap( 
    heapid_t  heapid
 ){
-   if (heapid->self == NULL)
-      return ERR_UNDEF_HEAPID;
-   if (heapid->self != (void*)heapid)
-      return ERR_UNDEF_HEAPID;
-   if (heapid->blocks != 0)
-      return EBUSY;
-      
-   free (heapid->heap);
-   free (heapid);
-      
-   return ERR_OK;
+	if (heapid->self == NULL)
+		return ERR_UNDEF_HEAPID;
+	if (heapid->self != (void*)heapid)
+		return ERR_UNDEF_HEAPID;
+	if (heapid->blocks != 0)
+		return EBUSY;
+	
+	if (heapid->is_malloced)
+		free (heapid->heap);
+	
+	//Free the header too (clean it and mark free)
+	memset(heapid,0,sizeof(heap_t));
+	nheaps--;
+	
+	return ERR_OK;
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -159,52 +242,52 @@ XXX
 @see KMEM
 */
 void *tk_mem_malloct ( 
-   heapid_t heapid, 
-   size_t size 
+	heapid_t heapid, 
+	size_t size 
 ){
-   int i;
-   int esz;
-   void *ptr;
-   
-   if (heapid->self == NULL){
-      //errno = ERR_UNDEF_HEAPID;
-	  return NULL;
-   }
-   if (heapid->self != (void*)heapid){
-      //errno = ERR_UNDEF_HEAPID;
-      return NULL;      
-   }
-   if (heapid->blocks >= heapid->num) {
-      //errno = ENOMEM;
-      return NULL;
-   }
-   
-   if (heapid->lock)
-      heapid->lock();
-   
-   /* Find next free block */
-   esz = sizeof(int) + heapid->size;
-   ptr = (char*)(heapid->heap) + esz*heapid->indx;
-
-   for (i=heapid->indx; *(int*)ptr; ){
-	   i++;
-      i%=heapid->num;
-      ptr = (char*)(heapid->heap) + esz*i;
-   }
-   i++;
-   i%=heapid->num;
-   heapid->indx=i;
-   heapid->blocks++;
-
-   /* Mark it as occupied */
-   *(int*)ptr = 1;
-
-   ptr = (char*)ptr + sizeof(int);      
-
-   if (heapid->unlock)
-      heapid->unlock();
-
-   return ptr;
+	int i;
+	int esz;
+	void *ptr;
+	
+	if (heapid->self == NULL){
+		//errno = ERR_UNDEF_HEAPID;
+		return NULL;
+	}
+	if (heapid->self != (void*)heapid){
+		//errno = ERR_UNDEF_HEAPID;
+		return NULL;
+	}
+	if (heapid->blocks >= heapid->num) {
+		//errno = ENOMEM;
+		return NULL;
+	}
+	
+	if (heapid->lock)
+		heapid->lock();
+	
+	/* Find next free block */
+	esz = sizeof(int) + heapid->size;
+	ptr = (char*)(heapid->heap) + esz*heapid->indx;
+	
+	for (i=heapid->indx; *(int*)ptr; ){
+		i++;
+		i%=heapid->num;
+		ptr = (char*)(heapid->heap) + esz*i;
+	}
+	i++;
+	i%=heapid->num;
+	heapid->indx=i;
+	heapid->blocks++;
+	
+	/* Mark it as occupied */
+	*(int*)ptr = 1;
+	
+	ptr = (char*)ptr + sizeof(int);      
+	
+	if (heapid->unlock)
+		heapid->unlock();
+	
+	return ptr;
 }
 
 /*! @brief free (on specified heap)
@@ -217,27 +300,27 @@ void tk_mem_free(
    heapid_t heapid, 
    void* ptr
 ){
-   if (heapid->self == NULL){
-      //errno = ERR_UNDEF_HEAPID;
-	  return;
-   }
-   if (heapid->self != (void*)heapid){
-      //errno = ERR_UNDEF_HEAPID;	  
-	  return;
-   }
-   if (heapid->blocks >= heapid->num){
-      //errno = ENOMEM;
-	  return;
-   }
-   if (heapid->lock)
-      heapid->lock();
-
-   ptr = (char*)ptr - sizeof(int);      
-   heapid->blocks--;
-   *(int*)ptr = 0;
-   
-   if (heapid->unlock)
-      heapid->unlock();
+	if (heapid->self == NULL){
+	//errno = ERR_UNDEF_HEAPID;
+		return;
+	}
+	if (heapid->self != (void*)heapid){
+	//errno = ERR_UNDEF_HEAPID;	  
+		return;
+	}
+	if (heapid->blocks >= heapid->num){
+	//errno = ENOMEM;
+		return;
+	}
+	if (heapid->lock)
+		heapid->lock();
+	
+	ptr = (char*)ptr - sizeof(int);      
+	heapid->blocks--;
+	*(int*)ptr = 0;
+	
+	if (heapid->unlock)
+		heapid->unlock();
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -377,6 +460,9 @@ both of these functions.
  * @defgroup CVSLOG_tk_mem_c tk_mem_c
  * @ingroup CVSLOG
  *  $Log: tk_mem.c,v $
+ *  Revision 1.8  2007-04-23 09:39:22  ambrmi09
+ *  KMEM refinement
+ *
  *  Revision 1.7  2006-04-08 10:16:03  ambrmi09
  *  Merged with branch newThreadstarter (as of 060408)
  *

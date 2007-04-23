@@ -166,7 +166,10 @@ void *DRV_IO(fini__)(void *inarg) {
 }
 
 /*Put the init/fini in corresponding sections so that filesys can pick them up */
+/*Obsolete - BOARD specific code must do this*/
+/*
 drv_finit_t DRV_IO(init) __attribute__ ((section (".drvinit"))) =DRV_IO(init__);
 drv_finit_t DRV_IO(fini) __attribute__ ((section (".drvfini"))) =DRV_IO(fini__);
+*/
 
 

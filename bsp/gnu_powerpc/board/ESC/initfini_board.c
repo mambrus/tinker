@@ -24,6 +24,7 @@ Initialice board specific internals and perepherials
 */
 
 #include <board/board.h>
+#include <filesys/filesys.h>
 
 #if ( TK_DCPU == __tk_860__ )
 void __init_board(){
@@ -109,4 +110,47 @@ void __exeptions_enable_board(){
 
 void __exeptions_disable_board(){
 }
+
+/*
+FS ini/fini stuff to generic drivers that need board specific initialization
+*/
+
+static tk_inode_t *inode_can;
+static tk_inode_t *inode_ram;
+
+#define DISK_SIZE 0x10000
+char testdisk[DISK_SIZE];
+
+void *escfs_init__(void *inarg) {
+	inode_can = (tk_inode_t*)can_init(0x20000000,lvl_IRQ_3,1,1,500000,0,0xffffffff);
+	assure(inode_can);
+
+	inode_ram = (tk_inode_t*)fs_ifreg_init(
+		"/dev/ram",	//!< Driver path-name (mount point name)
+		testdisk,	//!< Start address of memory region to use
+		DISK_SIZE,	//!< Size of the memory region in bytes
+		48,		//!< Size of each sector
+		10,		//!< inode vs. sector ratio (normal is 10 sectors or more)	
+		0		//!< Driver specific options
+	);
+	assure(inode_ram);
+
+	return (void*)"ESC specific files initialized (/dev/can /dev/ram/)";
+}
+void *escfs_fini__(void *inarg) {
+	assure(can_fini(inode_can) == 0);
+	assure(fs_ifreg_fini(inode_ram) == 0);
+	return (void*)"ESC specific files stopped (/dev/can /dev/ram/)";
+}
+
+/*
+Put the filesys related init/fini in corresponding sections so that filesys 
+can pick them up This will be done when the filesys coponent initializes - 
+i.e. very late in the boot chain, just before the call to application main.
+*/
+
+drv_finit_t escfs_init __attribute__ ((section (".drvinit"))) =escfs_init__;
+drv_finit_t escfs_fini __attribute__ ((section (".drvfini"))) =escfs_fini__;
+
+
 

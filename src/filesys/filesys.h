@@ -83,6 +83,8 @@ typedef enum{
 	ISA_TRUNC	= O_TRUNC
 }tk_flag_t;
 */
+
+/*!oflags as struct - used for bebug purposes*/
 typedef struct{	
 	int _O_RDONLY;
 	int _O_WRONLY;
@@ -99,7 +101,6 @@ typedef struct{
 }_tk_dbgflag_t;
 
 
-
 //! File handle type - this is the top-level type used as a file handle
 typedef struct {
 	tk_id_t		id;		//!< Unique ID (global counter)
@@ -108,6 +109,7 @@ typedef struct {
 	int		oflag;		//!< The flags for this node
 	void		*data;		//!< Optional data associated with a handle
 }tk_fhandle_t;
+
 
 /*! 
 Helper function to create a file handle
@@ -239,6 +241,8 @@ int fs_ifreg_read(int file, char *ptr, int len) ;
 int fs_ifreg_stat(const char *file, struct stat *st) ;
 int fs_ifreg_unlink(char *name) ;
 int fs_ifreg_write(int file, char *ptr, int len) ;
+int fs_ifreg_init(char*,char*,int,int,int,int);
+int fs_ifreg_fini(int);
 
 int fs_iflnk_close(int file) ;
 int fs_iflnk_fcntl (int file, int command, ...);

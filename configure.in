@@ -92,6 +92,8 @@ AH_TEMPLATE([TK_MAX_BLOCKED_ON_Q],
    [Maximum nuber of threads blocked on any ITC primitive (not only Q). If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_MAX_NUM_Q],
    [Maximum number of any ITC primitive (not only Q). If not set, value in tk_tuning.h will be used instead])
+AH_TEMPLATE([TK_KMEM_NHEAPS],
+   [Maximum number of heaps to be managed by the KMEM component])
 
 dnl TinKer components defines
 AH_TEMPLATE([TK_COMP_ITC],

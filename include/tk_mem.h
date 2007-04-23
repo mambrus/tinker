@@ -101,14 +101,16 @@ There should not be any reason for a normal user to address this
 structure explicitly. Use \ref heapid_t for normal operations instead.
 */
 typedef struct {   
-   int      num;        //!< Maximum number of elements this pool can hold
-   int      size;       //!< Size of each element
-   int      blocks;     //!< Current number of blocks in use
-   int      indx;       //!< Points at block firts after the last allocated block (probable for next alloc).
-   void *   heap;       //!< Pointer to the allocatded memory, null if unallocated
-   lock_f   lock;       //!< Function for un-locking acces when operation on the heap. NULL if no locking is needed.
-   unlock_f unlock;     //!< Function for locking acces when operation on the heap. NULL if no locking is needed.
-   void *   self;       //!< Use this as a sanity-check on systems where there's no MMU
+	int      num;        //!< Maximum number of elements this pool can hold.
+	int      size;       //!< Size of each element
+	int      blocks;     //!< Current number of blocks in use
+	int      indx;       //!< Points at block firts after the last allocated block (probable for next alloc).
+	char    *heap;       //!< Pointer to the allocatded memory, NULL if unallocated. I.e. NULL also means this header is avaiable
+	int      is_malloced;//!< If heap is on global heap or if it was provided extrernally
+	lock_f   lock;       //!< Function for un-locking acces when operation on the heap. NULL if no locking is needed.
+	unlock_f unlock;     //!< Function for locking acces when operation on the heap. NULL if no locking is needed.
+	void *   self;       //!< Use this as a sanity-check on systems where there's no MMU
+	char    *last;       //!< Top Of heap - Last address + 1 element this heap uses (consecutive non-global heaps can be placed on this address)
 }heap_t;
 
 
@@ -144,7 +146,7 @@ functions.
 */ 
 
 //@{ 
-unsigned long  tk_create_heap ( heapid_t*, int, int, lock_f, unlock_f);
+unsigned long  tk_create_heap ( heapid_t*, int, int, lock_f, unlock_f, char* );
 unsigned long  tk_destroy_heap( heapid_t  ); 
 //@}
 
@@ -176,6 +178,9 @@ void           tk_mem_free    ( heapid_t, void* );
  * @defgroup CVSLOG_tk_mem_h tk_mem_h
  * @ingroup CVSLOG
  *  $Log: tk_mem.h,v $
+ *  Revision 1.13  2007-04-23 09:39:22  ambrmi09
+ *  KMEM refinement
+ *
  *  Revision 1.12  2006-12-12 10:57:05  ambrmi09
  *  This adresses the second part of #1609064
  *

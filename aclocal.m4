@@ -404,6 +404,9 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_ARG_ENABLE(max_q,
 		AS_HELP_STRING([--enable-max_q=<val>],[Maximum number of any ITC primitive, i.e not only Q ]),
 		AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],$enableval))
+	AC_ARG_ENABLE(max_heaps,
+		AS_HELP_STRING([--enable-max_heaps=<val>],[Maximum number of heaps for the KMEM component]),
+		AC_DEFINE_UNQUOTED([TK_KMEM_NHEAPS],$enableval))
 
 	dnl Other configurable features
 	dnl ---------------------------------------------
