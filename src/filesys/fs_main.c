@@ -209,7 +209,7 @@ O_TRUNC
 	if (inode!=NULL && strncmp(inode->name,igetname(filename),NAME_MAX)){
 		//Serach is returning a mounted directory
 		//Pass further to the sfs device driver
-		assure(inode->moptions !=0 );
+		assure(inode->mount !=NULL );
 		assure(inode->iohandle);
 		assure(inode->iohandle->open);
 		return inode->iohandle->open(filename,oflag,inode);

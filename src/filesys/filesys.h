@@ -240,7 +240,9 @@ int fs_ifreg_open(const char *filename, int flags, ...);
 int fs_ifreg_read(int file, char *ptr, int len) ;
 int fs_ifreg_stat(const char *file, struct stat *st) ;
 int fs_ifreg_unlink(char *name) ;
-int fs_ifreg_write(int file, char *ptr, int len) ;
+int fs_ifreg_write(int file, char *ptr, int len);
+
+#define RAMDISK_KEEP_OLD_DATA (1<<0)
 int fs_ifreg_init(char*,char*,int,int,int,int);
 int fs_ifreg_fini(int);
 

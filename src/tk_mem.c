@@ -132,18 +132,21 @@ Creates a new heap, returns a heap handler (heapid).
 @see KMEM
 */
 unsigned long  tk_create_heap ( 
-	heapid_t   *heapid,  //!< Returned heap ID
-	int         size,    //!< Size each element will have
-	int         num,     //!< Requested maximum number of elements
-	lock_f      lock,    //!< Function for un-locking acces when operation on the heap. NULL if no locking is needed.
-	unlock_f    unlock,  //!< Function for locking acces when operation on the heap. NULL if no locking is needed.
-	char       *heap_ptr //!< Memory address to use as heap, or NULL for global heap usage
+	heapid_t	*heapid,	//!< Returned heap ID
+	int		hsize,		//!< Raw memory regions size allowed for this heap (in bytes)
+	int		dsize,		//!< Size each element will have	
+	int 		opt,		//!< Options bit-mask
+	lock_f		lock,		//!< Function for un-locking acces when operation on the heap. NULL if no locking is needed.
+	unlock_f	unlock,		//!< Function for locking acces when operation on the heap. NULL if no locking is needed.	
+	char		*heap_ptr	//!< Memory address to use as heap, or NULL for global heap usage	
 ){
-	int i,found;
-	int esz;
-	void *ptr;
+	int 		i,found_ID;
+	int 		esz;		//!< True element size
+	void 		*ptr;
+	int         	mxnum;		//!< Calculated maximum number of elements that will fit untruncated
 	
-	esz = sizeof(int) + size;
+	esz = sizeof(int) + dsize;
+	mxnum = hsize / esz;
 	*heapid = NULL;
 	
 	if (nheaps>=TK_KMEM_NHEAPS){	
@@ -151,9 +154,14 @@ unsigned long  tk_create_heap (
 		return ENOMEM;
 	}
 
-	for (i=0,found=0;i<TK_KMEM_NHEAPS && !found;i++){
+	for (
+		i=0,found_ID=TK_KMEM_NHEAPS+1;
+		i<TK_KMEM_NHEAPS && found_ID>TK_KMEM_NHEAPS;
+		i++
+	){
 		if (header_pool[cheap_idx].heap==NULL){
 			*heapid=&header_pool[cheap_idx];
+			found_ID=cheap_idx;
 		}
 		cheap_idx++;
 		cheap_idx%=TK_KMEM_NHEAPS;
@@ -162,7 +170,7 @@ unsigned long  tk_create_heap (
 	
 	/* Allocate the actual heap. Note that one extra sizeof(in) per element is also alocated */
 	if (heap_ptr==NULL){
-		(*heapid)->heap = malloc( num*size );
+		(*heapid)->heap = malloc( hsize );
 		(*heapid)->is_malloced=1;
 	}else{
 		(*heapid)->heap = heap_ptr;
@@ -182,20 +190,42 @@ unsigned long  tk_create_heap (
 	(*heapid)->lock   =  lock;
 	(*heapid)->unlock =  unlock;
 	
-	(*heapid)->self   = *heapid;
-	(*heapid)->size   =  size;
-	(*heapid)->num    =  num;  
-	(*heapid)->blocks =  0;     
-	(*heapid)->indx   =  0;
+	(*heapid)->self		= *heapid;
+	(*heapid)->dsize	=  dsize;
+	(*heapid)->maxnum 	=  mxnum;  
+	(*heapid)->blocks	=  0;
+	(*heapid)->indx		=  0;
 		
 	/*Blank the heap (or at least each first byte telling wheter each block is free or not)*/
 	//*(int*)((char*)ptr + i*esz) = 0;
 	
 	ptr = (*heapid)->heap;
-	for (i=0; i<num; i++){
-		*(int*)ptr = 0;
+
+	if (opt & KMEM_KEEP_UNINITIALIZED){
+		//Leave the blocks as is, but recalculated the heap-header control data
+		for (i=0; i<mxnum; i++){
+			if (*(int*)ptr != 0){
+				(*heapid)->blocks++;
+			}else{
+				(*heapid)->indx = i;
+			}
+		}
 		ptr = (char*)ptr + esz;
+	}else{
+		if (opt & KMEM_BLANK_ZERO){
+			memset((*heapid)->heap,0,hsize);
+		}else if (opt & KMEM_BLANK_ID){
+			memset((*heapid)->heap,found_ID,hsize);
+		}
+
+		if (!(opt & KMEM_BLANK_ZERO)){	//Cos if zero, this is allready done (opimization)
+			for (i=0; i<mxnum; i++){
+				*(int*)ptr = 0;
+				ptr = (char*)ptr + esz;
+			}
+		}
 	}
+
 	(*heapid)->last   =  ptr;
 	nheaps++;
 	
@@ -257,7 +287,7 @@ void *tk_mem_malloct (
 		//errno = ERR_UNDEF_HEAPID;
 		return NULL;
 	}
-	if (heapid->blocks >= heapid->num) {
+	if (heapid->blocks >= heapid->maxnum) {
 		//errno = ENOMEM;
 		return NULL;
 	}
@@ -266,16 +296,16 @@ void *tk_mem_malloct (
 		heapid->lock();
 	
 	/* Find next free block */
-	esz = sizeof(int) + heapid->size;
+	esz = sizeof(int) + heapid->dsize;
 	ptr = (char*)(heapid->heap) + esz*heapid->indx;
 	
 	for (i=heapid->indx; *(int*)ptr; ){
 		i++;
-		i%=heapid->num;
+		i%=heapid->maxnum;
 		ptr = (char*)(heapid->heap) + esz*i;
 	}
 	i++;
-	i%=heapid->num;
+	i%=heapid->maxnum;
 	heapid->indx=i;
 	heapid->blocks++;
 	
@@ -308,7 +338,7 @@ void tk_mem_free(
 	//errno = ERR_UNDEF_HEAPID;	  
 		return;
 	}
-	if (heapid->blocks >= heapid->num){
+	if (heapid->blocks >= heapid->maxnum){
 	//errno = ENOMEM;
 		return;
 	}
@@ -460,6 +490,9 @@ both of these functions.
  * @defgroup CVSLOG_tk_mem_c tk_mem_c
  * @ingroup CVSLOG
  *  $Log: tk_mem.c,v $
+ *  Revision 1.9  2007-04-23 16:26:07  ambrmi09
+ *  Mounting is close
+ *
  *  Revision 1.8  2007-04-23 09:39:22  ambrmi09
  *  KMEM refinement
  *

@@ -48,12 +48,19 @@ typedef enum {
 	ISA_IFIFO	= S_IFIFO	//!< FIFO or pipe	
 }tk_mode_t;
 
+typedef struct tk_mount_s{
+	tk_iohandle_t	*io_device;		//!<  Driver entries to mounted low-level device
+	tk_iohandle_t	*io_fstype;		//!<  Entries to mounted fstype (future feature - now always NULL);
+	//const char *fstype;
+	unsigned long int options;
+	//const void *data;
+}tk_mount_t;
 
 typedef struct tk_inode_s{
 	tk_id_t			id;		//!<  A "unique" ID number for this node (a counter)
 	char			*name;		//!<  Name of the node
 	tk_mode_t		mode;		//!<  What kind of node this is
-	unsigned long int 	moptions;	//!<  If this is a mountpoint this field contains the mount options. If not, this is zero.
+	struct tk_mount_s	*mount;		//!<  If this is a mountpoint this field contains the mount options. If not, this is zero.
 	struct tk_inode_s 	*belong;	//!<  Whom this node belongs to
 	struct tk_inode_s	*next;		//!<  Next node on the same level
 	struct tk_inode_s	*down;		//!<  Points to first inode that belongs to this one

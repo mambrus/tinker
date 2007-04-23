@@ -258,12 +258,114 @@ http://www.opengroup.org/onlinepubs/009695399/
 int mknod(const char *filename, mode_t mode, dev_t dev){
 	return imknod(__Rnod, filename, mode, dev);
 }
+/*
+EPERM
+    The process is not superuser.
+ENODEV
+    The file system type fstype is not known to the kernel.
+ENOTBLK
+    The file dev is not a block device special file.
+EBUSY
+
+        * The device is already mounted.
+        * The mount point is busy. (E.g. it is some process' working directory or has a filesystem mounted on it already).
+        * The request is to remount read-only, but there are files open for write. 
 
 
+EINVAL
+
+        * A remount was attempted, but there is no filesystem mounted over the specified mount point.
+        * The supposed filesystem has an invalid superblock. 
+
+
+EACCES
+
+        * The filesystem is inherently read-only (possibly due to a switch on the device) and the process attempted to mount it read/write (by setting the MS_RDONLY bit off).
+        * special_file or dir is not accessible due to file permissions.
+        * special_file is not accessible because it is in a filesystem that is mounted with the MS_NODEV option. 
+
+
+EM_FILE
+    The table of dummy devices is full. mount needs to create a dummy device (aka "unnamed" device) if the filesystem being mounted is not one that uses a device.
+*/
 #include <sys/mount.h>
-int mount (const char *special_file, const char *dir, const char *fstype, unsigned long int options, const void *data){
+
+/*!
+@brief http://www.gnu.org/software/libc/manual/html_mono/libc.html#Mount-Unmount-Remount
+
+@Note that TinKer permits the same device to be mounted on different places in 
+the current name-space at the same time. Therefore - to unmount you have to do 
+this on the directory. If you try unmounting on the device, TinKer will not 
+know which one of the (potential) several mountpoints you mean.
+*/
+int mount (
+	const char *special_file, 
+	const char *dir, 
+	const char *fstype, 
+	unsigned long int options, 
+	const void *data
+){
+	extern tk_inode_t 	*__Rnod;
+	tk_inode_t 		*device_file;
+	tk_inode_t 		*mount_dir;
+
+	device_file	=isearch(__Rnod,special_file);
+	if (device_file==NULL){
+		errno = EINVAL;
+		return -1;
+	}
+	if (!(device_file->mode & S_IFBLK)){
+		errno = ENOTBLK;
+		return -1;
+	}
+	mount_dir	=isearch(__Rnod,dir);
+	if (mount_dir==NULL){
+		errno = EINVAL;
+		return -1;
+	}
+	if (!(mount_dir->mode & S_IFDIR)){
+		errno = EACCES;
+		return -1;
+	}
+	if (mount_dir->mount != NULL){
+		errno = EBUSY;
+		return -1;
+	}
+
+	mount_dir->mount = calloc(1,sizeof(tk_mount_t));
+	if (mount_dir->mount == NULL){	//We lack error code for this case in the spec
+		errno = ENOMEM;
+		return -1;
+	}
+	mount_dir->mount->io_device=device_file->iohandle;
+	mount_dir->mount->options=options;
+	return 0;
 }
+
+/*!
+@brief http://www.gnu.org/software/libc/manual/html_mono/libc.html#Mount-Unmount-Remount
+
+@Note that TinKer permits the same device to be mounted on different places in 
+the current name-space at the same time. Therefore - to unmount you have to do 
+this on the directory. If you try unmounting on the device, TinKer will not 
+know which one of the (potential) several mountpoints you mean.
+*/
 int umount2 (const char *file, int flags){
+	extern tk_inode_t 	*__Rnod;
+	tk_inode_t 		*mount_dir;
+
+	mount_dir	=isearch(__Rnod,file);
+	if (mount_dir==NULL){
+		errno = EINVAL;
+		return -1;
+	}
+	if (mount_dir->mount == NULL){
+		errno = EINVAL;
+		return -1;
+	}
+	free(mount_dir->mount);
+	mount_dir->mount=NULL;
+	return 0;
 }
 
 

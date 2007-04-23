@@ -492,6 +492,7 @@ int DRV_IO(init)(
 	int			ninodes; 	//Number of inodes that will fit
 	int			nsectors;	//Number of sectors that will fit
 	int 			rc;
+	int 			kmemopts;
 	extern	tk_inode_t 	*__Rnod;
 
 	assure(mknod(path,S_IFBLK, (dev_t)&DRV_IO(io))	==0);
@@ -512,11 +513,36 @@ unsigned long  tk_create_heap (
 	unlock_f    unlock,  //!< Function for locking acces when operation on the heap. NULL if no locking is needed.
 	char       *heap_ptr //!< Memory address to use as heap, or NULL for global heap usage
 )*/
+	//nsect = isratio * ninodes
+	//ninodes = nsect/isratio
+	
+	//Non exact (but simple) alorythm to calculate space follows:
+	nsectors = size / sectorsize;
+	ninodes = nsectors / isratio;
+	//nsectors -= (ninodes / isratio);
+	nsectors -= ninodes;
+
+	nsectors = (size * isratio)/(sizeof(tk_inode_t) + isratio * sectorsize);
+	ninodes = nsectors / isratio;
+	//Truncation correction follows
+	if (sizeof(tk_inode_t) < sectorsize)
+		ninodes--;
+	else
+		nsectors--;
+
+
+
+	if (RAMDISK_KEEP_OLD_DATA){
+		kmemopts = KMEM_KEEP_UNINITIALIZED;
+	}else{
+		kmemopts = KMEM_BLANK_ID;
+	}
 
 	rc = tk_create_heap (
 		&drvdata->inode_heap,
 		sizeof(tk_inode_t),
-		ninodes,
+		ninodes*sizeof(tk_inode_t),
+		kmemopts,
 		NULL,
 		NULL,
 		start
@@ -526,11 +552,11 @@ unsigned long  tk_create_heap (
 		free(drvdata);
 		return rc;
 	}
-
 	rc = tk_create_heap (
 		&drvdata->sector_heap,
-		sizeof(tk_inode_t),
-		nsectors,
+		sectorsize,
+		nsectors * sectorsize,
+		kmemopts,
 		NULL,
 		NULL,
 		drvdata->inode_heap->last
@@ -542,12 +568,18 @@ unsigned long  tk_create_heap (
 		return rc;
 	}
 
+	#ifdef DEBUG
+		char *tptr = start + size;
+		int unused = (int)(tptr) - (int)(drvdata->sector_heap->last);
+		assure(unused>=0);
+	#endif
+	assert(drvdata->sector_heap->last <= (start + size ) );
+
 	drvdata->start		=start;
 	drvdata->size		=size;
 	drvdata->sectorsize	=sectorsize;
 	drvdata->isratio	=isratio;
 	drvdata->opt		=opt;
-
 }
 
 int DRV_IO(fini)(int file) {

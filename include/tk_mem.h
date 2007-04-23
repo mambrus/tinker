@@ -59,6 +59,11 @@ ERR_KMEM_SENTINEL
 
 };
 
+/*Bitfields controlling creation of a heap*/
+#define		KMEM_KEEP_UNINITIALIZED 	(1<<0)
+#define		KMEM_BLANK_ZERO			(1<<1)
+#define		KMEM_BLANK_ID			(1<<2)
+
 #include <tinker/config.h>
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 extern "C" {
@@ -101,8 +106,8 @@ There should not be any reason for a normal user to address this
 structure explicitly. Use \ref heapid_t for normal operations instead.
 */
 typedef struct {   
-	int      num;        //!< Maximum number of elements this pool can hold.
-	int      size;       //!< Size of each element
+	int      maxnum;     //!< Maximum number of elements this pool can hold.
+	int      dsize;      //!< Size of each element
 	int      blocks;     //!< Current number of blocks in use
 	int      indx;       //!< Points at block firts after the last allocated block (probable for next alloc).
 	char    *heap;       //!< Pointer to the allocatded memory, NULL if unallocated. I.e. NULL also means this header is avaiable
@@ -146,7 +151,7 @@ functions.
 */ 
 
 //@{ 
-unsigned long  tk_create_heap ( heapid_t*, int, int, lock_f, unlock_f, char* );
+unsigned long  tk_create_heap ( heapid_t*, int, int, int, lock_f, unlock_f, char* );
 unsigned long  tk_destroy_heap( heapid_t  ); 
 //@}
 
@@ -178,6 +183,9 @@ void           tk_mem_free    ( heapid_t, void* );
  * @defgroup CVSLOG_tk_mem_h tk_mem_h
  * @ingroup CVSLOG
  *  $Log: tk_mem.h,v $
+ *  Revision 1.14  2007-04-23 16:26:07  ambrmi09
+ *  Mounting is close
+ *
  *  Revision 1.13  2007-04-23 09:39:22  ambrmi09
  *  KMEM refinement
  *

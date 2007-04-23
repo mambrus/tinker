@@ -126,21 +126,21 @@ void *escfs_init__(void *inarg) {
 	assure(inode_can);
 
 	inode_ram = (tk_inode_t*)fs_ifreg_init(
-		"/dev/ram",	//!< Driver path-name (mount point name)
+		"/dev/ram0",	//!< Driver path-name (mount point name)
 		testdisk,	//!< Start address of memory region to use
 		DISK_SIZE,	//!< Size of the memory region in bytes
 		48,		//!< Size of each sector
 		10,		//!< inode vs. sector ratio (normal is 10 sectors or more)	
-		0		//!< Driver specific options
+		RAMDISK_KEEP_OLD_DATA		//!< Driver specific options
 	);
 	assure(inode_ram);
 
-	return (void*)"ESC specific files initialized (/dev/can /dev/ram/)";
+	return (void*)"ESC specific files initialized (/dev/can /dev/ram0)";
 }
 void *escfs_fini__(void *inarg) {
 	assure(can_fini(inode_can) == 0);
 	assure(fs_ifreg_fini(inode_ram) == 0);
-	return (void*)"ESC specific files stopped (/dev/can /dev/ram/)";
+	return (void*)"ESC specific files stopped (/dev/can /dev/ram0)";
 }
 
 /*

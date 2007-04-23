@@ -50,7 +50,7 @@ void igetpath(char *buff, const char *s){
 Find the i-node associated with a name (arg #2) from the i-node tree 
 structure pointed oit by arg #1
 
-@returns Three cases can appliy
+@returns Three cases can apply
 1. NULL if no valid node is found 
 2. The i-node seached for that matches the name exactly
 3. If a mount point is encountered on the seach-path, this one is returned instead
@@ -68,6 +68,9 @@ tk_inode_t *isearch(tk_inode_t 	*ci, const char*s){
 		nd;
 		cd=nd,nd=strtok(NULL,"/")
 	){
+		if (ci->mount)	//Mount point foind on the way
+			return ci;
+
 		if (ci) {
 			//assert(strncmp(ci->name,nd,NAME_MAX) == 0);
 			ci=ci->down;
