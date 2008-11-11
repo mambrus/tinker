@@ -25,7 +25,10 @@
 //#include "kernel/src/tk_ansi.h"
 #include <tk_ansi.h>
 
-#include <tinker/config.h>
+#if defined (HAVE_CONFIG_H)
+	#include <tinker/config.h>
+#endif
+
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 extern "C" {
 #endif
@@ -85,6 +88,9 @@ The assert macro.
  * @defgroup CVSLOG_assert_h assert_h
  * @ingroup CVSLOG
  *  $Log: assert.h,v $
+ *  Revision 1.15  2008-11-11 17:25:13  tinker
+ *  Commiting first change in new branch TMS570_CCS
+ *
  *  Revision 1.14  2007-02-22 23:22:31  ambrmi09
  *  FS structure added.
  *
