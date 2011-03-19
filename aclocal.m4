@@ -293,9 +293,20 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_SUBST(GCC_VERSION)
 	AC_DEFINE_UNQUOTED([TK_GCC_VERSION],$GCC_VERSION)
 
-	dnl Do not accept default autoconf CFLAGS. Tinker will not run with them (not on ARM tdmi at leat)
-	CFLAGS=""
-	AC_SUBST(CFLAGS)
+	dnl Some infuential environment variables
+	dnl =====================================
+	dnl C compiler flags
+ 	AC_SUBST(CFLAGS)
+	dnl linker flags, e.g. -L<lib dir> if you have libraries in a
+	dnl nonstandard directory <lib dir>
+ 	AC_SUBST(LDFLAGS)
+	dnl libraries to pass to the linker, e.g. -l<library>
+ 	AC_SUBST(LIBS)
+	dnl (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
+	dnl you have headers in a nonstandard directory <include dir>
+ 	AC_SUBST(CPPFLAGS)
+	dnl C++ compiler flags
+ 	AC_SUBST(CXXFLAGS)
 
 	AC_ARG_VAR(BOARD, [Selects which board to build TinKer BSP for. Valid values depend on each BSP and coorespond to a sub-directory in that structure])
 	AC_DEFINE_UNQUOTED([TK_BOARD],__tk_${BOARD}__)
