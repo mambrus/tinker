@@ -33,8 +33,8 @@
 #endif 
 
 #if (BOARD == BITFIRE)
-#include "lpc21xx/lpc21xx.h"
-#include "lpc21xx/lpc21xx_bits.h"
+#include "BOARD/lpc21xx/lpc21xx.h"
+#include "BOARD/lpc21xx/lpc21xx_bits.h"
 #endif
  
 #define TICK_OWNER         //!< By defining this, tell systimer data to reside in this oject module
