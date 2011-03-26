@@ -75,6 +75,7 @@ modules: $(MODULES)
 
 clean:
 	$(CLEAN_MODS)
+	FS=$$(find lib/ -type f | grep -v README); for F in $$FS; do echo $$F; done
 	@echo "======================================================"
 	@echo "<<-           ALL MODULES CLEANED!                 ->>"
 	@echo "======================================================"
