@@ -54,7 +54,7 @@ endif
 #Note: 'make configure' always assumes a GNU (or UNIX like) build host
 CONFIGURE_MODS  := $(patsubst %, make configure -C %;, $(CONFMODULES))
 
-.PHONY: modules $(MODULES) clean cleanall configure install flashit console cleanhard
+.PHONY: modules $(MODULES) clean cleanall configure install flashit console cleanhard cleanconfigure
 
 all: modules
 
@@ -125,4 +125,17 @@ configure:
 	@echo "./configure -C --host=arm-hixs-elf MCPU=arm7tdmi BOARD=lpc21xx"
 	@echo "==========================================================="
 
-
+cleanconfigure:
+	rm -f confdefs.h
+	rm -f include/tinker/config.h.in
+	find -name temp -exec rm -rf '{}' ';'
+	find . -name "automake-*" -exec rm '{}' ';'
+	find . -iname configure -exec rm '{}' ';'
+	find . -name 'Makefile-gnu' -exec rm '{}' ';'
+	find . -regex '.*config\.[^.]+$$' -exec rm '{}' ';'
+	find . -name 'install-sh' -exec rm '{}' ';'
+	find . -regex '.*\(bsp\|src\).*Makefile-gnu\.[^.]+$$' -exec rm '{}' ';'
+	FS=$$(find . -iname Makefile | egrep -v '^..Makefile' | \
+       egrep -v '^..src.Makefile' | egrep -v '^..bsp.Makefile'); \
+	   for F in $$FS; do rm $$F; done
+	( find . -name 'autom4te.cache' -exec rm -rf '{}' ';' 2>/dev/null )
