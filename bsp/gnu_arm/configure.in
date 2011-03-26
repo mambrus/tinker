@@ -11,8 +11,6 @@ AC_CONFIG_AUX_DIR(../..)
 dnl The following is sadly not working properly. Use autoconf -I <dir> instead to get the aclocal.m4
 #AC_CONFIG_MACRO_DIR(../..)
 
-AC_CONFIG_SUBDIRS([lpc21xx])
-
 sources_c="tk_angel.c tk_systimer.c"
 #sources_asm="startup_gnu.s"
 sources_asm=""
@@ -20,7 +18,9 @@ extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
 
 TINKER_CONFIGURE(../..)
 
-C_CONFIG_SUBDIRS([MCPU])
+dnl lpc21xx needs to be moved to BOARD eventually
+AC_CONFIG_SUBDIRS([lpc21xx])
+AC_CONFIG_SUBDIRS([MCPU])
 AC_CONFIG_SUBDIRS([BOARD])
 
 #AC_DEFINE([ANGEL_SWI],0,[Default system])
