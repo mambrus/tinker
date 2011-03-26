@@ -268,7 +268,9 @@ AC_DEFUN([TINKER_CONFIGURE],
 	if test $cross_compiling == yes; then
 		XCOMPILE=1
 		ABI=$(echo $host | sed -e s/.*-//)
-		ARCH=$(echo $host | sed -e s/-.*//)
+		if test "X${ARCH}" == "X"; then
+			ARCH=$(echo $host | sed -e s/-.*//)
+		fi
 	else
 		XCOMPILE=0
 

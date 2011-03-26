@@ -8,7 +8,7 @@ AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION 
 
 AC_CONFIG_AUX_DIR(../../../..)
 
-sources_c=""
+sources_c="stm32.c"
 sources_asm=""
 
 #extras="../../../../lib/ram_gnu.ld"
