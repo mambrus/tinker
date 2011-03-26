@@ -1,0 +1,120 @@
+dnl This is the tinker/bsp/gnu_arm/board/stm32 configure.in file.
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.59])
+
+AC_INIT(stm32, [0.1.0])
+AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
+
+AC_CONFIG_AUX_DIR(../../../..)
+
+sources_c=""
+sources_asm=""
+
+#extras="../../../../lib/ram_gnu.ld"
+extern_includes="../.."
+
+TINKER_CONFIGURE(../../../..)
+AC_CONFIG_SUBDIRS([])
+
+dnl Tunings. Main reason they are here is to set defaults specific to this target.
+dnl This part will is an itermediate solution and takes over the rols of >>tk_tuning.h<<
+dnl Future solutions might me an ordinary text file that both GNU and non GNU build 
+dnl   sytems can make use of
+
+if test $SYSTEM == 'hixs'; then
+   AC_DEFINE([TK_SYSTEM],__SYS_HIXS__)
+else
+   AC_DEFINE([TK_SYSTEM],__SYS_UNKNOWN__)
+   AC_MSG_ERROR([<<< Sorry, TinKer for this port (ARM for stm32) does only support HIXS systems (i.e. arm-hixs-<abi>)])
+fi
+
+AC_ARG_ENABLE(min_stack,
+	AS_HELP_STRING([--enable-min_stack=<val>],[Maximum size of a stack for a thread ]),
+	AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],$enableval),
+	AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],0x8000)
+)
+AC_ARG_ENABLE(norm_stack,
+	AS_HELP_STRING([--enable-norm_stack=<val>],[Stacksize used when stack-size is omitted ]),
+	AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],$enableval),
+	AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],0x8000)
+)
+AC_ARG_ENABLE(max_threads,
+	AS_HELP_STRING([--enable-max_threads=<val>],[Maximum number of threds your system could have ]),
+	AC_DEFINE_UNQUOTED([TK_MAX_THREADS],$enableval),
+	AC_DEFINE_UNQUOTED([TK_MAX_THREADS],500)
+)
+AC_ARG_ENABLE(max_prio,
+	AS_HELP_STRING([--enable-max_prio=<val>],[Numer of priorities for you system  (recomended value: 3 or 16)]),
+	AC_DEFINE_UNQUOTED([TK_MAX_PRIO_LEVELS],$enableval),
+	AC_DEFINE_UNQUOTED([TK_MAX_PRIO_LEVELS],16)
+)
+AC_ARG_ENABLE(that_prio,
+	AS_HELP_STRING([--enable-that_prio=<val>],[Number of threads that can be sceduled at each priority ]),
+	AC_DEFINE_UNQUOTED([TK_MAX_THREADS_AT_PRIO],$enableval),
+	AC_DEFINE_UNQUOTED([TK_MAX_THREADS_AT_PRIO],250)
+)
+AC_ARG_ENABLE(thename_len,
+	AS_HELP_STRING([--enable-thename_len=<val>],[Lengts of the string in TCB that holds the name of the thread ]),
+	AC_DEFINE_UNQUOTED([TK_THREAD_NAME_LEN],$enableval),
+	AC_DEFINE_UNQUOTED([TK_THREAD_NAME_LEN],0x17)
+)
+AC_ARG_ENABLE(blocked_q,
+	AS_HELP_STRING([--enable-blocked_q=<val>],[Maximum nuber of threads blocked on any ITC primitive, i.e. not only Q ]),
+	AC_DEFINE_UNQUOTED([TK_MAX_BLOCKED_ON_Q],$enableval),
+	AC_DEFINE_UNQUOTED([TK_MAX_BLOCKED_ON_Q],TK_MAX_THREADS)
+)
+AC_ARG_ENABLE(max_q,
+	AS_HELP_STRING([--enable-max_q=<val>],[Maximum number of any ITC primitive, i.e not only Q ]),
+	AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],$enableval),
+	AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],TK_MAX_THREADS)
+)
+AC_ARG_ENABLE(max_heaps,
+	AS_HELP_STRING([--enable-max_heaps=<val>],[Maximum number of heaps for the KMEM component]),
+	AC_DEFINE_UNQUOTED([TK_KMEM_NHEAPS],$enableval),
+	AC_DEFINE_UNQUOTED([TK_KMEM_NHEAPS],0x10)
+)
+
+
+# Set better default values than any previously set in either config.in earler in the 
+# chain or in any of the two levels of tk_tuning.h
+
+
+AC_ARG_ENABLE(how-to-malloc,
+	AS_HELP_STRING([--enable-how-to-mallow=<val>],[Advanced pimary porting - ORIGINAL/STUBBED/RENAMED/VOIDED]),
+	AC_DEFINE_UNQUOTED([TK_HOWTO_MALLOC],TK_FNK_$enableval),
+	AC_DEFINE_UNQUOTED([TK_HOWTO_MALLOC],TK_FNK_ORIGINAL /*stm32 default*/)
+)
+
+AC_ARG_ENABLE(how-to-clock,
+	AS_HELP_STRING([--enable-how-to-clock=<val>],[Advanced pimary porting - ORIGINAL/STUBBED/RENAMED/VOIDED]),
+	AC_DEFINE_UNQUOTED([TK_HOWTO_CLOCK],TK_FNK_$enableval),
+	AC_DEFINE_UNQUOTED([TK_HOWTO_CLOCK],TK_FNK_ORIGINAL /*stm32 default*/)
+)
+
+AC_ARG_ENABLE(how-to-printk,
+	AS_HELP_STRING([--enable-how-to-printk=<val>],[Advanced pimary porting - )]),
+	AC_DEFINE_UNQUOTED([TK_HOWTO_PRINTK],TK_FNK_$enableval),
+	AC_DEFINE_UNQUOTED([TK_HOWTO_PRINTK],TK_FNK_RENAMED /*stm32 default*/)
+)
+
+AC_ARG_ENABLE(how-to-assert,
+	AS_HELP_STRING([--enable-how-to-assert=<val>],[Advanced pimary porting - ]),
+	AC_DEFINE_UNQUOTED([TK_HOWTO_ASSERT],TK_FNK_$enableval),
+	AC_DEFINE_UNQUOTED([TK_HOWTO_ASSERT],TK_FNK_RENAMED /*stm32 default*/)
+)
+
+# We claim that we have an emergency console (or allow configure to disable it
+# or choose anouthe function name
+
+AC_ARG_ENABLE(emrgcy-console,
+	AS_HELP_STRING([--enable-emrgcy-console=<val>],[Claim an emergency console is available by the BSP. Alterativly, name a function to use.]),
+	AC_DEFINE_UNQUOTED([TK_USE_EMRGCY_CONSOLE],__tk_$enableval),
+	AC_DEFINE_UNQUOTED([TK_USE_EMRGCY_CONSOLE],console_write)
+)
+
+
+dnl Update config.h
+AC_CONFIG_HEADER(../../../../include/tinker/config.h)
+
+AC_OUTPUT(Makefile-gnu)
