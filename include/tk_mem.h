@@ -39,7 +39,7 @@ KMEM
 #if defined(__GNUC__)
    #include <tinker/config.h>
    #if (!defined(TK_COMP_KMEM) || (TK_COMP_KMEM==0) ) && !defined(ECODES_ONLY)
-   #error "tk_mem.h" belongs to a component that your build of TinKer didn't include. Please reconfigure and rebuild TinKer.
+   #error "<tk_mem.h> belongs to a component that your build of TinKer didn't include. Please reconfigure and rebuild TinKer."
    #endif
 #endif
 
