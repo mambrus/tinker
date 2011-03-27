@@ -8,11 +8,20 @@ AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION 
 
 AC_CONFIG_AUX_DIR(../../../..)
 
-sources_c="stm32_start.c"
+#sources_c="stm32_start.c tk_bsp_stm32.c console.c stm32f10x_rcc.c stm32f10x_gpio.c"
+sources_c="stm32_start.c tk_bsp_stm32.c console.c"
+#dnl Temporary to avoid. HIXS adaption will go here
+#sources_c="dummy.c"
 sources_asm=""
 
 #extras="../../../../lib/ram_gnu.ld"
 extern_includes="../.."
+
+## Provide it as a crt0.o (just to have something to provide)
+## This should really go inte the MCPU section (cortex-m3)
+#extras="../../../../lib/crt0.o"
+#CRT0_OBJECT=exceptions.AO
+#CRT0_OBJECT=stm32_start.o
 
 TINKER_CONFIGURE(../../../..)
 AC_CONFIG_SUBDIRS([])

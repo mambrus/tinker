@@ -1,4 +1,5 @@
 #include "stm32f10x_type.h"
+#include "stm32f10x_conf.h"
 #include "stm32f10x_lib.h"
 #include "stm32f10x_map.h"
 #include "stm32f10x_rcc.h"
@@ -43,28 +44,28 @@ int _start(void)
 	int strt_nr = 0;
 	char env[100];
 
-	*NVIC_CCR = *NVIC_CCR | 0x200; /* Set STKALIGN in NVIC */
+	//*NVIC_CCR = *NVIC_CCR | 0x200; /* Set STKALIGN in NVIC */
 	// Init clock system
 	Clk_Init();
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOA, ENABLE);
+	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOA, ENABLE);
 
-
+/*
 	// Configure PC.12 as output push-pull (LED)
 	GPIO_WriteBit(GPIOC,GPIO_Pin_12,Bit_SET);
 	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_12;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
-
+*/
 	while(1) {
 		strt_nr++;
 
-		GPIOC->BRR |= 0x00001000;
+//		GPIOC->BRR |= 0x00001000;
 		main(0,(char**)env);
 		strt_nr++;
-		GPIOC->BSRR |= 0x00001000;
+//		GPIOC->BSRR |= 0x00001000;
 	}
 }
 void nmi_handler(void)
@@ -93,6 +94,7 @@ void myDelay(unsigned long delay )
 
 void Clk_Init (void)
 {
+	/*
   // 1. Cloking the controller from internal HSI RC (8 MHz)
   RCC_HSICmd(ENABLE);
   // wait until the HSI is ready
@@ -118,4 +120,5 @@ void Clk_Init (void)
   *(vu32 *)0x40022000 = 0x12;
   // 5. Clock system from PLL
   RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+  */
 }

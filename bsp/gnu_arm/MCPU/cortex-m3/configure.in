@@ -19,10 +19,10 @@ extern_includes="../.."
 sources_asm=""
 
 ## Provide it as a crt0.o anyway (just to have something to provide)
-## Note that using it with libtinker will break the link in our case (PowerPC/860)
+## Note that using it with libtinker will break the link in our case
 extras="../../../../lib/crt0.o"
-#CRT0_OBJECT=exceptions.AO
-CRT0_OBJECT=dummy.c
+CRT0_OBJECT=startup_gnu.AO
+#CRT0_OBJECT=dummy.c
 
 TINKER_CONFIGURE(../../../..)
 AC_CONFIG_SUBDIRS([])

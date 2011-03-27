@@ -10,7 +10,15 @@ AC_CONFIG_AUX_DIR(..)
 dnl The following is sadly not working properly. Use autoconf -I <dir> instead to get the aclocal.m4
 #AC_CONFIG_MACRO_DIR(../)
 
-sources_c="gnu_stubs.c tk_stubs.c"
+TINKER_CONFIGURE(..)
+
+#if test $SYSTEM == 'hixs'; then
+#	AC_MSG_NOTICE([<<< Adding HIXS code >>>])
+#	sources_c="gnu_stubs.c tk_stubs.c hixsys.c"
+#else
+	sources_c="gnu_stubs.c tk_stubs.c"
+#fi
+
 TINKER_CONFIGURE(..)
 
 case "${host}" in
