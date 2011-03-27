@@ -1,3 +1,4 @@
+#include "stm32f10x_type.h"
 #include "stm32f10x_lib.h"
 #include "stm32f10x_map.h"
 #include "stm32f10x_rcc.h"
@@ -24,14 +25,7 @@ unsigned int * myvectors[4]
 // VARIABLES
 
 GPIO_InitTypeDef GPIO_InitStructure;
-/*
-#define BUF_LEN 255
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <fcntl.h>
-*/
+
 void myDelay(unsigned long delay );
 void Clk_Init (void);
 extern int main(int argc, char** argv);
@@ -64,12 +58,11 @@ int _start(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-	buf=malloc(BUF_LEN);
 	while(1) {
 		strt_nr++;
 
 		GPIOC->BRR |= 0x00001000;
-		main(0,&env);
+		main(0,(char**)env);
 		strt_nr++;
 		GPIOC->BSRR |= 0x00001000;
 	}
