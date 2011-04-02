@@ -17,18 +17,41 @@ TINKER_CONFIGURE(../../..)
 case "${BOARD}" in
   stm32)
     AC_MSG_NOTICE([<<< Board stm32 is configured >>>])
+
+	dnl default values that can be refined by deeper configs
+	ROM_START="0x00000000"
+	ROM_LEN="128K"
+	RAM_START="0x20000000"
+	RAM_LEN="20K"
+
     AC_CONFIG_SUBDIRS([stm32])
     ;;
   lpc21xx)
     AC_MSG_NOTICE([<<< Board lpc21xx is configured >>>])
-    AC_CONFIG_SUBDIRS([lpc21xx])
+
+	dnl default values that can be refined by deeper configs
+	dnl 254k flash, 15K RAM
+	ROM_START="0x00000000"
+	ROM_LEN="0x0003E000"
+	RAM_START="0x40000000"
+	RAM_LEN="0x00003AF0"
+
+	AC_CONFIG_SUBDIRS([lpc21xx])
     ;;
   *)
     AC_MSG_ERROR([<<< Sorry, board $BOARD is not supported >>>])
     ;;
 esac
 
+
 dnl Update config.h
 AC_CONFIG_HEADER(../../../include/tinker/config.h)
 
 AC_OUTPUT(Makefile-gnu)
+
+AC_SUBST(ROM_START)
+AC_SUBST(ROM_LEN)
+AC_SUBST(RAM_START)
+AC_SUBST(RAM_LEN)
+
+AC_OUTPUT(../flash_gnu.ld)

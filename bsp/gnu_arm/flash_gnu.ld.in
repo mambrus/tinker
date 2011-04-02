@@ -1,42 +1,35 @@
-/***********************************************************************/
-/*  This file is part of the ARM Compiler package                      */
-/*  Copyright KEIL ELEKTRONIK GmbH 1992-2004                           */
-/***********************************************************************/
-/*                                                                     */
-/*  TARGET.LD:  Linker Script File                                     */
-/*                                                                     */
-/***********************************************************************/
+/***************************************************************************
+ *   Copyright (C) 2011 by Michael Ambrus                                  *
+ *   ambrmi09@gmail.com                                                    *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 
-
-/*
-//*** <<< Use Configuration Wizard in Context Menu >>> *** 
-*/
-
-
-/*
-// <h> Memory Configuration
-//   <h> Code (Read Only)
-//     <o>  Start <0x0-0xFFFFFFFF>
-//     <o1> Size  <0x0-0xFFFFFFFF>
-//   </h>
-//   <h> Data (Read/Write)
-//     <o2> Start <0x0-0xFFFFFFFF>
-//     <o3> Size  <0x0-0xFFFFFFFF>
-//   </h>
-// </h>
-*/
-
-/* Memory Definitions */
+/* Memory Definitions, These are configured by configure in a en-leaf      */
+/* configure.in in the MCPU tree or BOARD tree (depending on if the target */
+/* is a System On Chip (SOC) or not.                                       */
 
 MEMORY
 {
-  CODE (rx) : ORIGIN = 0x00000000, LENGTH = 0x0003E000
-  DATA (rw) : ORIGIN = 0x40000000, LENGTH = 0x00003AF0
+  CODE (rx) : ORIGIN = @ROM_START@, LENGTH = @ROM_LEN@
+  DATA (rw) : ORIGIN = @RAM_START@, LENGTH = @RAM_LEN@
 }
 
 
 /* Section Definitions */
-
 SECTIONS
 {
 
@@ -44,8 +37,9 @@ SECTIONS
 
   .text :
   {
-    *startup.o (.text)         /* Startup code */
-    *(.text)                   /* remaining code */
+    *(vectors)					/* Vector table (permits definitions in c-code) */
+    *startup.o (.text)			/* Startup code */
+    *(.text)                  	/* remaining code */
 
     *(.glue_7t) *(.glue_7)
 

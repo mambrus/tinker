@@ -7,21 +7,8 @@
 
 #include "bits.h"
 
-#define STACK_TOP 0x20000800
 #define NVIC_CCR ((volatile unsigned long *)(0xE000ED14))
 //Declarations
-void nmi_handler(void);
-void hardfault_handler(void);
-int _start(void);
-
-// Define the vector table
-unsigned int * myvectors[4]
-   __attribute__ ((section("vectors")))= {
-   	(unsigned int *)	0x20000800,	// stack pointer
-   	(unsigned int *) 	_start,		// code entry point
-   	(unsigned int *)	nmi_handler,		// NMI handler (not really)
-   	(unsigned int *)	hardfault_handler		// hard fault handler (let's hope not)
-};
 
 // VARIABLES
 
@@ -39,7 +26,7 @@ extern int main(int argc, char** argv);
  * Description: The _start subroutine
  *
  *************************************************************************/
-int _start(void)
+int board_main(void)
 {
 	int strt_nr = 0;
 	char env[100];
@@ -68,6 +55,7 @@ int _start(void)
 //		GPIOC->BSRR |= 0x00001000;
 	}
 }
+
 void nmi_handler(void)
 {
 	return ;
