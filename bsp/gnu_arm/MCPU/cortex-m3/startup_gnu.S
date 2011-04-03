@@ -17,52 +17,93 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+# Some config declarations. Valid values for each is {0,1}
+
+.equ EXTERNAL_PLL_SETUP, 1
+# ---------------------------------------------------------------------------
+ 
 # *** Startup Code (executed after Reset) ***
-	.code 16
+.code 16
 
-# Starupt Code must be linked first at Address at which it expects to run.
+# External declarations
+# -- Secondary boot
+.thumb_func
+.type   board_main, %function
 
-	.text
-	.thumb
-
-/*Probably does nothing*/
-	.align  0
-	.global _startup
-	.code 16
-	.func   _startup
-_startup:
-  	bl		clock_setup
-	bl		bss_clear
-	bl		statics_init
-
+.if EXTERNAL_PLL_SETUP
+# -- PLL/clock initialization (pre-board boot to speed things at this level up)
 	.thumb_func
-	.type   board_main, %function
+	.type   pll_setup, %function
+.endif
+# ----------------------------------------------------------------------------
+
+# Starupt Code must be linked first at Address at which it expects to run
+# (unless startvector says other).
+
+.text
+.thumb
+
+/*.align 0, probably does nothing*/
+.align  0
+.global _startup
+.code 16
+.func   _startup
+_startup:
+  			bl		pll_setup
+			bl		bss_clear
+			bl		statics_init
+
 /*Call secondary boot*/
-	ldr		r7, =board_main
-	blx		r7
+			ldr		r7, =board_main
+			blx		r7
 /*Should never return, but if we do, lets go somewhere safe*/
-	bl		loop_forever
+			bl		loop_forever
 
-	.size   _startup, . - _startup
-	.endfunc
+.size   _startup, . - _startup
+.endfunc
+# ----------------------------------------------------------------------------
+# Local code
 
-clock_setup:
-/*Empty placeholder for now (will be call to board-code)*/
+.if ( EXTERNAL_PLL_SETUP != 1 )
+pll_setup:
+/* 
+ Empty placeholder for now, may contain cortex-m3 generic code later 
+ (if possible)
+*/
 	mov 	pc,lr
+.endif
 
 bss_clear:
 /*Clear bss memory*/
-	mov 	pc,lr
+			mov		r0, #0
+			ldr		r1, =__bss_start__
+			ldr		r2, =__bss_end__
+LoopZI:
+			str		r0, [r1]
+			add		r1, #4
+			cmp		r1, r2
+			blo		LoopZI
+			mov		pc,lr
 
 statics_init:
 /*Copy from ROM to RAM, initializating statics*/
-	mov 	pc,lr
+			ldr		r1, =_etext
+			ldr		r2, =_data
+			ldr		r3, =_edata
+LoopRel:
+			ldr		r0, [r1]
+			str		r0, [r2]
+			add		r1, #4
+			add		r2, #4
+			cmp		r2, r3  /* Have we reached end of _edata? */
+			blo		LoopRel
+			mov		pc,lr
 
 loop_forever:
 /*Stay here until WD grabs us*/
 	bl		loop_forever
 
-
+# --------------------------------------------------------------------------------------
 	.end
 
 

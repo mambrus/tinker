@@ -39,12 +39,21 @@ TOOLS := gnu
 #TOOLS := keil
 
 ifdef TOOLS
+ifdef GRCAT
+   CLEAN_MODS      := $(patsubst %, (make -f Makefile-$(TOOLS) clean    -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
+   CLEANALL_MODS   := $(patsubst %, (make -f Makefile-$(TOOLS) cleanall -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
+   INSTALL_MODS    := $(patsubst %, (make -f Makefile-$(TOOLS) install  -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
+   FLASHIT_MODS    := $(patsubst %, (make -f Makefile-$(TOOLS) flashit  -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
+   CONSOLE_MODS    := $(patsubst %, (make -f Makefile-$(TOOLS) console  -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
+   NEXT_MAKEALL    := -f Makefile-$(TOOLS)
+else
    CLEAN_MODS      := $(patsubst %, make -f Makefile-$(TOOLS) clean -C %;, $(MODULES))
    CLEANALL_MODS   := $(patsubst %, make -f Makefile-$(TOOLS) cleanall -C %;, $(MODULES))
    INSTALL_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) install -C %;, $(MODULES))
    FLASHIT_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) flashit -C %;, $(MODULES))
    CONSOLE_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) console -C %;, $(MODULES))
    NEXT_MAKEALL    := -f Makefile-$(TOOLS)
+endif
 else
    CLEAN_MODS      := $(patsubst %, make clean -C %;, $(MODULES))
    CLEANALL_MODS   := $(patsubst %, make cleanall -C %;, $(MODULES))
@@ -78,7 +87,7 @@ modules: $(MODULES)
 
 clean:
 	$(CLEAN_MODS)
-	FS=$$(find lib/ -type f | grep -v README); for F in $$FS; do echo $$F; done
+	FS=$$(find lib/ -type f | grep -v README); for F in $$FS; do rm $$F; done
 	@echo "======================================================"
 	@echo "<<-           ALL MODULES CLEANED!                 ->>"
 	@echo "======================================================"
