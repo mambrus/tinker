@@ -28,6 +28,9 @@ CPU_T=DUMMY_CPU_TYPE
 USR_DEFINES:=DUMMY_DEF
 export TINKER_SRC_DIR = $(shell pwd)
 
+#Colorizarion tool detection
+GRCAT = $(shell which grcat)
+
 # TOOLS could be either 'gnu' or any othe supported tool-chain.
 # If TOOLS is not set, the build system assumes each sub-module 
 # will know which tol-chain to use
@@ -108,7 +111,11 @@ $(MODULES):
 	@echo "======================================================"
 	@echo "<<-            ENTERING MODULE $@                  ->>"
 	@echo "======================================================"
+ifdef GRCAT
+	( make $(NEXT_MAKEALL) -C  $@ 2>&1 ) | grcat gcc.grc
+else
 	make $(NEXT_MAKEALL) -C  $@
+endif
 
 configure:
 	rm -f config.*

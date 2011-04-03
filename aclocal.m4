@@ -65,7 +65,7 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
 		MAKEOPTS=$enableval,
 		MAKEOPTS=""
 	)
-
+	
 	dnl The following test will handle defaults but also permit specific argument values
 	if test "$DEPMAKE" == __tk_yes; then
 		DEPMAKE="Makefile-gnu Makefile"
@@ -73,8 +73,14 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
 		DEPMAKE=""
 	fi
 	AC_SUBST(DEPMAKE)
-
 	AC_SUBST(MAKEOPTS)
+	
+	AC_ARG_ENABLE(subdir-verbose,
+		AS_HELP_STRING([--enable-subdir-verbose],[Build - If extra printouts should be made for each subdir build (=arg). Valid options are yes/no. Default is no]),
+		SUB_VERBOSE=$enableval,
+		SUB_VERBOSE="no"
+	)
+	AC_SUBST(SUB_VERBOSE)
 
 	if test -z $CRT0_OBJECT; then
                 AC_MSG_NOTICE([<<< ctr0.o is based on startup_gnu.ao (default)])

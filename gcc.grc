@@ -1,0 +1,53 @@
+# Note: grcat doesnt seem to recognize character classes
+
+# 
+regexp=^.*-gcc
+colours=yellow
+count=more
+.........
+regexp=\bgcc\b
+colours=yellow
+count=more
+.........
+# 
+regexp=^.*?:
+colours=magenta
+count=once
+.........
+# 
+regexp=\`\w+\'
+colours=green
+.........
+# -O
+regexp=\-O\d 
+colours=green
+.........
+# -o
+regexp=\-o\s.+\b
+colours=yellow
+.........
+# Numbers
+regexp=[[:digit:]]+:
+colours=blue
+.........
+# Numbers alt2
+regexp=[0-9]+:
+colours=blue
+.........
+# Numbers alt
+regexp=( |\t)+[0-9]+
+colours=blue
+.........
+
+# warning and error won't work, unless you redirect also
+# stderr to grcat 
+#
+# warning
+regexp=[Ww]arning
+colours=red
+.........
+# error
+regexp=([Ee]rror|ERROR)
+colours=red blink
+count=stop
+
