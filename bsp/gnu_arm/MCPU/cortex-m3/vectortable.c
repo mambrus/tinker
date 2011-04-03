@@ -19,7 +19,10 @@
  ***************************************************************************/
 
 /*Root threads top of stack*/
-#define STACK_TOP 0x20000800
+extern char _edata; //linker provides
+#define ROOT_STACK_SIZE 0x800
+#define STACK_TOP ( &_edata + ROOT_STACK_SIZE )
+//#define STACK_TOP 0x20000800
 
 /* Handler declarations */
 void nmi_handler(void);
