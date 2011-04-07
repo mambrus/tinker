@@ -402,6 +402,9 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_ARG_ENABLE(min_stack,
 		AS_HELP_STRING([--enable-min_stack=<val>],[Maximum size of a stack for a thread ]),
 		AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],$enableval))
+	AC_ARG_ENABLE(root_stack,
+		AS_HELP_STRING([--enable-root_stack=<val>],[Root threads stack-size]),
+		AC_DEFINE_UNQUOTED([TK_ROOT_STACK_SIZE],$enableval))
 	AC_ARG_ENABLE(norm_stack,
 		AS_HELP_STRING([--enable-norm_stack=<val>],[Stacksize used when stack-size is omitted ]),
 		AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],$enableval))

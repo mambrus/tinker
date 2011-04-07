@@ -16,7 +16,7 @@ TINKER_CONFIGURE(..)
 #	AC_MSG_NOTICE([<<< Adding HIXS code >>>])
 #	sources_c="gnu_stubs.c tk_stubs.c hixsys.c"
 #else
-	sources_c="gnu_stubs.c tk_stubs.c"
+	sources_c="gnu_stubs.c tk_stubs.c stack.c"
 #fi
 
 TINKER_CONFIGURE(..)

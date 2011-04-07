@@ -1,124 +1,138 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Michael Ambrus                                  *
- *   ambrmi09@gmail.com                                                    *
- *                                                                         *
+ *   Copyright (C) 2011 by Michael Ambrus								  *
+ *   ambrmi09@gmail.com													*
+ *																		 *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ *   the Free Software Foundation; either version 2 of the License, or	 *
+ *   (at your option) any later version.								   *
+ *																		 *
+ *   This program is distributed in the hope that it will be useful,	   *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of		*
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the		 *
+ *   GNU General Public License for more details.						  *
+ *																		 *
+ *   You should have received a copy of the GNU General Public License	 *
+ *   along with this program; if not, write to the						 *
+ *   Free Software Foundation, Inc.,									   *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.			 *
  ***************************************************************************/
 
-/* Memory Definitions, These are configured by configure in a en-leaf      */
+/* Memory Definitions, These are configured by configure in a en-leaf	  */
 /* configure.in in the MCPU tree or BOARD tree (depending on if the target */
-/* is a System On Chip (SOC) or not.                                       */
+/* is a System On Chip (SOC) or not.									   */
 
 MEMORY
 {
-  CODE (rx) : ORIGIN = @ROM_START@, LENGTH = @ROM_LEN@
-  DATA (rw) : ORIGIN = @RAM_START@, LENGTH = @RAM_LEN@
+	CODE (rx) : ORIGIN = @ROM_START@, LENGTH = @ROM_LEN@
+	DATA (rw) : ORIGIN = @RAM_START@, LENGTH = @RAM_LEN@
 }
 
+ENTRY(start)
 
 /* Section Definitions */
 SECTIONS
 {
 
-  /* first section is .text which is used for code */
+	ENTRY(start)
+	/* first section is .text which is used for code */
 
-  .text :
-  {
-    *(vectors)					/* Vector table (permits definitions in c-code) */
-    *startup.o (.text)			/* Startup code */
-    *(.text)                  	/* remaining code */
+	.text :
+	{
+		*(vectors)					/* Vector table (permits definitions in c-code) */
+		*(.text)				  	/* remaining code */
 
-    *(.glue_7t) *(.glue_7)
+		*(.glue_7t) *(.glue_7)
 
-  } >CODE =0
+	} >CODE =0
 
-  . = ALIGN(4);
+	. = ALIGN(4);
 
-  /* .rodata section which is used for read-only data (constants) */
+	/* .rodata section which is used for read-only data (constants) */
 
-  .rodata :
-  {
-    *(.rodata)
-  } >CODE
+	.rodata :
+	{
+		*(.rodata)
+	} >CODE
 
-  . = ALIGN(4);
+	. = ALIGN(4);
 
-  _etext = . ;
-  PROVIDE (etext = .);
+	_etext = . ;
+	PROVIDE (etext = .);
 
-  /* .data section which is used for initialized data */
+	/* .data section which is used for initialized data */
 
-  .data : AT (_etext)
-  {
-    _data = . ;
-    *(.data)
-    SORT(CONSTRUCTORS)
-  } >DATA
-  . = ALIGN(4);
+	.data : AT (_etext)
+	{
+		_data = . ;
+		PROVIDE (data = .);
+		*(.data)
+		SORT(CONSTRUCTORS)
+	} >DATA
+	. = ALIGN(4);
 
-  _edata = . ;
-   PROVIDE (edata = .);
+	_edata = . ;
+	 PROVIDE (edata = .);
 
-  /* .bss section which is used for uninitialized data */
+	/* .bss section which is used for uninitialized data */
 
-  .bss :
-  {
-    __bss_start = . ;
-    __bss_start__ = . ;
-    *(.bss)
-    *(COMMON)
-  } >DATA
-  . = ALIGN(4);
-  __bss_end__ = . ;
-  __bss_end__ = . ;
+	.bss :
+	{
+		__bss_start = . ;
+		__bss_start__ = . ;
+		*(.bss)
+		*(COMMON)
+	} >DATA
+	. = ALIGN(4);
+	__bss_end__ = . ;
+	__bss_end__ = . ;
 
-  _end = .;
-  PROVIDE (end = .);
+	_end = .;
+	PROVIDE (end = .);
 
-  /* Stabs debugging sections.  */
-  .stab          0 : { *(.stab) }
-  .stabstr       0 : { *(.stabstr) }
-  .stab.excl     0 : { *(.stab.excl) }
-  .stab.exclstr  0 : { *(.stab.exclstr) }
-  .stab.index    0 : { *(.stab.index) }
-  .stab.indexstr 0 : { *(.stab.indexstr) }
-  .comment       0 : { *(.comment) }
-  /* DWARF debug sections.
-     Symbols in the DWARF debugging sections are relative to the beginning
-     of the section so we begin them at 0.  */
-  /* DWARF 1 */
-  .debug          0 : { *(.debug) }
-  .line           0 : { *(.line) }
-  /* GNU DWARF 1 extensions */
-  .debug_srcinfo  0 : { *(.debug_srcinfo) }
-  .debug_sfnames  0 : { *(.debug_sfnames) }
-  /* DWARF 1.1 and DWARF 2 */
-  .debug_aranges  0 : { *(.debug_aranges) }
-  .debug_pubnames 0 : { *(.debug_pubnames) }
-  /* DWARF 2 */
-  .debug_info     0 : { *(.debug_info .gnu.linkonce.wi.*) }
-  .debug_abbrev   0 : { *(.debug_abbrev) }
-  .debug_line     0 : { *(.debug_line) }
-  .debug_frame    0 : { *(.debug_frame) }
-  .debug_str      0 : { *(.debug_str) }
-  .debug_loc      0 : { *(.debug_loc) }
-  .debug_macinfo  0 : { *(.debug_macinfo) }
-  /* SGI/MIPS DWARF 2 extensions */
-  .debug_weaknames 0 : { *(.debug_weaknames) }
-  .debug_funcnames 0 : { *(.debug_funcnames) }
-  .debug_typenames 0 : { *(.debug_typenames) }
-  .debug_varnames  0 : { *(.debug_varnames) }
+	.stack :
+	{
+		/* Have stack in a section of is own. This becomes TinKer root stack */
+		/* Do not PROVIDE. Force code to define symbols */
+		_stack_start = . ;
+		*(stack)
+	} >DATA
+	. = ALIGN(4);
+
+	_stack_end = . ;
+
+
+	/* Stabs debugging sections.  */
+	.stab		  0 : { *(.stab) }
+	.stabstr	   0 : { *(.stabstr) }
+	.stab.excl	 0 : { *(.stab.excl) }
+	.stab.exclstr  0 : { *(.stab.exclstr) }
+	.stab.index	0 : { *(.stab.index) }
+	.stab.indexstr 0 : { *(.stab.indexstr) }
+	.comment	   0 : { *(.comment) }
+	/* DWARF debug sections.
+	 Symbols in the DWARF debugging sections are relative to the beginning
+	 of the section so we begin them at 0.  */
+	/* DWARF 1 */
+	.debug		  0 : { *(.debug) }
+	.line		   0 : { *(.line) }
+	/* GNU DWARF 1 extensions */
+	.debug_srcinfo  0 : { *(.debug_srcinfo) }
+	.debug_sfnames  0 : { *(.debug_sfnames) }
+	/* DWARF 1.1 and DWARF 2 */
+	.debug_aranges  0 : { *(.debug_aranges) }
+	.debug_pubnames 0 : { *(.debug_pubnames) }
+	/* DWARF 2 */
+	.debug_info	 0 : { *(.debug_info .gnu.linkonce.wi.*) }
+	.debug_abbrev   0 : { *(.debug_abbrev) }
+	.debug_line	 0 : { *(.debug_line) }
+	.debug_frame	0 : { *(.debug_frame) }
+	.debug_str	  0 : { *(.debug_str) }
+	.debug_loc	  0 : { *(.debug_loc) }
+	.debug_macinfo  0 : { *(.debug_macinfo) }
+	/* SGI/MIPS DWARF 2 extensions */
+	.debug_weaknames 0 : { *(.debug_weaknames) }
+	.debug_funcnames 0 : { *(.debug_funcnames) }
+	.debug_typenames 0 : { *(.debug_typenames) }
+	.debug_varnames  0 : { *(.debug_varnames) }
 }

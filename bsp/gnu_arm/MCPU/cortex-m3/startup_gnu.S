@@ -45,12 +45,13 @@
 
 /*.align 0, probably does nothing*/
 .align  0
-.global _startup
+.global start
 .code 16
-.func   _startup
-_startup:
+.func   start
+start:
   			bl		pll_setup
 			bl		bss_clear
+			bl		stack_CACA
 			bl		statics_init
 
 /*Call secondary boot*/
@@ -59,7 +60,7 @@ _startup:
 /*Should never return, but if we do, lets go somewhere safe*/
 			bl		loop_forever
 
-.size   _startup, . - _startup
+.size   start, . - start
 .endfunc
 # ----------------------------------------------------------------------------
 # Local code
@@ -85,11 +86,30 @@ LoopZI:
 			blo		LoopZI
 			mov		pc,lr
 
+stack_CACA:
+/*Dirtify root stack*/
+			mov		r1, #0xCA
+			mov		r0, r1
+			lsl     r0, #4 
+			and     r0, r1
+			lsl     r0, #4 
+			and     r0, r1
+			lsl     r0, #4 
+			and     r0, r1
+			ldr		r1, =_stack_start
+			ldr		r2, =_stack_end
+LoopCACA:
+			str		r0, [r1]
+			add		r1, #4
+			cmp		r1, r2
+			blo		LoopCACA
+			mov		pc,lr
+
 statics_init:
 /*Copy from ROM to RAM, initializating statics*/
-			ldr		r1, =_etext
-			ldr		r2, =_data
-			ldr		r3, =_edata
+			ldr		r1, =etext
+			ldr		r2, =data
+			ldr		r3, =edata
 LoopRel:
 			ldr		r0, [r1]
 			str		r0, [r2]
