@@ -45,8 +45,8 @@ AC_ARG_ENABLE(min_stack,
 )
 AC_ARG_ENABLE(root_stack,
 	AS_HELP_STRING([--enable-root_stack=<val>],[Root threads stack-size]),
-	AC_DEFINE_UNQUOTED([TK_ROOT_STACK_SIZE],$enableval),
-	AC_DEFINE_UNQUOTED([TK_ROOT_STACK_SIZE],0x0300)
+	STACK_LEN=$enableval,
+	STACK_LEN=0x0300
 )
 AC_ARG_ENABLE(norm_stack,
 	AS_HELP_STRING([--enable-norm_stack=<val>],[Stacksize used when stack-size is omitted ]),
@@ -128,7 +128,27 @@ AC_ARG_ENABLE(emrgcy-console,
 )
 
 
+dnl Update the linker-script
+ROM_START="0x00000000"
+ROM_LEN="128K"
+
+RAM_START="0x20000000"
+RAM_LEN="0x5000"
+DATA_START="$RAM_START"
+DATA_LEN=$(( $RAM_LEN - $STACK_LEN - 4 ))
+STACK_START=$(( $DATA_START + $DATA_LEN + 4 ))
+
+AC_SUBST(ROM_START)
+AC_SUBST(ROM_LEN)
+AC_SUBST(DATA_START)
+AC_SUBST(DATA_LEN)
+AC_SUBST(STACK_START)
+AC_SUBST(STACK_LEN)
+
+AC_OUTPUT(../../flash_gnu.ld)
+
 dnl Update config.h
+AC_DEFINE_UNQUOTED([TK_ROOT_STACK_SIZE],$STACK_LEN)
 AC_CONFIG_HEADER(../../../../include/tinker/config.h)
 
 AC_OUTPUT(Makefile-gnu)

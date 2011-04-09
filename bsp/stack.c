@@ -21,6 +21,6 @@
 #include <tinker/config.h>
 
 /* Define the root-stack (very elegant) */
-unsigned char* root_stack[TK_ROOT_STACK_SIZE]
+unsigned char root_stack[TK_ROOT_STACK_SIZE]
    __attribute__ ((section("stack")));
 

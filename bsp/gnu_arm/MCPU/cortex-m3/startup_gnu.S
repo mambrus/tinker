@@ -90,12 +90,12 @@ stack_CACA:
 /*Dirtify root stack*/
 			mov		r1, #0xCA
 			mov		r0, r1
-			lsl     r0, #4 
-			and     r0, r1
-			lsl     r0, #4 
-			and     r0, r1
-			lsl     r0, #4 
-			and     r0, r1
+			lsl		r0, #8 
+			add		r0, r1
+			lsl		r0, #8 
+			add		r0, r1
+			lsl		r0, #8 
+			add		r0, r1
 			ldr		r1, =_stack_start
 			ldr		r2, =_stack_end
 LoopCACA:

@@ -58,6 +58,9 @@ The Following will get the tool-chains version of time.h
 #	include BUILDCHAIN(time.h)
 #endif
 
+   #define difftime(t1, t0) \
+      (t1 - t0)
+
 #ifndef TIME_H_TK
 #define TIME_H_TK
 

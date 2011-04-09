@@ -137,7 +137,7 @@ int bsp_Clock           (){
 	return Tcl; //Trunc it on purpose (best we can do anyway)
 	*/
 	static i = 0;
-	return i++;
+	return i+=10;
 }
 
 int bsp_Time            (/*TBD*/){}
