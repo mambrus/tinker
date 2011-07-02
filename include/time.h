@@ -58,6 +58,8 @@ The Following will get the tool-chains version of time.h
 #	include BUILDCHAIN(time.h)
 #endif
 
+#warning "difftime needs better implementation!!!!!!!!!!!!!"
+
    #define difftime(t1, t0) \
       (t1 - t0)
 
