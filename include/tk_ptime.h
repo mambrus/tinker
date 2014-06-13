@@ -42,7 +42,7 @@ PTIMER
 #if defined(__GNUC__)
    #include <tinker/config.h>
    #if (!defined(TK_COMP_PTIMER) || (TK_COMP_PTIMER==0) ) && !defined(ECODES_ONLY)
-   #error "tk_ptime.h" belongs to a component that your build of TinKer didn't include. Please reconfigure and rebuild TinKer.
+   #error "tk_ptime.h" belongs to [ptimer] that your configuration of TinKer did not include. Please reconfigure and rebuild TinKer.
    #endif
 #endif
 
