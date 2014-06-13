@@ -515,8 +515,8 @@ AC_DEFUN([TINKER_CONFIGURE],
 			Compilation will probably fail...])
 		fi
 	else
-		if test -n $BOARD; then
-			AC_MSG_WARN([<<< You are configuring for NATIVE but BOARD is selected.
+		if test "X${BOARD}" != "X"; then
+			AC_MSG_WARN([<<< You are configuring for NATIVE but BOARD is selected/defined.
 				This option does no purpose...])
 		fi
 	fi
