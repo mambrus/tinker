@@ -81,11 +81,7 @@ clean:
 	@echo "<<-           ALL MODULES CLEANED!                 ->>"
 	@echo "======================================================"
 
-mrproper: clean
-	rm -f config.*
-	rm -f install-sh
-	rm -f .installed-*
-	rm -rf autom4te.cache
+mrproper:
 	$(MRPROPER_MODS)
 	@echo "======================================================"
 	@echo "<<-           CONFIGURATION REMOVED!               ->>"

@@ -36,8 +36,9 @@ DCPU           = @DCPU@
 
 .PHONY: all subdirs info depend link clean cleanall cleanhard install tryinstall rebuild flashit console
 
-MAKE_SUBDIRS_ALL   := $(patsubst %, make -f Makefile-gnu all @MAKEOPTS@ -C % &&, $(MAKE_SUBDIRS))
-MAKE_SUBDIRS_CLEAN := $(patsubst %, make -f Makefile-gnu clean @MAKEOPTS@ -C % &&, $(MAKE_SUBDIRS))
+MAKE_SUBDIRS_ALL      := $(patsubst %, make -f Makefile-gnu all @MAKEOPTS@ -C % &&, $(MAKE_SUBDIRS))
+MAKE_SUBDIRS_CLEAN    := $(patsubst %, make -f Makefile-gnu clean @MAKEOPTS@ -C % &&, $(MAKE_SUBDIRS))
+MAKE_SUBDIRS_MRPROPER := $(patsubst %, make -f Makefile-gnu mrproper @MAKEOPTS@ -C % &&, $(MAKE_SUBDIRS))
 
 SUBLIBS       := $(patsubst %, -l%, @subdirs@)
 SUBLIBOUT     := $(patsubst %, @TINKER_PATH@/lib/lib%.a, @subdirs@)
@@ -144,6 +145,21 @@ cleanall: clean
 	rm -f .installed-$(PACK_ID)
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] installation removed! ->>"
+	@echo "======================================================"
+
+mrproper: clean
+	$(MAKE_SUBDIRS_MRPROPER) echo "<<< All subdirs of [@PACKAGE_NAME@] successfully un-configured>>>"
+	@echo "## Removing configure generated files..."
+	rm -f "config.*"
+	rm -f "install-sh"
+	rm -f ".installed-*"
+	rm -rf "autom4te.cache"
+	@echo "## Removing generator generated files..."
+	rm -f "automake-*"
+	rm -f "configure"
+	rm -f Makefile-gnu
+	@echo "======================================================"
+	@echo "<<- Target [@PACKAGE_NAME@] config removed!        ->>"
 	@echo "======================================================"
 
 
