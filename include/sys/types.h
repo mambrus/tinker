@@ -39,11 +39,16 @@ kernel_reimpl_ansi.
 */
 
 #if defined (__GNUC__)
-   #include <tk_ansi.h>
-   #include <tk_ansi_dirwrap.h>
+	#include <tk_ansi.h>
+	#include <tinker/config.h>
+	#include <tk_ansi_dirwrap.h>
 
-   #define __DEV_T void*
-   #include BUILDCHAIN(sys/types.h)
+	#define __DEV_T void*
+	#if defined(TK_MULTI_ARCH_TARGET)
+		#include BUILDCHAIN_MUARCH(sys/types.h)
+	#else
+		#include BUILDCHAIN(sys/types.h)
+	#endif
 #endif
 
 #ifndef SYS_TYPES_H_TK

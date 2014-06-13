@@ -183,7 +183,7 @@ RW lock structure static initializer
 
 
 #else
-	#Error Number of supported priorities for pthread component is wrong. Supported number is 3,5,9 and 16
+	#error Number of supported priorities for pthread component is wrong. Supported number is 3,5,9 and 16
 #endif
 
 

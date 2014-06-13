@@ -1,12 +1,12 @@
 dnl This function replaces the need of automake to get some files that autoconf
 dnl needs. TinKer does not use automake because of it's version incompability
 dnl problems. However, aoutoconf seems to have some dependancy towards automake
-dnl in the form of some mandatory scripts and files. This function takes care 
+dnl in the form of some mandatory scripts and files. This function takes care
 dnl of that.
 AC_DEFUN([TINKER_AM_PREREQ],
 [
 
-	AC_CHECK_PROG(HAS_AUTOMAKE, automake, yes, no) 
+	AC_CHECK_PROG(HAS_AUTOMAKE, automake, yes, no)
 
 	if test -f install-sh; then
 		echo "install-sh exists... good!"
@@ -18,7 +18,7 @@ AC_DEFUN([TINKER_AM_PREREQ],
 	rm -f install-sh
 	rm -f config.sub
 	rm -f config.guess
-   
+
 	AM_VERSION_LOCAL=$(automake --version | grep 'GNU' | sed -e 's/.* //' | sed -e 's/-.*$//')
 	if test -f /usr/share/automake/install-sh; then
 		ln -s /usr/share/automake/install-sh .
@@ -90,7 +90,7 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
         fi
 	AC_SUBST(CRT0_OBJECT)
 
-	#echo "------------------------------------------------------> $extern_includes"	
+	#echo "------------------------------------------------------> $extern_includes"
 	#Annoying, the below does not work - ^ is the problem
 	#ext_incl=$(echo $extern_includes  | sed -e 's/[^ ]\+/-I &/g')
 
@@ -134,7 +134,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_SUBST(TINKER_PATH)
 
 
-	dnl if called from kernel directory create the AM prerequisits 
+	dnl if called from kernel directory create the AM prerequisits
 	dnl All other should use AC_CONFIG_AUX_DIR
 	if test $1 == "."; then
 		TINKER_AM_PREREQ
@@ -145,18 +145,18 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl Find and set the C compiler. The result of this will affect the $CC env. var in the make
 	dnl files. Further more the TK_CPLUSPLUS macro in config.h will reflec the following:
 	dnl * Undefined. Whomever intended to build TinKer did *not* intend TinKer to be build with g++
-	dnl * Set but "FALSE". Whomever intended to build TinKer *did* intend TinKer to be build 
+	dnl * Set but "FALSE". Whomever intended to build TinKer *did* intend TinKer to be build
 	dnl    with g++, but the test failed and the build system falls back to gcc
-	dnl * Set but "TRUE". Whomever intended to build TinKer *did* intend TinKer to be build 
+	dnl * Set but "TRUE". Whomever intended to build TinKer *did* intend TinKer to be build
 	dnl    with g++ and TinKer was built that way.
 	dnl
 	dnl Note: it's easy to mix up the two macros G++ and C++ because they look very similar
 	dnl.They indicate the same logic, but their contents are very different.
-	AC_PROG_CC	
-	if test $USECPLUSPLUS != __tk_no; then		
+	AC_PROG_CC
+	if test $USECPLUSPLUS != __tk_no; then
 		dnl Tries to use g++ as instructed. Should fall back on gcc if c++ is not available
 		AC_PROG_CXX
-		AC_PROG_CC(g++)		
+		AC_PROG_CC(g++)
 		AC_LANG_CPLUSPLUS
 		dnl The TK_CPLUSPLUS macro in config.h will be set accordingly to the result
 		AC_DEFINE_UNQUOTED([TK_CPLUSPLUS],__tk_$GXX)
@@ -167,7 +167,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	else
 		dnl Use gcc
 		AC_PROG_CC
-		AC_PROG_CC(gcc)		
+		AC_PROG_CC(gcc)
 		AC_LANG_C
 	fi
 
@@ -204,7 +204,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 
 
 	dnl What is this?
-	AC_PROG_MAKE_SET 
+	AC_PROG_MAKE_SET
 
 	AC_HEADER_STDC
 
@@ -268,9 +268,6 @@ AC_DEFUN([TINKER_CONFIGURE],
 		TOOLDIR=$(echo $GXX_PATH | sed -e "s/\/bin\/\+$CXX//")
 	fi
 
-	AC_SUBST(TOOLDIR)
-	AC_DEFINE_UNQUOTED([TK_TOOLDIR],$TOOLDIR)
-
 	if test $cross_compiling == yes; then
 		XCOMPILE=1
 		ABI=$(echo $host | sed -e s/.*-//)
@@ -296,8 +293,60 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_DEFINE_UNQUOTED([__TK_ARCH_up__],$ARCH)
 	AC_DEFINE_UNQUOTED([__TK_ABI_up__],$ABI)
 
+	dnl Adapt for what could be ccache tricks where binary is installed
+	dnl under local to gain PATH priority, but includes and libs are not.
+	if test ! -f $TOOLDIR/$host_alias/include/stdio.h; then
+		AC_MSG_WARN([<<< System header-files are not at expected location.
+		Trying to work-around...])
+		if test -f $TOOLDIR/$host_alias/../include/stdio.h; then
+			pushd $TOOLDIR/$host_alias/..
+			TOOLDIR=$(pwd)
+			popd
+		else
+			AC_MSG_NOTICE([<<< Can't figure out location of system includes.
+			Please rapport bug!])
+		fi
+	fi
 
-	GCC_VERSION=$($CC -v 2>&1 | grep version | sed -e 's/gcc version //' | cut -f1 -d " ")
+	dnl Adapt for multi-arch
+	if test ! -f $TOOLDIR/$host_alias/include/sys/types.h; then
+		arch1=$target_cpu-$target_vendor-$target_os
+		arch2=$target_cpu-$target_os
+		AC_MSG_WARN([<<< Arch specific Header-files are not at expected location.
+		This must be a multi-arch target, Adding arch specific sub-dir...])
+		if test -f $TOOLDIR/$host_alias/include/$arch1/sys/types.h; then
+			MULTI_ARCH_TARGET=$(echo $arch1 | sed -e 's/\/\//\//g')
+			MULTI_ARCH_INCLUDES=$(
+				echo $TOOLDIR/$host_alias/include/$arch1 | \
+					sed -e 's/\/\//\//g'
+			)
+			AC_SUBST(MULTI_ARCH_TARGET)
+			AC_DEFINE_UNQUOTED([TK_MULTI_ARCH_TARGET],$MULTI_ARCH_TARGET)
+			AC_SUBST(MULTI_ARCH_TARGET)
+			AC_DEFINE_UNQUOTED([TK_MULTI_ARCH_TARGET],$MULTI_ARCH_TARGET)
+		elif test -f $TOOLDIR/$host_alias/include/$arch2/sys/types.h; then
+			MULTI_ARCH_TARGET=$(echo $arch2 | sed -e 's/\/\//\//g')
+			MULTI_ARCH_INCLUDES=$(
+				echo $TOOLDIR/$host_alias/include/$arch1 | \
+					sed -e 's/\/\//\//g'
+			)
+			AC_SUBST(MULTI_ARCH_TARGET)
+			AC_DEFINE_UNQUOTED([TK_MULTI_ARCH_TARGET],$MULTI_ARCH_TARGET)
+			AC_SUBST(MULTI_ARCH_INCLUDES)
+			AC_DEFINE_UNQUOTED([TK_MULTI_ARCH_INCLUDES],$MULTI_ARCH_INCLUDES)
+		else
+			dnl echo "Tested: "
+			dnl echo "$TOOLDIR/$host_alias/include/$arch1/sys/types.h"
+			dnl echo "$TOOLDIR/$host_alias/include/$arch2/sys/types.h"
+			AC_MSG_NOTICE([<<<Can't figure out location of arch includes and libraries
+			echo "Please rapport bug!])
+		fi
+	fi
+
+	AC_SUBST(TOOLDIR)
+	AC_DEFINE_UNQUOTED([TK_TOOLDIR],$TOOLDIR)
+
+	GCC_VERSION=$($CC -v 2>&1 | grep 'gcc version' | sed -e 's/gcc version //' | cut -f1 -d " ")
 	AC_SUBST(GCC_VERSION)
 	AC_DEFINE_UNQUOTED([TK_GCC_VERSION],$GCC_VERSION)
 
@@ -473,12 +522,12 @@ AC_DEFUN([TINKER_CONFIGURE],
 
 	if test $cross_compiling == yes; then
 		if test -z $BOARD; then
-			AC_MSG_WARN([<<< You are configuring for XCOMPILE but no BOARD is selected. 
+			AC_MSG_WARN([<<< You are configuring for XCOMPILE but no BOARD is selected.
 			Compilation will probably fail...])
 		fi
 	else
 		if test -n $BOARD; then
-			AC_MSG_WARN([<<< You are configuring for NATIVE but BOARD is selected. 
+			AC_MSG_WARN([<<< You are configuring for NATIVE but BOARD is selected.
 				This option does no purpose...])
 		fi
 	fi

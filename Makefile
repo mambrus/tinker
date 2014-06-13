@@ -48,6 +48,7 @@ ifdef GRCAT
    NEXT_MAKEALL    := -f Makefile-$(TOOLS)
 else
    CLEAN_MODS      := $(patsubst %, make -f Makefile-$(TOOLS) clean -C %;, $(MODULES))
+   MRPROPER_MODS   := $(patsubst %, make -f Makefile-$(TOOLS) mrproper -C %;, $(MODULES))
    CLEANALL_MODS   := $(patsubst %, make -f Makefile-$(TOOLS) cleanall -C %;, $(MODULES))
    INSTALL_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) install -C %;, $(MODULES))
    FLASHIT_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) flashit -C %;, $(MODULES))
@@ -56,6 +57,7 @@ else
 endif
 else
    CLEAN_MODS      := $(patsubst %, make clean -C %;, $(MODULES))
+   MRPROPER_MODS   := $(patsubst %, make mrproper -C %;, $(MODULES))
    CLEANALL_MODS   := $(patsubst %, make cleanall -C %;, $(MODULES))
    INSTALL_MODS    := $(patsubst %, make install -C %;, $(MODULES))
    FLASHIT_MODS    := $(patsubst %, make flashit -C %;, $(MODULES))
@@ -66,7 +68,7 @@ endif
 #Note: 'make configure' always assumes a GNU (or UNIX like) build host
 CONFIGURE_MODS  := $(patsubst %, make configure -C %;, $(CONFMODULES))
 
-.PHONY: modules $(MODULES) clean cleanall configure install flashit console cleanhard cleanconfigure
+.PHONY: modules $(MODULES) clean cleanall configure install flashit console cleanhard mrproper properhard cleanconfigure
 
 all: modules
 
@@ -92,7 +94,11 @@ clean:
 	@echo "<<-           ALL MODULES CLEANED!                 ->>"
 	@echo "======================================================"
 
-mrproper:
+mrproper: clean
+	rm -f config.*
+	rm -f install-sh
+	rm -f .installed-*
+	rm -rf autom4te.cache
 	$(MRPROPER_MODS)
 	@echo "======================================================"
 	@echo "<<-           CONFIGURATION REMOVED!               ->>"

@@ -45,9 +45,15 @@ I.e. we can safely redefine the first three (mqueu needs to test for O_RDONLY so
 
 #if defined (__GNUC__)
 	#include <tk_ansi.h>
+	#include <tinker/config.h>
 	#include <tk_ansi_dirwrap.h>
 
-	#include BUILDCHAIN(sys/fcntl.h)
+
+	#if defined(TK_MULTI_ARCH_TARGET)
+		#include BUILDCHAIN_MUARCH(sys/fcntl.h)
+	#else
+		#include BUILDCHAIN(sys/fcntl.h)
+	#endif
 
 	/*The following flags are incompatible with tinker*/
 	#undef O_RDONLY
