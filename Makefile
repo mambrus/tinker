@@ -91,6 +91,35 @@ clean:
 	@echo "======================================================"
 	@echo "<<-           ALL MODULES CLEANED!                 ->>"
 	@echo "======================================================"
+
+mrproper:
+	$(MRPROPER_MODS)
+	@echo "======================================================"
+	@echo "<<-           CONFIGURATION REMOVED!               ->>"
+	@echo "======================================================"
+
+properhard:
+	@echo "## Removing built & intermediate files..."
+	find -iname "*.d" -exec rm -f '{}' ';'
+	find -iname "*.o" -exec rm -f '{}' ';'
+	find -iname "*~" -exec rm -f '{}' ';'
+	#find -iname "tags" -exec rm -f '{}' ';'
+	#find -iname "c-tags" -exec rm -f '{}' ';'
+	find -iname ".installed-*" -exec rm -f '{}' ';'
+	@echo "## Removing configure generated files..."
+	find -name "config.*" -exec rm -f '{}' ';'
+	find -name "install-sh" -exec rm -f '{}' ';'
+	find -name ".installed-*" -exec rm -f '{}' ';'
+	for D in $$(find -name "autom4te.cache"); do rm -rf $$D; done
+	@echo "## Removing generator generated files..."
+	find -name "automake-*" -exec rm -f '{}' ';'
+	find -name "configure" -exec rm -f '{}' ';'
+	find -mindepth 2 -name "Makefile-gnu*" -exec rm -f '{}' ';'
+	find -mindepth 3 -name "Makefile*" -exec rm -f '{}' ';'
+	rm -f Makefile-gnu
+	@echo "======================================================"
+	@echo "<<-           CONFIGURATION REMOVED HARD!          ->>"
+	@echo "======================================================"
 	
 cleanall:
 	$(CLEANALL_MODS)

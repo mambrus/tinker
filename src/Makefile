@@ -8,7 +8,7 @@ else
 endif
 
 SUB_MODS_CONFIGURE := $(patsubst %, make configure -C %;, $(SUB_MODS))
-.PHONY: all info configure configure_this configure_subs cleanhard
+.PHONY: all info configure configure_this configure_subs clean cleanhard
 
 all: 
 	make -f Makefile-gnu all
