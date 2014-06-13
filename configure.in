@@ -24,15 +24,15 @@ AH_TOP(
 
 )
 AH_BOTTOM(
-//Avoid userspace naming conflicts
+/* Avoid userspace naming conflicts */
 #define TK_PACKAGE_BUGREPORT	PACKAGE_BUGREPORT
 #define TK_PACKAGE_NAME		PACKAGE_NAME
 #define TK_PACKAGE_STRING	PACKAGE_STRING
 #define TK_PACKAGE_TARNAME	PACKAGE_TARNAME
 
-//The following include undefines some conflicting macros (needed to fool aotoconf)
+/* The following include undefines some conflicting macros (needed to fool
+ * aotoconf) */
 #include <tinker/config_undef.h>
-
 
 #endif //tinker_config_h
 )
