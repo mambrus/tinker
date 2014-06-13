@@ -26,7 +26,7 @@
 
 Special file for getting tool-chain head files.
 
-@note <b>This file is supposed to be included "several" times.</b> Hence 
+@note <b>This file is supposed to be included "several" times.</b> Hence
 these is no "#ifndef" protection.
 
 For in-depth discussions about re-implementing ANSI functions, see \ref
@@ -45,9 +45,9 @@ kernel_reimpl_ansi
 #endif
 
 /*
-Make sure pthread stypes, time-constants and other stuff from other from any 
-of these OS'es that we don't care about. This will affect certain types and 
-macros both for the kernel, but also for any application using the kernel 
+Make sure pthread stypes, time-constants and other stuff from other from any
+of these OS'es that we don't care about. This will affect certain types and
+macros both for the kernel, but also for any application using the kernel
 header structure
 
 #if defined(__rtems__)
@@ -64,8 +64,8 @@ header structure
 */
 
 /*
-Below will do the same thing but it's safer (undefining the others is too crude 
-since they might be used for other datatypes like dev_t). 
+Below will do the same thing but it's safer (undefining the others is too crude
+since they might be used for other datatypes like dev_t).
 
 What the below setting does is preventing newlib headers to include
 the sys/features file, which is __rtems__ only specific and which sets
@@ -129,12 +129,15 @@ _POSIX_THREADS among other pthread retated things.
 
 #define FNAME( path, file ) \
    DEFSTR( path/file )
-   
+
 #define BUILDCHAIN( file ) \
    FNAME( CHAINPATH, file ) \
 
+#define BUILDCHAIN_MUARCH( file ) \
+   FNAME( /usr/include/x86_64-linux-gnu, file ) \
 
-/*! 
+
+/*!
  * @defgroup CVSLOG_tk_ansi_dirwrap_h tk_ansi_dirwrap_h
  * @ingroup CVSLOG
  *

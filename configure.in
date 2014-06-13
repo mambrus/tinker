@@ -59,6 +59,10 @@ AH_TEMPLATE([__TK_ABI_up__],
    [Calling convention - un-prefixed version])
 AH_TEMPLATE([TK_TOOLDIR],
    [Where the PREFIX directory is])
+AH_TEMPLATE([TK_MULTI_ARCH_TARGET],
+   [Name of multi-architecture target system (if any)])
+AH_TEMPLATE([TK_MULTI_ARCH_INCLUDES],
+   [CHAINPATH to arch-specific headers (if any)])
 AH_TEMPLATE([TK_GCC_VERSION],
    [Version of GCC that compiled tinker])
 AH_TEMPLATE([TK_TINKER_PATH],

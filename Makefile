@@ -37,6 +37,7 @@ TOOLS := gnu
 
 ifdef TOOLS
    CLEAN_MODS      := $(patsubst %, make -f Makefile-$(TOOLS) clean -C %;, $(MODULES))
+   MRPROPER_MODS   := $(patsubst %, make -f Makefile-$(TOOLS) mrproper -C %;, $(MODULES))
    CLEANALL_MODS   := $(patsubst %, make -f Makefile-$(TOOLS) cleanall -C %;, $(MODULES))
    INSTALL_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) install -C %;, $(MODULES))
    FLASHIT_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) flashit -C %;, $(MODULES))
@@ -44,6 +45,7 @@ ifdef TOOLS
    NEXT_MAKEALL    := -f Makefile-$(TOOLS)
 else
    CLEAN_MODS      := $(patsubst %, make clean -C %;, $(MODULES))
+   MRPROPER_MODS   := $(patsubst %, make mrproper -C %;, $(MODULES))
    CLEANALL_MODS   := $(patsubst %, make cleanall -C %;, $(MODULES))
    INSTALL_MODS    := $(patsubst %, make install -C %;, $(MODULES))
    FLASHIT_MODS    := $(patsubst %, make flashit -C %;, $(MODULES))
@@ -54,7 +56,7 @@ endif
 #Note: 'make configure' always assumes a GNU (or UNIX like) build host
 CONFIGURE_MODS  := $(patsubst %, make configure -C %;, $(CONFMODULES))
 
-.PHONY: modules $(MODULES) clean cleanall configure install flashit console cleanhard
+.PHONY: modules $(MODULES) clean cleanall configure install flashit console cleanhard mrproper properhard
 
 all: modules
 
@@ -77,6 +79,39 @@ clean:
 	$(CLEAN_MODS)
 	@echo "======================================================"
 	@echo "<<-           ALL MODULES CLEANED!                 ->>"
+	@echo "======================================================"
+
+mrproper: clean
+	rm -f config.*
+	rm -f install-sh
+	rm -f .installed-*
+	rm -rf autom4te.cache
+	$(MRPROPER_MODS)
+	@echo "======================================================"
+	@echo "<<-           CONFIGURATION REMOVED!               ->>"
+	@echo "======================================================"
+
+properhard:
+	@echo "## Removing built & intermediate files..."
+	find -iname "*.d" -exec rm -f '{}' ';'
+	find -iname "*.o" -exec rm -f '{}' ';'
+	find -iname "*~" -exec rm -f '{}' ';'
+	#find -iname "tags" -exec rm -f '{}' ';'
+	#find -iname "c-tags" -exec rm -f '{}' ';'
+	find -iname ".installed-*" -exec rm -f '{}' ';'
+	@echo "## Removing configure generated files..."
+	find -name "config.*" -exec rm -f '{}' ';'
+	find -name "install-sh" -exec rm -f '{}' ';'
+	find -name ".installed-*" -exec rm -f '{}' ';'
+	for D in $$(find -name "autom4te.cache"); do rm -rf $$D; done
+	@echo "## Removing generator generated files..."
+	find -name "automake-*" -exec rm -f '{}' ';'
+	find -name "configure" -exec rm -f '{}' ';'
+	find -mindepth 2 -name "Makefile-gnu*" -exec rm -f '{}' ';'
+	find -mindepth 3 -name "Makefile*" -exec rm -f '{}' ';'
+	rm -f Makefile-gnu
+	@echo "======================================================"
+	@echo "<<-           CONFIGURATION REMOVED HARD!          ->>"
 	@echo "======================================================"
 	
 cleanall:
