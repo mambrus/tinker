@@ -13,6 +13,7 @@ dnl The following is sadly not working properly. Use autoconf -I <dir> instead t
 
 sources_c="tk_bsp_bitfire.c lpc2129_uart_polled.c lpc2129_vic.c lpc2129_systimer.c"
 
+AC_PROG_CC
 TINKER_CONFIGURE(../../..)
 subdirs=
 AC_SUBST(subdirs)

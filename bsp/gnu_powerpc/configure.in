@@ -19,6 +19,7 @@ sources_asm=""
 extras=""
 #extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
 
+AC_PROG_CC
 TINKER_CONFIGURE(../..)
 
 

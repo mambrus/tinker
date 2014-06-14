@@ -134,7 +134,7 @@ _POSIX_THREADS among other pthread retated things.
    FNAME( CHAINPATH, file ) \
 
 #define BUILDCHAIN_MUARCH( file ) \
-   FNAME( /usr/include/x86_64-linux-gnu, file ) \
+   FNAME( TK_MULTI_ARCH_INCLUDES, file ) \
 
 
 /*!

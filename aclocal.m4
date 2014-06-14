@@ -1,6 +1,6 @@
 dnl This function replaces the need of automake to get some files that autoconf
-dnl needs. TinKer does not use automake because of it's version incompability
-dnl problems. However, aoutoconf seems to have some dependancy towards automake
+dnl needs. TinKer does not use automake because of it's version incompatibility
+dnl problems. However, autoconf seems to have some dependency towards automake
 dnl in the form of some mandatory scripts and files. This function takes care
 dnl of that.
 AC_DEFUN([TINKER_AM_PREREQ],
@@ -38,7 +38,7 @@ AC_DEFUN([TINKER_AM_PREREQ],
 	ln -s ${AMDIR}/config.sub .
 	ln -s ${AMDIR}/config.guess .
 
-	dnl The following seems needed to reninitialize the search-patch
+	dnl The following seems needed to re-initialize the search-patch
 	AC_CONFIG_AUX_DIR(.)
 fi
 
@@ -128,7 +128,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_SUBST(TINKER_PATH)
 
 
-	dnl if called from kernel directory create the AM prerequisits
+	dnl if called from kernel directory create the AM prerequisites
 	dnl All other should use AC_CONFIG_AUX_DIR
 	if test $1 == "."; then
 		TINKER_AM_PREREQ
@@ -137,7 +137,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	TINKER_OPTIONS_BUILD
 
 	dnl Find and set the C compiler. The result of this will affect the $CC env. var in the make
-	dnl files. Further more the TK_CPLUSPLUS macro in config.h will reflec the following:
+	dnl files. Further more the TK_CPLUSPLUS macro in config.h will reflect the following:
 	dnl * Undefined. Whomever intended to build TinKer did *not* intend TinKer to be build with g++
 	dnl * Set but "FALSE". Whomever intended to build TinKer *did* intend TinKer to be build
 	dnl    with g++, but the test failed and the build system falls back to gcc
@@ -146,7 +146,6 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl
 	dnl Note: it's easy to mix up the two macros G++ and C++ because they look very similar
 	dnl.They indicate the same logic, but their contents are very different.
-	AC_PROG_CC
 	if test $USECPLUSPLUS != __tk_no; then
 		dnl Tries to use g++ as instructed. Should fall back on gcc if c++ is not available
 		AC_PROG_CXX
@@ -179,7 +178,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_MSG_NOTICE([Target system vendor: $target_vendor])
 	AC_MSG_NOTICE([Target system OS: $target_os])
 
-	dnl Deduct the system call API based on TinKer's convention of asuming
+	dnl Deduct the system call API based on TinKer's convention of assuming
 	dnl the vendor part will tell us.
 	if test $host_vendor == "unknown"; then
 		SYSTEM="default"
@@ -188,7 +187,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	fi
 	dnl Note that system is not quoted in config.h in this file. This permits configure.in at lower level
 	dnl to determine {if test $SYSTEM == 'default'} to set whatever default system they think is best
-	dnl The "un-prefixed version is however quoted and is set to the cannonical middle name
+	dnl The "un-prefixed version is however quoted and is set to the canonical middle name
 	AC_SUBST(SYSTEM)
 	AC_DEFINE_UNQUOTED([__TK_SYSTEM_up__],$host_vendor)
 
@@ -269,8 +268,8 @@ AC_DEFUN([TINKER_CONFIGURE],
 	else
 		XCOMPILE=0
 
-		#$build, $target, host are missing in this case. Need AC_CANNONICAL_HOST but that inplies extra scripts (?)
-		#Prefered line below cant be used
+		#$build, $target, host are missing in this case. Need AC_CANNONICAL_HOST but that implies extra scripts (?)
+		#Preferred line below cant be used
 		#ARCH=$(echo $build | sed -e s/-.*//)
 
 		ARCH=$(uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
@@ -319,7 +318,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 		elif test -f $TOOLDIR/$host_alias/include/$arch2/sys/types.h; then
 			MULTI_ARCH_TARGET=$(echo $arch2 | sed -e 's/\/\//\//g')
 			MULTI_ARCH_INCLUDES=$(
-				echo $TOOLDIR/$host_alias/include/$arch1 | \
+				echo $TOOLDIR/$host_alias/include/$arch2 | \
 					sed -e 's/\/\//\//g'
 			)
 			AC_SUBST(MULTI_ARCH_TARGET)
@@ -342,7 +341,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_SUBST(GCC_VERSION)
 	AC_DEFINE_UNQUOTED([TK_GCC_VERSION],$GCC_VERSION)
 
-	dnl Some infuential environment variables
+	dnl Some influential environment variables
 	dnl =====================================
 	dnl C compiler flags
  	AC_SUBST(CFLAGS)
@@ -357,7 +356,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl C++ compiler flags
  	AC_SUBST(CXXFLAGS)
 
-	AC_ARG_VAR(BOARD, [Selects which board to build TinKer BSP for. Valid values depend on each BSP and coorespond to a sub-directory in that structure])
+	AC_ARG_VAR(BOARD, [Selects which board to build TinKer BSP for. Valid values depend on each BSP and correspond to a sub-directory in that structure])
 	AC_DEFINE_UNQUOTED([TK_BOARD],__tk_${BOARD}__)
 	AC_DEFINE_UNQUOTED([__TK_BOARD_up__],$BOARD)
 
@@ -407,7 +406,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 		_TK_COMP_POSIX_RT=__tk_yes
 	)
 	AC_ARG_ENABLE(filesys,
-		AS_HELP_STRING([--enable-filesys],[FIILESYS - Enable/disable embedded filesystem abstraction component. (Not available for all possible targets. Target must be HIXS adapted.)]),
+		AS_HELP_STRING([--enable-filesys],[FIILESYS - Enable/disable embedded file-system abstraction component. (Not available for all possible targets. Target must be HIXS adapted.)]),
 		_TK_COMP_FILESYS=__tk_$enableval,
 		_TK_COMP_FILESYS=__tk_no
 	)
@@ -423,12 +422,12 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl NOTE: Default values are set here, but *might get overridden in target specific sub-trees*
 	dnl ----------------------------------------------------------------------------
 	AC_ARG_ENABLE(builtin_sorting,
-		AS_HELP_STRING([--enable-builtin_sorting],[PACKAGE - Use builtin search/sort functions (overrides default for target)]),
+		AS_HELP_STRING([--enable-builtin_sorting],[PACKAGE - Use built-in search/sort functions (overrides default for target)]),
 		_TK_USE_BUILTIN_SORT=__tk_$enableval,
 		_TK_USE_BUILTIN_SORT=__tk_yes
 	)
 	AC_ARG_ENABLE(emrgcy-console,
-		AS_HELP_STRING([--enable-emrgcy-console=<val>],[Claim an emergency console is available by the BSP. Alterativly, name a function to use.]),
+		AS_HELP_STRING([--enable-emrgcy-console=<val>],[Claim an emergency console is available by the BSP. Alternatively: name a function to use.]),
 		AC_DEFINE_UNQUOTED([TK_USE_EMRGCY_CONSOLE],__tk_$enableval)
 	)
 
@@ -444,22 +443,22 @@ AC_DEFUN([TINKER_CONFIGURE],
 		AS_HELP_STRING([--enable-min_stack=<val>],[Maximum size of a stack for a thread ]),
 		AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],$enableval))
 	AC_ARG_ENABLE(norm_stack,
-		AS_HELP_STRING([--enable-norm_stack=<val>],[Stacksize used when stack-size is omitted ]),
+		AS_HELP_STRING([--enable-norm_stack=<val>],[Stack-size used when stack-size is omitted ]),
 		AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],$enableval))
 	AC_ARG_ENABLE(max_threads,
-		AS_HELP_STRING([--enable-max_threads=<val>],[Maximum number of threds your system could have ]),
+		AS_HELP_STRING([--enable-max_threads=<val>],[Maximum number of threads your system could have ]),
 		AC_DEFINE_UNQUOTED([TK_MAX_THREADS],$enableval))
 	AC_ARG_ENABLE(max_prio,
-		AS_HELP_STRING([--enable-max_prio=<val>],[Numer of priorities for you system  (recomended value: 3 or 16)]),
+		AS_HELP_STRING([--enable-max_prio=<val>],[Number of priorities for you system  (recommended value: 3 or 16)]),
 		AC_DEFINE_UNQUOTED([TK_MAX_PRIO_LEVELS],$enableval))
 	AC_ARG_ENABLE(that_prio,
-		AS_HELP_STRING([--enable-that_prio=<val>],[Number of threads that can be sceduled at each priority ]),
+		AS_HELP_STRING([--enable-that_prio=<val>],[Number of threads that can be scheduled at each priority ]),
 		AC_DEFINE_UNQUOTED([TK_MAX_THREADS_AT_PRIO],$enableval))
 	AC_ARG_ENABLE(thename_len,
 		AS_HELP_STRING([--enable-thename_len=<val>],[Lengts of the string in TCB that holds the name of the thread ]),
 		AC_DEFINE_UNQUOTED([TK_THREAD_NAME_LEN],$enableval))
 	AC_ARG_ENABLE(blocked_q,
-		AS_HELP_STRING([--enable-blocked_q=<val>],[Maximum nuber of threads blocked on any ITC primitive, i.e. not only Q ]),
+		AS_HELP_STRING([--enable-blocked_q=<val>],[Maximum number of threads blocked on any ITC primitive, i.e. not only Q ]),
 		AC_DEFINE_UNQUOTED([TK_MAX_BLOCKED_ON_Q],$enableval))
 	AC_ARG_ENABLE(max_q,
 		AS_HELP_STRING([--enable-max_q=<val>],[Maximum number of any ITC primitive, i.e not only Q ]),
@@ -487,22 +486,22 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl   which goes in each configure.in in such case.
 	dnl ---------------------------------------------
 	AC_ARG_ENABLE(how-to-malloc,
-		AS_HELP_STRING([--enable-how-to-mallow=<val>],[Advanced pimary porting - ORIGINAL/STUBBED/RENAMED/VOIDED]),
+		AS_HELP_STRING([--enable-how-to-mallow=<val>],[Advanced primary porting - ORIGINAL/STUBBED/RENAMED/VOIDED]),
 		AC_DEFINE_UNQUOTED([TK_HOWTO_MALLOC],TK_FNK_$enableval)
 	)
 
 	AC_ARG_ENABLE(how-to-clock,
-		AS_HELP_STRING([--enable-how-to-clock=<val>],[Advanced pimary porting - ORIGINAL/STUBBED/RENAMED/VOIDED]),
+		AS_HELP_STRING([--enable-how-to-clock=<val>],[Advanced primary porting - ORIGINAL/STUBBED/RENAMED/VOIDED]),
 		AC_DEFINE_UNQUOTED([TK_HOWTO_CLOCK],TK_FNK_$enableval)
 	)
 
 	AC_ARG_ENABLE(how-to-printk,
-		AS_HELP_STRING([--enable-how-to-printk=<val>],[Advanced pimary porting - )]),
+		AS_HELP_STRING([--enable-how-to-printk=<val>],[Advanced primary porting - )]),
 		AC_DEFINE_UNQUOTED([TK_HOWTO_PRINTK],TK_FNK_$enableval)
 	)
 
 	AC_ARG_ENABLE(how-to-assert,
-		AS_HELP_STRING([--enable-how-to-assert=<val>],[Advanced pimary porting - ]),
+		AS_HELP_STRING([--enable-how-to-assert=<val>],[Advanced primary porting - ]),
 		AC_DEFINE_UNQUOTED([TK_HOWTO_ASSERT],TK_FNK_$enableval)
 	)
 
@@ -518,6 +517,15 @@ AC_DEFUN([TINKER_CONFIGURE],
 		if test "X${BOARD}" != "X"; then
 			AC_MSG_WARN([<<< You are configuring for NATIVE but BOARD is selected/defined.
 				This option does no purpose...])
+      else
+         dnl If no $BOARD and no $cross_compiling, it must mean that this
+         dnl configure is for building a hosted kernel. Let build-system
+         dnl know this, some instructions dnl are illegal on hosted systems as
+         dnl kernel will not run in aprivileged mode (IRQ manipulation e.t.a.).
+
+         HOSTED=1
+			AC_SUBST(HOSTED)
+			AC_DEFINE_UNQUOTED([TK_HOSTED],$HOSTED)
 		fi
 	fi
 

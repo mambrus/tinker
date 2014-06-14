@@ -18,6 +18,7 @@ sources_c="tk_angel.c tk_systimer.c"
 sources_asm=""
 extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
 
+AC_PROG_CC
 TINKER_CONFIGURE(../..)
 
 

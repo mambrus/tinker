@@ -11,6 +11,7 @@ sources_c="sja1000.c can.c"
 sources_asm=""
 extras=""
 
+AC_PROG_CC
 TINKER_CONFIGURE(../../..)
 AC_CONFIG_SUBDIRS([])
 
