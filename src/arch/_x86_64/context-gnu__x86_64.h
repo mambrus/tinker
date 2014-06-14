@@ -134,13 +134,27 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #define PUSHALL()                         \
    asm __volatile__ (                     \
       " pushf\n\t"                        \
-      " pusha"                            \
+      " push eax\n\t"                     \
+      " push ecx\n\t"                     \
+      " push edx\n\t"                     \
+      " push ebx\n\t"                     \
+      " push esx\n\t"                     \
+      " push ebp\n\t"                     \
+      " push esx\n\t"                     \
+      " push edx\n\t"                     \
    );
 
 #define POPALL()                          \
    asm __volatile__ (                     \
-      " popa\n\t"                         \
-      " popf"                             \
+      " push edx\n\t"                     \
+      " push esx\n\t"                     \
+      " push ebp\n\t"                     \
+      " push esx\n\t"                     \
+      " push ebx\n\t"                     \
+      " push edx\n\t"                     \
+      " push ecx\n\t"                     \
+      " push eax\n\t"                     \
+      " popf\n\t"                         \
    )
 
 
