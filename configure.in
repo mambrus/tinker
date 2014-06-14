@@ -11,34 +11,37 @@ TINKER_AM_PREREQ
 AC_CONFIG_AUX_DIR(.)
 
 AC_CONFIG_SUBDIRS([src bsp])
-#Sources are deducted based on components configuration. The line below is now set further down.
-#sources_c="src/tk.c src/tk_itc.c src/tk_sysqueues.c"
 
 dnl Autoheader stuff
 AH_TOP(
+/*      --- MACHINE GENERATED FILE. MUST *NOT* BE CHANGED MANUALLY! ---      */
 #ifndef tinker_config_h
 #define tinker_config_h
 
-// Include well known constants used in this file and which are needed for macro evaluation
+/* Include well known constants used in this file and which are needed for
+ * macro evaluation */
 #include <tinker/_defines.h>
-
+/*===========================================================================*/
 )
 AH_BOTTOM(
-/* Avoid userspace naming conflicts */
+/*===========================================================================*/
+/* Avoid user-space naming conflicts */
 #define TK_PACKAGE_BUGREPORT	PACKAGE_BUGREPORT
 #define TK_PACKAGE_NAME		PACKAGE_NAME
 #define TK_PACKAGE_STRING	PACKAGE_STRING
 #define TK_PACKAGE_TARNAME	PACKAGE_TARNAME
 
 /* The following include undefines some conflicting macros (needed to fool
- * aotoconf) */
+ * autoconf) */
 #include <tinker/config_undef.h>
 
-#endif //tinker_config_h
+#endif /* tinker_config_h */
 )
 
-dnl Create defines we expect configure or sub-configure scripts to set (will end up in config.h)
-dnl Analyzed build system defines (by any TinKer configure options)
+dnl Create defines we expect configure or sub-configure scripts to set (will
+dnl end up in config.h)
+
+dnl Analyzed build system defines (set by TinKer configure option(s))
 AH_TEMPLATE([TK_CANONICAL_HOST],
    [Canonical hostname])
 AH_TEMPLATE([TK_ALIAS_HOST],
@@ -89,9 +92,9 @@ AH_TEMPLATE([TK_NORMAL_STACK_SIZE],
 AH_TEMPLATE([TK_MAX_THREADS],
    [Maximum number of threds your system could have. If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_MAX_PRIO_LEVELS],
-   [Numer of priorities for you system (recomended 3 or 16). If not set, value in tk_tuning.h will be used instead])
+   [Number of priorities for you system (recommended 3 or 16). If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_MAX_THREADS_AT_PRIO],
-   [Number of threads that can be sceduled at each priority. If not set, value in tk_tuning.h will be used instead])
+   [Number of threads that can be scheduled at each priority. If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_THREAD_NAME_LEN],
    [Lengts of the string in TCB that holds the name of the thread. If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_MAX_BLOCKED_ON_Q],
@@ -113,7 +116,7 @@ AH_TEMPLATE([TK_COMP_PTHREAD],
 AH_TEMPLATE([TK_COMP_POSIX_RT],
    [Comp. POSIX_RT - POSIX 1003.1b queues, semaphores component enabled])
 AH_TEMPLATE([TK_COMP_FILESYS],
-   [Comp. FILESYS - Embedded filesystem component enabled])
+   [Comp. FILESYS - Embedded files-ystem component enabled])
 
 dnl TinKer package tuning defines
 AH_TEMPLATE([TK_USE_BUILTIN_SORT],
@@ -125,6 +128,9 @@ AH_TEMPLATE([TK_USE_EMRGCY_CONSOLE],
 dnl Build features
 AH_TEMPLATE([TK_CPLUSPLUS],
    [If library was built using a C++ compiler])
+AH_TEMPLATE([TK_HOSTED],
+   [Configured and built in a way that means hosted execution
+   (auto-deducted)])
 
 dnl Other features
 AH_TEMPLATE([TK_DISPATCH],
@@ -133,14 +139,15 @@ AH_TEMPLATE([TK_DISPATCH],
 
 dnl Low level porting (advanced)
 AH_TEMPLATE([TK_HOWTO_MALLOC],
-   [Advanced pimary porting])
+   [Advanced primary porting])
 AH_TEMPLATE([TK_HOWTO_CLOCK],
-   [Advanced pimary porting])
+   [Advanced primary porting])
 AH_TEMPLATE([TK_HOWTO_PRINTK],
-   [Advanced pimary porting])
+   [Advanced primary porting])
 AH_TEMPLATE([TK_HOWTO_ASSERT],
-   [Advanced pimary porting])
+   [Advanced primary porting])
 
+AC_PROG_CC
 TINKER_CONFIGURE(.)
 
 AC_CONFIG_HEADER(include/tinker/config.h)

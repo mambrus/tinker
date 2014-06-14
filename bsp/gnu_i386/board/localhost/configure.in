@@ -27,6 +27,7 @@ extras="$extras ../../../../lib/crt0.o"
 CRT0_OBJECT=crt1.o
 
 
+AC_PROG_CC
 TINKER_CONFIGURE(../../../..)
 subdirs=
 AC_SUBST(subdirs)

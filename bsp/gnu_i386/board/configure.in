@@ -12,6 +12,7 @@ sources_c="board.c"
 sources_asm=""
 extras=""
 
+AC_PROG_CC
 TINKER_CONFIGURE(../../..)
 
 case "${BOARD}" in

@@ -18,6 +18,7 @@ extras=""
 sources_c=""
 #extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
 
+AC_PROG_CC
 TINKER_CONFIGURE(../..)
 
 # Add sources depending on configuration
