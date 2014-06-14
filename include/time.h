@@ -51,8 +51,13 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#Sleeping
 
 /*
 The Following will get the tool-chains version of time.h
-(excluding the build-chains that completly miss that file)
+(excluding the build-chains that completely miss that file)
 */
+
+#if defined (__GNUC__)
+   #include <tinker/config.h>
+   #include <sys/times.h>
+#endif
 #if !defined(__C166__)
 #	include <tk_ansi_dirwrap.h>
 #	include BUILDCHAIN(time.h)
@@ -66,7 +71,7 @@ The Following will get the tool-chains version of time.h
 #ifndef TIME_H_TK
 #define TIME_H_TK
 
-#define clock tk_clock   //!< The undefine last is the real re-router
+#define clock tk_clock   //!< The undefined last is the real re-router
 #define time  tk_time
 
 //#include <limits.h> //<! Information about integers max and min values
@@ -104,9 +109,6 @@ struct fmttime{
    int      secs; /*!Seconds, this value is between 0-60 */
    long int nanos;/*!Nano-seconds, this value is between 0 - 999 999 999 */
 };
-
-
-void timespec2fmttime_np( struct fmttime *totime, const struct timespec *fromtime);
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 

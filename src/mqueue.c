@@ -25,7 +25,7 @@
 @brief RT queues - POSIX 1003.1b API
 
 \code
-This file was donated courtesy of the Zoi project (year 2000, 
+This file was donated courtesy of the Zoi project (year 2000,
 SIEMENS Elema). It was originally written as a wrapper for
 pThreads-win32, to give Windows threads the ability of POSIX RT queues.
 \endcode
@@ -38,10 +38,6 @@ POSIX_RT
 @see PTHREAD
 
 @todo Consider replacing qsort with insert sort (or at least a non-reqursive version)
-
-@todo FIXME Figure out a better way to handle the queues names lengts than PATH_MAX
-This is a reserved definition and we're re-asigning it. Better name it differently.
-Perhaps making this a configurable option also?
 */
 
 
@@ -66,8 +62,16 @@ Perhaps making this a configurable option also?
    #include <sys/errno.h>
 #else   //Embedded TinKer config
    #include <errno.h>
-   #include <tk_ansi.h>         //Normally qsort is part of stdlib. But on embedded tool-chains this is often missing.   
-   #define  PATH_MAX    24   
+   #include <tk_ansi.h>         //Normally qsort is part of stdlib. But on embedded tool-chains this is often missing.
+   #ifndef PATH_MAX
+   #define  PATH_MAX    24
+   #endif //PATH_MAX
+#endif
+
+#if HOSTED
+   #define QNAME_LEN PATH_MAX
+#else
+   #define QNAME_LEN 24
 #endif
 
 #define _MQ_NO_WARN_VAR(x) ((void)x)  //!< Used silence warnings about unused variables
@@ -97,19 +101,19 @@ typedef struct{
 typedef struct{
    char                *buffer; /* Buffer where message is stored */
    int                  msgSz;  /* Length of message when sent */
-   OrderT               order;  /* Based on timestamp and mess prio */   
+   OrderT               order;  /* Based on timestamp and mess prio */
 }MessT;
 
 typedef struct {
    size_t               mIdxIn; /*The index for writing */
-   size_t               mIdxOut;/*The index for reading */  
-   MessT               *messArray;   
+   size_t               mIdxOut;/*The index for reading */
+   MessT               *messArray;
    unsigned int         lastInOrder; /*together with timestamp = unique */
 }MBox;
 
 typedef struct{
    int                   taken;
-   char                  mq_name[PATH_MAX];
+   char                  mq_name[QNAME_LEN];
    struct mq_attr        mq_attr;
    MBox                  mBox;
    sem_t                 sem;
@@ -135,14 +139,14 @@ static int     fPIdx = 0; /* Todo: Make this roundtrip */
 
 static sem_t   poolAccessSem;
 static pthread_once_t mq_once= PTHREAD_ONCE_INIT;
-	      
+
 /*****************************************************************************
  * private function declarations
  *****************************************************************************/
 static void initialize( void );
 static void sortByPrio( QueueD *Q );
 /*Comp. func for qsort */
-static int compMess( const void *elem1, const void *elem2 ); 
+static int compMess( const void *elem1, const void *elem2 );
 
 /*****************************************************************************
  * public function implementations
@@ -161,7 +165,7 @@ int mq_close(
    pthread_once(&mq_once, initialize);
    _MQ_NO_WARN_VAR(mq);
    assert(sem_wait(&poolAccessSem) == 0);
-   
+
    assert(sem_post(&poolAccessSem) == 0);
 
    return 0;
@@ -181,7 +185,7 @@ int mq_getattr(
    _MQ_NO_WARN_VAR(attrbuf);
    assert(sem_wait(&poolAccessSem) == 0);
    /*Find next empy slot in qPool*/
-   
+
    assert(sem_post(&poolAccessSem) == 0);
 
    return 0;
@@ -201,25 +205,25 @@ mqd_t mq_open(
    size_t                k;
    int                   qId;   /* queue ID in message pool */
    int                   dId;   /* descriptor */
-   
+
    pthread_once(&mq_once, initialize);
    _MQ_NO_WARN_VAR(mode);
-   
+
    assert(sem_wait(&poolAccessSem) == 0);
-   
+
    /*First test some harmless common things */
-   if (strlen(mq_name)>PATH_MAX ) { /* Name too long */
-      errno = ENAMETOOLONG;   
+   if (strlen(mq_name)>QNAME_LEN ) { /* Name too long */
+      errno = ENAMETOOLONG;
       assert(sem_post(&poolAccessSem) == 0);
-      return(-1);   
+      return(-1);
    }
 
    if (mq_name[0] != '/' ) { /* Invalid name of queue */
-      errno = EINVAL;   
+      errno = EINVAL;
       assert(sem_post(&poolAccessSem) == 0);
-      return(-1);   
+      return(-1);
    }
-   
+
    if (oflags & O_CREAT) {     /*Wishes to create new queue */
       int reuse = 0;
 
@@ -228,11 +232,11 @@ mqd_t mq_open(
          i++;
          i%=NUMBER_OF_QUEUES;
       }
-   
+
       if (j==NUMBER_OF_QUEUES) { /* No empty slot found */
-         errno = EMFILE;   
+         errno = EMFILE;
          assert(sem_post(&poolAccessSem) == 0);
-         return(-1);   
+         return(-1);
       }
       qId = j; /* slot identifier */
       queuePool[i].taken = 1;
@@ -240,7 +244,7 @@ mqd_t mq_open(
       /* Scan the pool to se if duplicate name exists */
       for (i=0; i<NUMBER_OF_QUEUES; i++) {
          if (queuePool[i].taken){
-            if (strncmp( queuePool[i].mq_name, mq_name, PATH_MAX) == 0){
+            if (strncmp( queuePool[i].mq_name, mq_name, QNAME_LEN) == 0){
                /* Duplicate name exists */
                if (oflags & O_CREAT) {
                   /*Exclusive ?*/
@@ -255,16 +259,16 @@ mqd_t mq_open(
                }
             }
          }
-      }      
+      }
 
       /* So far so good. Create the queue */
       if (!reuse) {
          queuePool[qId].taken = 1;
-         strncpy( queuePool[qId].mq_name, mq_name, PATH_MAX  );
-   
+         strncpy( queuePool[qId].mq_name, mq_name, QNAME_LEN  );
+
          /* Create default attributes (TBD) */
          /*
-         Todo: ... queuePool[qId].mode->xx = xx 
+         Todo: ... queuePool[qId].mode->xx = xx
 
          Mean-while, assure it exists!
          */
@@ -272,7 +276,7 @@ mqd_t mq_open(
             errno = EINVAL;
             return(-1);
          }
-         
+
          /*Todo: doesn't work.. why?*/
          /*memcpy( &queuePool[qId].mq_attr, mq_attr, sizeof(struct mq_attr)); strange...*/
          queuePool[qId].mq_attr.mq_maxmsg = mq_attr->mq_maxmsg;
@@ -287,11 +291,11 @@ mqd_t mq_open(
             errno =  ENFILE;
             return(-1);
          }
-         
+
          for (k=0; k<mq_attr->mq_maxmsg; k++){
             queuePool[qId].mBox.messArray[k].buffer = (char*)malloc(mq_attr->mq_msgsize * sizeof(char));
             if (queuePool[qId].mBox.messArray[k].buffer == NULL){
-               
+
                /*No more memory left on heap */
                /*Tidy up..*/
                for (j=k; j>=0; j--){
@@ -303,29 +307,29 @@ mqd_t mq_open(
                errno =  ENFILE;
                return(-1);
             }
-                        
-            queuePool[qId].mBox.messArray[k].msgSz = 0; 
-            queuePool[qId].mBox.messArray[k].order.inOrder = 0; 
+
+            queuePool[qId].mBox.messArray[k].msgSz = 0;
+            queuePool[qId].mBox.messArray[k].order.inOrder = 0;
             queuePool[qId].mBox.messArray[k].order.prio    = 0; /*Tada...!*/
-            queuePool[qId].mBox.messArray[k].order.time    = 0; 
-            queuePool[qId].mBox.lastInOrder = 0;   
+            queuePool[qId].mBox.messArray[k].order.time    = 0;
+            queuePool[qId].mBox.lastInOrder = 0;
          }
-         
+
          queuePool[qId].mBox.mIdxIn = 0; /*No pending messages */
          queuePool[qId].mBox.mIdxOut = 0;
-         
+
          /* initialize the queues semaphore */
          if (!(oflags & O_NONBLOCK))
             assert(sem_init (&queuePool[qId].sem, 0, 0) == 0);
       }
    }
-   
+
    /* Attach queue handle to file handle */
    if (oflags & (O_RDONLY | O_WRONLY | O_RDWR) ) { /* Want to use queue */
       if (!(oflags & O_CREAT)) { /*Hasn't been created this time. Find it!*/
          for (i=0; i<NUMBER_OF_QUEUES; i++) {
             if (queuePool[i].taken)
-               if (strncmp( queuePool[i].mq_name, mq_name, PATH_MAX) == 0)
+               if (strncmp( queuePool[i].mq_name, mq_name, QNAME_LEN) == 0)
                   break;
          }
          if ( i == NUMBER_OF_QUEUES ) {/* Not found ... */
@@ -336,18 +340,18 @@ mqd_t mq_open(
          qId = i;
       }/* else: The qId is valid allready */
 
-      
+
       /* Attach the pool handle to the file descriptor */
       /* Seek for new empty slot in file pool */
       for (i=fPIdx,j=0; j<NUMBER_OF_FILES && filePool[i].taken != 0; j++) {
          i++;
          i%=NUMBER_OF_FILES;
       }
-   
+
       if (j==NUMBER_OF_FILES) { /* No empty slot found */
-         errno = EMFILE;   
+         errno = EMFILE;
          assert(sem_post(&poolAccessSem) == 0);
-         return(-1);   
+         return(-1);
       }
       dId = j; /* slot identifier */
       filePool[i].taken = 1;
@@ -360,7 +364,7 @@ mqd_t mq_open(
    }
 
    assert(sem_post( &poolAccessSem) == 0);
-   return(dId);  
+   return(dId);
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -378,9 +382,9 @@ size_t mq_receive(
 
    pthread_once(&mq_once, initialize);
    assert(sem_wait(&poolAccessSem) == 0);
-   
+
    /*Is valid filehandle?*/
- 
+
    if (!(
       ((mq>=0) && (mq<NUMBER_OF_FILES)) &&
       ( filePool[mq].taken == 1 ) &&
@@ -405,18 +409,18 @@ size_t mq_receive(
       errno =  EBADF;
       return(-1);
    }
-   
+
    /* Check if message fits */
    if (!(buflen >= Q->mq_attr.mq_msgsize)){
       assert(sem_post(&poolAccessSem) == 0);
       errno = EMSGSIZE;
       return(-1);
    }
-   
+
    if ( NUMB_MESS(Q) <= 0 ) {
       if (filePool[mq].oflags & O_NONBLOCK){
          assert(sem_post(&poolAccessSem) == 0);
-         errno =  EAGAIN; 
+         errno =  EAGAIN;
          return(-1);
       }
    }
@@ -426,16 +430,16 @@ size_t mq_receive(
    assert(sem_post(&poolAccessSem) == 0);
    /* Will block if nescessary */
    assert(sem_wait(&Q->sem) == 0);
-      
-   memcpy( 
-      msg_buffer, 
-      Q->mBox.messArray[Q->mBox.mIdxOut].buffer, 
+
+   memcpy(
+      msg_buffer,
+      Q->mBox.messArray[Q->mBox.mIdxOut].buffer,
       Q->mBox.messArray[Q->mBox.mIdxOut].msgSz
-   );   
+   );
    if (msgprio)  //Special case if atribute is NULL. Check what standard says about that
       *msgprio = Q->mBox.messArray[Q->mBox.mIdxIn].order.prio;
 
-   msgSize = Q->mBox.messArray[Q->mBox.mIdxOut].msgSz; 
+   msgSize = Q->mBox.messArray[Q->mBox.mIdxOut].msgSz;
 
    Q->mBox.mIdxOut++;
    Q->mBox.mIdxOut %= Q->mq_attr.mq_maxmsg;
@@ -457,7 +461,7 @@ int mq_setattr(
    _MQ_NO_WARN_VAR(new_attrs);
    _MQ_NO_WARN_VAR(old_attrs);
    assert(sem_wait(&poolAccessSem) == 0);
-   
+
    assert(sem_post(&poolAccessSem) == 0);
 
    return 0;
@@ -479,9 +483,9 @@ int mq_send(
 
    pthread_once(&mq_once, initialize);
    assert(sem_wait(&poolAccessSem) == 0);
-   
+
    /*Is valid filehandle?*/
- 
+
    if (!(
       ((mq>=0) && (mq<NUMBER_OF_FILES)) &&
       ( filePool[mq].taken == 1 ) &&
@@ -506,20 +510,20 @@ int mq_send(
       errno =  EBADF;
       return(-1);
    }
-   
+
    /* Check if message fits */
    if (!(Q->mq_attr.mq_msgsize >= msglen)){
       assert(sem_post(&poolAccessSem) == 0);
       errno =  EMSGSIZE;
       return(-1);
    }
-   
+
    if (!(NUMB_MESS(Q) < Q->mq_attr.mq_maxmsg-1)){ /* queue is full*/
                                                   /* Save 1, else sort fucks up*/
       /* Todo: never bocks (yet) */
       if (filePool[mq].oflags & O_NONBLOCK){    /* to block or not to block*/
          assert(sem_post(&poolAccessSem) == 0);
-         errno =  EAGAIN; 
+         errno =  EAGAIN;
          return(-1);
       }else{
          assert(sem_post(&poolAccessSem) == 0);
@@ -527,15 +531,15 @@ int mq_send(
          return(-1);
       }
    }
-      
+
    /*OK so far*/
-   
+
    memcpy( Q->mBox.messArray[Q->mBox.mIdxIn].buffer, msg, msglen);
 
    Q->mBox.messArray[Q->mBox.mIdxIn].msgSz = msglen;
-   
+
    Q->mBox.messArray[Q->mBox.mIdxIn].order.prio = msgprio;
-   Q->mBox.messArray[Q->mBox.mIdxIn].order.inOrder =  
+   Q->mBox.messArray[Q->mBox.mIdxIn].order.inOrder =
       Q->mBox.lastInOrder++;
    Q->mBox.messArray[Q->mBox.mIdxIn].order.time = time(&ttime);
 
@@ -557,13 +561,13 @@ int mq_send(
 
 /*****************************************************************************
  * FUNCTION NAME:
- *  
+ *
  *
  * DESCRIPTION:
  *
- *  
+ *
  * NOTES:
- *  
+ *
  *****************************************************************************/
 static void initialize( void ) {
    int i;
@@ -575,7 +579,7 @@ static void initialize( void ) {
    assert(sem_wait(&poolAccessSem) == 0);
    for (i=0; i<NUMBER_OF_QUEUES; i++) {
 	   queuePool[i].taken = 0;
-           memset(queuePool[i].mq_name,'Q',PATH_MAX); //Makes a mark in memory. Easy to find the pool
+           memset(queuePool[i].mq_name,'Q',QNAME_LEN); //Makes a mark in memory. Easy to find the pool
            queuePool[i].mq_name[0]=0; //Also invalidate it for any string comparisments just in case
    }
    for (i=0; i<NUMBER_OF_FILES; i++) {
@@ -586,22 +590,22 @@ static void initialize( void ) {
 
 /*****************************************************************************
  * FUNCTION NAME: compMess
- *  
+ *
  *
  * DESCRIPTION: Compare function for quick sort. Sorts by prio, timestamp,
  *              incom order.
  *
- *  
+ *
  * NOTES:
- *  
+ *
  *****************************************************************************/
 static int compMess(
-   const void *elem1, 
-   const void *elem2 
+   const void *elem1,
+   const void *elem2
 ){
    MessT            *e1 = (MessT*)elem1;
    MessT            *e2 = (MessT*)elem2;
-   
+
    /* Per prio */
    if (e1->order.prio > e2->order.prio)
       return(-1);
@@ -624,34 +628,34 @@ static int compMess(
 static void sortByPrio( QueueD *Q ){
    int szMess = NUMB_MESS(Q);
    int i,j;
-   
-   
-   if (Q->mBox.mIdxOut <= Q->mBox.mIdxIn){    
-      qsort( 
-         &Q->mBox.messArray[Q->mBox.mIdxOut], 
-         szMess, 
-         sizeof(MessT), 
-         compMess 
-      );   
+
+
+   if (Q->mBox.mIdxOut <= Q->mBox.mIdxIn){
+      qsort(
+         &Q->mBox.messArray[Q->mBox.mIdxOut],
+         szMess,
+         sizeof(MessT),
+         compMess
+      );
    }else{
       MessT *tempT;
-      
+
       tempT = (MessT*)malloc( szMess * sizeof(MessT));
       /* Copy the content from queue into temp storage */
       i = Q->mBox.mIdxOut;
       /*i --;
       i %= Q->mq_attr.mq_maxmsg;*/
       for (j=0; j<szMess; j++){
-         tempT[j] = Q->mBox.messArray[i]; 
+         tempT[j] = Q->mBox.messArray[i];
          i++;
          i %= Q->mq_attr.mq_maxmsg;
       }
-      
-      qsort( 
-         tempT, 
-         szMess, 
-         sizeof(MessT), 
-         compMess 
+
+      qsort(
+         tempT,
+         szMess,
+         sizeof(MessT),
+         compMess
       );
 
       /* Copy back */
@@ -695,11 +699,11 @@ int mq_unlink(
 //      Q->mBox.mIdxOut = 0;
 //      Q->mBox.mIdxIn = szMess;
 //      /* Finally sort */
-//      qsort( 
-//         Q->mBox.messArray, 
-//         szMess, 
-//         sizeof(MessT), 
-//         compMess 
+//      qsort(
+//         Q->mBox.messArray,
+//         szMess,
+//         sizeof(MessT),
+//         compMess
 //      );
 
 

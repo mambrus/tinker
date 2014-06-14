@@ -47,7 +47,7 @@ used for hi-res calendar time-structs.
    #include <sys/time.h>
 #else
 
-   #include "tk_tick.h"    //internal macros for tick handliing in this header
+   #include "tk_tick.h"    //internal macros for tick handling in this header
    #include "tk_hwclock.h"
    #include <tk_hwsys.h>   //< Try to remove this one
 
