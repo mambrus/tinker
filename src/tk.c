@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michael Ambrus                                  * 
+ *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,9 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*! 
-@file 
-@ingroup SCHED    
+/*!
+@file
+@ingroup SCHED
 
 @brief TinKer kernel life"
 
@@ -56,7 +56,7 @@ SCHED
 Included conditionally to avoid complication if work is in progress in
 any of them.   errno.h
 
-@see COMPONENTS 
+@see COMPONENTS
 */
 //@{
 #if defined(TK_COMP_KMEM) && (TK_COMP_KMEM==1)
@@ -117,17 +117,18 @@ void *_tk_idle( void *foo );
 void  _tk_detach_children(thid_t thid);
 int   _tk_try_detach_parent( thid_t, int);
 
-void _tk_context_switch_to_thread(                             thid_t,thid_t);   
-void _tk_half_switch             (                             thid_t,thid_t);   
-void _tk_constructor             (start_func_f, void*, thid_t               );   
-void _tk_construct_thread_scope  (start_func_f, void*, thid_t               );   
+void _tk_context_switch_to_thread(                             thid_t,thid_t);
+void _tk_half_switch             (                             thid_t,thid_t);
+void _tk_constructor             (start_func_f, void*, thid_t               );
+void _tk_construct_thread_scope  (start_func_f, void*, thid_t               );
 
 
 /*- public data **/
 
  /*- private data **/
 
-int __tk_IntFlagCntr;  /*!< Increased +1 for each pending interrupt that's not finished (ISR depth counter)
+int __tk_IntFlagCntr;  /*!< Increased +1 for each pending interrupt that's
+                         not finished (ISR depth counter) */
 
 /*- public functions **/
 
@@ -140,20 +141,21 @@ int __tk_IntFlagCntr;  /*!< Increased +1 for each pending interrupt that's not f
 @note The index in this array \b is the thread ID.
 
 This is not perfect. PiD will be reused when more than TK_MAX_THREADS has
-been used. I would have wanted a Thid range that is much bigger and a lookup-
+been used. I would have wanted a Third range that is much bigger and a lookup-
 table (gives greater uniqueness - specially useful for \ref ITC) but that
 is costly (I think)...
 
-@note that this is only the pool of TCB's, the schedule itself is \ref __tk_schedule 
+@note that this is only the pool of TCB's, the schedule itself is \ref
+__tk_schedule
 
 coord_t lookUpTable[TK_MAX_THREADS];
 
-@todo Make this static (non available directly by others. Fore useing API 
-(additional needed to be implemented). Important for preemtable mode that 
-components use acces functions instead (locking issue).
+@todo Make this static (non available directly by others. Fore using API
+(additional needed to be implemented). Important for preempt-able mode that
+components use access functions instead (locking issue).
 
 */
-	struct tcb_t_ __tk_threadPool[TK_MAX_THREADS];  
+    struct tcb_t_ __tk_threadPool[TK_MAX_THREADS];
 
 
 /*!
@@ -165,55 +167,61 @@ to be handled by the dispatcher on each iteration.
 
 Matrix layout
 - First index (X) is the priority
-- Second index (Y) is a list of treads at that priority (in various states, i.e. both "running", "blocked" and whatnot). 
+- Second index (Y) is a list of treads at that priority (in various states,
+  i.e. both "running", "blocked" and whatnot).
 
 
-@todo Make this static (non available directly by others. Fore useing API 
-(additional needed to be implemented). Important for preemtable mode that 
+@todo Make this static (non available directly by others. Fore useing API
+(additional needed to be implemented). Important for preemtable mode that
 components use acces functions instead (locking issue).
 
 */
-	thid_t __tk_schedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
+    thid_t __tk_schedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
 
 /*!
-A index to the schedule. Contains information about how many threads are in 
-the schedule at each lvl and which index is currently executing (important 
+A index to the schedule. Contains information about how many threads are in
+the schedule at each lvl and which index is currently executing (important
 for load balancing and RR)
 
-@todo Make this static (non available directly by others. Fore useing API 
-(additional needed to be implemented). Important for preemtable mode that 
+@todo Make this static (non available directly by others. Fore useing API
+(additional needed to be implemented). Important for preemtable mode that
 components use acces functions instead (locking issue).
 
 */
-	struct stat_t __tk_roundrobin_prio_idxs[TK_MAX_PRIO_LEVELS];
+    struct stat_t __tk_roundrobin_prio_idxs[TK_MAX_PRIO_LEVELS];
 
 
-	thid_t __tk_active_thread;		//!< Deliberatlly left uninitialized to support post mortem analysis
-	#define active_thread __tk_active_thread
-	thid_t __tk_thread_to_run   = 0;
-	thid_t __tk_procs_in_use    = 0;
-	thid_t __tk_proc_idx;			//!< Points at the last TCB created in the \ref __tk_threadPool pool
-static	thid_t idle_Thid;			//!< Idle_Thid must be known, therefor public in this module (file)
+    thid_t __tk_active_thread;      /*!< Deliberately left uninitialized to
+                                      support post mortem analysis*/
+    #define active_thread __tk_active_thread
+    thid_t __tk_thread_to_run   = 0;
+    thid_t __tk_procs_in_use    = 0;
+    thid_t __tk_proc_idx;           /*!< Points at the last TCB created in
+                                      the \ref __tk_threadPool pool*/
+static  thid_t idle_Thid;           /*!< Idle_Thid must be known, therefor
+                                      public in this module (file)*/
 
 
-/*! 
-Assign a value to this function pointer in your app, and you can break into the kernel before it boots. 
-Great tool for connecting other monitors (syscall monitors e.t.a.). Note that this function pointer 
-is initially and intentionally zero, and non-static. Functionality relies on that .sdata gets initialized
-properly. Note that the kernel will call this pointer as the first thing it does. If the pointer is not
-or statically initialized by the application, all sorts of bad things will happen.
+/*!
+Assign a value to this function pointer in your app, and you can break into
+the kernel before it boots.  Great tool for connecting other monitors
+(syscall monitors e.t.a.). Note that this function pointer is initially and
+intentionally zero, and non-static. Functionality relies on that .sdata gets
+initialized properly. Note that the kernel will call this pointer as the
+first thing it does. If the pointer is not or statically initialized by the
+application, all sorts of bad things will happen.
 */
 
         init_func_f boot_hook;
 
 
-/*! 
-Manages the boot_hook. Not all systems will support calls even to null pointers (even though this is in 
-most cases not hard to accomplish).
+/*!
+Manages the boot_hook. Not all systems will support calls even to null
+pointers (even though this is in most cases not hard to accomplish).
 */
 void _b_hook(void *caller){
    if (boot_hook!=0)
-	boot_hook(caller);
+    boot_hook(caller);
 }
 
 void *_tk_idle( void *foo ){       //!< idle loop (non public)
@@ -236,9 +244,9 @@ thid_t tk_thread_id( void ){
 
 @brief Gives a way to enter my own threads TCB
 
-This gets the current threads internal thread control block (TCB). Function is
-"public" but is <b>not</b> ment to be used by application developers, rather as
-a way for different layers of TinKer to interact.
+This gets the current threads internal thread control block (TCB). Function
+is "public" but is <b>not</b> meant to be used by application developers,
+rather as a way for different layers of TinKer to interact.
 
 @note <b>For TinKer internal use only</b>
 
@@ -257,10 +265,10 @@ tk_tcb_t *_tk_specific_tcb( thid_t id ){
    return(&__tk_threadPool[id]);
 }
 
-/*! 
+/*!
 @ingroup kernel_glue
 
-This function will give you access to the current threads internal errno 
+This function will give you access to the current threads internal errno
 variable.
 
 @see errno
@@ -275,7 +283,9 @@ int *_tk_errno(){
 Creates the kernel. This is TinKers "init" funtion. All targets need to run
 this once, but only once.
 
-@todo <b>Figure out why the malloc(1) needs to be there.</b> I susbect eiter a byte-boundary probmem, a XC167 specific pointer prob (maybe in conjunction with the stacp pointer types), or a error in malloc itself
+@todo <b>Figure out why the malloc(1) needs to be there.</b> I susbect eiter
+a byte-boundary probmem, a XC167 specific pointer prob (maybe in conjunction
+with the stacp pointer types), or a error in malloc itself
 */
 
 #define TSTSZ 0x10
@@ -285,14 +295,14 @@ void tk_create_kernel( void ){
    char *testArea;
 
    TK_NO_WARN_ARG(testArea);
-   
+
    /*
-   Detect if a kernel is running amok.    
+   Detect if a kernel is running amok.
    */
 
    /* PLEEEEEEEEEEASE REMEBER TO UNCOMMENT THIS LATER!
    testArea = malloc(TSTSZ);
-   if (strncmp(testPatt,testArea,TSTSZ) == 0){   
+   if (strncmp(testPatt,testArea,TSTSZ) == 0){
       printk(("Error: Kernel running amok detected\n"));
       printk(("Broken thread was ID=%d (name=\"%s\"))\n",\
          __tk_active_thread,__tk_threadPool[__tk_active_thread].name);
@@ -305,7 +315,7 @@ void tk_create_kernel( void ){
 
    for (i=0; i<TK_MAX_THREADS; i++){
       __tk_threadPool[i].state                        = ZOMBI;
-      __tk_threadPool[i].bOnId.kind                   = BON_SCHED; 
+      __tk_threadPool[i].bOnId.kind                   = BON_SCHED;
       __tk_threadPool[i].bOnId.entity.tcb             = NULL;
       __tk_threadPool[i].wakeuptime                   = 0;
       __tk_threadPool[i].valid                        = TK_FALSE;
@@ -327,12 +337,13 @@ void tk_create_kernel( void ){
       __tk_threadPool[i].prmtRetAddr                  = NULL;
 */
    }
-   //The Root proc is already created but must be registred
+   //The Root thread is already created but must be registered
    __tk_threadPool[0].state = READY;
    __tk_threadPool[0].valid = TK_TRUE;
    strcpy(__tk_threadPool[0].name,"tk_root");
    __tk_procs_in_use = 1;
    __tk_proc_idx = 0;
+
    //Clear the tables (before creating idle - thread)
    for (i=0; i<TK_MAX_PRIO_LEVELS; i++){
       //Clear the help table
@@ -343,19 +354,24 @@ void tk_create_kernel( void ){
          __tk_schedule[i][j]=0;
       }
    }
-   //Create a Idle thread, whoes sole purpose is to burn up time
+
+   //Create a Idle thread, whose sole purpose is to burn up time
    //when nobody else is running
    idle_Thid = tk_create_thread("idle",TK_MAX_PRIO_LEVELS - 1,_tk_idle,(void*)NULL,TK_MINIMUM_STACK_SIZE);
-   //IdleProc must like root, i.e. bee owned by itself
+
+   //IdleProc must like root be owned by itself
    __tk_threadPool[__tk_threadPool[idle_Thid].Gid].noChilds--;
+
    //Awkward way to say that root has created one process less than it has
    __tk_threadPool[idle_Thid].Gid = __tk_threadPool[idle_Thid].Thid;
-   //Idle ownde by it self
-   //Init shedule tables
-   //Put the root in the scedule
+
+   //Idle owned by it self
+   //Init schedule tables
+   //Put the root in the schedule
    __tk_roundrobin_prio_idxs[0].procs_at_prio = 1;
    __tk_schedule[0][0]=0;
-   //Put idle thread in shedule at lowest prio
+
+   //Put idle thread in schedule at lowest prio
    /*
    __tk_roundrobin_prio_idxs[TK_MAX_PRIO_LEVELS - 1].procs_at_prio = 1;
    theScedule[TK_MAX_PRIO_LEVELS - 1][0]=idle_Thid;
@@ -364,43 +380,44 @@ void tk_create_kernel( void ){
 
 /*!
 
-This function is entered as a result of a ret instruction from a thread. 
-On X86 EAX is passed as the return value. 
+This function is entered as a result of a ret instruction from a thread.
+On X86 EAX is passed as the return value.
 
 
 Some systems don't like that we delete the stack while were using it.
-We need either borrow another stack or let another thread do the actual 
-canceling.    
-   
-The way TinKer does it is that it marks the thread as ZOMBI, detaches all 
-it's children and tries to detach it's parent (i.e. potentially also 
-awakening the parent). Then it goes to sleep of death and lets the rest of 
+We need either borrow another stack or let another thread do the actual
+canceling.
+
+The way TinKer does it is that it marks the thread as ZOMBI, detaches all
+it's children and tries to detach it's parent (i.e. potentially also
+awakening the parent). Then it goes to sleep of death and lets the rest of
 the system figure out how and when to actually cancel it.
 
-This seemingly complicated process of dieing has it's reasons: 
-   
+This seemingly complicated process of dieing has it's reasons:
+
 - Wee need to keep threads TCB active for any joiners. In the TCB there
-   are still important logic and also the joiners might need the threads 
+   are still important logic and also the joiners might need the threads
    return value.
-- In OS hosted situations (kernel in kernel), another thread or process from 
-   the host OS could preempt us and claim the memory we just released as our 
+- In OS hosted situations (kernel in kernel), another thread or process from
+   the host OS could preempt us and claim the memory we just released as our
    stack. I.e. the thread to cancel it's own stack is a bit \e "bad" ;)
 - In fully preemptable mode, TinKer itself could launch a thread that does
    the operation just mentioned above.
-     
+
 In either case, this is more complicated. But also much more robust.
-        
+
 */
 
 void *_tk_destructor( void *retval ){
 
    #ifdef DEBUG
-   //printk(("Dieing thread [id=%d] is returning! Return value is: 0x%lX\n\n",__tk_active_thread,retval));  
+   printk(("Dieing thread [id=%d] is returning! Return value is: 0x%lX\n\n",
+      __tk_active_thread,retval));
    #endif
 
    __tk_threadPool[__tk_active_thread].state  = ZOMBI;
    __tk_threadPool[__tk_active_thread].retval = (void*)retval;
-   _tk_detach_children(__tk_active_thread); 
+   _tk_detach_children(__tk_active_thread);
 
    /*Finalize the destruction*/
    //tk_delete_thread(__tk_active_thread);
@@ -420,27 +437,30 @@ void *_tk_destructor( void *retval ){
 
 Delete a thread
 
-@note be carefull about killing running threads. Any non-kernel resources
-allocated will not be freed. Always prefere a controlled exit of a thread.
+@note be careful about killing running threads. Any non-kernel resources
+allocated will not be freed. Always prepare a controlled exit of a thread.
 */
 int tk_delete_thread(
    thid_t Thid              //!< Threads identity
 ){
    unsigned int Prio,Idx,i;
    int bury_it = TK_TRUE;
-   
+
    if ( __tk_threadPool[Thid].valid == TK_FALSE )  {
       //The process you are trying to delete does not exist
-      return(TK_ERROR);    
+      return(TK_ERROR);
    }
 
-   
-   if (!(__tk_threadPool[Thid].state & ZOMBI)){ //If not self terminated, but killed explicitlly - we need to perform some duties
+
+   if (!(__tk_threadPool[Thid].state & ZOMBI)){
+       /* If not self terminated, but killed explicitly - we need to perform
+        * some duties*/
+
       __tk_threadPool[Thid].state = ZOMBI;
-      _tk_detach_children(Thid); 
-      bury_it = _tk_try_detach_parent(Thid, TK_FALSE); 
+      _tk_detach_children(Thid);
+      bury_it = _tk_try_detach_parent(Thid, TK_FALSE);
    }
-   
+
    if (bury_it){   //Can we buy the damned thing allready? or do we have to try another round?
       Prio = __tk_threadPool[Thid].Prio;
       Idx = __tk_threadPool[Thid].Idx;
@@ -452,7 +472,7 @@ int tk_delete_thread(
          __tk_threadPool[__tk_schedule[Prio][i]].Idx = i;
       }
       //#if DEBUG
-      // not needed, could cause problems if procs last.. 
+      // not needed, could cause problems if procs last..
       //__tk_schedule[Prio][i] = 0;
       //#endif
       //Take away the process fom __tk_roundrobin_prio_idxs
@@ -464,7 +484,7 @@ int tk_delete_thread(
       stalloc_free( STACK_PTR(__tk_threadPool[Thid].stack_begin) );
       __tk_threadPool[Thid].valid = TK_FALSE;
    }
-   
+
    return(TK_OK);
 }
 
@@ -473,10 +493,10 @@ int tk_detach(
 ){
    if ( __tk_threadPool[Thid].valid != TK_TRUE)
       return ESRCH;
-      
+
    if ( __tk_threadPool[Thid].Gid != -1)
       return EINVAL;
-      
+
    _tk_try_detach_parent(Thid, TK_TRUE); //forcefully detach
    return 0;
 }
@@ -486,17 +506,17 @@ int tk_detach(
 
 Creates a thread and puts it in runnable state (READY). Thread is not
 run though, until next yeald (or interrupt in case of a preemtable
-version). 
+version).
 
 */
-thid_t tk_create_thread(      
-   char          *name,     /*!< Name of the thread. This name can later be 
+thid_t tk_create_thread(
+   char          *name,     /*!< Name of the thread. This name can later be
                                  used to identify or look up a tread by name.*/
-   unsigned int   prio,     /*!< Priority. A low value means higher priority. 
-                                 The value must be between 0 and 
-                                 TK_MAX_PRIO_LEVELS. 0 is reserverd by 
-                                 convention for system deamons (and the root 
-                                 thread). <b>Avoid using priority level 0 for 
+   unsigned int   prio,     /*!< Priority. A low value means higher priority.
+                                 The value must be between 0 and
+                                 TK_MAX_PRIO_LEVELS. 0 is reserverd by
+                                 convention for system deamons (and the root
+                                 thread). <b>Avoid using priority level 0 for
                                  normal application threads. </b> */
    start_func_f   f,        //!< Start function, i.e. the treads entry point.
    void          *inpar,    //!< Any variable or value to start of with
@@ -513,29 +533,29 @@ thid_t tk_create_thread(
    //__tk_proc_idx)
    if (__tk_procs_in_use >= TK_MAX_THREADS){
       printk(("tk: Error - Total amount of threads would exceed limit\n"));
-      error |= TC_MAX_THREADS;   
+      error |= TC_MAX_THREADS;
    }
    //Check if chosen prio is within limits
    if (prio >= TK_MAX_PRIO_LEVELS){
       printk(("tk: Error - Chosen priority too high\n"));
-      error |= TC_MAX_PRIO_LEVELS;   
+      error |= TC_MAX_PRIO_LEVELS;
    }
    //Check if there will be enough room at that prio
    if (TK_MAX_THREADS_AT_PRIO <= ( __tk_roundrobin_prio_idxs[prio].procs_at_prio ) ){
       printk(("tk: Error - To many threads at this prio\n"));
-      error |= TC_THREADS_AT_PRIO;   
+      error |= TC_THREADS_AT_PRIO;
    }
    if (error){
       tk_exit(error);
    }
-   
+
    //Find next empty slot - which is also the CREATED Thid
    do{
       __tk_proc_idx++;
       __tk_proc_idx %= TK_MAX_THREADS;
    }while (__tk_threadPool[__tk_proc_idx].valid == TK_TRUE);
 
-   //Test if the assigned name fits   
+   //Test if the assigned name fits
    //In case highly optimized kernel, no names stored at all and no timly string copy
    #if TK_THREAD_NAME_LEN
       if (strlen(name)<TK_THREAD_NAME_LEN)
@@ -546,7 +566,7 @@ thid_t tk_create_thread(
       }
    #endif
    __tk_threadPool[__tk_proc_idx].name[TK_THREAD_NAME_LEN] = 0; //Terminate string just in case it's needed. Note, there is one extra byte so indexing like this is OK.
-   
+
    //Try to allocate memory for stack
    if (( STACK_PTR(__tk_threadPool[__tk_proc_idx].stack_begin) = (char *) stalloc(stack_size)) == NULL){
        printk(("tk: Error - Can't create process (can't allocate memory for stack)\n"));
@@ -554,13 +574,13 @@ thid_t tk_create_thread(
    }
 
    REINIT_STACKADDR( __tk_threadPool[__tk_proc_idx].stack_begin, stack_size );
-   
+
    __tk_threadPool[__tk_proc_idx].valid              = TK_TRUE;
    __tk_threadPool[__tk_proc_idx].state              = READY;
    __tk_threadPool[__tk_proc_idx].bOnId.kind         = BON_SCHED;
    __tk_threadPool[__tk_proc_idx].bOnId.entity.tcb   = NULL;
    __tk_threadPool[__tk_proc_idx].Thid               = __tk_proc_idx;    //for future compability with lage Thid:s
-   __tk_threadPool[__tk_proc_idx].Gid                = __tk_active_thread; //Owned by..   
+   __tk_threadPool[__tk_proc_idx].Gid                = __tk_active_thread; //Owned by..
    __tk_threadPool[__tk_proc_idx].noChilds           = 0;
    __tk_threadPool[__tk_proc_idx]._errno_            = 0;
    __tk_threadPool[__tk_proc_idx].stack_size         = stack_size;
@@ -590,12 +610,12 @@ thid_t tk_create_thread(
    #endif
 
    _tk_construct_thread_scope( f, inpar, __tk_proc_idx );
-   
+
    //Put process in scedule - assume tight tight schedule
    __tk_schedule[prio][slot_idx] = __tk_proc_idx;
    //Increase the amount of procs at same prio
    __tk_roundrobin_prio_idxs[prio].procs_at_prio++;
-   
+
    //Make a integrity certification on the stack of this thread
    //INTEGRITY_CERTIFY_STACK(__tk_threadPool[__tk_proc_idx], ct_temp3);
    return __tk_proc_idx ;
@@ -603,21 +623,21 @@ thid_t tk_create_thread(
 
 int tk_join(thid_t PID, void ** value_ptr){
    if ( __tk_threadPool[PID].Gid != __tk_active_thread)    //Only threads own children can be joined in TinKer (restrictive)
-      return EINVAL;                            
-      
+      return EINVAL;
+
    if ( __tk_threadPool[PID].valid != TK_TRUE)
       return ESRCH;
-      
+
    if (__tk_threadPool[PID].state & ZOMBI){ //Thread is finished allready. no need to block AND we can safelly read it's return value
       if (value_ptr != NULL) {
          *value_ptr = __tk_threadPool[PID].retval;
       }
-      //Also release it for cancelling. This is done by breaking it's 
+      //Also release it for cancelling. This is done by breaking it's
       //parent-child relationship
       _tk_try_detach_parent(PID, TK_TRUE); //forcefully detach. This will also count down the child count in the parent
 
    }else{
-      //prepare to block   
+      //prepare to block
       __tk_threadPool[__tk_active_thread].bOnId.kind       = BON_SCHED;
       __tk_threadPool[__tk_active_thread].bOnId.entity.tcb = &__tk_threadPool[PID];
       __tk_threadPool[__tk_active_thread].state = (PROCSTATE)(__tk_threadPool[__tk_active_thread].state | TERM);
@@ -625,23 +645,23 @@ int tk_join(thid_t PID, void ** value_ptr){
       assert(__tk_threadPool[__tk_active_thread].wakeupEvent == E_CHILDDEATH);
       if (value_ptr != NULL) {
          //We can't read the TCB of the thread we were just blocked on. It migt allready be cancelled
-         //However, It knew about this case when it awoke us - and made a copy in *our* retval instead. 
+         //However, It knew about this case when it awoke us - and made a copy in *our* retval instead.
          *value_ptr = __tk_threadPool[__tk_active_thread].retval;
-      }      
+      }
    }
-         
+
    return ERR_OK;
 }
 
 /*!
 
 @ingroup kernel
-        
-@brief Sleeps for ms amount of time. 
 
-Sleeps for ms amount of time. Passes control to other threads meanwhile.   
+@brief Sleeps for ms amount of time.
 
-The longest time this function can sleep is dependant on the 
+Sleeps for ms amount of time. Passes control to other threads meanwhile.
+
+The longest time this function can sleep is dependant on the
 targets bitsize for a integer. On 16 bit targets that would be  65535 mS
 or  aprox <b>max 65 S </b>.<br>
 
@@ -660,13 +680,13 @@ this case each  thread will not run with a fixed frequency but
 deliberatlly gitter a bit, so that the mean-value of the frequence is
 the desired one.<br>
 
-There isn't much any kernal can really do about this issue without beeing able 
-to control the HW in detail. That would however create a dependancy that is 
-beyont the scope of this project to handle. Note that choosing a better 
-precition is a delicate matter that is best suited for HW designers. 
+There isn't much any kernal can really do about this issue without beeing able
+to control the HW in detail. That would however create a dependancy that is
+beyont the scope of this project to handle. Note that choosing a better
+precition is a delicate matter that is best suited for HW designers.
 For now, alway remember to check the precition of you target.<br>
 
-There are several sleep functions to choose between. Which one is best is 
+There are several sleep functions to choose between. Which one is best is
 alwas a tradeof between resolution and maximum timeout.<br>
 
 
@@ -678,7 +698,7 @@ close to zero. This is due to that the code in the kernal itself takes
 some time to reach the point where a dispatch is actuated.
 
 
-@warning most of the above text is obsolete         
+@warning most of the above text is obsolete
 
 @todo correct the text above
 
@@ -709,13 +729,13 @@ also
 
 void tk_msleep( unsigned int time_ms ){
 /* It's our kernal so we "know" that a clock equals 1uS */
-   clock_t act_time_us; 
+   clock_t act_time_us;
    clock_t wkp_time_us;
    unsigned long in_us;
-   //unsigned long clk_sek = CLK_TCK; 
+   //unsigned long clk_sek = CLK_TCK;
    //unsigned long clk_sek = CLOCKS_PER_SEC;
-   
-   in_us = time_ms * 1000uL;   
+
+   in_us = time_ms * 1000uL;
    act_time_us    = tk_clock() * (1000000uL/CLOCKS_PER_SEC);
    wkp_time_us    = act_time_us + in_us;
    //wkp_time_us    = act_time_us + time_ms*1000uL;
@@ -731,7 +751,7 @@ void tk_msleep( unsigned int time_ms ){
 }
 
 /*!
-Changes the priority of a running thread. 
+Changes the priority of a running thread.
 
 \returns If state is actually changed (i.e. if yield is recommended)
 */
@@ -741,32 +761,32 @@ int tk_change_prio(thid_t tid, int newPrio){
    thid_t oldIdx,newIdx;
    int error = 0;
    int i;
-   
+
    if ( __tk_threadPool[tid].valid != TK_TRUE){
       printk(("tk: Error - Invalid TCB detected\n"));
-      error |= TC_TCB_INVALID;   
-   }       
-   
+      error |= TC_TCB_INVALID;
+   }
+
    //Check if chosen prio is within limits
    if (newPrio >= TK_MAX_PRIO_LEVELS){
       printk(("tk: Error - Chosen priority too high\n"));
-      error |= TC_MAX_PRIO_LEVELS;   
+      error |= TC_MAX_PRIO_LEVELS;
    }
    //Check if there will be enough room at that prio
    if (TK_MAX_THREADS_AT_PRIO <= ( __tk_roundrobin_prio_idxs[newPrio].procs_at_prio ) ){
       printk(("tk: Error - To many threads at this prio\n"));
-      error |= TC_THREADS_AT_PRIO;   
+      error |= TC_THREADS_AT_PRIO;
    }
    if (error){
       tk_exit(error);
    }
-         
+
    oldPrio = __tk_threadPool[tid].Prio;
    oldIdx =  __tk_threadPool[tid].Idx;
-      
+
    if (oldPrio == newPrio)          //No need to do anything
       return 0;
-         
+
    if (__tk_threadPool[tid].state != READY)
       y = 0;
    else{
@@ -774,10 +794,10 @@ int tk_change_prio(thid_t tid, int newPrio){
          y = 1;
       else if (__tk_active_thread == tid)
          y = 1;
-      else 
-         y = 0;                       
+      else
+         y = 0;
    }
-   
+
    //Take away the process from __tk_schedule and compress gap at prio
    for(i=oldIdx; i < __tk_roundrobin_prio_idxs[oldPrio].procs_at_prio; i++){
       __tk_schedule[oldPrio][i] = __tk_schedule[oldPrio][i+1];
@@ -787,19 +807,19 @@ int tk_change_prio(thid_t tid, int newPrio){
    if (__tk_roundrobin_prio_idxs[oldPrio].curr_idx >= __tk_roundrobin_prio_idxs[oldPrio].procs_at_prio){ //Uncertain about this.. Same issue in kill_thread
       __tk_roundrobin_prio_idxs[oldPrio].curr_idx = 0;
    }
-   
-   //Put the thread in the schedule in it's new position   
+
+   //Put the thread in the schedule in it's new position
    newIdx = __tk_roundrobin_prio_idxs[newPrio].procs_at_prio;
-   
+
    __tk_schedule[newPrio][newIdx] = tid;
    __tk_roundrobin_prio_idxs[newPrio].procs_at_prio++;
-   
+
    //Finalize by correcting the TCB also
    __tk_threadPool[tid].Prio = newPrio;
    __tk_threadPool[tid].Idx  = newIdx;
-   
+
    return y;
-   
+
 }
 
 /*!
@@ -826,19 +846,19 @@ if you have a small system with only resources for a few threads, you
 should always show intent by detaching threads after creating them, if
 you never intend to join them (will save resources).
 
-*/ 
+*/
 void _tk_detach_children(
    thid_t thid
 ){
    thid_t j;
-   
+
    if (  __tk_threadPool[thid].noChilds > 0 ){  //Dang! We must make our own children parentless ;(
       for(j=0;(__tk_threadPool[thid].noChilds>0) && (j<TK_MAX_THREADS);j++){
          if (__tk_threadPool[j].valid && __tk_threadPool[j].Gid == thid){
             /*Foud a poor sod*/
             __tk_threadPool[j].Gid = -1;
             __tk_threadPool[thid].noChilds--;
-         }           
+         }
       }
    }
 }
@@ -853,9 +873,9 @@ Break the relation to the parent of the \e thid
 This function is normally called as a step by a thread on it's way to
 cancel. When this function is executed, it means that \e this is an
 orfan. (Any children it has is however still attached to it. I.e.that
-relation is unchanged.) 
+relation is unchanged.)
 
-The only duty a exiting thread really has is to umblock it's parent \b once. 
+The only duty a exiting thread really has is to umblock it's parent \b once.
 When this is done, the thread has no other obligations and can safelly cancel.
 
 \returns The function will return succes (TK_TRUE) or faliure (TK_FALSE).
@@ -879,27 +899,27 @@ a succes if a parent is joining on us.
 
 - If \e thid is allready detached once, the function alwas returns TK_TRUE
 
-*/   
+*/
 
 int _tk_try_detach_parent(
    thid_t thid,                  //!< The thread id whos parent we are concerned with
    int force                     //!< Force detachment
 ){
-   int succeded_unblocking_parent = TK_FALSE;      
-   
+   int succeded_unblocking_parent = TK_FALSE;
+
    if (  __tk_threadPool[thid].Gid == -1 )
       return TK_TRUE;                     //allready orphan
-      
-   // (if con't) Yes, I have a parent, but is it waiting for my death or not?         
+
+   // (if con't) Yes, I have a parent, but is it waiting for my death or not?
    assert (__tk_threadPool[__tk_threadPool[thid].Gid].valid);  //sanity check
-   //We must have faith now, that the Gid is actually the one that created us, and 
-   //not a reused identity (which should not be possible to happen - mybe invent a 
+   //We must have faith now, that the Gid is actually the one that created us, and
+   //not a reused identity (which should not be possible to happen - mybe invent a
    //snity check for this?)
-   
-                  
+
+
    //If waiting for me (not my bro or sis) death, unblock the parent. (i.e. parent executed a tk_join)
    if (
-      (__tk_threadPool[__tk_threadPool[thid].Gid].state & TERM) && 
+      (__tk_threadPool[__tk_threadPool[thid].Gid].state & TERM) &&
       __tk_threadPool[__tk_threadPool[thid].Gid].bOnId.entity.tcb == &__tk_threadPool[thid] )
    {
       __tk_threadPool[__tk_threadPool[thid].Gid].state = (PROCSTATE)(__tk_threadPool[__tk_threadPool[thid].Gid].state & ~_______T); //Release the waiting parent
@@ -915,21 +935,21 @@ int _tk_try_detach_parent(
 
       succeded_unblocking_parent = TK_TRUE;
       //We are likelly to get out of context before the parent can read our retval. Therefore make an
-      //active copy to the parent's retval instead. The parent will know of this case and use that one 
+      //active copy to the parent's retval instead. The parent will know of this case and use that one
       //instead of trying to read a potentially invalid TCB.
       __tk_threadPool[__tk_threadPool[thid].Gid].retval = __tk_threadPool[thid].retval;
-      
+
    } else
       succeded_unblocking_parent = TK_FALSE;
-      
+
    if ( (succeded_unblocking_parent == TK_TRUE) || (force == TK_TRUE) ) {
       __tk_threadPool[__tk_threadPool[thid].Gid].noChilds--;
       assert(__tk_threadPool[__tk_threadPool[thid].Gid].noChilds >= 0);
       __tk_threadPool[thid].Gid = -1;
       return TK_TRUE;
-   } 
-   
-   return TK_FALSE;               
+   }
+
+   return TK_FALSE;
 }
 
 
@@ -937,10 +957,10 @@ int _tk_try_detach_parent(
 /* @ingroup kernel_internal
 
 Get the identity of the next thread to run.  Scheduling policy is used
-to determine which one that would be. 
-*/ 
+to determine which one that would be.
+*/
 
-thid_t _tk_next_runable_thread(){ 
+thid_t _tk_next_runable_thread(){
    int idx,prio,cidx,/*midx,*/nbTry,loop,return_Thid,p_at_p; TK_BOOL found;
 
    return_Thid  = idle_Thid; //In case no runnable proc is found...
@@ -952,7 +972,7 @@ thid_t _tk_next_runable_thread(){
          //Manual RR from current to next ready
          idx =(__tk_roundrobin_prio_idxs[prio].curr_idx);
          cidx = __tk_roundrobin_prio_idxs[prio].curr_idx;
-         nbTry = __tk_roundrobin_prio_idxs[prio].procs_at_prio;                             
+         nbTry = __tk_roundrobin_prio_idxs[prio].procs_at_prio;
          for(  loop = 0;
                loop < nbTry && !found;
                loop++){
@@ -973,9 +993,9 @@ thid_t _tk_next_runable_thread(){
 /*!
 @ingroup kernel_internal
 
-@brief Context switch to next tread. 
+@brief Context switch to next tread.
 
-Makes a context switch. Will prior to that also try to detect stack 
+Makes a context switch. Will prior to that also try to detect stack
 out-of-bounds errors.
 
 @todo Besides out of bounds check, a check for stack consistency would be
@@ -994,7 +1014,7 @@ TRY_CATCH_STACK_ERROR)
 
 void _tk_context_switch_to_thread(
    thid_t         RID,        //!< Thread ID to switch to
-   thid_t         SID         /*!< Thread ID to switch from. I.e. 
+   thid_t         SID         /*!< Thread ID to switch from. I.e.
                                    current thread ID to put away in TCB*/
 ){
    static char *cswTSP;          //!< fony temporary stackpointer used in the process of setting TOS
@@ -1008,24 +1028,24 @@ void _tk_context_switch_to_thread(
    //INTEGRITY_CERTIFY_STACK( __tk_threadPool[SID], cswTEMP2 ); //Certify the stack we're leaving from
 
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );
-   
+
    #ifdef  JUMPER_BASED
    if (cswTEMP==0)
    #endif
    {
       STACK_PTR( __tk_threadPool[SID].curr_sp ) = cswTSP;
-   
-      cswTSP = STACK_PTR( __tk_threadPool[RID].curr_sp ); 
+
+      cswTSP = STACK_PTR( __tk_threadPool[RID].curr_sp );
 
       __tk_active_thread=RID;
       CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );
    }
-   //TRY_CATCH_STACK_INTEGRITY_VIOLATION( __tk_threadPool[__tk_active_thread], cswTEMP2 ); //Check integrity is OK before running 
+   //TRY_CATCH_STACK_INTEGRITY_VIOLATION( __tk_threadPool[__tk_active_thread], cswTEMP2 ); //Check integrity is OK before running
 }
 
 void _tk_half_switch (
    thid_t         RID,        //!< Thread ID to switch to
-   thid_t         SID         /*!< Thread ID to switch from. I.e. 
+   thid_t         SID         /*!< Thread ID to switch from. I.e.
                                    current thread ID to put away in TCB*/
 ){
    static char *cswTSP;          //!< fony temporary stackpointer used in the process of setting TOS
@@ -1038,7 +1058,7 @@ void _tk_half_switch (
 
    //TRY_CATCH_STACK_ERROR( __tk_threadPool[SID].stack_begin, cswTEMP2 );
    //INTEGRITY_CERTIFY_STACK( __tk_threadPool[SID], cswTEMP2 ); //Certify the stack we're leaving from
-   
+
 
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );
 
@@ -1052,45 +1072,45 @@ void _tk_half_switch (
       __tk_active_thread=RID;
       CHANGE_STACK_POP_CPU( cswTSP, cswTEMP );
    }
-   //TRY_CATCH_STACK_INTEGRITY_VIOLATION( __tk_threadPool[__tk_active_thread], cswTEMP2 ); //Check integrity is OK before running 
+   //TRY_CATCH_STACK_INTEGRITY_VIOLATION( __tk_threadPool[__tk_active_thread], cswTEMP2 ); //Check integrity is OK before running
 }
 
 
 /*!
 @brief Runs \b before threads entry function, but \b in the threads scope
 
-*/   
+*/
 
 void _tk_constructor(
    start_func_f   f,        //!< Start function, i.e. the treads entry point.
    void          *inpar,    //!< Any variable or value to start of with
    thid_t         id        //!< The ID (needed to relate to the correct TCB)
 ){
-   void *retval;   
+   void *retval;
 
-   //When we reach here, the "scope" is actally in place, 
+   //When we reach here, the "scope" is actally in place,
    //but we don't want to run the tread yet.
    //Instead we start by "context" switching back to the
    //thread that created us.
-   
+
    //_tk_context_switch_to_thread(__tk_active_thread, id); //Note both arguments *seems* wrong (but they are correct).
    //When the above function returns - it will return to the caller *and not to us* (important)
 
    tk_yield();
-   
-   //Reaching the next line means we're been contended back here by the dispatcher. 
+
+   //Reaching the next line means we're been contended back here by the dispatcher.
    //The thread is now operating in its proper scope.
    retval = f(inpar);
-   
+
    //The thread has given up life - call it's destructor to release it's resources (i.e. begin cancelation)
    _tk_destructor(retval);
-   
+
 }
 
 /*!
 @warning <b>Has static variables (very much non-reentrant and thread un-safe)</b>
 
-*/   
+*/
 void _tk_construct_thread_scope(
    start_func_f   f,        //!< Start function, i.e. the treads entry point.
    void          *inpar,    //!< Any variable or value to start of with
@@ -1098,36 +1118,36 @@ void _tk_construct_thread_scope(
 ){
 TK_CLI();
 
-   //We're going to operate on a different stack, so we need 
-   //to store away the arguments somewhere guaranteed not to 
+   //We're going to operate on a different stack, so we need
+   //to store away the arguments somewhere guaranteed not to
    //be on any stack (needed so that we can reach their contents).
    static  start_func_f   t_f;
    static  void          *t_inpar;
-   static  thid_t         t_id;     
-   
+   static  thid_t         t_id;
+
    //Some other code segmented temp variables needed by the macros
-   static char *aSP;          
-   static unsigned int TEMP;  
-   static stack_t SPS; 
+   static char *aSP;
+   static unsigned int TEMP;
+   static stack_t SPS;
 
    TK_NO_WARN_ARG(TEMP);
 
    t_f       = f;
    t_inpar   = inpar;
-   t_id      = id;     
-   
+   t_id      = id;
+
    //Set initial value of the SP in TCB (does not affect register SP)
    INIT_SP(
-      __tk_threadPool[t_id].curr_sp, 
+      __tk_threadPool[t_id].curr_sp,
       __tk_threadPool[t_id].stack_begin
    );
 
    //The following variable is used by the BIND_STACK macro.
-   //Some targets use intirect adressing using the same registers we're 
-   //manipulating and cant access complex structures without them. Therfoe
+   //Some targets use indirect addressing using the same registers we're
+   //manipulating and cant access complex structures without them. Therefore
    //keep the following  access simple by using a copy stored in the code seg.
    //(Note: stack_t is a form of pointer that is used to refer to the physical stack)
-   SPS = __tk_threadPool[t_id].curr_sp;     
+   SPS = __tk_threadPool[t_id].curr_sp;
   //TK_CLI();
    PUSHALL();              // <--       // Make sure CPU context is ok
   //TK_STI();
@@ -1135,20 +1155,20 @@ TK_CLI();
    _tk_half_switch(t_id, __tk_active_thread);
   //TK_STI();
 
-   if (__tk_active_thread != t_id){      
-      POPALL();            // <--      // ...since we're comming back via 
+   if (__tk_active_thread != t_id){
+      POPALL();            // <--      // ...since we're coming back via
       return;                          // another function (might not be using
-                                       // exactlly the same regs, base-
-                                       // pointers e.t.a.      
+                                       // exactly the same regs, base-
+                                       // pointers e.t.a.
    }
-   
-   //Do the acual stack change (CPU register level)
+
+   //Do the actual stack change (CPU register level)
    aSP = STACK_PTR( __tk_threadPool[t_id].curr_sp );
    CHANGE_STACK( aSP, TEMP );
-      
+
    //Some targets need a certain binding of the stack until we can use a single
    //value to access the whole stack (single value = the key to the whole = i.e.
-   //the curren SP register value).   
+   //the current SP register value).
    BIND_STACK( SPS, TEMP );
 TK_STI();
    _tk_constructor(t_f, t_inpar, t_id);
@@ -1174,22 +1194,22 @@ int
      }
 #endif
 #define _MSTR(x) \
-	#x
+    #x
 #define MSTR(x) \
-	_MSTR(x)
+    _MSTR(x)
 /*!
 @ingroup kernel_glue
 
-Called from your real main() or from your start-up code 
+Called from your real main() or from your start-up code
 
 @note (for deeply embedded developers) You target have to fulfill two
 things at least:
 
-- malloc has to work and return valid pointers 
+- malloc has to work and return valid pointers
 - You need a working printf to see run-time errors
 
 */
-//void     tk_root( void ); 
+//void     tk_root( void );
 void _tk_main( void ){
    _b_hook(_tk_main);
    #if defined (TK_SYSTEM) && (TK_SYSTEM == __SYS_HIXS__)
@@ -1197,7 +1217,7 @@ void _tk_main( void ){
       extern struct hixs_t hixs;
       hixs.exit = tk_exit;
    #endif
-   tk_bsp_sysinit();      //For emulation targets, this is ment to be nothing 
+   tk_bsp_sysinit();      //For emulation targets, this is ment to be nothing
    _b_hook(tk_bsp_sysinit);
 
    printk(("BSP initialized\n"));
@@ -1290,11 +1310,11 @@ void _tk_main( void ){
          assert( tk_ptime_destruct() == ERR_OK );
       #endif
    #endif
-   
+
    #if defined(TK_COMP_KMEM) && TK_COMP_KMEM
       _b_hook(tk_mem_destruct);
       assert( tk_mem_destruct() == ERR_OK );
-   #endif 
+   #endif
    _b_hook(tk_delete_kernel);
    tk_delete_kernel();
    printk(("Kernel deleted\n"));
@@ -1304,7 +1324,7 @@ void _tk_main( void ){
 #if (defined(_WIN32)          &&  defined(_MSC_VER))             \
  ||  defined(__BORLANDC__)    || defined(__BCPLUSPLUS__)         \
  ||  defined(__CYGWIN32__)    || defined(__CYGWIN__) || defined(__GNUC__)
- 
+
 /*
 //Declaring a helper variable as (any any type of) function pointer
 //makes gdb be able to look up it's name (practical when debugging).
@@ -1316,11 +1336,11 @@ void My_syscall_mon( void *syscall ) {
 
 int My_write(int file, char *ptr, int len){
     int todo;
-    
-	for (todo = 0; todo < len; todo++) {
-	   //writechar(*ptr++);
-	}
-	return len;     
+
+    for (todo = 0; todo < len; todo++) {
+       //writechar(*ptr++);
+    }
+    return len;
 }
 
 //We "know" the following functions exists. They are really function pointers
@@ -1330,22 +1350,22 @@ extern void (*hixs_syscall_mon)(void *syscall);
 */
 
 
-int main(int argc, char **argv); 
+int main(int argc, char **argv);
 int main(int argc, char **argv){
-   /*	
-   hixs_syscall_mon   = My_syscall_mon;   
+   /*
+   hixs_syscall_mon   = My_syscall_mon;
 
-   //Now test your new syscall monitor   
+   //Now test your new syscall monitor
    hixs_syscall_mon(main); //Short-cut call
    _syscall_mon(main);     //Hooked call
    //If you return from here, monitoring *should* work
-   
+
    //Test overloading the _write sys-call (by overloading it's hooked fuction)
    hixs_write=My_write;
-   
+
    //The following call should now generate calls to the monitor
-   //(i.e. My_syscall_mon since we overloaded it) and to My_write    
-   printf("Hello world"); 
+   //(i.e. My_syscall_mon since we overloaded it) and to My_write
+   printf("Hello world");
    */
 
    //assert("This is an intentional faliure..." == NULL);
@@ -1353,7 +1373,7 @@ int main(int argc, char **argv){
    _b_hook(main);
     _tk_main();
    _b_hook(NULL);
-   TRAP(0); 
+   TRAP(0);
 }
 #endif
 
@@ -1370,7 +1390,7 @@ int main(int argc, char **argv){
 
 
 
-  
+
 /*!
  * @defgroup CVSLOG_tk_c tk_c
  * @ingroup CVSLOG
@@ -1969,5 +1989,5 @@ int main(int argc, char **argv){
  *  Revision 1.1  1998/01/28 20:12:08  mickey
  *  Initial revision
  *
- *  
+ *
  *******************************************************************/

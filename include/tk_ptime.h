@@ -43,6 +43,7 @@ PTIMER
    #include <tinker/config.h>
    #if (!defined(TK_COMP_PTIMER) || (TK_COMP_PTIMER==0) ) && !defined(ECODES_ONLY)
    #error "tk_ptime.h" belongs to [ptimer] that your configuration of TinKer did not include. Please reconfigure and rebuild TinKer.
+   #endif
 #endif
 
 /*- include files **/
@@ -200,7 +201,6 @@ unsigned long  tk_ptimer_sleep  ( thid_t  tid, time_t *relTime );
 }
 #endif
 
-#endif
 #endif
 
   

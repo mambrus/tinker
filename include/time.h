@@ -24,9 +24,9 @@
 
 @brief ANSI time functions reimplemented
 
-The functions in this file are all reimplementations of ANSI functions
+The functions in this file are all reimplementation of ANSI functions
 concerning POSIX time, that TinKer relies on but that are commonly
-missing from many embedded toolchain suppliers.
+missing from many embedded tool-chain suppliers.
 
 For in-depth discussions about re-implementing ANSI functions, see \ref
 kernel_reimpl_ansi
@@ -50,7 +50,7 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#Sleeping
 #include <tk_ansi.h>
 
 /*
-The Following will get the tool-chains version of time.h 
+The Following will get the tool-chains version of time.h
 (excluding the build-chains that completly miss that file)
 */
 #if !defined(__C166__)
@@ -111,7 +111,7 @@ void timespec2fmttime_np( struct fmttime *totime, const struct timespec *fromtim
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 
-/*! 
+/*!
 Wrapper macro until \ref PTIMER is ready
 */
 #define sleep(t) ( tk_msleep( t * 1000 ) )
@@ -123,7 +123,7 @@ Wrapper macro until \ref PTIMER is ready
 
 
 #if defined (__GNUC__) && defined (TK_BOARD)
-//In this case we know and control our own time - still, make sure 
+//In this case we know and control our own time - still, make sure
 //standard is respected.
 	#if defined(CLOCKS_PER_SEC)
 		#undef CLOCKS_PER_SEC
@@ -134,16 +134,16 @@ Wrapper macro until \ref PTIMER is ready
 
 	#define CLOCKS_PER_SEC 1000000L
 	#define CLK_TCK CLOCKS_PER_SEC
-#endif 
+#endif
 
 #if !defined (__GNUC__)
 
    #ifndef CLOCKS_PER_SEC
-   /*! 
+   /*!
    According to POSIX standard this must be 1 milion regardless of true
    resolution.
 
-   */   
+   */
    #define CLOCKS_PER_SEC 1000000L
    #endif
 
@@ -152,7 +152,7 @@ Wrapper macro until \ref PTIMER is ready
    #define CLK_TCK CLOCKS_PER_SEC
    #endif
 
- 
+
    #ifndef clock_t
    /*!
    A clock entity is supposed to mean some sort of system ticks (i.e.
@@ -196,47 +196,73 @@ Wrapper macro until \ref PTIMER is ready
    #endif
 
    /*!
-   The struct timeval structure represents an elapsed time. It is declared in sys/time.h
+   The struct timeval structure represents an elapsed time. It is declared
+   in sys/time.h
 
-   Honestly speaking, I don't understand why this struct is needed since the struct timespec does the same job AND is of much higher presition. However, it's used in the POSIX standard API gettimeofday so I suppose we'll have to stick with it.
+   Honestly speaking, I don't understand why this struct is needed since the
+   struct timespec does the same job AND is of much higher precision.
+   However, it's used in the POSIX standard API gettimeofday so I suppose
+   we'll have to stick with it.
 
-   Further reference: http://www.gnu.org/software/libc/manual/html_mono/libc.html#Elapsed%20Time
+   Further reference:
+   http://www.gnu.org/software/libc/manual/html_mono/libc.html#Elapsed%20Time
 
    @see timespec
    */
    struct timeval{
-      long int tv_sec;  //!< This represents the number of whole seconds of elapsed time. 
-      long int tv_usec; //!< This is the rest of the elapsed time (a fraction of a second), represented as the number of <b>microseconds</b>. It is always less than one million.  
-   };
+	  long int tv_sec;  /*!< This represents the number of whole seconds of
+                         elapsed time. */
+
+     long int tv_usec; /*!< This is the rest of the elapsed time (a fraction
+                         of a second), represented as the number of
+                         <b>microseconds</b>. It is always less than one
+                         million. */
+	};
 
    /*!
    The struct timespec structure represents an elapsed time. It is declared in time.h
 
-   this stuct is essential for the pthreads timing API that TinKer supports (pthread_mutex_timedlock, pthread_cond_timedwait to name a few). But also to the nanosleep function 
+   this stuct is essential for the pthreads timing API that TinKer supports
+   (pthread_mutex_timedlock, pthread_cond_timedwait to name a few). But also
+   to the nanosleep function
 
-   A 32 bit signed storage for tv_sec will guarantee a time value that lasts for <b>4085 years!</b>.
-   A 32 bit signed storage for tv_nsec is enough to store a fraction of a secons in nanoseconds. Actually it's more tha twice as big as nessesary since it can carry 2.147 seconds before overflowing.
+   - A 32 bit signed storage for tv_sec will guarantee a time value that
+   lasts for <b>4085 years!</b>.
+   - A 32 bit signed storage for tv_nsec is enough to store a fraction of a
+   second in nanoseconds. Actually it's more tha twice as big as necessary
+   since it can carry 2.147 seconds before overflowing.
 
-   Further reference: http://www.gnu.org/software/libc/manual/html_mono/libc.html#Elapsed%20Time
+   Further reference:
+   http://www.gnu.org/software/libc/manual/html_mono/libc.html#Elapsed%20Time
    */
    struct timespec{
-      long int tv_sec;  //!< This represents the number of whole seconds of elapsed time.
-      long int tv_nsec; //!< This is the rest of the elapsed time (a fraction of a second), represented as the number of <b>nanoseconds</b>. It is always less than one billion
+	  long int tv_sec;  /*!< This represents the number of whole seconds of
+						  elapsed time.*/
+
+	  long int tv_nsec; /*!< This is the rest of the elapsed time (a
+						  fraction of a second), represented as the number
+						  of <b>nanoseconds</b>. It is always less than one
+						  billion */
+
    };
 
    /*!
-   This function is not supported on all targets properlly yet.
+   This function is not supported on all targets properly yet.
 
    @todo implement this
    */
-   int nanosleep (const struct timespec *requested_time, struct timespec *remaining); 
+   int nanosleep (const struct timespec *requested_time, struct timespec *remaining);
 
    /*!
-   Works like the POSIX spec says, excepth that timezone is alway ignored.
+   Works like the POSIX spec says, except that timezone is alway ignored.
 
-   @note This function will on some supported targes give the time in accurate uS resolution ecen if systetem tick is updated with a frequency lower than 1uS. This is achcheived by a cobination of reading the system timer and the HW clock dricing the system timer. 
+   @note This function will on some supported target give the time in
+   accurate uS resolution even if system tick is updated with a frequency
+   lower than 1uS. This is achieved by a combination of reading the system
+   timer and the HW clock driving the system timer.
 
-   @todo investigate the timezone thingy and if there is an equivlent API wit nS resoution
+   @todo investigate the timezone thingy and if there is an equivalent API
+   wit nS resolution
 
    @todo implement this
    */
@@ -244,11 +270,12 @@ Wrapper macro until \ref PTIMER is ready
 
 
    /*!
-   Works like the POSIX spec says, excepth that timezone is alway ignored.
+   Works like the POSIX spec says, except that timezone is alway ignored.
 
-   @todo investigate the timezone thingy and if there is an equivlent API wit nS resoution
+   @todo investigate the timezone thingy and if there is an equivalent API
+   wit nS resolution
 
-   @todo implement this 
+   @todo implement this
    */
 
    int settimeofday (const struct timeval *tp, const struct timezone *tzp);
@@ -274,7 +301,8 @@ Wrapper macro until \ref PTIMER is ready
    portability in your application. See \ref clock_t and \ref time_t for
    more information about TinKer's internal system time representation.
 
-   The order of the operands have the same order as the sutraction operator. I.e.:
+   The order of the operands have the same order as the sutraction operator.
+   I.e.:
 
    \code
    C = difftime(A,B);
@@ -335,7 +363,7 @@ Wrapper macro until \ref PTIMER is ready
    #ifndef difftime
    #define difftime(t1, t0) \
       (t1 - t0)
-   #endif   
+   #endif
 
 //   #if USE_TINKER_CLOCK_F
    clock_t clock();
@@ -363,7 +391,7 @@ Wrapper macro until \ref PTIMER is ready
 #endif //!defined (__GNUC__)
 
 
-#if !defined(__C166__)  
+#if !defined(__C166__)
 #undef clock
 #undef time
 #endif
@@ -377,7 +405,7 @@ Wrapper macro until \ref PTIMER is ready
 
 #endif /*time_h_tk*/
 
-  
+
 /*!
  *  @defgroup CVSLOG_time_h time_h
  *  @ingroup CVSLOG
@@ -537,10 +565,5 @@ Wrapper macro until \ref PTIMER is ready
  *  Revision 1.9  2006/02/09 23:05:24  ambrmi09
  *  Doxygen related fixes
  *
- *  
+ *
  *******************************************************************/
-
-
-
-
-
