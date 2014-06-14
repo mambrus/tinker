@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michael Ambrus                                  *
- *   michael.ambrus@maquet.com                                             *
+ *   Copyright (C) 2014 by Michael Ambrus                                  *
+ *   michael.ambrus@gmail.com                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,48 +17,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
-/*!
-@file
-
-asm ( "statements" : output_registers : input_registers : clobbered_registers);
-
-*/
-
-#ifndef TK_HWSYS_GNU_i386_H
-#define TK_HWSYS_GNU_i386_H
+#ifndef TK_CONTEXT_H
+#define TK_CONTEXT_H
 
 #include <tinker/config.h>
 
-#define EXTRA_MARGIN 20                //<! Define SP this below the theoretical top (some compilers require it)
+#define EXTRA_MARGIN 20
 
-/*!
-@name Mapping stack allocation API for this target
-*/
-//@{
-#define stalloc      malloc
+#define stalloc malloc
 #define stalloc_free free
-//@}
 
-/*
-#define TK_CLI()                          \
-   asm __volatile__ (" CLI ");
+#if defined (__GNUC__)
+#include <tinker/config.h>
+#endif
 
-#define TK_STI()                          \
-   asm __volatile__ (" STI ");
-*/   
+#if !TK_HOSTED
+  #define TK_CLI() asm __volatile__ (" CLI ");
+  #define TK_STI() asm __volatile__ (" STI ");
+#else
+  #define TK_CLI()
+  #define TK_STI()
+#endif
 
-#define TK_CLI()
-#define TK_STI()
+#define REAL_STACK_SIZE(TCB) \
+   ( TCB.stack_size )
 
-
-   
-#define REAL_STACK_SIZE( TCB )            \
-   ( TCB.stack_size ) 
-   
-
-#define PREP_TOS( _oldTOS, _newSP, _temp1, _temp2, _stack_struct )   \
-   PUSHALL();                             \
+#define PREP_TOS(_oldTOS,_newSP,_temp1,_temp2,_stack_struct) \
+   PUSHALL(); \
    asm __volatile__ (                     \
       " movl %%esp, %%eax\n\t"            \
       " movl %%ebx, %%esp"                \
@@ -67,14 +52,14 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
       : "memory"                          \
    );                                     \
                                           \
-   /*---> Compiler specific*/             \
+                                          \
                                           \
    asm __volatile__ (                     \
       " push %ebp\n\t"                    \
       " push %ebx"                        \
    );                                     \
                                           \
-    /*<--- Compiler specific*/            \
+                                          \
                                           \
    PUSHALL();                             \
                                           \
@@ -87,86 +72,108 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
    );                                     \
    POPALL();
 
-
-#define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )  \
+#define PUSH_CPU_GETCUR_STACK(TSP1,TEMP)  \
    PUSHALL();                             \
    asm __volatile__ (                     \
       " movl %%esp, %%eax"                \
       : "=a" (TSP1)                       \
-      : /*No input reg*/                  \
+      :                                   \
       : "memory"                          \
    );
 
-#define CHANGE_STACK_POP_CPU( TSP1, TEMP )   \
+#define CHANGE_STACK_POP_CPU(TSP1,TEMP)   \
    asm __volatile__ (                     \
       " movl %%ebx, %%esp"                \
-      : /*no output*/                     \
+      :                                   \
       : "b" (TSP1)                        \
-   );  /*Note, no clobber (intentional)*/ \
+   );                                     \
    POPALL();
 
-//function enters as a result of a ret instruction. EAX is passed
-//as the return value. Not shure if it works on every processor
-
-#define CHANGE_STACK( TSP1, TEMP )        \
+#define CHANGE_STACK(TSP1,TEMP)           \
    asm __volatile__ (                     \
       " movl %%ebx, %%esp"                \
-      : /*no output*/                     \
+      :                                   \
       : "b" (TSP1)                        \
-   );  /*Note, no clobber (intentional)*/
+   );
 
-
-#define INIT_SP( _stack_SP, _stack_begin )\
-   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; 			\
+#define INIT_SP(_stack_SP,_stack_begin)                           \
+   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; \
    _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;
 
-//Does nothing on this port
-#define BIND_STACK( _stack_struct, _temp2 )
+#define BIND_STACK(_stack_struct,_temp2)
 
-#define GET_THREADS_RETVAL( THRETVAL, TEMP )  \
+#define GET_THREADS_RETVAL(THRETVAL,TEMP) \
    asm __volatile__ (                     \
       "nop\n\t"                           \
       : "=a" (THRETVAL)                   \
-      : /*No imput reg*/                  \
+      :                                   \
       : "memory"                          \
       );
 
+#define MNEM_0(OP)                        \
+   #OP" \n\t"
+
+#define MNEM_1(OP,OPRND)                  \
+   #OP" "#OPRND" \n\t"
+
+#define PUSH(R)                           \
+   MNEM_1( push, R )
+
+#define POP(R)                            \
+   MNEM_1( pop, R )
+
+#define PUSHF                             \
+    MNEM_0( pushf )
+
+#define POPF                              \
+    MNEM_0( popf )
+
 #define PUSHALL()                         \
    asm __volatile__ (                     \
-      " pushf\n\t"                        \
-      " push eax\n\t"                     \
-      " push ecx\n\t"                     \
-      " push edx\n\t"                     \
-      " push ebx\n\t"                     \
-      " push esx\n\t"                     \
-      " push ebp\n\t"                     \
-      " push esx\n\t"                     \
-      " push edx\n\t"                     \
+      PUSHF                               \
+      PUSH( %rax )                        \
+      PUSH( %rbx )                        \
+      PUSH( %rcx )                        \
+      PUSH( %rdx )                        \
+      PUSH( %rbp )                        \
+      PUSH( %rsp )                        \
+      PUSH( %rsi )                        \
+      PUSH( %rdi )                        \
+      PUSH( %r8 )                         \
+      PUSH( %r9 )                         \
+      PUSH( %r10 )                        \
+      PUSH( %r11 )                        \
+      PUSH( %r12 )                        \
+      PUSH( %r13 )                        \
+      PUSH( %r14 )                        \
+      PUSH( %r15 )                        \
    );
 
 #define POPALL()                          \
    asm __volatile__ (                     \
-      " push edx\n\t"                     \
-      " push esx\n\t"                     \
-      " push ebp\n\t"                     \
-      " push esx\n\t"                     \
-      " push ebx\n\t"                     \
-      " push edx\n\t"                     \
-      " push ecx\n\t"                     \
-      " push eax\n\t"                     \
-      " popf\n\t"                         \
+      POP( %r15 )                         \
+      POP( %r14 )                         \
+      POP( %r13 )                         \
+      POP( %r12 )                         \
+      POP( %r11 )                         \
+      POP( %r10 )                         \
+      POP( %r9 )                          \
+      POP( %r8 )                          \
+      POP( %rdi )                         \
+      POP( %rsi )                         \
+      POP( %rsp )                         \
+      POP( %rbp )                         \
+      POP( %rdx )                         \
+      POP( %rcx )                         \
+      POP( %rbx )                         \
+      POP( %rax )                         \
+      POPF                                \
    )
 
-
-//Allready a char', no need to do handle in any special way.
-#define STACK_PTR( ADDR ) \
+#define STACK_PTR(ADDR)                   \
    (ADDR.tstack)
 
-//Not needed to do anything really. But just in case, follow the new convention 
-#define REINIT_STACKADDR( ADDR, size ) \
+#define REINIT_STACKADDR(ADDR,size)       \
    (ADDR.stack_size = size)
 
-
 #endif
-
-
