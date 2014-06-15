@@ -223,12 +223,13 @@ these is done by using either
 	#endif
 
 	#if (!(TK_SYSTEM == __SYS_HIXS__))
-
-		/*! How to initializing the BSP is done on this target (Only needed
-		    for bare bone targets). If the kernel is intended to run under
-		    Linux or Cygwin we don't need/want this function. */
-
-		#define tk_bsp_sysinit() ((void*)0)
+		/*! How to initializing the BSP is done on this target (Needed
+          for bare bone-metal targets). If the kernel is intended to run
+          under Linux or Cygwin we don't need/want these functions.
+          Otherwise, they belong implemented somewhere under bsp/<target>*/
+      #define tk_bsp_sysinit _tk_bsp_sysinit
+      #define tk_root _tk_main
+      #define BOOT_BSP_STUB
 	#endif
 
 	/*
@@ -312,9 +313,3 @@ these is done by using either
  *
  *
  *******************************************************************/
-
-
-
-
-
-

@@ -46,7 +46,7 @@ SCHED
 #include "implement_tk.h"
 
 #ifndef printk
-#   error "Tinker needs a prink to be implemented for this target"
+#   error "Tinker needs a printk to be implemented for this target"
 #endif
 
 
@@ -223,7 +223,7 @@ pointers (even though this is in most cases not hard to accomplish).
 */
 void _b_hook(void *caller){
    if (boot_hook!=0)
-    boot_hook(caller);
+      boot_hook(caller);
 }
 
 void *_tk_idle( void *foo ){       //!< idle loop (non public)
@@ -531,7 +531,7 @@ thid_t tk_create_thread(
    unsigned int   i;
    #endif
 
-   //Error handling needs improvment (don't forget taking special care of
+   //Error handling needs improvement (don't forget taking special care of
    //__tk_proc_idx)
    if (__tk_procs_in_use >= TK_MAX_THREADS){
       printk(("tk: Error - Total amount of threads would exceed limit\n"));
@@ -1194,7 +1194,17 @@ int
        /* Store modified flag word in the descriptor. */
        return fcntl (desc, F_SETFL, oldflags);
      }
+
 #endif
+
+#ifdef BOOT_BSP_STUB
+/* Instance of dummy system initializer when there's no HIXS or other
+ * syscall interface to be initialized */
+int _tk_bsp_sysinit(void) {
+   return 0;
+}
+#endif
+
 #define _MSTR(x) \
     #x
 #define MSTR(x) \
@@ -1211,7 +1221,6 @@ things at least:
 - You need a working printf to see run-time errors
 
 */
-//void     tk_root( void );
 void _tk_main( void ){
    _b_hook(_tk_main);
    #if defined (TK_SYSTEM) && (TK_SYSTEM == __SYS_HIXS__)
@@ -1219,8 +1228,8 @@ void _tk_main( void ){
       extern struct hixs_t hixs;
       hixs.exit = tk_exit;
    #endif
-   tk_bsp_sysinit();      //For emulation targets, this is ment to be nothing
-   _b_hook(tk_bsp_sysinit);
+   _tk_bsp_sysinit();
+   _b_hook(_tk_bsp_sysinit);
 
    printk(("BSP initialized\n"));
 
