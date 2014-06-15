@@ -398,12 +398,12 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_ARG_ENABLE(pthread,
 		AS_HELP_STRING([--enable-pthread],[PTHRED - Enable/disable POSIX 1003.1c threads component]),
 		_TK_COMP_PTHREAD=__tk_$enableval,
-		_TK_COMP_PTHREAD=__tk_yes
+		_TK_COMP_PTHREAD=__tk_no
 	)
 	AC_ARG_ENABLE(posix_rt,
 		AS_HELP_STRING([--enable-posix_rt],[POSIX_RT - Enable/disable POSIX 1003.1b queues, semaphores component enabled]),
 		_TK_COMP_POSIX_RT=__tk_$enableval,
-		_TK_COMP_POSIX_RT=__tk_yes
+		_TK_COMP_POSIX_RT=__tk_no
 	)
 	AC_ARG_ENABLE(filesys,
 		AS_HELP_STRING([--enable-filesys],[FIILESYS - Enable/disable embedded file-system abstraction component. (Not available for all possible targets. Target must be HIXS adapted.)]),

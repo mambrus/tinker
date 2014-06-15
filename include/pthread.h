@@ -47,10 +47,6 @@ PTHREAD
 	#define TK_MAX_THREADS 16
 #endif
 
-#ifndef TK_MAX_THREADS
-	#error TK_MAX_THREADS not defined. Did you --enable-max_threads=<val> properly?
-#endif
-
 //#include <sched.h>
 #include <time.h>
 #include <sys/types.h>
@@ -97,7 +93,7 @@ typedef enum {
 }
 
 #define PTHREAD_CV_MUTEX_INITIALIZER { \
-   (pthread_t)1,/*Makes sure will block on first take. Value to low to ever be a valid adress*/ \
+   (pthread_t)1,/*Makes sure will block on first take. Value to low to ever be a valid address*/ \
    _PTHREAD_BLOCKED_INIT,           \
    _PBON_NOLINK,                    \
    NULL,                            \
