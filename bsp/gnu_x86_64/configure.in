@@ -10,12 +10,12 @@ AC_CONFIG_AUX_DIR(../..)
 dnl Currently only hosted mode. I.e. no real BOARDSs and no MCPU adaptions (TBD)
 AC_CONFIG_SUBDIRS([])
 
-# Note: The system identification and configure.h update has to be done by the last 
-# test in the cain
+# Note: The system identification and configure.h update will get its final
+# form by the last test in the AC chain
 
 sources_asm=""
 extras=""
-sources_c=""
+sources_c="dummy_board.c"
 #extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
 
 AC_PROG_CC
