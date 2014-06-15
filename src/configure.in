@@ -16,25 +16,9 @@ AC_CONFIG_HEADER(../include/tinker/config.h)
 
 sources_c="tk.c tk_error.c tk_switch.c time.c"
 
-if test $CONF_VERBOSE == "yes"; then
-	echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-	echo "                   COMPONENTS"
-	echo "                   =========="
-	echo "TK_COMP_ITC:                             $_TK_COMP_ITC"
-	echo "TK_COMP_PTIMER:                          $_TK_COMP_PTIMER"
-	echo "TK_COMP_KMEM:                            $_TK_COMP_KMEM"
-	echo "TK_COMP_PTHREAD:                         $_TK_COMP_PTHREAD"
-	echo "TK_COMP_POSIX_RT:                        $_TK_COMP_POSIX_RT"
-	echo "TK_COMP_FILESYS:                         $_TK_COMP_FILESYS"
-	echo
-	echo "                 PACKAGES & misc"
-	echo "                 ==============="
-	echo "TK_USE_BUILTIN_SORT:                     $_TK_USE_BUILTIN_SORT"
-	echo "VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV"
-fi
+TINKER_CONDITINAL_VERBOSE_PRINT
 
-
-dnl Components & packake usage deduction 
+dnl Components & packake usage deduction
 if test $_TK_COMP_ITC != __tk_no; then
    sources_c="$sources_c tk_itc.c tk_itcny.c tk_itcshared.c tk_sysqueues.c"
    if test $_TK_USE_BUILTIN_SORT != __tk_no; then

@@ -104,24 +104,26 @@ mrproper:
 	@echo "======================================================"
 
 properhard:
-	@echo "## Removing built & intermediate files..."
+	@echo "## Removing built & intermediate files (make)"
 	find -iname "*.d" -exec rm -f '{}' ';'
 	find -iname "*.o" -exec rm -f '{}' ';'
 	find -iname "*~" -exec rm -f '{}' ';'
 	#find -iname "tags" -exec rm -f '{}' ';'
 	#find -iname "c-tags" -exec rm -f '{}' ';'
 	find -iname ".installed-*" -exec rm -f '{}' ';'
-	@echo "## Removing configure generated files..."
+	@echo "## Removing configure generated files (./configure)"
 	find -name "config.*" -exec rm -f '{}' ';'
 	find -name "install-sh" -exec rm -f '{}' ';'
 	find -name ".installed-*" -exec rm -f '{}' ';'
 	for D in $$(find -name "autom4te.cache"); do rm -rf $$D; done
-	@echo "## Removing generator generated files..."
+	rm -f include/tinker/config.h
+	rm -f Makefile-gnu
+	@echo "## Removing generator generated files (make configure)"
 	find -name "automake-*" -exec rm -f '{}' ';'
 	find -name "configure" -exec rm -f '{}' ';'
 	find -mindepth 2 -name "Makefile-gnu*" -exec rm -f '{}' ';'
 	find -mindepth 3 -name "Makefile*" -exec rm -f '{}' ';'
-	rm -f Makefile-gnu
+	rm -f include/tinker/config.h.in
 	@echo "======================================================"
 	@echo "<<-           CONFIGURATION REMOVED HARD!          ->>"
 	@echo "======================================================"
