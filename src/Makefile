@@ -4,7 +4,7 @@ HAS_SUBDIRS_FILE:=$(shell if test -f make.subdirs; then echo yes; else echo no; 
 ifeq ($(HAS_SUBDIRS_FILE),yes)
 	SUB_MODS:=$(shell cat make.subdirs)
 else
-	SUB_MODS:=
+	SUB_MODS:=$(shell find . -maxdepth 2 -mindepth 2 -iname configure.in -exec dirname '{}' ';')
 endif
 
 SUB_MODS_CONFIGURE := $(patsubst %, make configure -C %;, $(SUB_MODS))
