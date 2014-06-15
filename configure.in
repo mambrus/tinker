@@ -53,7 +53,7 @@ AH_TEMPLATE([TK_ARCH],
 AH_TEMPLATE([__TK_ARCH_up__],
    [Which main CPU architecture - un-prefixed version])
 AH_TEMPLATE([TK_SYSTEM],
-   [Defines which system (i.e. system call API) we're using])
+   [Defines the executing system])
 AH_TEMPLATE([__TK_SYSTEM_up__],
    [Defines which system (i.e. system call API) we're using - un-prefixed version])
 AH_TEMPLATE([TK_ABI],
@@ -130,10 +130,29 @@ AH_TEMPLATE([TK_HOSTED],
    [Configured and built in a way that means hosted execution
    (auto-deducted)])
 
+dnl Canonical extras
+AH_TEMPLATE([CANON_BUILD_CPU],
+   [Canonical info: BUILD_CPU])
+AH_TEMPLATE([CANON_BUILD_VENDOR],
+   [Canonical info: BUILD_VENDOR])
+AH_TEMPLATE([CANON_BUILD_OS],
+   [Canonical info: BUILD_OS])
+AH_TEMPLATE([CANON_HOST_CPU],
+   [Canonical info: HOST_CPU])
+AH_TEMPLATE([CANON_HOST_VENDOR],
+   [Canonical info: HOST_VENDOR])
+AH_TEMPLATE([CANON_HOST_OS],
+   [Canonical info: HOST_OS])
+AH_TEMPLATE([CANON_TARGET_CPU],
+   [Canonical info: TARGET_CPU])
+AH_TEMPLATE([CANON_TARGET_VENDOR],
+   [Canonical info: TARGET_VENDOR])
+AH_TEMPLATE([CANON_TARGET_OS],
+   [Canonical info: TARGET_OS])
+
 dnl Other features
 AH_TEMPLATE([TK_DISPATCH],
    [Main type of dispatching (MIXED or EXCLUSIVE).])
-
 
 dnl Low level porting (advanced)
 AH_TEMPLATE([TK_HOWTO_MALLOC],
@@ -147,10 +166,9 @@ AH_TEMPLATE([TK_HOWTO_ASSERT],
 
 AC_PROG_CC
 TINKER_CONFIGURE(.)
+dnl TINKER_CANONICAL_EXTRA
 
 AC_CONFIG_HEADER(include/tinker/config.h)
-
-
 
 ALL_C=$sources_c
 AC_SUBST(ALL_C)

@@ -113,7 +113,6 @@ these is done by using either
 #elif defined( __C166__ )
 #include <../bsp/XC167_Keil/tk_tuning.h>
 
-
 #elif defined(__GNUC__)
 
    #ifndef ARCH
