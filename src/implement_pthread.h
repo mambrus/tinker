@@ -54,6 +54,11 @@ PTHREAD
 #ifndef _IMPLEMENT_PTHREAD_H
 #define _IMPLEMENT_PTHREAD_H
 #include "stypes.h"
+#include "tk_tuning.h"
+
+#ifndef TK_MAX_THREADS
+	#error TK_MAX_THREADS not defined. Did you --enable-max_threads=<val> properly?
+#endif
 
 /*!
 @brief Tinker ID mapping.

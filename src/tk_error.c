@@ -34,7 +34,6 @@ kernel_reimpl_ansi
 @see PACKAGES
 */
 
-#include <pthread.h>
 #include <errno.h>
 #include <assert.h>
 #include <stdio.h>
