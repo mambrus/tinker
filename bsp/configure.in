@@ -32,6 +32,10 @@ case "${host}" in
     AC_MSG_NOTICE([<<< BSP for X86 >>>])
     AC_CONFIG_SUBDIRS([gnu_i386])
     ;;
+  x86_64-*-*)
+    AC_MSG_NOTICE([<<< BSP for x86_64 >>>])
+    AC_CONFIG_SUBDIRS([gnu_x86_64])
+    ;;
 esac
 
 if test $_TK_COMP_FILESYS == __tk_yes; then

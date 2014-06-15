@@ -1,0 +1,36 @@
+dnl This is the tinker/bsp/gnu_x86_64 configure.in file.
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.59])
+AC_INIT(gnu_x86_64, [0.1.0])
+AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
+
+AC_CONFIG_AUX_DIR(../..)
+
+
+AC_CONFIG_SUBDIRS([board])
+
+# Note: The system identification and configure.h update has to be done by the last 
+# test in the cain
+
+sources_asm=""
+extras=""
+sources_c=""
+#extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
+
+AC_PROG_CC
+TINKER_CONFIGURE(../..)
+
+# Add sources depending on configuration
+if test $SYSTEM == 'hixs'; then
+	sources_c="$sources_c hixsys.c syscon.c initfini.c"
+fi
+
+# See to that all sources get in the makefile (both generic and configure specific)
+ALL_C=$sources_c
+AC_SUBST(ALL_C)
+
+dnl Update config.h
+AC_CONFIG_HEADER(../../include/tinker/config.h)
+
+AC_OUTPUT(Makefile-gnu)

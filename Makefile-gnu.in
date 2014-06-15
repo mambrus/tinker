@@ -65,7 +65,7 @@ ifeq ($(XCOMPILE),1)
    LDFLAGS   := $(LDFLAGS) -nostdlib -nostartfiles
 
 else
-   CFLAGS   := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=_$(ARCH) -DDEBUG 
+   CFLAGS   := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=$(ARCH) -DDEBUG 
    CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/include 
    CFLAGS   := $(CFLAGS) -Wall -I . -I $(TINKER_PATH)/include 
    LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
