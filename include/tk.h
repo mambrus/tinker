@@ -196,8 +196,12 @@ typedef isr_ft   *isr_handler;
 
 
 extern init_func_f boot_hook;
-
+#if defined(HAVE_UINTPTR_T)
+#include <stdint.h>
+typedef uintptr_t tin_t;
+#else
 typedef int tin_t;      //!< A tinker        ID
+#endif
 typedef tin_t thid_t;   //!< A tinker thread ID
 typedef tin_t titc_t;   //!< A tinker ITC    ID
 typedef tin_t titi_t;   //!< A tinker pTimer ID

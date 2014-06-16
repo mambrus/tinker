@@ -35,11 +35,13 @@ ITC
 #include <implement_itc.h>
 #ifdef TK_COMP_ITC
 
+#ifdef TBD
 static unsigned long lock_stage_ny(
 	unsigned long qid, 
 	unsigned long timeout);
 static unsigned long unlock_stage_ny(
-	unsigned long qid);	
+	unsigned long qid);
+#endif
 
 extern itc_t *__itc_array[TK_MAX_NUM_Q];	
 extern int __itc_idx;						
@@ -239,7 +241,7 @@ static unsigned long _unlock_stage_ny(
 			/*Should be obsolite now, but is not*/
 			Him->state = (PROCSTATE)( (Him->state) & ~_____QST); /* In case of timeout active release that to */
 			Him->wakeupEvent = E_ITC;
-			tk_preemplist(Him);
+			tk_preemplist((tin_t)Him);
 			//tk_yield(); /*In case the one you've just released has higher prio, run it*/   
 		}
 	}else

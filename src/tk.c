@@ -115,9 +115,7 @@ any of them.   errno.h
 void *_tk_destructor( void *retval );
 void *_tk_idle( void *foo );
 void  _tk_detach_children(thid_t thid);
-int   _tk_try_detach_parent( thid_t, int);
 
-void _tk_context_switch_to_thread(                             thid_t,thid_t);
 void _tk_half_switch             (                             thid_t,thid_t);
 void _tk_constructor             (start_func_f, void*, thid_t               );
 void _tk_construct_thread_scope  (start_func_f, void*, thid_t               );
@@ -525,9 +523,6 @@ thid_t tk_create_thread(
    //where in __tk_scheduler to put thread id
    thid_t   slot_idx = __tk_roundrobin_prio_idxs[prio].procs_at_prio;
    unsigned int   error = 0;
-   #ifdef DEBUG
-   unsigned int   i;
-   #endif
 
    //Error handling needs improvement (don't forget taking special care of
    //__tk_proc_idx)
@@ -961,7 +956,7 @@ to determine which one that would be.
 */
 
 thid_t _tk_next_runable_thread(){
-   int idx,prio,cidx,/*midx,*/nbTry,loop,return_Thid,p_at_p; TK_BOOL found;
+   int idx,prio,/*cidx,midx,*/nbTry,loop,return_Thid,p_at_p; TK_BOOL found;
 
    return_Thid  = idle_Thid; //In case no runnable proc is found...
    found        = TK_FALSE;
@@ -971,7 +966,7 @@ thid_t _tk_next_runable_thread(){
       if (p_at_p != 0){ //No procs at prio to run.. prevent division by zero
          //Manual RR from current to next ready
          idx =(__tk_roundrobin_prio_idxs[prio].curr_idx);
-         cidx = __tk_roundrobin_prio_idxs[prio].curr_idx;
+         //cidx = __tk_roundrobin_prio_idxs[prio].curr_idx;
          nbTry = __tk_roundrobin_prio_idxs[prio].procs_at_prio;
          for(  loop = 0;
                loop < nbTry && !found;
@@ -1128,7 +1123,7 @@ TK_CLI();
    //Some other code segmented temp variables needed by the macros
    static char *aSP;
    static unsigned int TEMP;
-   static stack_t SPS;
+   //static stack_t SPS;
 
    TK_NO_WARN_ARG(TEMP);
 
@@ -1147,7 +1142,7 @@ TK_CLI();
    //manipulating and cant access complex structures without them. Therefore
    //keep the following  access simple by using a copy stored in the code seg.
    //(Note: stack_t is a form of pointer that is used to refer to the physical stack)
-   SPS = __tk_threadPool[t_id].curr_sp;
+   //SPS = __tk_threadPool[t_id].curr_sp;
   //TK_CLI();
    PUSHALL();              // <--       // Make sure CPU context is ok
   //TK_STI();
@@ -1383,6 +1378,7 @@ int main(int argc, char **argv){
     _tk_main();
    _b_hook(NULL);
    TRAP(0);
+   return 0;
 }
 #endif
 

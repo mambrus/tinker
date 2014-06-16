@@ -20,16 +20,21 @@
 #ifndef TK_CONTEXT_H
 #define TK_CONTEXT_H
 
-#include <tinker/config.h>
-
-#define EXTRA_MARGIN 20
-
 #define stalloc malloc
 #define stalloc_free free
 
 #if defined (__GNUC__)
 #include <tinker/config.h>
+#include <stdint.h>
 #endif
+#include <setjmp.h>
+#define JUMPER_BASED
+
+#ifndef _JBLEN
+#define _JBLEN (16*sizeof(uint64_t))
+#endif
+
+#define EXTRA_MARGIN (2*sizeof(uint64_t))
 
 #if !TK_HOSTED
   #define TK_CLI() asm __volatile__ (" CLI ");
@@ -38,6 +43,60 @@
   #define TK_CLI()
   #define TK_STI()
 #endif
+
+#ifdef JUMPER_BASED
+
+
+#define REAL_STACK_SIZE( TCB )            \
+   ( TCB.stack_size ) 
+
+#define PUSHALL()   /*No need to PUSHALL on this target- Already done by setjmp*/
+#define POPALL()    /*No need to POPALL on this target- Already done by longjmp*/
+
+#define GET_SP( OUT_SP )                  \
+   asm __volatile__ (                     \
+      "mov %[mystack],%%rsp"              \
+      : [mystack] "=m" (OUT_SP)           \
+      : /**/                              \
+      : "memory"                          \
+   );
+
+#define SET_SP( IN_SP )                   \
+   asm __volatile__ (                     \
+      "mov %%rsp,%[mystack]"              \
+      : /**/                              \
+      : [mystack] "m" (IN_SP)             \
+   );  /*Note, no clobber (intentional)*/
+
+
+#define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )     \
+   GET_SP( TSP1 )                               \
+   TEMP = setjmp( (void*)(TSP1 - _JBLEN* - EXTRA_MARGIN));              \
+   if (TEMP != (active_thread+1))               \
+      GET_SP( TSP1 )
+
+#define CHANGE_STACK_POP_CPU( TSP1, TEMP )      \
+    longjmp( (void*)(TSP1 - _JBLEN*sizeof(double) - EXTRA_MARGIN), active_thread+1);
+
+#define CHANGE_STACK( TSP1, TEMP )              \
+  SET_SP( TSP1 )
+
+#define INIT_SP( _stack_SP, _stack_begin )                      \
+   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN;           \
+   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;
+
+//Does nothing on this port
+#define BIND_STACK( _stack_struct, _temp2 )
+
+//Already a char', no need to do handle in any special way.
+#define STACK_PTR( ADDR ) \
+   (ADDR.tstack)
+
+//Not needed to do anything really. But just in case, follow the new convention 
+#define REINIT_STACKADDR( ADDR, size ) \
+   (ADDR.stack_size = size)
+
+#else
 
 #define REAL_STACK_SIZE(TCB) \
    ( TCB.stack_size )
@@ -176,4 +235,5 @@
 #define REINIT_STACKADDR(ADDR,size)       \
    (ADDR.stack_size = size)
 
+#endif
 #endif

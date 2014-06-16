@@ -183,13 +183,17 @@ typedef struct stat_t{
 struct tcb_t_ *_tk_current_tcb( void );
 struct tcb_t_ *_tk_specific_tcb( thid_t id );
 void           _tk_main( void );
+void            tk_trap( int ec );
+int            _tk_try_detach_parent( thid_t, int);
+thid_t         _tk_next_runable_thread( void );
+void           _tk_context_switch_to_thread( thid_t, thid_t);
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 
 /*- public data **/
 
 /*- private data **/
-extern int _tk_IntFlagCntr;
+extern int __tk_IntFlagCntr;
 
 #if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
 	clock_t clock_stubbed();

@@ -39,6 +39,9 @@ kernel_reimpl_ansi
 #include <stdio.h>
 #include <string.h>
 #include <tk_tuning.h>
+#if TK_HOSTED
+#include <stdlib.h>
+#endif
 
 void perror (const char *message); //Should go int stdio.h
 char * strerror (int errnum);      //Should go int string.h 
@@ -229,6 +232,7 @@ static const char *errno_srings[] = {
 /*!
 Trap-code strings
 */
+#if TK_USE_EMRGCY_CONSOLE
 								// Bit number
 static const char *trapcode_srings[] = {
 	"No Trap Error",						// none
@@ -249,6 +253,8 @@ static const char *trapcode_srings[] = {
 	"HW driver detected a fatal error",				// 14
 	"Undefined termination reason (or reason not known to TinKer): "	// 15
 };
+#endif
+
 /*!
 Helper function
 A simple conversion from a number to string
@@ -299,7 +305,7 @@ HW trapping might not have a working stack when reaching this far, in which
 case this function has to be replaced. In either case, no calling other 
 functions, stack or heap operations are allowed from here on.
 */
-tk_trap(int ec){
+void tk_trap(int ec){
 	int i,m;
 
 #if defined(TK_USE_EMRGCY_CONSOLE)
@@ -379,8 +385,8 @@ tk_trap(int ec){
 #endif
 
 
-#if defined(__GNUC__)
-	_exit(ec);
+#if defined(__GNUC__) && TK_HOSTED
+	exit(ec);
 #else
 	while(1);
 #endif
