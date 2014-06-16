@@ -21,36 +21,66 @@
 /*!
 @file
 
-This file is a PowerPC eabi architecture.
+This file is for the PowerPC architecture. Tested with several ABI for
+Newlib glibc.
 
-It implementation setjmp and longjmp techniques, which has some considerarions:
-- Both functions manipulate the CPU stackpointer themseves. We need to be certain 
-that the a thead comes out, it actually does so with the correct stack with it
+It implements setjmp and longjmp techniques which has some considerations
+compared to traditional TinKer context switching:
 
-- Some extra overhead while creating a thread, which will also actually run for a
-very short time (needed so it can create it's ownv scope)
+* Both methods manipulate the CPU stack-pointer. We need to be
+  certain that a thread comes out, it actually does so with the correct
+  stack with it. Balancing way in and way and out is crucial. For the
+  context switcher this is not a problem, but when creating a new thread
+  this becomes a little tricky, as the function has to be doing a
+  context-swich exactly half way, and all the steps has to be identical AND
+  any optimizations between the two functions has to be identical.
 
-- We're forced to rely on an external implementation in a very critical part of 
-the kernal.
+* Some extra overhead while creating a thread, which will also actually run for a
+  very short time (needed so it can create it's own scope)
 
-TinKers PUSH/POP based techiquie share a lot of similarities with setjmp/longjmp, 
-but they are not quite the same (se considerations above). However, by using 
-setjmp/longjump we will gain the following benefits:
+* We're forced to rely on an external implementation in a very critical part of 
+  the kernel.
 
-- TinKer becomes even more portable and even less code needs to be tailored
-for a certain archetecture (In this implementation there are actually only 2 
-lines of assembly code).
+TinKers original PUSH/POP based technique share a lot of similarities with
+setjmp/longjmp, but they are not quite the same (see considerations above).
+However, by using setjmp/longjump we will gain the following benefits and
+drawbacks:
 
-- We need not to bother with certain special handling due to differen GCC -m 
-options or certaing CPU variants limitations or issues. We'll let the toolchains 
-libc implementation handlo those instead (great!)
++ TinKer becomes even more portable and even less code needs to be tailored
+  for a certain architecture (In this implementation there are actually only
+  2 lines of assembly code).
 
++ We need not to bother with certain special handling due to different 
+  GCC -m options or certain CPU variants limitations or issues. We'll let
+  the tool-chains libc implementation handle those instead (great!)
 
-@note Tinker is from now on adapted to handle both techniques.
++ Saving/restoring context can potentially be much faster. System knows what
+  it needs to save, what not and it what order. Shadow registers/banking and
+  DMA transfer are all theoretically possible assists. This would could play
+  a very positive role in LKM/VM/hosted executions.
+
+? Context does not have to be on TOS. It's a convenient place to put it as
+  everything gets unlocked by the same key: the SP. But one drawback is that
+  we get dependent on knowing the size of the sigjmp_buf. Availability of
+  _JBLEN used in this solution is apparently not standard, just very common.
+
+  An alternative could be to use curr_sp stack_t differently as. As it is
+  our type, and as buth this type and the context intricate as are paired we
+  could use BOS for the context. Stack will meet from two ends so to speak.
+  What's essential is that it is still one key opening both. Similarly
+  stack_t could have a context-buffer completely separated from the threads
+  stack.
+
+- Where HW/SIC/System is not so great (i.e. for deeply embedded targets) we
+  might end up context-switching more than needed, and almost certainly in a
+  non HW-accelerated way.
+
+@note Tinker is from this implementation on adapted to handle both
+techniques.
 
 @attention Consider this implementation highly EXPERIMENTAL
 
-@note Inline assemby syntax: 
+@note In-line assembly syntax: 
 asm ( "statements" : output_registers : input_registers : clobbered_registers);
 
 */
@@ -60,7 +90,8 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 
 #include <setjmp.h>
 
-#define EXTRA_MARGIN 20                //<! Define SP this below the theoretical top (some compilers require it)
+#define EXTRA_MARGIN 20   /* Define SP this below the theoretical top (some
+                             compilers require it) */
 #define JUMPER_BASED
 
 /*!

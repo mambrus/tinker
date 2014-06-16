@@ -167,8 +167,9 @@ AH_TEMPLATE([TK_HOWTO_ASSERT],
    [Advanced primary porting])
 
 TINKER_CONFIGURE(.)
-dnl TINKER_CANONICAL_EXTRA
+dnl AC_INCLUDES_DEFAULT ([HAVE_UINTPTR_T]) GAH! How to use this??
 
+dnl TINKER_CANONICAL_EXTRA
 AC_CONFIG_HEADER(include/tinker/config.h)
 
 ALL_C=$sources_c

@@ -195,8 +195,7 @@ before the first PUSHALL nor after the last POPALL.
 
 */
 void tk_yield( void ){
-	if (_tk_IntFlagCntr)
-		exit;
+	assert(__tk_IntFlagCntr==0);
 	
 	TK_CLI();
 	PUSHALL();

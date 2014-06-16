@@ -338,6 +338,14 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_CHECK_FUNCS(gettimeofday)
 	AC_CHECK_FUNCS(settimeofday)
 
+   dnl Check for types
+   AC_CHECK_TYPES(
+      [ptrdiff_t, uintptr_t],
+      [],
+      [],
+      [[#include <stdint.h>]]
+   )
+
 	dnl Check for broken compiler setup
 	AC_HAVE_LIBRARY(gcc_s)
 
