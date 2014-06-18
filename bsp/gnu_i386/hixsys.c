@@ -85,7 +85,7 @@ extern "C" {
 	int     _fstat        (int file, struct stat *st)			{ MON(hixs.fstat); return hixs.fstat(file, st);}
 	int     _getpid       ()						{ MON(hixs.getpid); return hixs.getpid();}
 	int     _gettimeofday (struct timeval *tp, struct timezone *tzp)	{ MON(hixs.gettimeofday); return hixs.gettimeofday(tp, tzp);}
-	int      isatty       (int file)					{ MON(hixs.isatty); return hixs.isatty(file);}
+	int      _isatty       (int file)					{ MON(hixs.isatty); return hixs.isatty(file);}
 	int     _kill         (int pid, int sig)				{ MON(hixs.kill); return hixs.kill(pid, sig);}
 	int     _link         (char *old, char *new)				{ MON(hixs.link); return hixs.link(old, new);}
 	int     _lseek        (int file, int ptr, int dir)			{ MON(hixs.lseek); return hixs.lseek(file, ptr, dir);}
