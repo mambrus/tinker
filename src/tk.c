@@ -84,6 +84,8 @@ any of them.   errno.h
    #endif
    #include <pthread.h>
    #undef main
+#elif !defined(TK_HOSTED)
+   #undef main
 #endif
 
 #if defined(TK_COMP_POSIX_RT) && (TK_COMP_POSIX_RT==1)

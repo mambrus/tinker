@@ -10,7 +10,7 @@
 //Declarations
 void nmi_handler(void);
 void hardfault_handler(void);
-int main(void);
+int main(int argc, char** argv);
 
 // Define the vector table
 unsigned int * myvectors[4] 
@@ -44,7 +44,7 @@ int apa = 23;
  * Description: The main subroutine
  *
  *************************************************************************/
-int main(void)
+int main(int argc, char** argv)
 {
 	int myVar = 100;
 	char *buf;
