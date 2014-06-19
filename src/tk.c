@@ -83,10 +83,8 @@ any of them.   errno.h
       #error Component POSIX_RT is dependant of ITC
    #endif
    #include <pthread.h>
-   #undef main
-#elif !defined(TK_HOSTED)
-   #undef main
 #endif
+#undef main
 
 #if defined(TK_COMP_POSIX_RT) && (TK_COMP_POSIX_RT==1)
    #ifndef TK_COMP_PTHREAD
@@ -1203,6 +1201,8 @@ int
 int _tk_bsp_sysinit(void) {
    return 0;
 }
+#else
+#  define _tk_bsp_sysinit tk_bsp_sysinit
 #endif
 
 #define _MSTR(x) \
