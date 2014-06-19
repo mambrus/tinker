@@ -12,7 +12,6 @@ dnl The following is sadly not working properly. Use autoconf -I <dir> instead t
 
 sources_c="gnu_stubs.c tk_stubs.c stack.c"
 
-AC_PROG_CC
 TINKER_CONFIGURE(..)
 
 case "${host}" in

@@ -152,6 +152,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl
 	dnl Note: it's easy to mix up the two macros G++ and C++ because they look very similar
 	dnl.They indicate the same logic, but their contents are very different.
+	AC_PROG_CC
 	if test $USECPLUSPLUS != __tk_no; then
 		dnl Tries to use g++ as instructed. Should fall back on gcc if c++ is not available
 		AC_PROG_CXX

@@ -147,7 +147,6 @@ AH_TEMPLATE([TK_HOWTO_PRINTK],
 AH_TEMPLATE([TK_HOWTO_ASSERT],
    [Advanced primary porting])
 
-AC_PROG_CC
 TINKER_CONFIGURE(.)
 
 AC_CONFIG_HEADER(include/tinker/config.h)

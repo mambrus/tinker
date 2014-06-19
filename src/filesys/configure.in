@@ -9,7 +9,6 @@ AC_CONFIG_AUX_DIR(../..)
 
 sources_c=" filesys.c inode.c fs_ifdir.c fs_main.c fs_ifchr.c fs_ifblk.c fs_ifreg.c fs_iflnk.c fs_ifsock.c fs_ififo.c"
 
-AC_PROG_CC
 TINKER_CONFIGURE(../..)
 subdirs=
 AC_SUBST(subdirs)

@@ -11,7 +11,6 @@ sources_c="null.c tim.c timr.c con.c mem.c fifo.c"
 sources_asm=""
 extras=""
 
-AC_PROG_CC
 TINKER_CONFIGURE(../..)
 AC_CONFIG_SUBDIRS([can])
 
