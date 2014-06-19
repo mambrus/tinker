@@ -232,7 +232,6 @@ static const char *errno_srings[] = {
 /*!
 Trap-code strings
 */
-#if TK_USE_EMRGCY_CONSOLE
 								// Bit number
 static const char *trapcode_srings[] = {
 	"No Trap Error",						// none
@@ -253,7 +252,6 @@ static const char *trapcode_srings[] = {
 	"HW driver detected a fatal error",				// 14
 	"Undefined termination reason (or reason not known to TinKer): "	// 15
 };
-#endif
 
 /*!
 Helper function
@@ -308,7 +306,8 @@ functions, stack or heap operations are allowed from here on.
 void tk_trap(int ec){
 	int i,m;
 
-#if defined(TK_USE_EMRGCY_CONSOLE)
+#if defined (TK_USE_EMRGCY_CONSOLE) && (TK_USE_EMRGCY_CONSOLE != __tk_no)
+
 	static const char trp_txt[]="tk: TRAP";
 	#define MAX_LEN 80
 
