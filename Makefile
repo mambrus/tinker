@@ -29,7 +29,10 @@ USR_DEFINES:=DUMMY_DEF
 export TINKER_SRC_DIR = $(shell pwd)
 
 #Colorizarion tool detection
-GRCAT = $(shell which grcat)
+
+ifeq ($(VIM),)
+   GRCAT = $(shell which grcat)
+endif
 
 # TOOLS could be either 'gnu' or any othe supported tool-chain.
 # If TOOLS is not set, the build system assumes each sub-module 
