@@ -237,6 +237,10 @@ these is done by using either
 	#define printk(x) { printf x; fflush(stdout); }
 	*/
 
+//#ifndef tk_root
+#define tk_root main
+//#endif
+
 #endif //if defined(__GNUC__)
 #endif //TK_TUNING_H_ROOT_HEADER
 //------1---------2---------3---------4---------5---------6---------7---------8
