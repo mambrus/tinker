@@ -198,7 +198,7 @@ these is done by using either
 
 #ifndef TK_TUNING_H_ROOT_HEADER
 #define TK_TUNING_H_ROOT_HEADER
-//FIXME I know other ports still have tis somewhere else. Those should be moved here also
+//FIXME I know other ports still have this somewhere else. Those should be moved here also
 //the #if defined(__GNUC__) remains until then...
 #if defined(__GNUC__)
 
@@ -228,7 +228,11 @@ these is done by using either
           under Linux or Cygwin we don't need/want these functions.
           Otherwise, they belong implemented somewhere under bsp/<target>*/
       #define tk_bsp_sysinit _tk_bsp_sysinit
-      #define tk_root _tk_main
+      #if TK_HOSTED
+         #if TK_COMP_PTHREAD == __tk_no
+         #   define tk_root root
+         #endif
+      #endif
       #define BOOT_BSP_STUB
 	#endif
 

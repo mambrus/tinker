@@ -189,6 +189,9 @@ thid_t         _tk_next_runable_thread( void );
 void           _tk_context_switch_to_thread( thid_t, thid_t);
 //------1---------2---------3---------4---------5---------6---------7---------8
 
+/* User-provided */
+extern int root(void);
+
 
 /*- public data **/
 
