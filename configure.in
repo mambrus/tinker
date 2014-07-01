@@ -86,7 +86,7 @@ dnl TinKer tuning defines
 AH_TEMPLATE([TK_MINIMUM_STACK_SIZE],
    [Maximum size of a stack for a thread. If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_ROOT_STACK_SIZE],
-   [Root stack size. If not set, it should generate a compilator error])
+   [Root stack size. If not set, it should generate a build error])
 AH_TEMPLATE([TK_NORMAL_STACK_SIZE],
    [Stacksize used when stack-size is omitted. If not set, value in tk_tuning.h will be used instead])
 AH_TEMPLATE([TK_MAX_THREADS],
