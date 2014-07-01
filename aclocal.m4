@@ -185,6 +185,7 @@ AC_DEFUN([TINKER_PRINT_COMP_SETTINGS],
    echo "               =================="
    echo "TK_MINIMUM_STACK_SIZE                     : $_TK_MINIMUM_STACK_SIZE"
    echo "TK_NORMAL_STACK_SIZE                      : $_TK_NORMAL_STACK_SIZE"
+   echo "TK_ROOT_STACK_SIZE                        : $_TK_ROOT_STACK_SIZE"
    echo "TK_MAX_THREADS                            : $_TK_MAX_THREADS"
    echo "TK_MAX_PRIO_LEVELS                        : $_TK_MAX_PRIO_LEVELS"
    echo "TK_MAX_THREADS_AT_PRIO                    : $_TK_MAX_THREADS_AT_PRIO"
@@ -213,6 +214,9 @@ AC_DEFUN([TINKER_ACTUATE_COMP_SETTINGS],
 [
    AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],  $_TK_MINIMUM_STACK_SIZE)
    AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],   $_TK_NORMAL_STACK_SIZE)
+   if test ! -z $_TK_ROOT_STACK_SIZE; then
+      AC_DEFINE_UNQUOTED([TK_ROOT_STACK_SIZE],     $_TK_ROOT_STACK_SIZE)
+   fi
    AC_DEFINE_UNQUOTED([TK_MAX_THREADS],         $_TK_MAX_THREADS)
    AC_DEFINE_UNQUOTED([TK_MAX_PRIO_LEVELS],     $_TK_MAX_PRIO_LEVELS)
    AC_DEFINE_UNQUOTED([TK_MAX_THREADS_AT_PRIO], $_TK_MAX_THREADS_AT_PRIO)
@@ -597,6 +601,13 @@ AC_DEFUN([TINKER_CONFIGURE],
          [Stack-size used when stack-size is omitted ]
       ),
       _TK_NORMAL_STACK_SIZE=$enableval
+   )
+   AC_ARG_ENABLE(root_stack,
+      AS_HELP_STRING(
+         [--enable-root_stack=<val>],
+         [Stack-size for root-stack or process if hosted]
+      ),
+      _TK_ROOT_STACK_SIZE=$enableval
    )
    AC_ARG_ENABLE(max_threads,
       AS_HELP_STRING(
