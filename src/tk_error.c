@@ -232,26 +232,27 @@ static const char *errno_srings[] = {
 /*!
 Trap-code strings
 */
-								// Bit number
-static const char *trapcode_srings[] = {
-	"No Trap Error",						// none
-	"Total amount of threads would exceed limit",			// 0
-	"Assertion failed",						// 1
-	"Chosen priority too high",					// 2
-	"Unknown",							// 3
-	"Stack out of bounds check faliure",				// 4
-	"Stack integrity faliure detected",				// 5
-	"To many threads at this prio",					// 6
-	"Kernel running amok detected",					// 7
-	"Thread-name to long",						// 8
-	"No memory left for allocation",				// 9
-	"Invalid ETKB detected",					// 10
-	"Unknown",							// 11
-	"Unknown",							// 12
-	"Unknown",							// 13
-	"HW driver detected a fatal error",				// 14
-	"Undefined termination reason (or reason not known to TinKer): "	// 15
+#if (TK_HOWTO_PRINTK != TK_FNK_VOIDED)
+static const char *trapcode_srings[] = {                          // Bit number
+	"No Trap Error",                                                     // none
+	"Total amount of threads would exceed limit",                        // 0
+	"Assertion failed",                                                  // 1
+	"Chosen priority too high",                                          // 2
+	"Unknown",                                                           // 3
+	"Stack out of bounds check faliure",                                 // 4
+	"Stack integrity faliure detected",                                  // 5
+	"To many threads at this prio",                                      // 6
+	"Kernel running amok detected",                                      // 7
+	"Thread-name to long",                                               // 8
+	"No memory left for allocation",                                     // 9
+	"Invalid ETKB detected",                                             // 10
+	"Unknown",                                                           // 11
+	"Unknown",                                                           // 12
+	"Unknown",                                                           // 13
+	"HW driver detected a fatal error",                                  // 14
+	"Undefined termination reason (or reason not known to TinKer): "     // 15
 };
+#endif //(TK_HOWTO_PRINTK != TK_FNK_VOIDED)
 
 /*!
 Helper function

@@ -202,7 +202,10 @@ extern int __tk_IntFlagCntr;
 	#define tk_clock()  clock()
 #endif
 
-#if defined (__GNUC__)
+#if defined(TK_HOSTED)
+/* We don't care it's fast enough */
+#  define tk_difftime difftime
+#else
 /* Light version of ANSI difftime with the only difference that it doesn't
    return a double, but a time_t instead. This guarantees correctness in
    both value and signed-ness as long as:
@@ -215,16 +218,9 @@ extern int __tk_IntFlagCntr;
  *    evaluation to constantly TRUE or constantly FALSE (NEW).
  *
  * */
-
-   static time_t _tk_difftime(t1, t0) {
+   static time_t _tk_difftime(time_t t1, time_t t0) {
       return t1 - t0;
    }
-#endif
-
-#if defined(TH_HOSTED)
-/* We don't care it's fast enough */
-#  define tk_difftime difftime
-#else
 #  define tk_difftime _tk_difftime
 #endif
 
