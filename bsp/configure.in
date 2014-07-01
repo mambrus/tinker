@@ -10,10 +10,11 @@ AC_CONFIG_AUX_DIR(..)
 dnl The following is sadly not working properly. Use autoconf -I <dir> instead to get the aclocal.m4
 #AC_CONFIG_MACRO_DIR(../)
 
-sources_c="gnu_stubs.c tk_stubs.c"
+sources_c="gnu_stubs.c tk_stubs.c stack.c"
 
 if test $HOSTED -eq 1; then
-   sources_c="$sources_c stack.c"
+   #Nothing additional for now. Mechanism kept for reference.
+   sources_c="$sources_c"
 fi
 
 TINKER_CONFIGURE(..)

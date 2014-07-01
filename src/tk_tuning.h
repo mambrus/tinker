@@ -237,9 +237,11 @@ these is done by using either
 	#define printk(x) { printf x; fflush(stdout); }
 	*/
 
-//#ifndef tk_root
-#define tk_root main
-//#endif
+#ifndef tk_root
+/* tk_root not wrapped yet. I.e. must be core-only set-up
+ * (i.o.w. kernel configured without pthreads package) */
+#define tk_root root
+#endif
 
 #endif //if defined(__GNUC__)
 #endif //TK_TUNING_H_ROOT_HEADER
