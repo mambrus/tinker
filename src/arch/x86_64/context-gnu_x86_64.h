@@ -27,31 +27,37 @@
 #include <tinker/config.h>
 #include <stdint.h>
 #endif
+
+#ifndef JUMPER_BASED
+	#define JUMPER_BASED 1
+#endif
+
+#if !TK_HOSTED
+	#define TK_CLI() asm __volatile__ (" CLI ");
+	#define TK_STI() asm __volatile__ (" STI ");
+#else
+	#define TK_CLI()
+	#define TK_STI()
+#endif
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+#if JUMPER_BASED
+//------1---------2---------3---------4---------5---------6---------7---------8
 #include <setjmp.h>
-#define JUMPER_BASED
 
 #ifndef _JBLEN
 //#define _JBLEN (16*sizeof(uint64_t))
+#warning JBLEN is not known, just guessing...(TBD)
 #define _JBLEN 2048
 #endif
 
 #define EXTRA_MARGIN (2*sizeof(uint64_t))
 
-#if !TK_HOSTED
-  #define TK_CLI() asm __volatile__ (" CLI ");
-  #define TK_STI() asm __volatile__ (" STI ");
-#else
-  #define TK_CLI()
-  #define TK_STI()
-#endif
-
-#ifdef JUMPER_BASED
-
 #define REAL_STACK_SIZE( TCB )            \
-   ( TCB.stack_size ) 
+   ( TCB.stack_size )
 
-#define PUSHALL()   /*No need to PUSHALL on this target- Already done by setjmp*/
-#define POPALL()    /*No need to POPALL on this target- Already done by longjmp*/
+#define PUSHALL()   /*No need to PUSHALL on this arch - Already done by setjmp*/
+#define POPALL()    /*No need to POPALL on this arch - Already done by longjmp*/
 
 #define GET_SP( OUT_SP )                  \
    asm __volatile__ (                     \
@@ -92,11 +98,15 @@
 #define STACK_PTR( ADDR ) \
    (ADDR.tstack)
 
-//Not needed to do anything really. But just in case, follow the new convention 
+//Not needed to do anything really. But just in case, follow the new convention
 #define REINIT_STACKADDR( ADDR, size ) \
    (ADDR.stack_size = size)
 
-#else
+//------1---------2---------3---------4---------5---------6---------7---------8
+#else //Not JUMPER_BASED
+//------1---------2---------3---------4---------5---------6---------7---------8
+#error Non jumper-based context-switch is TBD for this architecture
+/* Below is just templated from i386 (not enough) */
 
 #define REAL_STACK_SIZE(TCB) \
    ( TCB.stack_size )
@@ -235,5 +245,7 @@
 #define REINIT_STACKADDR(ADDR,size)       \
    (ADDR.stack_size = size)
 
-#endif
+//------1---------2---------3---------4---------5---------6---------7---------8
+#endif //JUMPER_BASED
+//------1---------2---------3---------4---------5---------6---------7---------8
 #endif
