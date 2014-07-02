@@ -18,7 +18,6 @@ sources_c="hixsys.c"
 sources_asm=""
 extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
 
-AC_PROG_CC
 TINKER_CONFIGURE(../..)
 subdirs=
 AC_SUBST(subdirs)

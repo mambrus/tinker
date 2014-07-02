@@ -14,7 +14,6 @@ sources_asm=""
 extras="../../../../lib/ram_gnu.ld"
 extern_includes="../.."
 
-AC_PROG_CC
 TINKER_CONFIGURE(../../../..)
 AC_CONFIG_SUBDIRS([])
 

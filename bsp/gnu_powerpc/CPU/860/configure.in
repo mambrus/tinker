@@ -21,7 +21,6 @@ sources_asm="exceptions.AO"
 extras="../../../../lib/crt0.o"
 CRT0_OBJECT=exceptions.AO
 
-AC_PROG_CC
 TINKER_CONFIGURE(../../../..)
 AC_CONFIG_SUBDIRS([])
 
