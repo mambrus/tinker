@@ -43,11 +43,18 @@ AC_ARG_ENABLE(min_stack,
 	AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],$enableval),
 	AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],0x0300)
 )
+dnl ======================================================================
+dnl Note that root_stack configuration is managed in two parts because the
+dnl same is used for two auto-conf target and the intemediate value is
+dnl needed.
 AC_ARG_ENABLE(root_stack,
 	AS_HELP_STRING([--enable-root_stack=<val>],[Root threads stack-size]),
-	AC_DEFINE_UNQUOTED([TK_ROOT_STACK_SIZE],$enableval),
-	AC_DEFINE_UNQUOTED([TK_ROOT_STACK_SIZE],0x0400)
+	STACK_LEN=$enableval,
+	STACK_LEN=0x0300
 )
+AC_DEFINE_UNQUOTED([TK_ROOT_STACK_SIZE],$STACK_LEN)
+dnl ======================================================================
+
 AC_ARG_ENABLE(norm_stack,
 	AS_HELP_STRING([--enable-norm_stack=<val>],[Stacksize used when stack-size is omitted ]),
 	AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],$enableval),
