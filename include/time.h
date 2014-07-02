@@ -189,7 +189,7 @@ Wrapper macro until \ref PTIMER is ready
    interpreted).
 
    */
-   #define time_t unsigned long
+   #define time_t long
    #endif
 
    /*!

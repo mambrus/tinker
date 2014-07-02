@@ -39,7 +39,7 @@ POSIX_RT
 #if defined(__GNUC__)
    #include <tinker/config.h>
    #if (!defined(TK_COMP_POSIX_RT) || TK_COMP_POSIX_RT==0 ) && !defined(ECODES_ONLY)
-   #error "semaphore.h" belongs to [posix_rt] that your configuration of TinKer did not include. Please reconfigure and rebuild TinKer.
+   #error "<semaphore.h> belongs to a component that your build of TinKer didn't include. Please reconfigure and rebuild TinKer."
    #endif
 #endif
 

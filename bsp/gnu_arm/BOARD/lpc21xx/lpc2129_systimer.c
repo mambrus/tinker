@@ -29,7 +29,7 @@
 #include "lpc21xx.h"
 #include "lpc21xx_bits.h" 
 #include "aeb01.h" 
-#include "../tk_systimer.h" 
+#include "../../tk_systimer.h" 
 #include <../src/tk_tick.h>
 
 

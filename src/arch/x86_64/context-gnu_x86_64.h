@@ -31,7 +31,8 @@
 #define JUMPER_BASED
 
 #ifndef _JBLEN
-#define _JBLEN (16*sizeof(uint64_t))
+//#define _JBLEN (16*sizeof(uint64_t))
+#define _JBLEN 2048
 #endif
 
 #define EXTRA_MARGIN (2*sizeof(uint64_t))
@@ -46,7 +47,6 @@
 
 #ifdef JUMPER_BASED
 
-
 #define REAL_STACK_SIZE( TCB )            \
    ( TCB.stack_size ) 
 
@@ -55,7 +55,7 @@
 
 #define GET_SP( OUT_SP )                  \
    asm __volatile__ (                     \
-      "mov %[mystack],%%rsp"              \
+      "mov %%rsp,%[mystack]"              \
       : [mystack] "=m" (OUT_SP)           \
       : /**/                              \
       : "memory"                          \
@@ -63,7 +63,7 @@
 
 #define SET_SP( IN_SP )                   \
    asm __volatile__ (                     \
-      "mov %%rsp,%[mystack]"              \
+      "mov %[mystack],%%rsp"              \
       : /**/                              \
       : [mystack] "m" (IN_SP)             \
    );  /*Note, no clobber (intentional)*/
@@ -71,12 +71,12 @@
 
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )     \
    GET_SP( TSP1 )                               \
-   TEMP = setjmp( (void*)(TSP1 - _JBLEN* - EXTRA_MARGIN));              \
+   TEMP = setjmp( (void*)(TSP1 - _JBLEN - EXTRA_MARGIN));              \
    if (TEMP != (active_thread+1))               \
       GET_SP( TSP1 )
 
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )      \
-    longjmp( (void*)(TSP1 - _JBLEN*sizeof(double) - EXTRA_MARGIN), active_thread+1);
+    longjmp( (void*)(TSP1 - _JBLEN - EXTRA_MARGIN), active_thread+1);
 
 #define CHANGE_STACK( TSP1, TEMP )              \
   SET_SP( TSP1 )

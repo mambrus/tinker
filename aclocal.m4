@@ -73,8 +73,14 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
 		DEPMAKE=""
 	fi
 	AC_SUBST(DEPMAKE)
-
 	AC_SUBST(MAKEOPTS)
+
+	AC_ARG_ENABLE(subdir-verbose,
+		AS_HELP_STRING([--enable-subdir-verbose],[Build - If extra printouts should be made for each subdir build (=arg). Valid options are yes/no. Default is no]),
+		SUB_VERBOSE=$enableval,
+		SUB_VERBOSE="no"
+	)
+	AC_SUBST(SUB_VERBOSE)
 
 	if test -z $CRT0_OBJECT; then
                 AC_MSG_NOTICE([<<< ctr0.o is based on startup_gnu.ao (default)])
@@ -179,6 +185,7 @@ AC_DEFUN([TINKER_PRINT_COMP_SETTINGS],
    echo "               =================="
    echo "TK_MINIMUM_STACK_SIZE                     : $_TK_MINIMUM_STACK_SIZE"
    echo "TK_NORMAL_STACK_SIZE                      : $_TK_NORMAL_STACK_SIZE"
+   echo "TK_ROOT_STACK_SIZE                        : $_TK_ROOT_STACK_SIZE"
    echo "TK_MAX_THREADS                            : $_TK_MAX_THREADS"
    echo "TK_MAX_PRIO_LEVELS                        : $_TK_MAX_PRIO_LEVELS"
    echo "TK_MAX_THREADS_AT_PRIO                    : $_TK_MAX_THREADS_AT_PRIO"
@@ -207,6 +214,9 @@ AC_DEFUN([TINKER_ACTUATE_COMP_SETTINGS],
 [
    AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],  $_TK_MINIMUM_STACK_SIZE)
    AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],   $_TK_NORMAL_STACK_SIZE)
+   if test ! -z $_TK_ROOT_STACK_SIZE; then
+      AC_DEFINE_UNQUOTED([TK_ROOT_STACK_SIZE],     $_TK_ROOT_STACK_SIZE)
+   fi
    AC_DEFINE_UNQUOTED([TK_MAX_THREADS],         $_TK_MAX_THREADS)
    AC_DEFINE_UNQUOTED([TK_MAX_PRIO_LEVELS],     $_TK_MAX_PRIO_LEVELS)
    AC_DEFINE_UNQUOTED([TK_MAX_THREADS_AT_PRIO], $_TK_MAX_THREADS_AT_PRIO)
@@ -234,6 +244,16 @@ AC_DEFUN([TINKER_CONDITINAL_VERBOSE_PRINT],
    fi
 ])
 
+dnl prints input argument as hex-string. AWK is used for this as it is part
+dnl of every standard system (may need to detect this as well to be safe)
+AC_DEFUN([TINKER_TO_HEX],
+[
+	if [ "X$2" == "X" ]; then
+		echo $1 | awk '{printf("0x%x",$[1])}'
+	else
+		echo $1 | awk '{printf("0x%0$2x",$[1])}'
+	fi
+])
 
 dnl Mega everything. This function really needs to be broken up in bits...
 AC_DEFUN([TINKER_CONFIGURE],
@@ -269,6 +289,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	dnl
 	dnl Note: it's easy to mix up the two macros G++ and C++ because they look very similar
 	dnl.They indicate the same logic, but their contents are very different.
+	AC_PROG_CC
 	if test $USECPLUSPLUS != __tk_no; then
 		dnl Tries to use g++ as instructed. Should fall back on gcc if c++ is not available
 		AC_PROG_CXX
@@ -394,7 +415,9 @@ AC_DEFUN([TINKER_CONFIGURE],
 	if test $cross_compiling == yes; then
 		XCOMPILE=1
 		ABI=$(echo $host | sed -e s/.*-//)
-		ARCH=$(echo $host | sed -e s/-.*//)
+		if test "X${ARCH}" == "X"; then
+			ARCH=$(echo $host | sed -e s/-.*//)
+		fi
 	else
 		XCOMPILE=0
 
@@ -571,7 +594,6 @@ AC_DEFUN([TINKER_CONFIGURE],
 
 	AC_DEFINE_UNQUOTED([TK_USE_BUILTIN_SORT],$_TK_USE_BUILTIN_SORT)
 
-
    dnl Configurable entities (TinKer tuning defines)
    dnl NOTE: Default values *NOT* set here, These are supposed to be set in
    dnl target specific sub-trees dnl   which goes in each configure.in in such
@@ -589,6 +611,13 @@ AC_DEFUN([TINKER_CONFIGURE],
          [Stack-size used when stack-size is omitted ]
       ),
       _TK_NORMAL_STACK_SIZE=$enableval
+   )
+   AC_ARG_ENABLE(root_stack,
+      AS_HELP_STRING(
+         [--enable-root_stack=<val>],
+         [Stack-size for root-stack or process if hosted]
+      ),
+      _TK_ROOT_STACK_SIZE=$enableval
    )
    AC_ARG_ENABLE(max_threads,
       AS_HELP_STRING(

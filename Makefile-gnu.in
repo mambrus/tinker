@@ -33,6 +33,7 @@ TINKER_PATH    = @TINKER_PATH@
 THIS_DIR       = @THIS_DIR@
 CPU_OPT        = @CPU_OPT@
 DCPU           = @DCPU@
+SUB_VERBOSE    = @SUB_VERBOSE@
 
 
 .PHONY: all subdirs info depend link clean cleanall cleanhard install tryinstall rebuild flashit console
@@ -100,6 +101,7 @@ FOUND_CDEPS:= $(shell find . -name "*.d")
 FOUND_OPTMK:= $(shell ls -d *.mk 2>/dev/null)
 #-------1---------2---------3---------4---------5---------6---------7---------8
 
+ifeq ($(SUB_VERBOSE),yes)
 all: subdirs $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) $(OUTFILENAME) $(EXTRAS)
 	@echo "======================================================"
 	@echo "<<- Target [@PACKAGE_NAME@] built! ->>"
@@ -107,6 +109,27 @@ all: subdirs $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) $(OUTFILENAME) $(EXTRAS)
 
 subdirs:
 	$(MAKE_SUBDIRS_ALL) echo "<<< All subdirs of [@PACKAGE_NAME@] successfully built >>>"
+
+clean:
+	$(MAKE_SUBDIRS_CLEAN) echo "<<< All subdirs of [@PACKAGE_NAME@] successfully cleaned >>>"
+	rm -f $(ALL_COBJS) $(ALL_AOBJS) $(ALL_CDEPS) $(OUTFILENAME) $(OUTFILENAME).map $(EXTRAS)
+	@echo "======================================================"
+	@echo "<<- Target [@PACKAGE_NAME@] cleaned! ->>"
+	@echo "======================================================"
+
+else
+
+all: subdirs $(ALL_CDEPS) $(ALL_COBJS) $(ALL_AOBJS) $(OUTFILENAME) $(EXTRAS)
+
+subdirs:
+	@$(MAKE_SUBDIRS_ALL) echo "zipp" > /dev/null
+
+clean:
+	@$(MAKE_SUBDIRS_CLEAN) echo "<<< All subdirs of [@PACKAGE_NAME@] successfully cleaned >>>"
+	@rm -f $(ALL_COBJS) $(ALL_AOBJS) $(ALL_CDEPS) $(OUTFILENAME) $(OUTFILENAME).map $(EXTRAS)
+
+endif
+
 
 info:
 	@echo "======================================================"
@@ -119,13 +142,6 @@ info:
 	@echo "======================================================"
 	@echo "======================================================"
 	@echo $(ALL_COBJS)
-	@echo "======================================================"
-
-clean:
-	$(MAKE_SUBDIRS_CLEAN) echo "<<< All subdirs of [@PACKAGE_NAME@] successfully cleaned >>>"
-	rm -f $(ALL_COBJS) $(ALL_AOBJS) $(ALL_CDEPS) $(OUTFILENAME) $(OUTFILENAME).map $(EXTRAS)
-	@echo "======================================================"
-	@echo "<<- Target [@PACKAGE_NAME@] cleaned! ->>"
 	@echo "======================================================"
 
 cleanhard:
@@ -187,40 +203,54 @@ install: all
 	@echo "======================================================"
 
 %.ld:
+ifeq ($(SUB_VERBOSE),yes)
 	@echo =LD========================================================
+endif
 	cp ${@F} $@
 
 %crt0.o: ${THIS_DIR}/@CRT0_OBJECT@
+ifeq ($(SUB_VERBOSE),yes)
 	@echo =CRT0========================================================
+endif
 	cp @CRT0_OBJECT@ $@
 
 %.d: %.c @DEPMAKE@
+ifeq ($(SUB_VERBOSE),yes)
 	@echo =d2========================================================
 	echo $*
 	echo $@
+endif
 	@bash -c 'if [ ! -d ${@D} ]; then echo "-->>>> Creating directory: ${@D}"; mkdir -p ${@D}; fi'
 	$(CC) -MM $(CFLAGS) ${@:d=c} > temp
 	@sed  -e 's,\(.*\):,$*.o: $@,' > $@ < temp
 	@echo
 
 %.o: %.d @DEPMAKE@
+ifeq ($(SUB_VERBOSE),yes)
 	@echo =o2========================================================
+endif
 	$(CC) -c $(CFLAGS) ${@:o=c} -o $@
 	@echo
 
 %.ao: %.s @DEPMAKE@
+ifeq ($(SUB_VERBOSE),yes)
 	@echo =a2========================================================
+endif
 	$(CC) -c $(CFLAGS) ${@:ao=s} -o $@
 	@echo
 
 %.AO: %.S @DEPMAKE@
+ifeq ($(SUB_VERBOSE),yes)
 	@echo =A2========================================================
+endif
 	$(CC) -c $(CFLAGS) ${@:AO=S} -o $@
 	@echo
 
 
 $(OUTFILENAME): $(ALL_COBJS) $(ALL_AOBJS) $(SUBLIBOUT)
+ifeq ($(SUB_VERBOSE),yes)
 	@echo =LINK [@PACKAGE_NAME@]====================================
+endif
 	rm -f $(OUTFILENAME)
 	rm -f $(OUTFILENAME).map
 	touch $(OUTFILENAME).map

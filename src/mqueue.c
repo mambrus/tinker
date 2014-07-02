@@ -38,10 +38,6 @@ POSIX_RT
 @see PTHREAD
 
 @todo Consider replacing qsort with insert sort (or at least a non-reqursive version)
-
-@todo FIXME Figure out a better way to handle the queues names lengts than PATH_MAX
-This is a reserved definition and we're re-asigning it. Better name it differently.
-Perhaps making this a configurable option also?
 */
 
 
@@ -70,6 +66,12 @@ Perhaps making this a configurable option also?
    #ifndef PATH_MAX
    #define  PATH_MAX    24
    #endif //PATH_MAX
+#endif
+
+#if HOSTED
+   #define QNAME_LEN PATH_MAX
+#else
+   #define QNAME_LEN 24
 #endif
 
 #define _MQ_NO_WARN_VAR(x) ((void)x)  //!< Used silence warnings about unused variables
@@ -111,7 +113,7 @@ typedef struct {
 
 typedef struct{
    int                   taken;
-   char                  mq_name[PATH_MAX];
+   char                  mq_name[QNAME_LEN];
    struct mq_attr        mq_attr;
    MBox                  mBox;
    sem_t                 sem;
@@ -210,7 +212,7 @@ mqd_t mq_open(
    assert(sem_wait(&poolAccessSem) == 0);
 
    /*First test some harmless common things */
-   if (strlen(mq_name)>PATH_MAX ) { /* Name too long */
+   if (strlen(mq_name)>QNAME_LEN ) { /* Name too long */
       errno = ENAMETOOLONG;
       assert(sem_post(&poolAccessSem) == 0);
       return(-1);
@@ -242,7 +244,7 @@ mqd_t mq_open(
       /* Scan the pool to se if duplicate name exists */
       for (i=0; i<NUMBER_OF_QUEUES; i++) {
          if (queuePool[i].taken){
-            if (strncmp( queuePool[i].mq_name, mq_name, PATH_MAX) == 0){
+            if (strncmp( queuePool[i].mq_name, mq_name, QNAME_LEN) == 0){
                /* Duplicate name exists */
                if (oflags & O_CREAT) {
                   /*Exclusive ?*/
@@ -262,7 +264,7 @@ mqd_t mq_open(
       /* So far so good. Create the queue */
       if (!reuse) {
          queuePool[qId].taken = 1;
-         strncpy( queuePool[qId].mq_name, mq_name, PATH_MAX  );
+         strncpy( queuePool[qId].mq_name, mq_name, QNAME_LEN  );
 
          /* Create default attributes (TBD) */
          /*
@@ -327,7 +329,7 @@ mqd_t mq_open(
       if (!(oflags & O_CREAT)) { /*Hasn't been created this time. Find it!*/
          for (i=0; i<NUMBER_OF_QUEUES; i++) {
             if (queuePool[i].taken)
-               if (strncmp( queuePool[i].mq_name, mq_name, PATH_MAX) == 0)
+               if (strncmp( queuePool[i].mq_name, mq_name, QNAME_LEN) == 0)
                   break;
          }
          if ( i == NUMBER_OF_QUEUES ) {/* Not found ... */
@@ -577,7 +579,7 @@ static void initialize( void ) {
    assert(sem_wait(&poolAccessSem) == 0);
    for (i=0; i<NUMBER_OF_QUEUES; i++) {
 	   queuePool[i].taken = 0;
-           memset(queuePool[i].mq_name,'Q',PATH_MAX); //Makes a mark in memory. Easy to find the pool
+           memset(queuePool[i].mq_name,'Q',QNAME_LEN); //Makes a mark in memory. Easy to find the pool
            queuePool[i].mq_name[0]=0; //Also invalidate it for any string comparisments just in case
    }
    for (i=0; i<NUMBER_OF_FILES; i++) {

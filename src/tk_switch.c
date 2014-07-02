@@ -129,7 +129,7 @@ void _tk_wakeup_timedout_threads( void ){
 			if (__tk_threadPool[i].state & SLEEP){  //This one is sleeping. Time to wake him up?
 				//if ( act_time >= __tk_threadPool[i].wakeuptime ){
 				//if ( (signed long)(act_time - __tk_threadPool[i].wakeuptime) >= 0 ){
-				if ( (signed long)(difftime(act_time_us,__tk_threadPool[i].wakeuptime) ) >= 0 ){
+				if ( tk_difftime(act_time_us,__tk_threadPool[i].wakeuptime) >= 0 ){
 					__tk_threadPool[i].state = (PROCSTATE)(__tk_threadPool[i].state & ~_____QS_); /*Release ques also (but not the TERM bit)*/
 					__tk_threadPool[i].wakeupEvent = E_TIMER;
 				}

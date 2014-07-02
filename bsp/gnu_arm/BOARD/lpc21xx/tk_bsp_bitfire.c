@@ -28,8 +28,8 @@
 
 #include <tinker/config.h>
 
-#include "../tk_bsp.h"
-#include "../tk_systimer.h"
+#include "../../tk_bsp.h"
+#include "../../tk_systimer.h"
 #include <../src/tk_tick.h>
 
 #include "lpc2129_uart.h"

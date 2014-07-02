@@ -40,7 +40,7 @@ PTHREAD
 #if defined(__GNUC__)
 	#include <tinker/config.h>
 	#if (!defined(TK_COMP_PTHREAD) || TK_COMP_PTHREAD==0 ) && !defined(ECODES_ONLY)
-    #error "pthread.h" belongs to [pthread] that your configuration of TinKer did not include. Please reconfigure and rebuild TinKer.
+	#error "<pthread.h> belongs to a component that your build of TinKer didn't include. Please reconfigure and rebuild TinKer."
 	#endif
 	#define _PTHREAD_PRIOS TK_MAX_PRIO_LEVELS
 #else
@@ -52,10 +52,11 @@ PTHREAD
 #include <sys/types.h>
 #include <tk.h>
 
+/*
 #if defined(TINKER)
    #define main(x,y) tk_root() 
 #endif
-
+*/
 #define SCHED_OTHER 0    //!< not used by tinker
 #define SCHED_FIFO  1
 #define SCHED_RR    2

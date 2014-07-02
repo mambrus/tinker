@@ -1,0 +1,32 @@
+dnl This is the tinker/bsp/gnu_arm/MCPU/cortex-m3 configure.in file.
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.59])
+#AC_INIT(startup_gnu.s)
+AC_INIT(cortex-m3, [0.1.0])
+AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
+
+AC_CONFIG_AUX_DIR(../../../..)
+
+sources_c="vectortable.c cortex_m3.c"
+extern_includes="../.."
+
+# By putting the start module in the library we don't have to use crt0.o
+# Our start module will output to a special section that we can let the linker 
+# relocate automagically instead
+#sources_asm="exceptions.AO"
+sources_asm=""
+
+## Provide it as a crt0.o anyway (just to have something to provide)
+## Note that using it with libtinker will break the link in our case
+extras="../../../../lib/crt0.o"
+CRT0_OBJECT=startup_gnu.AO
+#CRT0_OBJECT=dummy.c
+
+TINKER_CONFIGURE(../../../..)
+AC_CONFIG_SUBDIRS([])
+
+dnl Update config.h
+AC_CONFIG_HEADER(../../../../include/tinker/config.h)
+
+AC_OUTPUT(Makefile-gnu)

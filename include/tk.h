@@ -292,6 +292,10 @@ extern int     tk_bsp_sysinit(void);
 
 /*- private functions **/
 
+#if defined(TINKER)
+   #define main(x,y) tk_root() 
+#endif
+
 #endif
 
   

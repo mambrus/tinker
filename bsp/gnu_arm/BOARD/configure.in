@@ -1,0 +1,57 @@
+dnl This is the tinker/bsp/gnu_arm/BOARD configure.in file.
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.59])
+
+AC_INIT(BOARD, [0.1.0])
+AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
+
+AC_CONFIG_AUX_DIR(../../..)
+
+sources_c="board.c"
+sources_asm=""
+extras=""
+
+TINKER_CONFIGURE(../../..)
+
+case "${BOARD}" in
+  stm32)
+    AC_MSG_NOTICE([<<< Board stm32 is configured >>>])
+
+	dnl default values that can be refined by deeper configs
+	ROM_START="0x00000000"
+	ROM_LEN="128K"
+	DATA_START="0x20000000"
+	DATA_LEN="20K"
+
+    AC_CONFIG_SUBDIRS([stm32])
+    ;;
+  lpc21xx)
+    AC_MSG_NOTICE([<<< Board lpc21xx is configured >>>])
+
+	dnl default values that can be refined by deeper configs
+	dnl 254k flash, 15K RAM
+	ROM_START="0x00000000"
+	ROM_LEN="0x0003E000"
+	DATA_START="0x40000000"
+	DATA_LEN="0x00003AF0"
+
+	AC_CONFIG_SUBDIRS([lpc21xx])
+    ;;
+  *)
+    AC_MSG_ERROR([<<< Sorry, board $BOARD is not supported >>>])
+    ;;
+esac
+
+
+dnl Update config.h
+AC_CONFIG_HEADER(../../../include/tinker/config.h)
+
+AC_OUTPUT(Makefile-gnu)
+
+AC_SUBST(ROM_START)
+AC_SUBST(ROM_LEN)
+AC_SUBST(DATA_START)
+AC_SUBST(DATA_LEN)
+
+AC_OUTPUT(../flash_gnu.ld)

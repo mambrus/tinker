@@ -189,6 +189,9 @@ thid_t         _tk_next_runable_thread( void );
 void           _tk_context_switch_to_thread( thid_t, thid_t);
 //------1---------2---------3---------4---------5---------6---------7---------8
 
+/* User-provided */
+extern int root(void);
+
 
 /*- public data **/
 
@@ -200,6 +203,28 @@ extern int __tk_IntFlagCntr;
 	#define tk_clock()  clock_stubbed()
 #else
 	#define tk_clock()  clock()
+#endif
+
+#if defined(TK_HOSTED)
+/* We don't care it's fast enough */
+#  define tk_difftime difftime
+#else
+/* Light version of ANSI difftime with the only difference that it doesn't
+   return a double, but a time_t instead. This guarantees correctness in
+   both value and signed-ness as long as:
+ *
+ * 1: No casting in (a macro couldn't prevent this)
+ * 2: Both Left-hand value and operands are of same size and all are signed.
+ * 3: The difference is never larger than ((1/2 value-range) -1) for time_t
+ * 4: Compiler can't figure out on beforehand that signed-overflow on any of
+ *    it's operands can occur, or it has the right to optimize any
+ *    evaluation to constantly TRUE or constantly FALSE (NEW).
+ *
+ * */
+   static time_t _tk_difftime(time_t t1, time_t t0) {
+      return t1 - t0;
+   }
+#  define tk_difftime _tk_difftime
 #endif
 
 #endif /* _IMPLEMENT_TK_H */
