@@ -10,14 +10,16 @@ AC_CONFIG_AUX_DIR(..)
 dnl The following is sadly not working properly. Use autoconf -I <dir> instead to get the aclocal.m4
 #AC_CONFIG_MACRO_DIR(../)
 
-sources_c="gnu_stubs.c tk_stubs.c stack.c"
+TINKER_CONFIGURE(..)
+
+sources_c="gnu_stubs.c tk_stubs.c"
 
 if test $HOSTED -eq 1; then
-   #Nothing additional for now. Mechanism kept for reference.
+   #No root-stack needed. Process stack is used as root-stack.
    sources_c="$sources_c"
+else
+   sources_c="$sources_c stack.c"
 fi
-
-TINKER_CONFIGURE(..)
 
 case "${host}" in
   arm-*-*)
