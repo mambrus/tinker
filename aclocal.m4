@@ -65,7 +65,7 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
 		MAKEOPTS=$enableval,
 		MAKEOPTS=""
 	)
-	
+
 	dnl The following test will handle defaults but also permit specific argument values
 	if test "$DEPMAKE" == __tk_yes; then
 		DEPMAKE="Makefile-gnu Makefile"
@@ -74,7 +74,7 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
 	fi
 	AC_SUBST(DEPMAKE)
 	AC_SUBST(MAKEOPTS)
-	
+
 	AC_ARG_ENABLE(subdir-verbose,
 		AS_HELP_STRING([--enable-subdir-verbose],[Build - If extra printouts should be made for each subdir build (=arg). Valid options are yes/no. Default is no]),
 		SUB_VERBOSE=$enableval,
@@ -244,6 +244,16 @@ AC_DEFUN([TINKER_CONDITINAL_VERBOSE_PRINT],
    fi
 ])
 
+dnl prints input argument as hex-string. AWK is used for this as it is part
+dnl of every standard system (may need to detect this as well to be safe)
+AC_DEFUN([TINKER_TO_HEX],
+[
+	if [ "X$2" == "X" ]; then
+		echo $1 | awk '{printf("0x%x",$[1])}'
+	else
+		echo $1 | awk '{printf("0x%0$2x",$[1])}'
+	fi
+])
 
 dnl Mega everything. This function really needs to be broken up in bits...
 AC_DEFUN([TINKER_CONFIGURE],
