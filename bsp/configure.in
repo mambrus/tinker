@@ -10,6 +10,10 @@ AC_CONFIG_AUX_DIR(..)
 dnl The following is sadly not working properly. Use autoconf -I <dir> instead to get the aclocal.m4
 #AC_CONFIG_MACRO_DIR(../)
 
+dnl Need to expand before sources are set to get some variable(s) set.
+dnl TODO
+dnl It would be better if TINKER_CONFIGURE didn't depend on sources and that
+dnl Makefile (and others) generation get a macro of their own.
 TINKER_CONFIGURE(..)
 
 sources_c="gnu_stubs.c tk_stubs.c"
@@ -20,6 +24,11 @@ if test $HOSTED -eq 1; then
 else
    sources_c="$sources_c stack.c"
 fi
+
+dnl NOTE that if any sources gets added *after* TINKER_CONFIGURE is
+dnl expanded, the below is  mandatory
+ALL_C=$sources_c
+AC_SUBST(ALL_C)
 
 case "${host}" in
   arm-*-*)

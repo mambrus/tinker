@@ -18,9 +18,9 @@ TINKER_CONFIGURE(../../../..)
 AC_CONFIG_SUBDIRS([])
 
 dnl Tunings. Main reason they are here is to set defaults specific to this target.
-dnl This part will is an itermediate solution and takes over the rols of >>tk_tuning.h<<
+dnl This part will is an intermediate solution and takes over the role of >>tk_tuning.h<<
 dnl Future solutions might me an ordinary text file that both GNU and non GNU build 
-dnl   sytems can make use of
+dnl systems can make use of
 
 if test $SYSTEM == 'hixs'; then
    AC_DEFINE([TK_SYSTEM],__SYS_HIXS__)
