@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michael Ambrus                                  *
+ *   Copyright (C) 2014 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -17,46 +17,108 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
-/*!
-@file
-
+#ifndef TK_CONTEXT_H
+#define TK_CONTEXT_H
+/*
 asm ( "statements" : output_registers : input_registers : clobbered_registers);
 
 http://tisu.mit.jyu.fi/embedded/TIE345/luentokalvot/Embedded_3_ARM.pdf
 http://www.arm.com/miscPDFs/9658.pdf
-
 */
 
-#ifndef TK_HWSYS_GNU_ARM_H
-#define TK_HWSYS_GNU_ARM_H
-
-#define EXTRA_MARGIN 20                //<! Define SP this below the theoretical top (some compilers require it)
-
-/*!
-@name Mapping stack allocation API for this target
-*/
-//@{
-#define stalloc      malloc
+#define stalloc malloc
 #define stalloc_free free
-//@}
 
+#if defined (__GNUC__)
+#include <tinker/config.h>
+#include <stdint.h>
+#endif
+
+/* Default and fall-back as this is the most fool-proof way to get all
+   context saved & restored */
+#ifndef JUMPER_BASED
+	#define JUMPER_BASED 1
+#endif
+
+#if !TK_HOSTED
 /*
-#define TK_CLI()                          \
-   asm __volatile__ (" CLI ");
+	Need select ability on sub-arch for this to fully work (TBD)
+	#define TK_CLI() asm __volatile__ (" CPSID aif\n\t");
+	#define TK_STI() asm __volatile__ (" CPSIE aif\n\t");
+*/
+	#define TK_CLI() asm __volatile__ (" CPSID if\n\t");
+	#define TK_STI() asm __volatile__ (" CPSIE if\n\t");
+#else
+	#define TK_CLI()
+	#define TK_STI()
+#endif
 
-#define TK_STI()                          \
-   asm __volatile__ (" STI ");
-*/   
+//------1---------2---------3---------4---------5---------6---------7---------8
+#if JUMPER_BASED
+//------1---------2---------3---------4---------5---------6---------7---------8
+#include <setjmp.h>
 
-#define TK_CLI()
-#define TK_STI()
+#ifndef _JBLEN
+#error JBLEN is expected but not known (undefined)
+#endif
+
+#define EXTRA_MARGIN (2*sizeof(uint64_t))
+
+#define PUSHALL()   /*No need to PUSHALL on this arch - Already done by setjmp*/
+#define POPALL()    /*No need to POPALL on this arch - Already done by longjmp*/
+
+#define GET_SP( OUT_SP )                  \
+   asm __volatile__ (                     \
+      "mov %0, %%r13 "                    \
+      : "=r" (OUT_SP)                     \
+      : /**/                              \
+      : "memory"                          \
+   )
+
+#define SET_SP( IN_SP )                   \
+   asm __volatile__ (                     \
+      "mov %%r13, %0 "                    \
+      : /**/                              \
+      : "r" (IN_SP)                       \
+   )  /*Note, no clobber (intentional)*/
+
+#define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                      \
+   GET_SP( TSP1 );                                                               \
+   TEMP = setjmp( (double*)(TSP1 - (_JBLEN*sizeof(double)) - EXTRA_MARGIN));     \
+   if (TEMP != (active_thread+1))                                                \
+      GET_SP( TSP1 );
+
+#define CHANGE_STACK_POP_CPU( TSP1, TEMP )                                       \
+	longjmp( (double*)(TSP1 - (_JBLEN*sizeof(double)) - EXTRA_MARGIN), active_thread+1);
 
 
-   
+#define CHANGE_STACK( TSP1, TEMP )                                               \
+  SET_SP( TSP1 );
+
+#define INIT_SP( _stack_SP, _stack_begin )                                       \
+   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN;                \
+   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;
+
+//Does nothing on this port
+#define BIND_STACK( _stack_struct, _temp2 )
+
+//Allready a char', no need to do handle in any special way.
+#define STACK_PTR( ADDR )                 \
+   (ADDR.tstack)
+
+//Not needed to do anything really. But just in case, follow the new convention
+#define REINIT_STACKADDR( ADDR, size )    \
+   (ADDR.stack_size = size)
+
+
+//------1---------2---------3---------4---------5---------6---------7---------8
+#else //Not JUMPER_BASED
+//------1---------2---------3---------4---------5---------6---------7---------8
+#define EXTRA_MARGIN 20
+
 #define REAL_STACK_SIZE( TCB )            \
-   ( TCB.stack_size ) 
-   
+   ( TCB.stack_size )
+
 
 /*
 */
@@ -112,7 +174,7 @@ http://www.arm.com/miscPDFs/9658.pdf
       : /**/                              \
       : "memory"                          \
    )
-  
+
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )   \
    asm __volatile__ (                     \
       "mov %%r13, %0 "                    \
@@ -124,7 +186,7 @@ http://www.arm.com/miscPDFs/9658.pdf
 
 //   asm __volatile__ (                  \
 //      "add %r11, %r13, #0x14"            \
-//   );  /*Note, no clobber (intentional)*/ 
+//   );  /*Note, no clobber (intentional)*/
 
 
 
@@ -141,7 +203,7 @@ http://www.arm.com/miscPDFs/9658.pdf
    _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;
 
 //Does nothing on this port
-#define BIND_STACK( _stack_struct, _temp2 )     
+#define BIND_STACK( _stack_struct, _temp2 )
 
 
 
@@ -164,11 +226,11 @@ http://www.arm.com/miscPDFs/9658.pdf
       "ldmia sp!, {r0-r12,lr}"            \
    );
 
-//Allready a char', no need to do handle in any special way.
+//Already a char', no need to do handle in any special way.
 #define STACK_PTR( ADDR ) \
    (ADDR.tstack)
 
-//Not needed to do anything really. But just in case, follow the new convention 
+//Not needed to do anything really. But just in case, follow the new convention
 #define REINIT_STACKADDR( ADDR, size ) \
    (ADDR.stack_size = size)
 
@@ -215,6 +277,9 @@ http://www.arm.com/miscPDFs/9658.pdf
    __asm__( "mov %0, #1", "=r" (param))
 
 
+//------1---------2---------3---------4---------5---------6---------7---------8
+#endif //JUMPER_BASED
+//------1---------2---------3---------4---------5---------6---------7---------8
 #endif
 
 
