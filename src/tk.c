@@ -459,7 +459,7 @@ int tk_delete_thread(
       bury_it = _tk_try_detach_parent(Thid, TK_FALSE);
    }
 
-   if (bury_it){   //Can we buy the damned thing allready? or do we have to try another round?
+   if (bury_it){   //Can we bury the damned thing allready? or do we have to try another round?
       Prio = __tk_threadPool[Thid].Prio;
       Idx = __tk_threadPool[Thid].Idx;
       assert(__tk_schedule[Prio][Idx] == Thid);
@@ -469,17 +469,22 @@ int tk_delete_thread(
          __tk_schedule[Prio][i] = __tk_schedule[Prio][i+1];
          __tk_threadPool[__tk_schedule[Prio][i]].Idx = i;
       }
+
       //#if DEBUG
       // not needed, could cause problems if procs last..
       //__tk_schedule[Prio][i] = 0;
       //#endif
+
       //Take away the process fom __tk_roundrobin_prio_idxs
       __tk_roundrobin_prio_idxs[Prio].procs_at_prio --;
-      if (__tk_roundrobin_prio_idxs[Prio].curr_idx >= __tk_roundrobin_prio_idxs[Prio].procs_at_prio){
+      if (__tk_roundrobin_prio_idxs[Prio].curr_idx >=
+         __tk_roundrobin_prio_idxs[Prio].procs_at_prio)
+      {
          __tk_roundrobin_prio_idxs[Prio].curr_idx = 0;
       }
       //Make it final - remove it's primary resource: it's stack
       stalloc_free( STACK_PTR(__tk_threadPool[Thid].stack_begin) );
+
       __tk_threadPool[Thid].valid = TK_FALSE;
    }
 
@@ -523,6 +528,7 @@ thid_t tk_create_thread(
    //where in __tk_scheduler to put thread id
    thid_t   slot_idx = __tk_roundrobin_prio_idxs[prio].procs_at_prio;
    unsigned int   error = 0;
+   thid_t valid_proc_idx;
 
    //Error handling needs improvement (don't forget taking special care of
    //__tk_proc_idx)
@@ -604,16 +610,23 @@ thid_t tk_create_thread(
    #endif
    #endif
 
+   /* The following will also yield to get thread in place, which if another
+      creation/deletion occurs will interfere with kernel consistency */
+   valid_proc_idx = __tk_proc_idx;
    _tk_construct_thread_scope( f, inpar, __tk_proc_idx );
 
-   //Put process in scedule - assume tight tight schedule
+   /* After yield, correct what has potentially become broken */
+   slot_idx = __tk_roundrobin_prio_idxs[prio].procs_at_prio; /* Re-reed*/
+   __tk_threadPool[__tk_proc_idx].Idx = slot_idx;            /* Re-write*/
+
+   //Put process in schedule - assume tight tight schedule
    __tk_schedule[prio][slot_idx] = __tk_proc_idx;
    //Increase the amount of procs at same prio
    __tk_roundrobin_prio_idxs[prio].procs_at_prio++;
 
    //Make a integrity certification on the stack of this thread
-   //INTEGRITY_CERTIFY_STACK(__tk_threadPool[__tk_proc_idx], ct_temp3);
-   return __tk_proc_idx ;
+   //INTEGRITY_CERTIFY_STACK(__tk_threadPool[valid_proc_idx], ct_temp3);
+   return valid_proc_idx ;
 }
 
 int tk_join(thid_t PID, void ** value_ptr){
@@ -956,21 +969,41 @@ to determine which one that would be.
 */
 
 thid_t _tk_next_runable_thread(){
-   int idx,prio,/*cidx,midx,*/nbTry,loop,return_Thid,p_at_p; TK_BOOL found;
+   int idx,prio,nbTry,loop, p_at_p;
+   thid_t return_Thid;
+   TK_BOOL found;
+#ifndef NDEBUG
+   thid_t last_thid = (thid_t)-1;
+#endif
 
    return_Thid  = idle_Thid; //In case no runnable proc is found...
    found        = TK_FALSE;
 
-   for(prio=0;prio<TK_MAX_PRIO_LEVELS && !found;prio++){ //prio from highets to lowest
+   /* Iterate over prio, from highest (=0) to lowest */
+   for(
+      prio=0;
+      prio<TK_MAX_PRIO_LEVELS && !found;
+      prio++
+   ){
       p_at_p = __tk_roundrobin_prio_idxs[prio].procs_at_prio;
-      if (p_at_p != 0){ //No procs at prio to run.. prevent division by zero
+      /* No procs at prio to run.. Prevent division by zero */
+      if (p_at_p != 0) {
          //Manual RR from current to next ready
          idx =(__tk_roundrobin_prio_idxs[prio].curr_idx);
          //cidx = __tk_roundrobin_prio_idxs[prio].curr_idx;
          nbTry = __tk_roundrobin_prio_idxs[prio].procs_at_prio;
-         for(  loop = 0;
-               loop < nbTry && !found;
-               loop++){
+         for(
+            loop = 0;
+            loop < nbTry && !found;
+               loop++
+         ) {
+            /* Asserts below search for bad logic in list. These are true
+             * asserts */
+#ifndef NDEBUG
+            assert(__tk_threadPool[__tk_schedule[prio][idx]].valid);
+            assert(__tk_threadPool[__tk_schedule[prio][idx]].Thid != last_thid);
+            last_thid=__tk_threadPool[__tk_schedule[prio][idx]].Thid;
+#endif
             if (__tk_threadPool[__tk_schedule[prio][idx]].state == READY){
                return_Thid = __tk_schedule[prio][idx];
                found = TK_TRUE;
