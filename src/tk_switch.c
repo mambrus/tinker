@@ -1,5 +1,7 @@
 /***************************************************************************
- *   Copyright (C) 20006- 2014 by Michael Ambrus                           *
+ *   Copyright (C) 20006, Michael Ambrus                                   *
+ *   michael.ambrus@maquet.com                                             *
+ *   Copyright (C) 2014, Michael Ambrus                                    *
  *   michael.ambrus@gmail.com                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *

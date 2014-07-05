@@ -1,6 +1,9 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michael Ambrus                                  *
+ *   Copyright (C) 1998, Michael Ambrus                                    *
+ *   Copyright (C) 2005,2006, Michael Ambrus                               *
  *   michael.ambrus@maquet.com                                             *
+ *   Copyright (C) 2014 by Michael Ambrus                                  *
+ *   michael.ambrus@gmail.com                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
