@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
- *   michael.ambrus@maquet.com                                             *
+ *   Copyright (C) 20006- 2014 by Michael Ambrus                           *
+ *   michael.ambrus@gmail.com                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -107,14 +107,12 @@ void _tk_wakeup_timedout_threads( void ){
 	thid_t i;
 	clock_t act_time_us;
 	int _npreempt;
-	
 
-	
 	//act_time = tk_clock();
 	act_time_us    = tk_clock() * (1000000uL/CLOCKS_PER_SEC);
-	//Note: The following is not just a sanity check, the list might be 
-	//fragmented.Explains also why the the whole table (pool) has to be 
-	//travesesd, and not just [0..procs_in_use]
+	//Note: The following is not just a sanity check, the list might be
+	//fragmented.Explains also why the whole table (pool) has to be
+	//traversed, and not just [0..procs_in_use]
 	for(i=0;i<TK_MAX_THREADS;i++){
 		TK_CLI();
 		_npreempt = npreempt;
@@ -125,34 +123,35 @@ void _tk_wakeup_timedout_threads( void ){
 		}
 
 		TK_CLI();
-		if (__tk_threadPool[i].valid){		
+		if (__tk_threadPool[i].valid){
 			if (__tk_threadPool[i].state & SLEEP){  //This one is sleeping. Time to wake him up?
 				//if ( act_time >= __tk_threadPool[i].wakeuptime ){
 				//if ( (signed long)(act_time - __tk_threadPool[i].wakeuptime) >= 0 ){
 				if ( tk_difftime(act_time_us,__tk_threadPool[i].wakeuptime) >= 0 ){
-					__tk_threadPool[i].state = (PROCSTATE)(__tk_threadPool[i].state & ~_____QS_); /*Release ques also (but not the TERM bit)*/
+               /*Release queues also (but not the TERM bit)*/
+					__tk_threadPool[i].state = (PROCSTATE)(__tk_threadPool[i].state & ~_____QS_);
 					__tk_threadPool[i].wakeupEvent = E_TIMER;
 				}
 			}
-		
-			//This thread wants to die (zombied). But make sure someone else is doing it 
-			//(otherwize we would remove our own stack, which is both ugly and dangerous)
-			if ((__tk_threadPool[i].state & ZOMBI) && (i != __tk_active_thread)){ 
-			
-				//We shuld not really need to do the following line. Should 
+
+			//This thread wants to die (zombied). But make sure someone else is doing it
+			//(otherwise we would remove our own stack, which is both ugly and dangerous)
+			if ((__tk_threadPool[i].state & ZOMBI) && (i != __tk_active_thread)){
+
+				//We should not really need to do the following line. Should
 				//have been done in any canceling mechanism of the thread.
 				//Note and commented call saved for future reference.
-			
-				//_tk_detach_children(i); 
-			
-			
+
+				//_tk_detach_children(i);
+
+
 				if ( _tk_try_detach_parent(i, TK_FALSE) ){
-					//Finally, it should now be safe to send the zombied thread to Nirvana 
+					//Finally, it should now be safe to send the zombied thread to Nirvana
 					tk_delete_thread(i);
-				} 
-				//else: The parent is either blocking on a brother or sister OR 
-				//neither, but might consider blocking later. I.e. we have to stay 
-				//zombied until it desides (i.e. either joins us, dies or someone detaches us).
+				}
+				//else: The parent is either blocking on a brother or sister OR
+				//neither, but might consider blocking later. I.e. we have to stay
+				//zombied until it decides (i.e. either joins us, dies or someone detaches us).
 			}
 		}
 		TK_STI();
