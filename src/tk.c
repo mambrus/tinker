@@ -1066,7 +1066,7 @@ void _tk_context_switch_to_thread(
 
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );
 
-   #ifdef  JUMPER_BASED
+   #if  JUMPER_BASED
    if (cswTEMP==0)
    #endif
    {
@@ -1099,7 +1099,7 @@ void _tk_half_switch (
 
    PUSH_CPU_GETCUR_STACK( cswTSP, cswTEMP );
 
-   #ifdef  JUMPER_BASED
+   #if  JUMPER_BASED
    if (cswTEMP==0)
    #endif
    {
