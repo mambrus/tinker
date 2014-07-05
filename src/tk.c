@@ -108,6 +108,13 @@ any of them.   errno.h
    #include <filesys/filesys.h>
 #endif
 
+#ifndef MARKUP_STACKS_ON_START
+   #if TK_HOSTED
+      #define MARKUP_STACKS_ON_START __tk_no
+   #else
+      #define MARKUP_STACKS_ON_START __tk_yes
+   #endif
+#endif
 
 //@}
 
@@ -600,15 +607,17 @@ thid_t tk_create_thread(
    __tk_threadPool[__tk_active_thread].noChilds++;
    __tk_procs_in_use++;
 
-   #ifdef DEBUG
-   #if defined (HAVE_MEMSET)
-      #include <string.h>
-      memset(STACK_PTR(__tk_threadPool[__tk_proc_idx].stack_begin),(unsigned char)__tk_proc_idx,stack_size-8);
-   #else
+#if MARKUP_STACKS_ON_START
+#  if defined (HAVE_MEMSET)
+#  include <string.h>
+      memset(STACK_PTR(__tk_threadPool[__tk_proc_idx].stack_begin),
+            (unsigned char)__tk_proc_idx,stack_size-8);
+#  else
       for (i=0;i<stack_size;i++)
-         STACK_PTR(__tk_threadPool[__tk_proc_idx].stack_begin)[i] = (unsigned char)__tk_proc_idx;
-   #endif
-   #endif
+         STACK_PTR(__tk_threadPool[__tk_proc_idx].stack_begin)[i] =
+            (unsigned char)__tk_proc_idx;
+#  endif
+#endif
 
    /* The following will also yield to get thread in place, which if another
       creation/deletion occurs will interfere with kernel consistency */
