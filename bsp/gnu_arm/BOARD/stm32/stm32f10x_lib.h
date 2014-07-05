@@ -25,42 +25,37 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_map.h"
 
-
 #ifdef _EXTI
-  #include "stm32f10x_exti.h"
+#include "stm32f10x_exti.h"
 #endif /*_EXTI */
 
 #ifdef _FLASH
-  #include "stm32f10x_flash.h"
+#include "stm32f10x_flash.h"
 #endif /*_FLASH */
 
 #ifdef _GPIO
-  #include "stm32f10x_gpio.h"
+#include "stm32f10x_gpio.h"
 #endif /*_GPIO */
 
-
 #ifdef _NVIC
-  #include "stm32f10x_nvic.h"
+#include "stm32f10x_nvic.h"
 #endif /*_NVIC */
 
 #ifdef _PWR
-  #include "stm32f10x_pwr.h"
+#include "stm32f10x_pwr.h"
 #endif /*_PWR */
 
 #ifdef _RCC
-  #include "stm32f10x_rcc.h"
+#include "stm32f10x_rcc.h"
 #endif /*_RCC */
 
-
 #ifdef _SysTick
-  #include "stm32f10x_systick.h"
+#include "stm32f10x_systick.h"
 #endif /*_SysTick */
 
-
 #ifdef _USART
-  #include "stm32f10x_usart.h"
+#include "stm32f10x_usart.h"
 #endif /*_USART */
-
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -68,6 +63,6 @@
 /* Exported functions ------------------------------------------------------- */
 void debug(void);
 
-#endif /* __STM32F10x_LIB_H */
+#endif				/* __STM32F10x_LIB_H */
 
 /******************* (C) COPYRIGHT 2007 STMicroelectronics *****END OF FILE****/

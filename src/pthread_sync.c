@@ -43,13 +43,16 @@ PTHREAD_SYNC
 #include "implement_tk.h"
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-unsigned long tk_pthread_sync( void ){
-   return ERR_OK;
+unsigned long tk_pthread_sync(void)
+{
+	return ERR_OK;
 }
 
-unsigned long tk_pthread_sync_destruct( void ){
-   return ERR_OK;
+unsigned long tk_pthread_sync_destruct(void)
+{
+	return ERR_OK;
 }
+
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
 The mutex lock primitive.
@@ -57,27 +60,28 @@ The mutex lock primitive.
 This function will change the state in the scheduler, but it will not yield.
 Instead it returns a \b recommendation to yield or not.
 */
-int _mutex_lock_primitive (pthread_mutex_t *mutex){
-   int rc = 0;
+int _mutex_lock_primitive(pthread_mutex_t * mutex)
+{
+	int rc = 0;
 
-   if (mutex->owner == NULL){
-      mutex->owner = pthread_self();
-      mutex->blocked.numb = 0;
-   }else{
-      pthread_t self;
-      self = pthread_self();
-      self->bOnId.kind = BON_PMUTEX;
-      self->bOnId.entity.mutex = mutex;
-      self->state = (PROCSTATE)(self->state | QUEUE);
+	if (mutex->owner == NULL) {
+		mutex->owner = pthread_self();
+		mutex->blocked.numb = 0;
+	} else {
+		pthread_t self;
+		self = pthread_self();
+		self->bOnId.kind = BON_PMUTEX;
+		self->bOnId.entity.mutex = mutex;
+		self->state = (PROCSTATE) (self->state | QUEUE);
 
-      mutex->linkOf=_PBON_NOLINK;
-      mutex->link.dummy=NULL;
-      mutex->blocked.thread[mutex->blocked.numb] = self;
-      mutex->blocked.numb++;
+		mutex->linkOf = _PBON_NOLINK;
+		mutex->link.dummy = NULL;
+		mutex->blocked.thread[mutex->blocked.numb] = self;
+		mutex->blocked.numb++;
 
-      rc = 1;  //Schedule state has chanced, yield recommended
-   }
-   return rc;
+		rc = 1;		//Schedule state has chanced, yield recommended
+	}
+	return rc;
 }
 
 /*!
@@ -86,68 +90,71 @@ The mutex unlock primitive.
 This function will change the state in the scheduler, but it will not yield.
 Instead it returns a \b recommendation to yield or not.
 */
-int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast){
-   int rc = 0;
-   pthread_t self = pthread_self();
-   unsigned prio = TK_MAX_PRIO_LEVELS;
-   int i;
+int _mutex_unlock_primitive(pthread_mutex_t * mutex, bcast_t bcast)
+{
+	int rc = 0;
+	pthread_t self = pthread_self();
+	unsigned prio = TK_MAX_PRIO_LEVELS;
+	int i;
 /*
    if ( !pthread_equal(mutex->owner,self) )
       return 1;
 */
-   if ( mutex->owner == NULL ){
-      //refuse to use
-      assert(mutex->blocked.numb == 0);
-      return 0;
-   }
+	if (mutex->owner == NULL) {
+		//refuse to use
+		assert(mutex->blocked.numb == 0);
+		return 0;
+	}
 
-   if (mutex->blocked.numb == 0){
-      //No one to unblock
-      mutex->owner = NULL;
-      return 0;
-   }
+	if (mutex->blocked.numb == 0) {
+		//No one to unblock
+		mutex->owner = NULL;
+		return 0;
+	}
 
-   rc = 1;  //Schedule state has chanced, yield recomended
-   //One ore more blocked, yeild recomended.
+	rc = 1;			//Schedule state has chanced, yield recomended
+	//One ore more blocked, yeild recomended.
 
-   if (bcast){
-      //Release all, let despatcher select in which order to run.
-      for (i=0; i<mutex->blocked.numb;i++){
-         mutex->blocked.thread[i]->bOnId.kind         =     BON_SCHED;
-         mutex->blocked.thread[i]->bOnId.entity.tcb   =     NULL;
-         mutex->blocked.thread[i]->state              =     (PROCSTATE)(mutex->blocked.thread[i]->state & ~QUEUE);
-         mutex->blocked.thread[i]->wakeupEvent        =     E_ITC;
-      }
-      mutex->blocked.numb=0;
+	if (bcast) {
+		//Release all, let despatcher select in which order to run.
+		for (i = 0; i < mutex->blocked.numb; i++) {
+			mutex->blocked.thread[i]->bOnId.kind = BON_SCHED;
+			mutex->blocked.thread[i]->bOnId.entity.tcb = NULL;
+			mutex->blocked.thread[i]->state =
+			    (PROCSTATE) (mutex->blocked.thread[i]->
+					 state & ~QUEUE);
+			mutex->blocked.thread[i]->wakeupEvent = E_ITC;
+		}
+		mutex->blocked.numb = 0;
 
-   }else{
-      pthread_t newOwner;
-      int j;
+	} else {
+		pthread_t newOwner;
+		int j;
 
-      for (i=0; i<mutex->blocked.numb;i++){
-         //Find the one first in order with the highest prio (PRIO then FIFO)
-         if (mutex->blocked.thread[i]->Prio < prio){
-            j = i;
-            prio = mutex->blocked.thread[i]->Prio;
-         }
-      }
-      //The new owner is selected. Release him only, and adjust new mutext data.
-      mutex->owner = newOwner = mutex->blocked.thread[j];
+		for (i = 0; i < mutex->blocked.numb; i++) {
+			//Find the one first in order with the highest prio (PRIO then FIFO)
+			if (mutex->blocked.thread[i]->Prio < prio) {
+				j = i;
+				prio = mutex->blocked.thread[i]->Prio;
+			}
+		}
+		//The new owner is selected. Release him only, and adjust new mutext data.
+		mutex->owner = newOwner = mutex->blocked.thread[j];
 
-      //Compress the blocked list
-      for (i=j; i<mutex->blocked.numb; i++){
-         mutex->blocked.thread[i]=mutex->blocked.thread[i+1];
-      }
+		//Compress the blocked list
+		for (i = j; i < mutex->blocked.numb; i++) {
+			mutex->blocked.thread[i] = mutex->blocked.thread[i + 1];
+		}
 
-      mutex->blocked.numb--;
+		mutex->blocked.numb--;
 
-      newOwner->bOnId.kind = BON_SCHED;
-      newOwner->bOnId.entity.tcb = NULL;
-      newOwner->state = (PROCSTATE)(newOwner->state & ~QUEUE);
-      newOwner->wakeupEvent = E_ITC;
-   }
+		newOwner->bOnId.kind = BON_SCHED;
+		newOwner->bOnId.entity.tcb = NULL;
+		newOwner->state = (PROCSTATE) (newOwner->state & ~QUEUE);
+		newOwner->wakeupEvent = E_ITC;
+	}
 
-   return rc;
+	return rc;
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -165,7 +172,6 @@ Syncronisation between threads, i.e.
 <p><b>Go gack to</b> \ref COMPONENTS</p>
 
 */
-
 
 /*!
  *  @defgroup CVSLOG_pthread_sync_c pthread_sync_c
@@ -212,17 +218,3 @@ Syncronisation between threads, i.e.
  *
  *
  *******************************************************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-

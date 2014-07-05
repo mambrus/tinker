@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 #ifndef TK_HWSYS_KEILC166_H
 #define TK_HWSYS_KEILC166_H
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -43,7 +42,6 @@ class which is limited to a maximum of 64K.
 */
 #pragma dynamicusrstk
 
-
 /*!
 The SAVEUSR directive instructs the C166 Compiler to save temporary results and
 saved-by-callee variables on the user stack. This option may be necessary if
@@ -67,11 +65,9 @@ http://www.keil.com/support/man/docs/c166/c166_reentrant.htm
 
 #pragma NOFD
 
-
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 #include <stddef.h>
-
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
@@ -87,11 +83,10 @@ device must follow Keils predifined devices, which you can find as files in the 
 */
 
 #if defined( DEVICE )
-   #include REGH( DEVICE )
+#include REGH( DEVICE )
 #else
-   #error "Error, No device specified - can't determine register definition file !!!!!!!!!!!"
+#error "Error, No device specified - can't determine register definition file !!!!!!!!!!!"
 #endif
-
 
 /*!
 How printk is implemented on this target
@@ -109,7 +104,6 @@ void *stalloc (TLEN size);
 void stalloc_free (void *memp);
 void stalloc_init_mempool (void MTYP *pool, TLEN size);
 */
-
 
 /*
 #include <dave/MAIN.H>
@@ -150,8 +144,6 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ push  STKOV                  }                                                                      \
    __asm{ push  STKUN                  }
 
-
-
 #define POPALL()                                                                                              \
    __asm{ pop  STKUN                   }                                                                      \
    __asm{ pop  STKOV                   }                                                                      \
@@ -180,13 +172,11 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ pop  R0                      }                                                                      \
    __asm{ pop  PSW                     }
 
-
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                                                   \
    PUSHALL()                                                                                                  \
    TEMP = 0ul;                      /*Important, or the next assembly "cast" will fail (not clearing 16 MSB */ \
    __asm{ mov TEMP,SP             } /*The current SP is now the new _newSP, save it.      */                  \
-   TSP1 = ((unsigned long)SPSEG<<16) + (unsigned long)TEMP; /*  This value will then be copied into the TCB    */
-
+   TSP1 = ((unsigned long)SPSEG<<16) + (unsigned long)TEMP;	/*  This value will then be copied into the TCB    */
 
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )                                                                    \
    TEMP = (unsigned long)TSP1 >> 16;                                                                          \
@@ -216,7 +206,6 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ mov STKOV,_temp2          }                                                                       \
    _temp2 = _stack_struct.systemstack.reg._SP + _stack_struct.sys_stack_size;                               \
    __asm{ mov STKUN,_temp2          }
-                                                                                                            \
 
 #define GET_THREADS_RETVAL( THRETVAL, TEMP  )                                                               \
    __asm{ mov THRETVAL, R4 }                                                                                \
@@ -226,16 +215,14 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
 #define STACK_PTR( ADDR )                                                                                   \
    ((char *)ADDR.systemstack.linear)
 
-
 extern unsigned long Q_ASC0;
-void _tk_initialize_system_ques( );
+void _tk_initialize_system_ques();
 
 #define REINIT_STACKADDR( ADDR, size )                                                                      \
    _tk_reinit_stackaddr_xc167keil( &ADDR, size )
 
 #define REAL_STACK_SIZE( ADDR )                                                                             \
    ( ADDR.sys_stack_size )
-
 
 #define TRY_CATCH_STACK_ERROR( STACK_T, TEMP )                                \
    __asm { mov TEMP, R0 }                                                     \
@@ -248,17 +235,13 @@ void _tk_initialize_system_ques( );
       tk_exit(TC_ERR_STACK);                                                  \
    }
 
-
-void _do_trap (unsigned int num);
+void _do_trap(unsigned int num);
 #define TRAP( NUM )                                                           \
    _do_trap( NUM )
-
-
 
 #define OBSOLETE_TK_CLI()                                                     \
    __asm{ BCLR PSW_IEN }                                                      \
    _tk_IntFlagCntr++;
-
 
 #define OBSOLETE_TK_STI()	                                              \
    _tk_IntFlagCntr--;  /*Is ok since CLI is active no one can interfere*/      \
@@ -270,7 +253,6 @@ void _do_trap (unsigned int num);
 
 #define TK_STI()	                                                      \
    __asm{ BSET PSW_IEN }
-
 
 #define STK_CRC_CALC( TEMP )                                               \
    __asm { mov TEMP, R0 }                                                  \
@@ -315,7 +297,6 @@ void _do_trap (unsigned int num);
    __asm { ROL R2, R4 }    \
    __asm { mov TEMP, R2 }
 
-
 /*!
 @ingroup kernel_internals
 
@@ -325,8 +306,6 @@ TBD
 #define INTEGRITY_CERTIFY_STACK( TCB_T, TEMP)               \
    STK_CRC_CALC( TEMP );                                    \
    TCB_T.stack_crc = TEMP
-
-
 
 /*!
 @ingroup kernel_internals
@@ -343,14 +322,11 @@ TBD
       }                                                        \
    }
 
-
-
-#endif //TK_HWSYS_KEILC166_H
+#endif				//TK_HWSYS_KEILC166_H
 
 /*
 
 */
-
 
 /*!
  * @defgroup CVSLOG_tk_hwsys_keilC166_h tk_hwsys_keilC166_h

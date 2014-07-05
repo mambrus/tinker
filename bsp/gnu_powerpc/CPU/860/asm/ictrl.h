@@ -26,7 +26,6 @@ The instruction support control register (ICTRL), shown in Figure 44-18, is used
 conﬁgure instruction breakpoint operations.
 */
 
-
 #include <sys/types.h>
 
 /*
@@ -64,7 +63,6 @@ conﬁgure instruction breakpoint operations.
  26   DIW2EN
  27   DIW3EN
 
-
  28      IFM   Ignore ﬁrst match, only for instruction breakpoints.
                0 Do not ignore ﬁrst match, used for “go to x” (reset value).
                1 Ignore ﬁrst match (used for “continue”).
@@ -88,34 +86,32 @@ conﬁgure instruction breakpoint operations.
 
 */
 
-typedef union{
+typedef union {
 	__uint32_t raw;
 	struct {
 
-		__uint32_t CTA		:3;
-		__uint32_t CTB		:3;
-		__uint32_t CTC		:3;
-		__uint32_t CTD		:3;
+		__uint32_t CTA:3;
+		__uint32_t CTB:3;
+		__uint32_t CTC:3;
+		__uint32_t CTD:3;
 
-		__uint32_t IW0		:2;
-		__uint32_t IW1		:2;
-		__uint32_t IW2		:2;
-		__uint32_t IW3		:2;
+		__uint32_t IW0:2;
+		__uint32_t IW1:2;
+		__uint32_t IW2:2;
+		__uint32_t IW3:2;
 
-		__uint32_t SIW0EN	:1;
-		__uint32_t SIW1EN	:1;
-		__uint32_t SIW2EN	:1;
-		__uint32_t SIW3EN	:1;
-		__uint32_t DIW0EN	:1;
-		__uint32_t DIW1EN	:1;
-		__uint32_t DIW2EN	:1;
-		__uint32_t DIW3EN	:1;
-		__uint32_t IFM		:1;
+		__uint32_t SIW0EN:1;
+		__uint32_t SIW1EN:1;
+		__uint32_t SIW2EN:1;
+		__uint32_t SIW3EN:1;
+		__uint32_t DIW0EN:1;
+		__uint32_t DIW1EN:1;
+		__uint32_t DIW2EN:1;
+		__uint32_t DIW3EN:1;
+		__uint32_t IFM:1;
 
-		__uint32_t ISCT_SER	:3;
-	}f;
-}ictrl_t;
+		__uint32_t ISCT_SER:3;
+	} f;
+} ictrl_t;
 
-
-#endif //ICTRL_H
-
+#endif				//ICTRL_H

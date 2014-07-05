@@ -18,10 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+void vPortYieldProcessor(void) __attribute__ ((interrupt("SWI"), naked));
 
-void vPortYieldProcessor( void ) __attribute__((interrupt("SWI"), naked));
-
-void vPortYieldProcessor( void )
+void vPortYieldProcessor(void)
 {
 
 }

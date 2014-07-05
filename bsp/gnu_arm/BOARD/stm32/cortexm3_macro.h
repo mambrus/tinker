@@ -44,6 +44,6 @@ void __RESETFAULTMASK(void);
 void __BASEPRICONFIG(u32 NewPriority);
 u32 __GetBASEPRI(void);
 
-#endif /* __CORTEXM3_MACRO_H */
+#endif				/* __CORTEXM3_MACRO_H */
 
 /******************* (C) COPYRIGHT 2007 STMicroelectronics *****END OF FILE****/

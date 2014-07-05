@@ -21,8 +21,6 @@
 
 // USER CODE END
 
-
-
 /*
 ******************************************************************************
 @Note
@@ -37,7 +35,6 @@ Bus arbitration enabled
 ******************************************************************************
 */
 
-
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
@@ -49,7 +46,6 @@ Bus arbitration enabled
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Macros
 //****************************************************************************
@@ -57,7 +53,6 @@ Bus arbitration enabled
 // USER CODE BEGIN (MAIN_Header,3)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Defines
@@ -68,11 +63,9 @@ Bus arbitration enabled
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Declaration of SFRs
 //****************************************************************************
-
 
 // The source and destination pointers SRCPx and DSTPx
 #define SRCP0                  (*((uword volatile *) 0xEC40))
@@ -4019,42 +4012,39 @@ Bus arbitration enabled
 // Constant Value 0's Register
 #define ZEROS                  (*((uword volatile *) 0xFF1C))
 
-
 //****************************************************************************
 // @Typedefs
 //****************************************************************************
 
-typedef unsigned char  ubyte;    // 1 byte unsigned; prefix: ub
-typedef signed char    sbyte;    // 1 byte signed;   prefix: sb
-typedef unsigned int   uword;    // 2 byte unsigned; prefix: uw
-typedef signed int     sword;    // 2 byte signed;   prefix: sw
-typedef unsigned long  ulong;    // 4 byte unsigned; prefix: ul
-typedef signed long    slong;    // 4 byte signed;   prefix: sl
+typedef unsigned char ubyte;	// 1 byte unsigned; prefix: ub
+typedef signed char sbyte;	// 1 byte signed;   prefix: sb
+typedef unsigned int uword;	// 2 byte unsigned; prefix: uw
+typedef signed int sword;	// 2 byte signed;   prefix: sw
+typedef unsigned long ulong;	// 4 byte unsigned; prefix: ul
+typedef signed long slong;	// 4 byte signed;   prefix: sl
 
-typedef volatile struct
-{
-  unsigned int    bit0      : 1;
-  unsigned int    bit1      : 1;
-  unsigned int    bit2      : 1;
-  unsigned int    bit3      : 1;
-  unsigned int    bit4      : 1;
-  unsigned int    bit5      : 1;
-  unsigned int    bit6      : 1;
-  unsigned int    bit7      : 1;
-  unsigned int    bit8      : 1;
-  unsigned int    bit9      : 1;
-  unsigned int    bit10     : 1;
-  unsigned int    bit11     : 1;
-  unsigned int    bit12     : 1;
-  unsigned int    bit13     : 1;
-  unsigned int    bit14     : 1;
-  unsigned int    bit15     : 1;
-}  T_Reg16;
+typedef volatile struct {
+	unsigned int bit0:1;
+	unsigned int bit1:1;
+	unsigned int bit2:1;
+	unsigned int bit3:1;
+	unsigned int bit4:1;
+	unsigned int bit5:1;
+	unsigned int bit6:1;
+	unsigned int bit7:1;
+	unsigned int bit8:1;
+	unsigned int bit9:1;
+	unsigned int bit10:1;
+	unsigned int bit11:1;
+	unsigned int bit12:1;
+	unsigned int bit13:1;
+	unsigned int bit14:1;
+	unsigned int bit15:1;
+} T_Reg16;
 
 // USER CODE BEGIN (MAIN_Header,5)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Imported Global Variables
@@ -4064,7 +4054,6 @@ typedef volatile struct
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Global Variables
 //****************************************************************************
@@ -4073,18 +4062,15 @@ typedef volatile struct
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Prototypes Of Global Functions
 //****************************************************************************
-
 
 void MAIN_vUnlockProtecReg(void);
 
 // USER CODE BEGIN (MAIN_Header,8)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Interrupt Vectors
@@ -4093,7 +4079,6 @@ void MAIN_vUnlockProtecReg(void);
 // USER CODE BEGIN (MAIN_Header,9)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Project Includes
@@ -4111,5 +4096,4 @@ void MAIN_vUnlockProtecReg(void);
 
 // USER CODE END
 
-
-#endif  // ifndef _MAIN_H_
+#endif				// ifndef _MAIN_H_

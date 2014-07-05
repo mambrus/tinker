@@ -49,15 +49,13 @@ PTHREAD
 @see http://www.freepascal.org/docs-html/rtl/unixtype/index-3.html
 */
 
-
-
 #ifndef _IMPLEMENT_PTHREAD_H
 #define _IMPLEMENT_PTHREAD_H
 #include "stypes.h"
 #include "tk_tuning.h"
 
 #ifndef TK_MAX_THREADS
-	#error TK_MAX_THREADS not defined. Did you --enable-max_threads=<val> properly?
+#error TK_MAX_THREADS not defined. Did you --enable-max_threads=<val> properly?
 #endif
 
 /*!
@@ -82,14 +80,12 @@ functions to set the thread attributes.
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_attr_t.html
 */
 struct pthread_attr_t_ {
-   unsigned long  valid;            //
-   stack_t        stackaddr;        // Used to be a vioid*
-   size_t         stacksize;        //
-   int            detachstate;      //
-   int            priority;         //
+	unsigned long valid;	//
+	stack_t stackaddr;	// Used to be a vioid*
+	size_t stacksize;	//
+	int detachstate;	//
+	int priority;		//
 };
-
-
 
 /*!
 TBD
@@ -97,32 +93,13 @@ TBD
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_key_t.html
 */
 struct pthread_key_t_ {
-   int TBD_THIS_STRUCT;
+	int TBD_THIS_STRUCT;
 };
 
-typedef enum {BSINGLE=0, BCAST}bcast_t;
+typedef enum { BSINGLE = 0, BCAST } bcast_t;
 
-int _mutex_lock_primitive (pthread_mutex_t *mutex);
-int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+int _mutex_lock_primitive(pthread_mutex_t * mutex);
+int _mutex_unlock_primitive(pthread_mutex_t * mutex, bcast_t bcast);
 
 //#include <semaphore.h>
 //typedef enum {
@@ -131,13 +108,13 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 //   * The thread is still "alive" if the numeric value of the
 //   * state is greater or equal "PThreadStateRunning".
 //   */
-//PThreadStateInitial = 0,	/* Thread not running                   */
-//PThreadStateRunning,	        /* Thread alive & kicking               */
-//PThreadStateSuspended,	/* Thread alive but suspended           */
-//PThreadStateCanceling,	/* Thread alive but and is              */
+//PThreadStateInitial = 0,      /* Thread not running                   */
+//PThreadStateRunning,          /* Thread alive & kicking               */
+//PThreadStateSuspended,        /* Thread alive but suspended           */
+//PThreadStateCanceling,        /* Thread alive but and is              */
 //                              /* in the process of terminating        */
 //                              /* due to a cancellation request        */
-//PThreadStateException,	/* Thread alive but exiting             */
+//PThreadStateException,        /* Thread alive but exiting             */
 //                              /* due to an exception                  */
 //PThreadStateLast
 //}
@@ -149,11 +126,11 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 //   * This enumeration represents the reason why a thread has
 //   * terminated/is terminating.
 //   */
-//PThreadDemisePeaceful = 0,	/* Death due natural causes     */
-//PThreadDemiseCancelled,	/* Death due to user cancel     */
-//PThreadDemiseException,	/* Death due to unhandled       */
+//PThreadDemisePeaceful = 0,    /* Death due natural causes     */
+//PThreadDemiseCancelled,       /* Death due to user cancel     */
+//PThreadDemiseException,       /* Death due to unhandled       */
 //                              /* exception                    */
-//PThreadDemiseNotDead	/* I'm not dead!                */
+//PThreadDemiseNotDead  /* I'm not dead!                */
 //}
 //PThreadDemise;
 //
@@ -238,16 +215,16 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 //struct pthread_cond_t_ {
 //long waiters;                       /* # waiting threads             */
 //pthread_mutex_t waitersLock;        /* Mutex that guards access to
-//					waiter count                  */
+//                                      waiter count                  */
 //sem_t sema;                         /* Queue up threads waiting for the
-//					condition to become signaled  */
+//                                      condition to become signaled  */
 //HANDLE waitersDone;                 /* An auto reset event used by the
-//					broadcast/signal thread to wait
-//					for the waiting thread(s) to wake
-//					up and get a chance at the
-//					semaphore                     */
+//                                      broadcast/signal thread to wait
+//                                      for the waiting thread(s) to wake
+//                                      up and get a chance at the
+//                                      semaphore                     */
 //int wasBroadcast;                   /* keeps track if we are signaling
-//					or broadcasting               */
+//                                      or broadcasting               */
 //};
 //
 //
@@ -332,7 +309,7 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 //* Severity Values:
 //*/
 //#define SE_SUCCESS              0x00
-//#define SE_INFORMATION	        0x01
+//#define SE_INFORMATION                0x01
 //#define SE_WARNING              0x02
 //#define SE_ERROR                0x03
 //
@@ -344,7 +321,6 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 	   ( (_facility) << 16 ) |	/* Facility Code	*/ \
 	   ( (_exception) <<  0 )	/* Exception Code	*/ \
 	   ) )
-
 
 ///*
 //* We choose one specific Facility/Error code combination to
@@ -359,8 +335,8 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 			      PTHREAD_SERVICES_ERROR )
 
 */
-//#define PTHREAD_SERVICES_FACILITY		0xBAD
-//#define PTHREAD_SERVICES_ERROR			0xDEED
+//#define PTHREAD_SERVICES_FACILITY             0xBAD
+//#define PTHREAD_SERVICES_ERROR                        0xDEED
 //
 //#else
 //
@@ -411,13 +387,13 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 //void _pthread_callUserDestroyRoutines (pthread_t thread);
 //
 //int _pthread_tkAssocCreate (ThreadKeyAssoc ** assocP,
-//			   pthread_t thread,
-//			   pthread_key_t key);
+//                         pthread_t thread,
+//                         pthread_key_t key);
 //
 //void _pthread_tkAssocDestroy (ThreadKeyAssoc * assoc);
 //
 //int _pthread_sem_timedwait (sem_t * sem,
-//			   const struct timespec * abstime);
+//                         const struct timespec * abstime);
 //
 //#ifdef __cplusplus
 //}
@@ -456,7 +432,7 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 //
 //#endif /* __CYGWIN32__ || __CYGWIN__ */
 
-#endif /* _IMPLEMENT_PTHREAD_H */
+#endif				/* _IMPLEMENT_PTHREAD_H */
 
 /*!
  * @defgroup CVSLOG_implement_pthread_h implement_pthread_h

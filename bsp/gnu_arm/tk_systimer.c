@@ -19,14 +19,14 @@
  ***************************************************************************/
 
  /*!
- @brief systimer for GNU_ARM
+    @brief systimer for GNU_ARM
 
- This is the generic systimer hendler. It's common for all ARM boards, and
- possibly even for all embedded GNU targets.
+    This is the generic systimer hendler. It's common for all ARM boards, and
+    possibly even for all embedded GNU targets.
 
- @note that initialization and setup is handled by board specific code.
+    @note that initialization and setup is handled by board specific code.
 
- */
+  */
 
 #if !defined(BOARD)
 #error BOARD needs to be defined
@@ -37,18 +37,17 @@
 #include "BOARD/lpc21xx/lpc21xx_bits.h"
 #endif
 
-#define TICK_OWNER         //!< By defining this, tell systimer data to reside in this oject module
+#define TICK_OWNER		//!< By defining this, tell systimer data to reside in this oject module
 #include <../src/tk_tick.h>
 
 #include "tk_systimer.h"
 
-void systimer_Handler( void )
+void systimer_Handler(void)
 {
-   TIMER0_IR   |=  BIT( IR_MR0 );  //Reset interrupt, command to Timer HW
-   _tk_tick_advance_mS(PERT);
-   VICVectAddr = 0x0;              //Interrupt complete (tell interrup controller)
+	TIMER0_IR |= BIT(IR_MR0);	//Reset interrupt, command to Timer HW
+	_tk_tick_advance_mS(PERT);
+	VICVectAddr = 0x0;	//Interrupt complete (tell interrup controller)
 }
-
 
 /*!
  * @defgroup CVSLOG_tk_systimer_c tk_systimer_c
@@ -65,4 +64,3 @@ void systimer_Handler( void )
  *
  *
  */
-

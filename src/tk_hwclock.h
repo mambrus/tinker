@@ -18,14 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
-
 #ifndef TK_HWCLOCK_H
 #define TK_HWCLOCK_H
 
 /*- include files **/
 //#include <time.h>
-
 
 /*- public definitions **/
 
@@ -43,32 +40,31 @@ service is supporting/providing. Note that the upper part (i.e. this
 file) is generic and is supposed to be transparent over many different
 targets.
 */
-typedef struct{
-   unsigned long   freq_hz;   /*!<  The frequency driving the HWclock
-                                    expressed in Hertz. I.e.
-                                    frequency <b>after</b> any prescaler
-                                    or chain of prescalers. This is
-                                    the actual <b>drift compensated</b>
-                                    frequency (not the theoretical
-                                    one found printed on the physical
-                                    oscillator circuit) */
-   unsigned char  res;        /*!<  Number of bits this HWClock_ handles
-                                    */
-   HWtick_t       perPebbles; /*!<  Variable holds the vaule supposed to
-                                    reload the clock with in case
-                                    ofperiodical operations (i.e. CLK1
-                                    operation) */
-   HWtick_t       maxPebbles; /*!<  Number of HW-ticks the HWclock_ can
-                                    handle without fraction. Any timeout
-                                    event requireing longer than
-                                    this time needs to have it's time
-                                    chopped up in multiples of this
-                                    amount of time. This value is
-                                    interesting for CLK2 operations
-                                    @note Make sure type holding this
-                                    value is at least 32 bits long. */
-}HWclock_stats_t;
-
+typedef struct {
+	unsigned long freq_hz;	/*!<  The frequency driving the HWclock
+				   expressed in Hertz. I.e.
+				   frequency <b>after</b> any prescaler
+				   or chain of prescalers. This is
+				   the actual <b>drift compensated</b>
+				   frequency (not the theoretical
+				   one found printed on the physical
+				   oscillator circuit) */
+	unsigned char res;	/*!<  Number of bits this HWClock_ handles
+				 */
+	HWtick_t perPebbles;	/*!<  Variable holds the vaule supposed to
+				   reload the clock with in case
+				   ofperiodical operations (i.e. CLK1
+				   operation) */
+	HWtick_t maxPebbles;	/*!<  Number of HW-ticks the HWclock_ can
+				   handle without fraction. Any timeout
+				   event requireing longer than
+				   this time needs to have it's time
+				   chopped up in multiples of this
+				   amount of time. This value is
+				   interesting for CLK2 operations
+				   @note Make sure type holding this
+				   value is at least 32 bits long. */
+} HWclock_stats_t;
 
 /*!
 Get the quality of the HWclock. Will assume this never changes after system
@@ -82,7 +78,6 @@ used for high-res timeout events (ptime)
 @note This function must be provided by lower level BSP
 */
 #define tk_getHWclock_Quality(HWclockNR, HWclock_stats) tk_getHWclock_Quality_##HWclockNR(HWclock_stats)
-
 
 /*!
 Set new time in HWclock. Pending timer will be prevented from fireing and current
@@ -121,7 +116,6 @@ used for high-res timeout events (ptime)
 */
 #define tk_armHWclock(HWclockNR) tk_armHWclock_##HWclockNR()
 
-
 /*!
 Disarms the HW clock so that it can NOT fire (i.e. disables generating an interrupt).
 
@@ -131,7 +125,6 @@ used for high-res timeout events (ptime)
 @note This function must be provided by lower level BSP
 */
 #define tk_disarmHWclock(HWclockNR) tk_disarmHWclock_##HWclockNR()
-
 
 /*------------------------ obsolete follows? -----------------------------------*/
 
@@ -153,7 +146,6 @@ allready happened.
 */
 //extern int disarmHWclock_       ();
 
-
 /*- external data **/
 
 /*- internal functions **/
@@ -169,23 +161,19 @@ allready happened.
 /*- include lower layer **/
 
 #if defined(_WIN32) &&  defined(_MSC_VER)
-   #error "HW timers not implemented for this target yet"
+#error "HW timers not implemented for this target yet"
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
-   #error "HW timers not implemented for this target yet"
+#error "HW timers not implemented for this target yet"
 #elif defined( __C166__ )
-   #include <../bsp/XC167_Keil/dave/GPT1.H>
-   #include <../bsp/XC167_Keil/dave/GPT2.H>
+#include <../bsp/XC167_Keil/dave/GPT1.H>
+#include <../bsp/XC167_Keil/dave/GPT2.H>
 #elif defined(__GNUC__)
-   #error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"
+#error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"
 #else
-   #error "Can\'t determine the target for the TINKER kernel"
+#error "Can\'t determine the target for the TINKER kernel"
 #endif
 
-
-
-
 #endif
-
 
 /*!
  * @defgroup CVSLOG_tk_hwclock_h tk_hwclock_h
@@ -254,12 +242,3 @@ allready happened.
  *
  *
  *******************************************************************/
-
-
-
-
-
-
-
-
-

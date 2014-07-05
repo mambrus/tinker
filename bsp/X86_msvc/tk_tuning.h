@@ -18,13 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 //------1---------2---------3---------4---------5---------6---------7---------8
 #ifndef TK_TUNING_H
 #define TK_TUNING_H
 
 //App & system
-#define TK_MINIMUM_STACK_SIZE 0x0600  //!< TBD this @todo TBD this
+#define TK_MINIMUM_STACK_SIZE 0x0600	//!< TBD this @todo TBD this
 #define TK_NORMAL_STACK_SIZE  0x1200
 
 //SCHED
@@ -37,9 +36,7 @@
 #define TK_MAX_BLOCKED_ON_Q    	TK_MAX_THREADS
 #define TK_MAX_NUM_Q       		0x100
 
-
-#endif  //TK_TUNING_H
-
+#endif				//TK_TUNING_H
 
 /*!
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
@@ -95,9 +92,3 @@
  *
  *
  *******************************************************************/
-
-
-
-
-
-

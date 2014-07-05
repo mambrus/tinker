@@ -30,7 +30,6 @@
 A very hastily done wrapper done in 1hr. Probably needs a lot of more work.
 </p>
 
-
 For in-depth discussions about this component, see \ref
 POSIX_RT
 
@@ -43,17 +42,13 @@ POSIX_RT
 #include <assert.h>
 #include <tk_itc.h>
 
-
 /*!
 @brief Defines a semaphore. Equivalent to TinKer \ref sm_create
 
 @see http://www.opengroup.org/onlinepubs/009695399/functions/sem_init.html
 */
-int sem_init (
-	sem_t          *sem,
-	int            pshared,
-	unsigned int   value
-){
+int sem_init(sem_t * sem, int pshared, unsigned int value)
+{
 	unsigned int rc;
 
 	if (pshared != 0)
@@ -62,7 +57,7 @@ int sem_init (
 	rc = sm_create("PS", value, FIFO, sem);
 	errno = rc;
 
-	if (rc==ERR_OK)
+	if (rc == ERR_OK)
 		return 0;
 	else
 		return EINVAL;
@@ -75,7 +70,8 @@ int sem_init (
 
 @see http://www.opengroup.org/onlinepubs/009695399/functions/sem_destroy.html
 */
-int sem_destroy (sem_t * sem){
+int sem_destroy(sem_t * sem)
+{
 	assert("sem_destroy - Not implemented" == NULL);
 
 	return 0;
@@ -86,7 +82,8 @@ int sem_destroy (sem_t * sem){
 
 @see http://www.opengroup.org/onlinepubs/009695399/functions/sem_trywait.html
 */
-int sem_trywait (sem_t * sem){
+int sem_trywait(sem_t * sem)
+{
 	assert("sem_trywait - Not implemented" == NULL);
 
 	return 0;
@@ -97,19 +94,19 @@ int sem_trywait (sem_t * sem){
 
 @see http://www.opengroup.org/onlinepubs/009695399/functions/sem_wait.html
 */
-int sem_wait (sem_t * sem){
+int sem_wait(sem_t * sem)
+{
 	unsigned int rc;
 	extern int __tk_IntFlagCntr;
 
-
 	if (__tk_IntFlagCntr)
-		rc = sm_p_ny(*sem,WAIT,TK_FOREVER);
+		rc = sm_p_ny(*sem, WAIT, TK_FOREVER);
 	else
-		rc = sm_p(*sem,WAIT,TK_FOREVER);
+		rc = sm_p(*sem, WAIT, TK_FOREVER);
 
 	errno = rc;
 
-	if (rc==ERR_OK)
+	if (rc == ERR_OK)
 		return 0;
 	else
 		return EINVAL;
@@ -122,7 +119,8 @@ int sem_wait (sem_t * sem){
 
 @see http://www.opengroup.org/onlinepubs/009695399/functions/sem_post.html
 */
-int sem_post (sem_t * sem){
+int sem_post(sem_t * sem)
+{
 	unsigned int rc;
 	extern int __tk_IntFlagCntr;
 
@@ -133,7 +131,7 @@ int sem_post (sem_t * sem){
 
 	errno = rc;
 
-	if (rc==ERR_OK)
+	if (rc == ERR_OK)
 		return 0;
 	else
 		return EINVAL;

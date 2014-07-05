@@ -90,8 +90,8 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 
 #include <setjmp.h>
 
-#define EXTRA_MARGIN 20   /* Define SP this below the theoretical top (some
-                             compilers require it) */
+#define EXTRA_MARGIN 20		/* Define SP this below the theoretical top (some
+				   compilers require it) */
 #define JUMPER_BASED
 
 /*!
@@ -102,17 +102,16 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #define stalloc_free free
 //@}
 
-
 #define MAGIC_NUMBER 7327
 
-#define TK_CLI()  /*TBD FIXME*/
-#define TK_STI()  /*TBD FIXME*/
+#define TK_CLI()		/*TBD FIXME */
+#define TK_STI()		/*TBD FIXME */
 
 #define REAL_STACK_SIZE( TCB )            \
    ( TCB.stack_size )
 
-#define PUSHALL()	/*No need to PUSHALL on this target- Allready done by setjmp*/
-#define POPALL()	/*No need to POPALL on this target- Allready done by longjmp*/
+#define PUSHALL()		/*No need to PUSHALL on this target- Allready done by setjmp */
+#define POPALL()		/*No need to POPALL on this target- Allready done by longjmp */
 
 #define GET_SP( OUT_SP )					\
    asm __volatile__ (						\
@@ -127,7 +126,7 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
       "lwz %%sp,%[mystack]"					\
       : /**/							\
       : [mystack] "m" (IN_SP)					\
-   );  /*Note, no clobber (intentional)*/
+   );				/*Note, no clobber (intentional) */
 
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )			\
    GET_SP( TSP1 )						\
@@ -137,7 +136,6 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )		\
 	longjmp( (double*)(TSP1 - (_JBLEN*sizeof(double)) - EXTRA_MARGIN), active_thread+1);
-
 
 #define CHANGE_STACK( TSP1, TEMP )        		\
   SET_SP( TSP1 )
@@ -157,10 +155,6 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #define REINIT_STACKADDR( ADDR, size ) \
    (ADDR.stack_size = size)
 
-
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-
 #endif
-
-

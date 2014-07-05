@@ -40,5 +40,4 @@ In ch.h for now...
 */
 //#define DP_ERAM 3
 
-#endif //hwboard_h
-
+#endif				//hwboard_h

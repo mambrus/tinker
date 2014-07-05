@@ -38,45 +38,43 @@ the running code.
 */
 
 typedef enum {
-	ISA_UNKNOWN	= 0,		//!< Unknown type
-	ISA_IFDIR	= S_IFDIR,	//!< directory file.
-	ISA_IFCHR	= S_IFCHR,	//!< character-oriented device file.
-	ISA_IFBLK	= S_IFBLK,	//!< block-oriented device file.
-	ISA_IFREG	= S_IFREG,	//!< regular file
-	ISA_IFLNK	= S_IFLNK,	//!< symbolic link
-	ISA_IFSOCK	= S_IFSOCK,	//!< socket
-	ISA_IFIFO	= S_IFIFO	//!< FIFO or pipe
-}tk_mode_t;
+	ISA_UNKNOWN = 0,	//!< Unknown type
+	ISA_IFDIR = S_IFDIR,	//!< directory file.
+	ISA_IFCHR = S_IFCHR,	//!< character-oriented device file.
+	ISA_IFBLK = S_IFBLK,	//!< block-oriented device file.
+	ISA_IFREG = S_IFREG,	//!< regular file
+	ISA_IFLNK = S_IFLNK,	//!< symbolic link
+	ISA_IFSOCK = S_IFSOCK,	//!< socket
+	ISA_IFIFO = S_IFIFO	//!< FIFO or pipe
+} tk_mode_t;
 
-typedef struct tk_mount_s{
-	tk_iohandle_t	*io_device;		//!<  Driver entries to mounted low-level device
-	tk_iohandle_t	*io_fstype;		//!<  Entries to mounted fstype (future feature - now always NULL);
+typedef struct tk_mount_s {
+	tk_iohandle_t *io_device;	//!<  Driver entries to mounted low-level device
+	tk_iohandle_t *io_fstype;	//!<  Entries to mounted fstype (future feature - now always NULL);
 	//const char *fstype;
 	unsigned long int options;
 	//const void *data;
-}tk_mount_t;
+} tk_mount_t;
 
-typedef struct tk_inode_s{
-	tk_id_t			id;		//!<  A "unique" ID number for this node (a counter)
-	char			*name;		//!<  Name of the node
-	tk_mode_t		mode;		//!<  What kind of node this is
-	struct tk_mount_s	*mount;		//!<  If this is a mountpoint this field contains the mount options. If not, this is zero.
-	struct tk_inode_s 	*belong;	//!<  Whom this node belongs to
-	struct tk_inode_s	*next;		//!<  Next node on the same level
-	struct tk_inode_s	*down;		//!<  Points to first inode that belongs to this one
-	void			*idata;		/*!<  Certain IO can instanciate driver multiple times.
-						      This field is for instance specific driver data.*/
-	tk_iohandle_t	*iohandle;		//!<  Operations that can be made on this i-node
-}tk_inode_t;
+typedef struct tk_inode_s {
+	tk_id_t id;		//!<  A "unique" ID number for this node (a counter)
+	char *name;		//!<  Name of the node
+	tk_mode_t mode;		//!<  What kind of node this is
+	struct tk_mount_s *mount;	//!<  If this is a mountpoint this field contains the mount options. If not, this is zero.
+	struct tk_inode_s *belong;	//!<  Whom this node belongs to
+	struct tk_inode_s *next;	//!<  Next node on the same level
+	struct tk_inode_s *down;	//!<  Points to first inode that belongs to this one
+	void *idata;		/*!<  Certain IO can instanciate driver multiple times.
+				   This field is for instance specific driver data. */
+	tk_iohandle_t *iohandle;	//!<  Operations that can be made on this i-node
+} tk_inode_t;
 
-int 		imknod		(tk_inode_t *ci, const char *filename, mode_t mode, dev_t dev);
-tk_inode_t 	*isearch	(tk_inode_t *ci, const char*s);
-char 		*igetname	(const char *s);
-void 		igetpath	(char *buff, const char *s);
+int imknod(tk_inode_t * ci, const char *filename, mode_t mode, dev_t dev);
+tk_inode_t *isearch(tk_inode_t * ci, const char *s);
+char *igetname(const char *s);
+void igetpath(char *buff, const char *s);
 
-
-#endif //TK_INODE_H
-
+#endif				//TK_INODE_H
 
 /*
 ifdir
@@ -103,6 +101,3 @@ node  ->	node  ->	node  ->	node  ->	NULL
 	node  ->	node  ->	node  ->	node  ->	NULL
 
 */
-
-
-

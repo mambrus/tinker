@@ -18,23 +18,21 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
  /*!
- @file
+    @file
 
- High resolution clock function and internal
- system clock storage owner.
- */
-
+    High resolution clock function and internal
+    system clock storage owner.
+  */
 
 #define TICK_OWNER
 #include "tk_tick.h"
 #include <tk.h>
 #include <stdio.h>
 #include <time.h>
-#include <tk_hwsys.h> //Should really be moved into tk_hwclock.h, but we cant since Keil prepocessor is buggd.
-
+#include <tk_hwsys.h>		//Should really be moved into tk_hwclock.h, but we cant since Keil prepocessor is buggd.
 
 #if defined(HW_CLOCKED)
-   #include "tk_hwclock.h"
+#include "tk_hwclock.h"
 #endif
 
 /*
@@ -76,7 +74,6 @@ timer register until next update of "ticks". In practice, the precision
 is determined by the HW and is of date of this writing in practice 100
 or 200 nS.
 
-
 The time is presented in the ANSI struct timespec to better fit the
 pthreads component. This is however an expression in (signed)
 32-bit value seconds and (signed) 32-bit valued nS fractions. This
@@ -113,23 +110,22 @@ inventing 64-bit operations.
 @todo see the second note in getuptime
 */
 
-void getnanouptime (
-   struct timespec *tp            //!< The returned uptime in nS presision
-){
-   unsigned long    /*MSS,*/MSmS; // 32-bit <b>H</b>igh part of seconds, millisecons
-   unsigned long        LSS,LSmS; // 32-bit <b>L</b>ow part of seconds, millisecons
-   unsigned long        MSfrac;   // whole seconds left from MSmS part
-   unsigned long        MSrest;   // The rest after converting to seconds (to propagate down to nS)
-   unsigned long        pebbles;  // Remainig value in HWclock register
-   unsigned long        nS;       // Time passed since last update of tick expressed in nS. Lets hope we dont need a 64 bit value for this.
-   unsigned long        TnS;      // Temp of the above
+void getnanouptime(struct timespec *tp	//!< The returned uptime in nS presision
+    )
+{
+	unsigned long /*MSS, */ MSmS;	// 32-bit <b>H</b>igh part of seconds, millisecons
+	unsigned long LSS, LSmS;	// 32-bit <b>L</b>ow part of seconds, millisecons
+	unsigned long MSfrac;	// whole seconds left from MSmS part
+	unsigned long MSrest;	// The rest after converting to seconds (to propagate down to nS)
+	unsigned long pebbles;	// Remainig value in HWclock register
+	unsigned long nS;	// Time passed since last update of tick expressed in nS. Lets hope we dont need a 64 bit value for this.
+	unsigned long TnS;	// Temp of the above
 
-   #if defined(HW_CLOCKED)
-   HWclock_stats_t      HWclock_stats;
-   #endif
+#if defined(HW_CLOCKED)
+	HWclock_stats_t HWclock_stats;
+#endif
 
 // First part is to gather the bits and pieces holding the time
-
 
 // Read HW clock if supported follows:
 // Note that the following operation will not cause drift. Nither HWclock
@@ -138,61 +134,59 @@ void getnanouptime (
 // read comes very close to a timeout - that might cause a small drift depending on the HW configuration
 // (automatic reload or reload by ISR). For now we accept this small drift.
 
-   pebbles = 0;
+	pebbles = 0;
 
-   #if defined(HW_CLOCKED)
-   tk_getHWclock_Quality( CLK1, &HWclock_stats );
-   tk_disarmHWclock(      CLK1 );
-   tk_getHWclock(         CLK1, &pebbles);
-   #endif
+#if defined(HW_CLOCKED)
+	tk_getHWclock_Quality(CLK1, &HWclock_stats);
+	tk_disarmHWclock(CLK1);
+	tk_getHWclock(CLK1, &pebbles);
+#endif
 
-   MSmS = sys_mackey;
-   LSmS = sys_mickey;
+	MSmS = sys_mackey;
+	LSmS = sys_mickey;
 
-   #if defined(HW_CLOCKED)
-   tk_armHWclock(         CLK1 );
+#if defined(HW_CLOCKED)
+	tk_armHWclock(CLK1);
 
-   if ((HWclock_stats.res > 16) && (HWclock_stats.freq_hz < 1000000)) {
-      printk(("tk: to high resolution HW clock. TinKer can't handle this ATM \n"));
-      tk_exit(TC_ERR_HW);
-   }
-   #endif
-
+	if ((HWclock_stats.res > 16) && (HWclock_stats.freq_hz < 1000000)) {
+		printk(("tk: to high resolution HW clock. TinKer can't handle this ATM \n"));
+		tk_exit(TC_ERR_HW);
+	}
+#endif
 
 // Now we should have all we need, and we can start converting.
 
-   // Calculate the nuber of nS since last update of tick
-   TnS = HWclock_stats.maxPebbles - pebbles;
-   TnS = (TnS * (1000000000L / (HWclock_stats.freq_hz/100)))/100;
+	// Calculate the nuber of nS since last update of tick
+	TnS = HWclock_stats.maxPebbles - pebbles;
+	TnS = (TnS * (1000000000L / (HWclock_stats.freq_hz / 100))) / 100;
 
-   //convert tick to <i>struct timespec</i>
-   MSfrac = (MSmS % 1000L)*FACTOR +((MSmS % 1000L)*FFRACT)/1000L;
-   MSrest = ((MSmS % 1000L)*FFRACT)%1000L;
-   LSS    = (LSmS / 1000L) + MSfrac;
+	//convert tick to <i>struct timespec</i>
+	MSfrac = (MSmS % 1000L) * FACTOR + ((MSmS % 1000L) * FFRACT) / 1000L;
+	MSrest = ((MSmS % 1000L) * FFRACT) % 1000L;
+	LSS = (LSmS / 1000L) + MSfrac;
 
-   //MSS = MSmS / 1000L;  //<-not used
+	//MSS = MSmS / 1000L;  //<-not used
 
-   nS  = ( ( LSmS % 1000L )      +               MSrest                    )    * 1000000L;
-   //            ^^^                              ^^^
-   //    fraction of milli sec from LS       fraction of millisec from MS        in namosecs
+	nS = ((LSmS % 1000L) + MSrest) * 1000000L;
+	//            ^^^                              ^^^
+	//    fraction of milli sec from LS       fraction of millisec from MS        in namosecs
 
-   //Add the fraction originally expressed in pebbles and compensate seconds if needed
-   nS  = nS + TnS;
-   LSS = LSS + nS/1000000000L;  // All the "rests" added togeather might result in more than one second.
-   nS  = nS%1000000000L;        // take away the amount that got into seconds
+	//Add the fraction originally expressed in pebbles and compensate seconds if needed
+	nS = nS + TnS;
+	LSS = LSS + nS / 1000000000L;	// All the "rests" added togeather might result in more than one second.
+	nS = nS % 1000000000L;	// take away the amount that got into seconds
 
-   //MSS is not compensated - bug will not be seen unless running system for 60 years, and only if nS
-   //frac causes overflow that ripples though both nS and S. Compensating for this will cause
-   //extra code to run on every invocation and that will most certanlly never do anything (waste
-   //of time). Besides MSS is never used outside this function (double waste). This note kept for
-   //future reference.
+	//MSS is not compensated - bug will not be seen unless running system for 60 years, and only if nS
+	//frac causes overflow that ripples though both nS and S. Compensating for this will cause
+	//extra code to run on every invocation and that will most certanlly never do anything (waste
+	//of time). Besides MSS is never used outside this function (double waste). This note kept for
+	//future reference.
 
 //Finally we should have the information requested. Copy to caller
-   tp->tv_sec  = LSS;
-   tp->tv_nsec = nS;
+	tp->tv_sec = LSS;
+	tp->tv_nsec = nS;
 
 }
-
 
 /*!
  * @defgroup CVSLOG_tk_tick_c tk_tick_c
@@ -359,8 +353,3 @@ void getnanouptime (
  *
  *
  *******************************************************************/
-
-
-
-
-

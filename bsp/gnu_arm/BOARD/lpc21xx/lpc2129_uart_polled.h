@@ -26,19 +26,19 @@
 //!   uart_int_init(&uart0);     \n
 //! </pre>
 //! \ingroup lpc2129_uart_polled
-void  uart_polled_init(uart_control *uc);
+void uart_polled_init(uart_control * uc);
 
 //! Writes 8 bits to the UART peripheral
 //! @param *uc Pointer to initialized uart_control struct.
 //! You must call uart_polled_init() first.
 //! @param ch Containing the 8 bits to be sent.
 //! \ingroup lpc2129_uart_polled
-UNS_8 uart_polled_putchar(uart_control *uc, UNS_8 ch);
+UNS_8 uart_polled_putchar(uart_control * uc, UNS_8 ch);
 
 //! Reads 8 bits from the UART periferal. Blocks until data is ready.
 //! @param *uc Pointer to initialized uart_control struct.
 //! @return Read character
 //! \ingroup lpc2129_uart_polled
-UNS_8 uart_polled_getchar(uart_control *uc);
+UNS_8 uart_polled_getchar(uart_control * uc);
 
 #endif

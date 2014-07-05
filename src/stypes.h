@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 #ifndef TK_HWTYPES_H
 #define TK_HWTYPES_H
 
@@ -26,10 +25,9 @@
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-#endif  //DOXYGEN_ONLY
+#endif				//DOXYGEN_ONLY
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
@@ -39,37 +37,33 @@
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
 #include <../bsp/X86_Borland/tk_hwtypes_borlandX86.h>
 
-
 #elif defined( __C166__ )
 #include <../bsp/XC167_Keil/tk_hwtypes_keilC166.h>
 
 #elif defined(__GNUC__)
 
+#ifndef ARCH
+#error For GNU targets, ARCH has to be defined
+#endif
 
-   #ifndef ARCH
-   #  error For GNU targets, ARCH has to be defined
-   #endif
-
-
-   #define str( x ) \
+#define str( x ) \
       #x
 
-   #define INCLNAME( farch ) \
+#define INCLNAME( farch ) \
       <../src/arch/farch/stypes-gnu_ farch.h>
 
-   #define INCLABI( farch, abi )                      \
+#define INCLABI( farch, abi )                      \
       <../src/arch/farch/stypes-gnu_ farch-abi.h>
 
+#ifdef ABI
+#include INCLABI( ARCH, ABI )
+#else
+#include INCLNAME( ARCH )
+#endif
 
-   #ifdef ABI
-   #   include INCLABI( ARCH, ABI )
-   #else
-   #   include INCLNAME( ARCH )
-   #endif
-
-   #undef str
-   #undef INCLNAME
-   #undef INCLABI
+#undef str
+#undef INCLNAME
+#undef INCLABI
 
 #else
 #error "Can\'t determine the target for the TINKER kernel"
@@ -78,8 +72,7 @@
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-#endif  //TK_HWSYS_H
-
+#endif				//TK_HWSYS_H
 
 /*!
  * @defgroup CVSLOG_tk_hwtypes_h tk_hwtypes_h
@@ -145,9 +138,3 @@
  *
  *
  *******************************************************************/
-
-
-
-
-
-

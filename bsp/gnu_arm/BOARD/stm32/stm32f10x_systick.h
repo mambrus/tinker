@@ -63,6 +63,6 @@ void SysTick_ITConfig(FunctionalState NewState);
 u32 SysTick_GetCounter(void);
 FlagStatus SysTick_GetFlagStatus(u8 SysTick_FLAG);
 
-#endif /* __STM32F10x_SYSTICK_H */
+#endif				/* __STM32F10x_SYSTICK_H */
 
 /******************* (C) COPYRIGHT 2007 STMicroelectronics *****END OF FILE****/

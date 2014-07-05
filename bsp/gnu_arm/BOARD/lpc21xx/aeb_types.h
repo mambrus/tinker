@@ -8,10 +8,10 @@
 typedef char CHAR;
 typedef unsigned char UNS_8;
 typedef signed char INT_8;
-typedef	unsigned short UNS_16;
-typedef	signed short INT_16;
-typedef	unsigned int UNS_32;
-typedef	signed int INT_32;
+typedef unsigned short UNS_16;
+typedef signed short INT_16;
+typedef unsigned int UNS_32;
+typedef signed int INT_32;
 typedef long long INT_64;
 typedef unsigned long long UNS_64;
 typedef INT_32 TK_BOOL_32;

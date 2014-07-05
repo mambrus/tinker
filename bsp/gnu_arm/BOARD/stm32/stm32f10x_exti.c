@@ -22,7 +22,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define EXTI_LineNone    ((u32)0x00000)  /* No interrupt selected */
+#define EXTI_LineNone    ((u32)0x00000)	/* No interrupt selected */
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -39,11 +39,11 @@
 *******************************************************************************/
 void EXTI_DeInit(void)
 {
-  EXTI->IMR = 0x00000000;
-  EXTI->EMR = 0x00000000;
-  EXTI->RTSR = 0x00000000;
-  EXTI->FTSR = 0x00000000;
-  EXTI->PR = 0x0007FFFF;
+	EXTI->IMR = 0x00000000;
+	EXTI->EMR = 0x00000000;
+	EXTI->RTSR = 0x00000000;
+	EXTI->FTSR = 0x00000000;
+	EXTI->PR = 0x0007FFFF;
 }
 
 /*******************************************************************************
@@ -56,39 +56,38 @@ void EXTI_DeInit(void)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void EXTI_Init(EXTI_InitTypeDef* EXTI_InitStruct)
+void EXTI_Init(EXTI_InitTypeDef * EXTI_InitStruct)
 {
-  /* Check the parameters */
-  assert(IS_EXTI_MODE(EXTI_InitStruct->EXTI_Mode));
-  assert(IS_EXTI_TRIGGER(EXTI_InitStruct->EXTI_Trigger));
-  assert(IS_EXTI_LINE(EXTI_InitStruct->EXTI_Line));
-  assert(IS_FUNCTIONAL_STATE(EXTI_InitStruct->EXTI_LineCmd));
+	/* Check the parameters */
+	assert(IS_EXTI_MODE(EXTI_InitStruct->EXTI_Mode));
+	assert(IS_EXTI_TRIGGER(EXTI_InitStruct->EXTI_Trigger));
+	assert(IS_EXTI_LINE(EXTI_InitStruct->EXTI_Line));
+	assert(IS_FUNCTIONAL_STATE(EXTI_InitStruct->EXTI_LineCmd));
 
-  if (EXTI_InitStruct->EXTI_LineCmd != DISABLE)
-  {
-    *(u32 *)(EXTI_BASE + (u32)EXTI_InitStruct->EXTI_Mode)|= EXTI_InitStruct->EXTI_Line;
+	if (EXTI_InitStruct->EXTI_LineCmd != DISABLE) {
+		*(u32 *) (EXTI_BASE + (u32) EXTI_InitStruct->EXTI_Mode) |=
+		    EXTI_InitStruct->EXTI_Line;
 
-    /* Clear Rising Falling edge configuration */
-    EXTI->RTSR &= ~EXTI_InitStruct->EXTI_Line;
-    EXTI->FTSR &= ~EXTI_InitStruct->EXTI_Line;
+		/* Clear Rising Falling edge configuration */
+		EXTI->RTSR &= ~EXTI_InitStruct->EXTI_Line;
+		EXTI->FTSR &= ~EXTI_InitStruct->EXTI_Line;
 
-    /* Select the trigger for the selected external interrupts */
-    if (EXTI_InitStruct->EXTI_Trigger == EXTI_Trigger_Rising_Falling)
-    {
-      /* Rising Falling edge */
-      EXTI->RTSR |= EXTI_InitStruct->EXTI_Line;
-      EXTI->FTSR |= EXTI_InitStruct->EXTI_Line;
-    }
-    else
-    {
-      *(u32 *)(EXTI_BASE + (u32)EXTI_InitStruct->EXTI_Trigger)|= EXTI_InitStruct->EXTI_Line;
-    }
-  }
-  else
-  {
-    /* Disable the selected external lines */
-    *(u32 *)(EXTI_BASE + (u32)EXTI_InitStruct->EXTI_Mode)&= ~EXTI_InitStruct->EXTI_Line;
-  }
+		/* Select the trigger for the selected external interrupts */
+		if (EXTI_InitStruct->EXTI_Trigger ==
+		    EXTI_Trigger_Rising_Falling) {
+			/* Rising Falling edge */
+			EXTI->RTSR |= EXTI_InitStruct->EXTI_Line;
+			EXTI->FTSR |= EXTI_InitStruct->EXTI_Line;
+		} else {
+			*(u32 *) (EXTI_BASE +
+				  (u32) EXTI_InitStruct->EXTI_Trigger) |=
+			    EXTI_InitStruct->EXTI_Line;
+		}
+	} else {
+		/* Disable the selected external lines */
+		*(u32 *) (EXTI_BASE + (u32) EXTI_InitStruct->EXTI_Mode) &=
+		    ~EXTI_InitStruct->EXTI_Line;
+	}
 }
 
 /*******************************************************************************
@@ -99,12 +98,12 @@ void EXTI_Init(EXTI_InitTypeDef* EXTI_InitStruct)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void EXTI_StructInit(EXTI_InitTypeDef* EXTI_InitStruct)
+void EXTI_StructInit(EXTI_InitTypeDef * EXTI_InitStruct)
 {
-  EXTI_InitStruct->EXTI_Line = EXTI_LineNone;
-  EXTI_InitStruct->EXTI_Mode = EXTI_Mode_Interrupt;
-  EXTI_InitStruct->EXTI_Trigger = EXTI_Trigger_Falling;
-  EXTI_InitStruct->EXTI_LineCmd = DISABLE;
+	EXTI_InitStruct->EXTI_Line = EXTI_LineNone;
+	EXTI_InitStruct->EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStruct->EXTI_Trigger = EXTI_Trigger_Falling;
+	EXTI_InitStruct->EXTI_LineCmd = DISABLE;
 }
 
 /*******************************************************************************
@@ -119,10 +118,10 @@ void EXTI_StructInit(EXTI_InitTypeDef* EXTI_InitStruct)
 *******************************************************************************/
 void EXTI_GenerateSWInterrupt(u32 EXTI_Line)
 {
-  /* Check the parameters */
-  assert(IS_EXTI_LINE(EXTI_Line));
+	/* Check the parameters */
+	assert(IS_EXTI_LINE(EXTI_Line));
 
-  EXTI->SWIER |= EXTI_Line;
+	EXTI->SWIER |= EXTI_Line;
 }
 
 /*******************************************************************************
@@ -136,20 +135,17 @@ void EXTI_GenerateSWInterrupt(u32 EXTI_Line)
 *******************************************************************************/
 FlagStatus EXTI_GetFlagStatus(u32 EXTI_Line)
 {
-  FlagStatus bitstatus = RESET;
+	FlagStatus bitstatus = RESET;
 
-  /* Check the parameters */
-  assert(IS_GET_EXTI_LINE(EXTI_Line));
+	/* Check the parameters */
+	assert(IS_GET_EXTI_LINE(EXTI_Line));
 
-  if ((EXTI->PR & EXTI_Line) != (u32)RESET)
-  {
-    bitstatus = SET;
-  }
-  else
-  {
-    bitstatus = RESET;
-  }
-  return bitstatus;
+	if ((EXTI->PR & EXTI_Line) != (u32) RESET) {
+		bitstatus = SET;
+	} else {
+		bitstatus = RESET;
+	}
+	return bitstatus;
 }
 
 /*******************************************************************************
@@ -163,10 +159,10 @@ FlagStatus EXTI_GetFlagStatus(u32 EXTI_Line)
 *******************************************************************************/
 void EXTI_ClearFlag(u32 EXTI_Line)
 {
-  /* Check the parameters */
-  assert(IS_EXTI_LINE(EXTI_Line));
+	/* Check the parameters */
+	assert(IS_EXTI_LINE(EXTI_Line));
 
-  EXTI->PR = EXTI_Line;
+	EXTI->PR = EXTI_Line;
 }
 
 /*******************************************************************************
@@ -180,23 +176,20 @@ void EXTI_ClearFlag(u32 EXTI_Line)
 *******************************************************************************/
 ITStatus EXTI_GetITStatus(u32 EXTI_Line)
 {
-  ITStatus bitstatus = RESET;
-  u32 enablestatus = 0;
+	ITStatus bitstatus = RESET;
+	u32 enablestatus = 0;
 
-  /* Check the parameters */
-  assert(IS_GET_EXTI_LINE(EXTI_Line));
+	/* Check the parameters */
+	assert(IS_GET_EXTI_LINE(EXTI_Line));
 
-  enablestatus =  EXTI->IMR & EXTI_Line;
+	enablestatus = EXTI->IMR & EXTI_Line;
 
-  if (((EXTI->PR & EXTI_Line) != (u32)RESET) && enablestatus)
-  {
-    bitstatus = SET;
-  }
-  else
-  {
-    bitstatus = RESET;
-  }
-  return bitstatus;
+	if (((EXTI->PR & EXTI_Line) != (u32) RESET) && enablestatus) {
+		bitstatus = SET;
+	} else {
+		bitstatus = RESET;
+	}
+	return bitstatus;
 }
 
 /*******************************************************************************
@@ -210,10 +203,10 @@ ITStatus EXTI_GetITStatus(u32 EXTI_Line)
 *******************************************************************************/
 void EXTI_ClearITPendingBit(u32 EXTI_Line)
 {
-  /* Check the parameters */
-  assert(IS_EXTI_LINE(EXTI_Line));
+	/* Check the parameters */
+	assert(IS_EXTI_LINE(EXTI_Line));
 
-  EXTI->PR = EXTI_Line;
+	EXTI->PR = EXTI_Line;
 }
 
 /******************* (C) COPYRIGHT 2007 STMicroelectronics *****END OF FILE****/

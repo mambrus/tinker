@@ -24,14 +24,11 @@
 #define SMC_BD_RX_BUFFLEN	160	//!< RX length of the buffert in DPRAM BD
 #define SMC_BD_TX_BUFFLEN	160	//!< TX length of the buffert in DPRAM BD
 
-
-
 /*Example 9600 8N1
 console_init(9600, 8,'N',1);
 */
 int console_init(int bpr, int nr_bits, int par, int nr_stop);
-int console_write(const char* buffer, int buff_len);
-int console_read(char* buffer, int max_len);
+int console_write(const char *buffer, int buff_len);
+int console_read(char *buffer, int max_len);
 
-#endif //CONSOLE_H
-
+#endif				//CONSOLE_H

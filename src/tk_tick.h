@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 #ifndef TK_TICK_H
 #define TK_TICK_H
 
@@ -37,9 +36,9 @@ on true POSIX targets).
 #define MICKEYS_PER_SEC 1000000uL
 
 #if defined(__C166__)
-   #define MEMTYPE idata
+#define MEMTYPE idata
 #else
-   #define MEMTYPE
+#define MEMTYPE
 #endif
 
 /*! If HWclock operations are supported or not. */
@@ -53,17 +52,16 @@ Use SPEEDUP larger than 1 to make kernel advance faster.
 #define SPEEDUP 1ul
 //#define SPEEDUP 1000ul
 
-
 #if (SPEEDUP > 1)
-   #define ADV( PERT ) (   \
+#define ADV( PERT ) (   \
       ( PERT * SPEEDUP )   \
    )
 #elif (SPEEDUP == 1)
-   #define ADV( PERT ) (   \
+#define ADV( PERT ) (   \
       ( PERT )             \
    )
 #else
-   #error Faulty SPEEDUP factor (use this for debugging dispatcher only)
+#error Faulty SPEEDUP factor (use this for debugging dispatcher only)
 #endif
 
 /* 18 014 398 509 481 983 nS*/
@@ -77,13 +75,12 @@ Use SPEEDUP larger than 1 to make kernel advance faster.
 //  extention" when declaring external cariables like this.
 
 #if defined(TICK_OWNER)
-   unsigned long MEMTYPE sys_mackey = 0;             //!< Overflow counter for sys_mickey
-   unsigned long MEMTYPE sys_mickey = 0;             //!< A timer tick. Zapp this: "Trimmed to be 1/10 of a mS"
+unsigned long MEMTYPE sys_mackey = 0;	//!< Overflow counter for sys_mickey
+unsigned long MEMTYPE sys_mickey = 0;	//!< A timer tick. Zapp this: "Trimmed to be 1/10 of a mS"
 #else
-   extern unsigned long MEMTYPE sys_mickey;
-   extern unsigned long MEMTYPE sys_mackey;
+extern unsigned long MEMTYPE sys_mickey;
+extern unsigned long MEMTYPE sys_mackey;
 #endif
-
 
 /*!
 @brief Advance system tick.
@@ -125,16 +122,9 @@ while operated on:
       sys_mickey+=ADV(advance);              \
    }
 
-
-void getnanouptime (
-   struct timespec *tp
-);
+void getnanouptime(struct timespec *tp);
 
 #endif
-
-
-
-
 
 /*!
  * @defgroup CVSLOG_tk_tick_h tk_tick_h
@@ -237,4 +227,3 @@ void getnanouptime (
  *
  *
  *******************************************************************/
-

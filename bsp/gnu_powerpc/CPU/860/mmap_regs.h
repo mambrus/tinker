@@ -7,7 +7,6 @@
 
 #define DMM1    0xFA200000
 
-
 // Memory mapped registers follows...
 
 #define SIUMCR (*(volatile __uint32_t *)(DMM1+0x000))
@@ -283,4 +282,4 @@
 #define _MD_RAM1 826
 #define _DPDR 630
 
-#endif //MMAP_REGS_H
+#endif				//MMAP_REGS_H

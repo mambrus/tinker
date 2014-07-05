@@ -35,7 +35,6 @@ SCHED
 #ifndef _IMPLEMENT_ITC_H
 #define _IMPLEMENT_ITC_H
 
-
 #include <tk.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,31 +52,22 @@ SCHED
 #define tk_yield_CLI( ) \
 	{ tk_yield(); TK_CLI();}
 
-
 #if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
-   clock_t clock_stubbed();
-   #define clock clock_stubbed
+clock_t clock_stubbed();
+#define clock clock_stubbed
 #endif
 
+void _itc_removeBlocked(itc_t * queue_p, unsigned int idx);
 
-void _itc_removeBlocked(
-	itc_t *queue_p,
-	unsigned int idx);
+unsigned int _itc_findNextEmpySlot(void);
 
-unsigned int _itc_findNextEmpySlot(
-	void );
-
-unsigned long _itc_uintDiff(
-	unsigned long x1,
-	unsigned long x2,
-	unsigned long max);
+unsigned long _itc_uintDiff(unsigned long x1,
+			    unsigned long x2, unsigned long max);
 
 int _itc_proveConcistency(unsigned int qid);
 int _itc_no_duplicateBlock(unsigned int qid, unsigned int mark);
 
-
-#endif /* _IMPLEMENT_itc_H */
-
+#endif				/* _IMPLEMENT_itc_H */
 
 /*!
  * @defgroup CVSLOG_implement_itc_h implement_itc_h
@@ -89,4 +79,3 @@ int _itc_no_duplicateBlock(unsigned int qid, unsigned int mark);
  *
  *
  */
-

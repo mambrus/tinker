@@ -24,17 +24,18 @@ This file contains initialization and closing down of the system
 
 #include <initfini.h>
 
-void __init(){
+void __init()
+{
 	__init_cpu();
 	__init_board();
 	__exeptions_enable_cpu();
 	__exeptions_enable_board();
 }
 
-void __fini(){
+void __fini()
+{
 	__exeptions_disable_board();
 	__exeptions_disable_cpu();
 	__fini_board();
 	__fini_cpu();
 }
-

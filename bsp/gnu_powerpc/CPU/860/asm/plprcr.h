@@ -25,7 +25,6 @@
 
 #include <sys/types.h>
 
-
 /*
                           Table 14-10. PLPRCR Field Descriptions
  Bits  Name                                                Description
@@ -81,7 +80,6 @@
             1 Address and data bus is driven low in sleep and deep-sleep mode.
 27–31 —     Reserved, should be cleared.
 
-
 =============================================================================================================
 
  Table 14-11. PLPRCR[CSR] and DER[CHSTPE] Bit Combinations
@@ -97,25 +95,23 @@ PLPRCR[CSR]   DER[CHSTPE] Checkstop Mode        Result
 
 */
 
-
-typedef union{
+typedef union {
 	__uint32_t raw;
 	struct {
-		__uint32_t MF		:12;
-		__uint32_t PAD_0	:4;
-		__uint32_t SPLSS	:1;
-		__uint32_t TEXPS	:1;
-		__uint32_t PAD_1	:1;
-		__uint32_t TMIST	:1;
-		__uint32_t PAD_2	:1;
-		__uint32_t CSRC		:1;
-		__uint32_t LPM		:2;
-		__uint32_t CSR		:1;
-		__uint32_t PAD_3	:1;
-		__uint32_t FIOPD	:1;
-		__uint32_t PAD_4	:5;
-	}f;
-}plprcr_t;
+		__uint32_t MF:12;
+		__uint32_t PAD_0:4;
+		__uint32_t SPLSS:1;
+		__uint32_t TEXPS:1;
+		__uint32_t PAD_1:1;
+		__uint32_t TMIST:1;
+		__uint32_t PAD_2:1;
+		__uint32_t CSRC:1;
+		__uint32_t LPM:2;
+		__uint32_t CSR:1;
+		__uint32_t PAD_3:1;
+		__uint32_t FIOPD:1;
+		__uint32_t PAD_4:5;
+	} f;
+} plprcr_t;
 
-#endif //PLPRCR_H
-
+#endif				//PLPRCR_H

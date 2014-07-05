@@ -27,16 +27,14 @@ everywhere).
 #ifndef INITFINI_H
 #define INITFINI_H
 
-void __init_cpu(void );
-void __init_board(void );
-void __fini_cpu(void );
-void __fini_board(void );
+void __init_cpu(void);
+void __init_board(void);
+void __fini_cpu(void);
+void __fini_board(void);
 
 void __exeptions_enable_cpu(void);
 void __exeptions_disable_cpu(void);
 void __exeptions_enable_board(void);
 void __exeptions_disable_board(void);
 
-
-#endif // INITFINI_H
-
+#endif				// INITFINI_H

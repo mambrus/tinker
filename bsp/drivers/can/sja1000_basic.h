@@ -90,7 +90,6 @@ BasicCAN address allocation
 
 */
 
-
 //-----------------------------------------------------------------------------
 /*!
 Table 3 Bit interpretation of the control register (CR); CAN address 0
@@ -133,14 +132,14 @@ CR.0 RR  Reset Request; note 4    1 present; detection of a reset request result
 
 */
 
-typedef struct{
+typedef struct {
 	__uint8_t padd:3;	//!< padding
-	__uint8_t OIE:1; 	//!< Overrun Interrupt Enable
-	__uint8_t EIE:1; 	//!< Error Interrupt Enable
-	__uint8_t TIE:1; 	//!< Transmit Interrupt Enable
-	__uint8_t RIE:1; 	//!< Receive Interrupt Enable
-	__uint8_t RR:1; 	//!< Reset Request
-}sja1000_basic_cr_t;
+	__uint8_t OIE:1;	//!< Overrun Interrupt Enable
+	__uint8_t EIE:1;	//!< Error Interrupt Enable
+	__uint8_t TIE:1;	//!< Transmit Interrupt Enable
+	__uint8_t RIE:1;	//!< Receive Interrupt Enable
+	__uint8_t RR:1;		//!< Reset Request
+} sja1000_basic_cr_t;
 
 /*!
 Table 4 Bit interpretation of the command register (CMR); CAN address 1
@@ -166,14 +165,14 @@ Table 4 Bit interpretation of the command register (CMR); CAN address 1
  CMR.0     TR            Transmission Request;         1        present; a message will be transmitted
                          note 5                        0        absent; no action
 */
-typedef struct{
+typedef struct {
 	__uint8_t padd:3;	//!< padding
-	__uint8_t GTS:1; 	//!< Go To Sleep
-	__uint8_t CD0:1; 	//!< Clear Data Overrun
-	__uint8_t RRB:1; 	//!< Release Receive Buffer
-	__uint8_t AT:1; 	//!< Abort Transmission
-	__uint8_t TR:1; 	//!< Transmission Request
-}sja1000_basic_cmr_t;
+	__uint8_t GTS:1;	//!< Go To Sleep
+	__uint8_t CD0:1;	//!< Clear Data Overrun
+	__uint8_t RRB:1;	//!< Release Receive Buffer
+	__uint8_t AT:1;		//!< Abort Transmission
+	__uint8_t TR:1;		//!< Transmission Request
+} sja1000_basic_cmr_t;
 
 /*!
 Table 5 Bit interpretation of the status register (SR); CAN address 2
@@ -206,17 +205,16 @@ Table 5 Bit interpretation of the status register (SR); CAN address 2
                                                      0              empty; no message is available
 
 */
-typedef struct{
-	__uint8_t BS:1; 	//!< Bus Status
-	__uint8_t ES:1; 	//!< Error Status
-	__uint8_t TS:1; 	//!< Transmit Status
-	__uint8_t RS:1; 	//!< Receive Status
-	__uint8_t TCS:1; 	//!< Transmission Complete Status
-	__uint8_t TBS:1; 	//!< Transmit Buffer Status
-	__uint8_t DOS:1; 	//!< Data Overrun Status
-	__uint8_t RBS:1; 	//!< Receive Buffer Status
-}sja1000_basic_sr_t;
-
+typedef struct {
+	__uint8_t BS:1;		//!< Bus Status
+	__uint8_t ES:1;		//!< Error Status
+	__uint8_t TS:1;		//!< Transmit Status
+	__uint8_t RS:1;		//!< Receive Status
+	__uint8_t TCS:1;	//!< Transmission Complete Status
+	__uint8_t TBS:1;	//!< Transmit Buffer Status
+	__uint8_t DOS:1;	//!< Data Overrun Status
+	__uint8_t RBS:1;	//!< Receive Buffer Status
+} sja1000_basic_sr_t;
 
 /*!
 Table 6 Bit interpretation of the interrupt register (IR); CAN address 3
@@ -253,14 +251,14 @@ Table 6 Bit interpretation of the interrupt register (IR); CAN address 3
                                                                      microcontroller
 
 */
-typedef struct{
-	__uint8_t padd:3; 	//!< Padding
-	__uint8_t WUI:1; 	//!< Wake Up Interrupt
-	__uint8_t DOI:1; 	//!< Data Overrun Interrupt
-	__uint8_t EI:1; 	//!< Error Interrupt
-	__uint8_t TI:1; 	//!< Transmitt Interrupt
-	__uint8_t RI:1; 	//!< Receive Interrupt
-}sja1000_basic_ir_t;
+typedef struct {
+	__uint8_t padd:3;	//!< Padding
+	__uint8_t WUI:1;	//!< Wake Up Interrupt
+	__uint8_t DOI:1;	//!< Data Overrun Interrupt
+	__uint8_t EI:1;		//!< Error Interrupt
+	__uint8_t TI:1;		//!< Transmitt Interrupt
+	__uint8_t RI:1;		//!< Receive Interrupt
+} sja1000_basic_ir_t;
 
 /*!
 Table 7 Layout of transmit buffer
@@ -280,33 +278,31 @@ Table 7 Layout of transmit buffer
      19                 TX data 8        transmit data byte 8
 */
 
-typedef struct{
-	__uint16_t ID:11; 	//!< Identiﬁer
-	__uint16_t RTR:1; 	//!< Remote Transmission Request
-	__uint16_t DLC:4; 	//!< Data Length Code
-	__uint8_t data[8]; 	//!< transmit data [8]
-}sja1000_basic_buffer_t;
-
+typedef struct {
+	__uint16_t ID:11;	//!< Identiﬁer
+	__uint16_t RTR:1;	//!< Remote Transmission Request
+	__uint16_t DLC:4;	//!< Data Length Code
+	__uint8_t data[8];	//!< transmit data [8]
+} sja1000_basic_buffer_t;
 
 /*!
 sja1000_basic_t struct mapped to memory layout.
 */
-typedef struct{
-	sja1000_basic_cr_t	cr;	//!< control register (CR); CAN address 0
-	sja1000_basic_cmr_t	cmr;	//!< command register (CMR); CAN address 1
-	sja1000_basic_sr_t	sr;	//!< status register (SR); CAN address 2
-	sja1000_basic_ir_t	ir;	//!< interrupt register (IR); CAN address 3
-	__uint8_t		acr;	//!< Acceptance Code Register (ACR); CAN address 4
-	__uint8_t		amr;	//!< Acceptance Mask Register (AMR); CAN address 5
-	sja1000_btr0_t		btr0;	//!< BUS TIMING REGISTER 0 (BTR0); CAN address 6
-	sja1000_btr1_t		btr1;	//!< BUS TIMING REGISTER 1 (BTR1); CAN address 7
-	sja1000_ocr_t   	ocr;	//!< OUTPUT CONTROL REGISTER (OCR); CAN address 8
-	__uint8_t		test;	//!< test; CAN address 9
-	sja1000_basic_buffer_t	txb;	//!< transmit buffer; CAN address 10-19
-	sja1000_basic_buffer_t	rxb;	//!< transmit buffer; CAN address 20-29
-	__uint8_t		padd;	//!< padding; CAN address 30
- 	sja1000_cdr_t		cdr;	//!< clock divider register (CDR); CAN address 31
-}sja1000_basic_t;
+typedef struct {
+	sja1000_basic_cr_t cr;	//!< control register (CR); CAN address 0
+	sja1000_basic_cmr_t cmr;	//!< command register (CMR); CAN address 1
+	sja1000_basic_sr_t sr;	//!< status register (SR); CAN address 2
+	sja1000_basic_ir_t ir;	//!< interrupt register (IR); CAN address 3
+	__uint8_t acr;		//!< Acceptance Code Register (ACR); CAN address 4
+	__uint8_t amr;		//!< Acceptance Mask Register (AMR); CAN address 5
+	sja1000_btr0_t btr0;	//!< BUS TIMING REGISTER 0 (BTR0); CAN address 6
+	sja1000_btr1_t btr1;	//!< BUS TIMING REGISTER 1 (BTR1); CAN address 7
+	sja1000_ocr_t ocr;	//!< OUTPUT CONTROL REGISTER (OCR); CAN address 8
+	__uint8_t test;		//!< test; CAN address 9
+	sja1000_basic_buffer_t txb;	//!< transmit buffer; CAN address 10-19
+	sja1000_basic_buffer_t rxb;	//!< transmit buffer; CAN address 20-29
+	__uint8_t padd;		//!< padding; CAN address 30
+	sja1000_cdr_t cdr;	//!< clock divider register (CDR); CAN address 31
+} sja1000_basic_t;
 
-#endif //SJA1000_BASIC_H
-
+#endif				//SJA1000_BASIC_H

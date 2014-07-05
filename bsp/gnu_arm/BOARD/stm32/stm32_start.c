@@ -16,7 +16,7 @@
 
 GPIO_InitTypeDef GPIO_InitStructure;
 
-extern int main(int argc, char** argv);
+extern int main(int argc, char **argv);
 
 /*Used as checking if static initialization works (will be removed)*/
 volatile unsigned int apavariabel = 0x87654321;
@@ -34,24 +34,24 @@ int board_main(void)
 	int strt_nr = 0;
 	char env[100];
 
-	*NVIC_CCR = *NVIC_CCR | 0x200; /* Set STKALIGN in NVIC */
+	*NVIC_CCR = *NVIC_CCR | 0x200;	/* Set STKALIGN in NVIC */
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOA, ENABLE);
-
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOA,
+			       ENABLE);
 
 	// Configure PC.12 as output push-pull (LED)
-	GPIO_WriteBit(GPIOC,GPIO_Pin_12,Bit_SET);
-	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_12;
+	GPIO_WriteBit(GPIOC, GPIO_Pin_12, Bit_SET);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-	while(1) {
+	while (1) {
 		strt_nr++;
 
 		GPIOC->BRR |= 0x00001000;
-		main(0,(char**)env);
+		main(0, (char **)env);
 		strt_nr++;
 		GPIOC->BSRR |= 0x00001000;
 	}
@@ -59,11 +59,10 @@ int board_main(void)
 
 void nmi_handler(void)
 {
-	return ;
+	return;
 }
 
 void hardfault_handler(void)
 {
-	return ;
+	return;
 }
-

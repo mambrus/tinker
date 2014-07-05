@@ -36,7 +36,6 @@ non-GNU targets provide the only way to configure TinKer.
 - The last lever is a catch-all level. It sets sets safe but practically
 unusable settings. This takes care of cases where porting has just started.
 
-
 Tuning macros fall into two categories:
 
 - Mapping of functions and function macros. TinKer doesn't rely on many
@@ -73,12 +72,12 @@ these is done by using either
 //------1---------2---------3---------4---------5---------6---------7---------8
 // First some global stuf...
 //------1---------2---------3---------4---------5---------6---------7---------8
-	#define TK_FNK_ORIGINAL 0  //!< Use & link against original name somewhere
-	#define TK_FNK_STUBBED  1  //!< Use the stubbed version of the function
-	#define TK_FNK_RENAMED  2  //!< Use a renamed version
-	#define TK_FNK_VOIDED   4  //!< Void function call out
+#define TK_FNK_ORIGINAL 0	//!< Use & link against original name somewhere
+#define TK_FNK_STUBBED  1	//!< Use the stubbed version of the function
+#define TK_FNK_RENAMED  2	//!< Use a renamed version
+#define TK_FNK_VOIDED   4	//!< Void function call out
 
-#endif //TK_TUNING_GLOB
+#endif				//TK_TUNING_GLOB
 //------1---------2---------3---------4---------5---------6---------7---------8
 // 1'st level tuning.
 // Highest abstraction (and most flexible) tuning
@@ -91,9 +90,9 @@ these is done by using either
 #ifndef USED_TINKER_CONFIG_H
 #define USED_TINKER_CONFIG_H
 #if defined(__GNUC__)
-	#include <tinker/config.h>
+#include <tinker/config.h>
 #endif
-#endif // USED_TINKER_CONFIG_H
+#endif				// USED_TINKER_CONFIG_H
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 // 2'nd level tuning. Get ARC specific default tuning values
@@ -109,31 +108,29 @@ these is done by using either
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
 #include <../bsp/X86_Borland/tk_tuning.h>
 
-
 #elif defined( __C166__ )
 #include <../bsp/XC167_Keil/tk_tuning.h>
 
 #elif defined(__GNUC__)
 
-   #ifndef ARCH
-   #  error For GNU targets, ARCH has to be defined
-   #endif
+#ifndef ARCH
+#error For GNU targets, ARCH has to be defined
+#endif
 
    //Define the include wrapper temporally
-   #define INCLNAME( farch ) \
+#define INCLNAME( farch ) \
       <../bsp/gnu_ farch/tk_tuning.h>
 
    //Include the BSP specifig tk_tuning.h file
-   #include INCLNAME( ARCH )
+#include INCLNAME( ARCH )
 
    //Undefine the macro wrapper again so that we can re-use it
-   #undef INCLNAME
+#undef INCLNAME
 
 #else
-	#error "Can\'t determine the tool-chin you're using for the TINKER kernel"
+#error "Can\'t determine the tool-chin you're using for the TINKER kernel"
 
-#endif //__GNUC__
-
+#endif				//__GNUC__
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 // 3'nd level tuning. Catch-all tuning fall-back NOTE Read the intro above...
@@ -143,58 +140,58 @@ these is done by using either
 #define TINKER_TUNING_CATCHALL
 
 	//App & system
-	#ifndef TK_MINIMUM_STACK_SIZE
-	#define TK_MINIMUM_STACK_SIZE 	0x200
-	#endif
+#ifndef TK_MINIMUM_STACK_SIZE
+#define TK_MINIMUM_STACK_SIZE 	0x200
+#endif
 
-	#ifndef TK_NORMAL_STACK_SIZE
-	#define TK_NORMAL_STACK_SIZE  	0x200
-	#endif
+#ifndef TK_NORMAL_STACK_SIZE
+#define TK_NORMAL_STACK_SIZE  	0x200
+#endif
 
 	//SCHED
-	#ifndef TK_MAX_THREADS
-	#define TK_MAX_THREADS          50
-	#endif
+#ifndef TK_MAX_THREADS
+#define TK_MAX_THREADS          50
+#endif
 
-	#ifndef TK_MAX_PRIO_LEVELS
-	#define TK_MAX_PRIO_LEVELS      5
-	#endif
+#ifndef TK_MAX_PRIO_LEVELS
+#define TK_MAX_PRIO_LEVELS      5
+#endif
 
-	#ifndef TK_MAX_THREADS_AT_PRIO
-	#define TK_MAX_THREADS_AT_PRIO  10
-	#endif
+#ifndef TK_MAX_THREADS_AT_PRIO
+#define TK_MAX_THREADS_AT_PRIO  10
+#endif
 
-	#ifndef TK_THREAD_NAME_LEN
-	#define TK_THREAD_NAME_LEN      0x4
-	#endif
+#ifndef TK_THREAD_NAME_LEN
+#define TK_THREAD_NAME_LEN      0x4
+#endif
 
 	//ITC
-	#ifndef TK_MAX_BLOCKED_ON_Q
-	#define TK_MAX_BLOCKED_ON_Q    	TK_MAX_THREADS
-	#endif
+#ifndef TK_MAX_BLOCKED_ON_Q
+#define TK_MAX_BLOCKED_ON_Q    	TK_MAX_THREADS
+#endif
 
-	#ifndef TK_MAX_NUM_Q
-	#define TK_MAX_NUM_Q       	TK_MAX_THREADS
-	#endif
+#ifndef TK_MAX_NUM_Q
+#define TK_MAX_NUM_Q       	TK_MAX_THREADS
+#endif
 
 	//Functions and macros how-to's
-	#ifndef TK_HOWTO_MALLOC
-	#define TK_HOWTO_MALLOC 	TK_FNK_STUBBED
-	#endif
+#ifndef TK_HOWTO_MALLOC
+#define TK_HOWTO_MALLOC 	TK_FNK_STUBBED
+#endif
 
-	#ifndef TK_HOWTO_CLOCK
-	#define TK_HOWTO_CLOCK  	TK_FNK_STUBBED
-	#endif
+#ifndef TK_HOWTO_CLOCK
+#define TK_HOWTO_CLOCK  	TK_FNK_STUBBED
+#endif
 
-	#ifndef TK_HOWTO_PRINTK
-	#define TK_HOWTO_PRINTK 	TK_FNK_VOIDED
-	#endif
+#ifndef TK_HOWTO_PRINTK
+#define TK_HOWTO_PRINTK 	TK_FNK_VOIDED
+#endif
 
-	#ifndef TK_HOWTO_ASSERT
-	#define TK_HOWTO_ASSERT 	TK_FNK_RENAMED
-	#endif
+#ifndef TK_HOWTO_ASSERT
+#define TK_HOWTO_ASSERT 	TK_FNK_RENAMED
+#endif
 
-#endif // TINKER_TUNING_CATCHALL
+#endif				// TINKER_TUNING_CATCHALL
 
 #ifndef TK_TUNING_H_ROOT_HEADER
 #define TK_TUNING_H_ROOT_HEADER
@@ -203,46 +200,46 @@ these is done by using either
 #if defined(__GNUC__)
 
 	/*!
-	How printk is implemented on this target. I.e. ability to output on console.
-	- TK_FNK_VOIDED		Digests the call
-	- TK_FNK_ORIGINAL	Uses printf for output
-	- TK_FNK_RENAMED	Prints on stderr
+	   How printk is implemented on this target. I.e. ability to output on console.
+	   - TK_FNK_VOIDED              Digests the call
+	   - TK_FNK_ORIGINAL    Uses printf for output
+	   - TK_FNK_RENAMED     Prints on stderr
 
-	@note macro should digest <b>all</b> arguments if TK_FNK_VOIDED is used. Therefore
-	doubble parenthesis have to be used. I.e. printk(("This is how..."))
-	*/
-	#if (TK_HOWTO_PRINTK == TK_FNK_VOIDED)
-		#define printk(x) ((void)0)
-	#elif (TK_HOWTO_PRINTK == TK_FNK_ORIGINAL)
-		#define printk(x) printf x
-	#elif (TK_HOWTO_PRINTK == TK_FNK_RENAMED)
-		#define eprintf(...) fprintf (stderr, __VA_ARGS__)
-		#define printk(x) eprintf x
-	#else
-	#   error Can not handle requested option for printk
-	#endif
+	   @note macro should digest <b>all</b> arguments if TK_FNK_VOIDED is used. Therefore
+	   doubble parenthesis have to be used. I.e. printk(("This is how..."))
+	 */
+#if (TK_HOWTO_PRINTK == TK_FNK_VOIDED)
+#define printk(x) ((void)0)
+#elif (TK_HOWTO_PRINTK == TK_FNK_ORIGINAL)
+#define printk(x) printf x
+#elif (TK_HOWTO_PRINTK == TK_FNK_RENAMED)
+#define eprintf(...) fprintf (stderr, __VA_ARGS__)
+#define printk(x) eprintf x
+#else
+#error Can not handle requested option for printk
+#endif
 
-	#if (!(TK_SYSTEM == __SYS_HIXS__))
+#if (!(TK_SYSTEM == __SYS_HIXS__))
 		/*! How to initializing the BSP is done on this target (Needed
-          for bare bone-metal targets). If the kernel is intended to run
-          under Linux or Cygwin we don't need/want these functions.
-          Otherwise, they belong implemented somewhere under bsp/<target>*/
-      #define tk_bsp_sysinit _tk_bsp_sysinit
-      #if TK_HOSTED
-         #if TK_COMP_PTHREAD == __tk_no
-         #   define tk_root root
-         #endif
-      #endif
-      #define BOOT_BSP_STUB
-	#endif
+		   for bare bone-metal targets). If the kernel is intended to run
+		   under Linux or Cygwin we don't need/want these functions.
+		   Otherwise, they belong implemented somewhere under bsp/<target> */
+#define tk_bsp_sysinit _tk_bsp_sysinit
+#if TK_HOSTED
+#if TK_COMP_PTHREAD == __tk_no
+#define tk_root root
+#endif
+#endif
+#define BOOT_BSP_STUB
+#endif
 
 	/*
-	NOTE For Linux/Cygwin, the following might be required
-	#define printk(x) { printf x; fflush(stdout); }
-	*/
+	   NOTE For Linux/Cygwin, the following might be required
+	   #define printk(x) { printf x; fflush(stdout); }
+	 */
 
-#endif //if defined(__GNUC__)
-#endif //TK_TUNING_H_ROOT_HEADER
+#endif				//if defined(__GNUC__)
+#endif				//TK_TUNING_H_ROOT_HEADER
 //------1---------2---------3---------4---------5---------6---------7---------8
 //
 //------1---------2---------3---------4---------5---------6---------7---------8

@@ -26,14 +26,13 @@
 #include "stm32f10x_map.h"
 
 /* Exported types ------------------------------------------------------------*/
-typedef struct
-{
-  u32 SYSCLK_Frequency;
-  u32 HCLK_Frequency;
-  u32 PCLK1_Frequency;
-  u32 PCLK2_Frequency;
-  u32 ADCCLK_Frequency;
-}RCC_ClocksTypeDef;
+typedef struct {
+	u32 SYSCLK_Frequency;
+	u32 HCLK_Frequency;
+	u32 PCLK1_Frequency;
+	u32 PCLK2_Frequency;
+	u32 ADCCLK_Frequency;
+} RCC_ClocksTypeDef;
 
 /* Exported constants --------------------------------------------------------*/
 /* HSE configuration */
@@ -257,7 +256,7 @@ void RCC_LSEConfig(u32 RCC_LSE);
 void RCC_LSICmd(FunctionalState NewState);
 void RCC_RTCCLKConfig(u32 RCC_RTCCLKSource);
 void RCC_RTCCLKCmd(FunctionalState NewState);
-void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks);
+void RCC_GetClocksFreq(RCC_ClocksTypeDef * RCC_Clocks);
 void RCC_AHBPeriphClockCmd(u32 RCC_AHBPeriph, FunctionalState NewState);
 void RCC_APB2PeriphClockCmd(u32 RCC_APB2Periph, FunctionalState NewState);
 void RCC_APB1PeriphClockCmd(u32 RCC_APB1Periph, FunctionalState NewState);
@@ -271,6 +270,6 @@ void RCC_ClearFlag(void);
 ITStatus RCC_GetITStatus(u8 RCC_IT);
 void RCC_ClearITPendingBit(u8 RCC_IT);
 
-#endif /* __STM32F10x_RCC_H */
+#endif				/* __STM32F10x_RCC_H */
 
 /******************* (C) COPYRIGHT 2007 STMicroelectronics *****END OF FILE****/

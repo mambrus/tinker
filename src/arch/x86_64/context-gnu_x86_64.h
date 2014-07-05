@@ -29,15 +29,15 @@
 #endif
 
 #ifndef JUMPER_BASED
-	#define JUMPER_BASED 1
+#define JUMPER_BASED 1
 #endif
 
 #if !TK_HOSTED
-	#define TK_CLI() asm __volatile__ (" CLI ");
-	#define TK_STI() asm __volatile__ (" STI ");
+#define TK_CLI() asm __volatile__ (" CLI ");
+#define TK_STI() asm __volatile__ (" STI ");
 #else
-	#define TK_CLI()
-	#define TK_STI()
+#define TK_CLI()
+#define TK_STI()
 #endif
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -56,8 +56,8 @@
 #define REAL_STACK_SIZE( TCB )            \
    ( TCB.stack_size )
 
-#define PUSHALL()   /*No need to PUSHALL on this arch - Already done by setjmp*/
-#define POPALL()    /*No need to POPALL on this arch - Already done by longjmp*/
+#define PUSHALL()		/*No need to PUSHALL on this arch - Already done by setjmp */
+#define POPALL()		/*No need to POPALL on this arch - Already done by longjmp */
 
 #define GET_SP( OUT_SP )                  \
    asm __volatile__ (                     \
@@ -72,8 +72,7 @@
       "mov %[mystack],%%rsp"              \
       : /**/                              \
       : [mystack] "m" (IN_SP)             \
-   );  /*Note, no clobber (intentional)*/
-
+   );				/*Note, no clobber (intentional) */
 
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )     \
    GET_SP( TSP1 )                               \
@@ -103,7 +102,7 @@
    (ADDR.stack_size = size)
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-#else //Not JUMPER_BASED
+#else				//Not JUMPER_BASED
 //------1---------2---------3---------4---------5---------6---------7---------8
 #error Non jumper-based context-switch is TBD for this architecture
 /* Below is just templated from i386 (not enough) */
@@ -246,6 +245,6 @@
    (ADDR.stack_size = size)
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-#endif //JUMPER_BASED
+#endif				//JUMPER_BASED
 //------1---------2---------3---------4---------5---------6---------7---------8
 #endif

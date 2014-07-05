@@ -24,5 +24,3 @@
 #include "context-gnu_powerpc-eabi.h"
 
 #endif
-
-

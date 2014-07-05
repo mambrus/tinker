@@ -12,6 +12,7 @@
 **
 ***************************************************************************-*/
 //#include "console.h"
-int console_write(const char* buffer, int buff_len){
+int console_write(const char *buffer, int buff_len)
+{
 	return buff_len;
 }

@@ -28,28 +28,28 @@
 #define NULL ((void*)0)
 #endif
 
-typedef double                Flo64;    // Double precision floating point
-typedef double              * pFlo64;
-typedef float                 Flo32;    // Single precision floating point
-typedef float               * pFlo32;
-typedef signed   long long    Int64S;   // Signed   64 bit quantity
-typedef signed   long long  * pInt64S;
-typedef unsigned long long    Int64U;   // Unsigned 64 bit quantity
-typedef unsigned long long  * pInt64U;
-typedef signed   int          Int32S;   // Signed   32 bit quantity
-typedef signed   int        * pInt32S;
-typedef unsigned int          Int32U;   // Unsigned 32 bit quantity
-typedef unsigned int        * pInt32U;
-typedef signed   short        Int16S;   // Signed   16 bit quantity
-typedef signed   short      * pInt16S;
-typedef unsigned short        Int16U;   // Unsigned 16 bit quantity
-typedef unsigned short      * pInt16U;
-typedef signed   char         Int8S;    // Signed    8 bit quantity
-typedef signed   char       * pInt8S;
-typedef unsigned char         Int8U;    // Unsigned  8 bit quantity
-typedef unsigned char       * pInt8U;
-typedef unsigned char         Boolean;  // Boolean
-typedef unsigned char       * pBoolean;
+typedef double Flo64;		// Double precision floating point
+typedef double *pFlo64;
+typedef float Flo32;		// Single precision floating point
+typedef float *pFlo32;
+typedef signed long long Int64S;	// Signed   64 bit quantity
+typedef signed long long *pInt64S;
+typedef unsigned long long Int64U;	// Unsigned 64 bit quantity
+typedef unsigned long long *pInt64U;
+typedef signed int Int32S;	// Signed   32 bit quantity
+typedef signed int *pInt32S;
+typedef unsigned int Int32U;	// Unsigned 32 bit quantity
+typedef unsigned int *pInt32U;
+typedef signed short Int16S;	// Signed   16 bit quantity
+typedef signed short *pInt16S;
+typedef unsigned short Int16U;	// Unsigned 16 bit quantity
+typedef unsigned short *pInt16U;
+typedef signed char Int8S;	// Signed    8 bit quantity
+typedef signed char *pInt8S;
+typedef unsigned char Int8U;	// Unsigned  8 bit quantity
+typedef unsigned char *pInt8U;
+typedef unsigned char Boolean;	// Boolean
+typedef unsigned char *pBoolean;
 
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
@@ -60,16 +60,16 @@ typedef unsigned char       * pBoolean;
 #define _4BL(a)   (Int8U)(a),(Int8U)(a>>8),(Int8U)(a>>16),(Int8U)(a>>24)
 #define _4BB(a)   (Int8U)(a>>24),(Int8U)(a>>16),(Int8U)(a>>8),(Int8U)(a)
 
-typedef void * (*CommUserFpnt_t)(void *);
-typedef void   (*VoidFpnt_t)(void);
+typedef void *(*CommUserFpnt_t) (void *);
+typedef void (*VoidFpnt_t) (void);
 
 // Atomic exchange of data between a memory cell and a register
 // return value of the memory cell
 #if __CORE__ < 7
-inline __arm Int32U AtomicExchange (Int32U State, pInt32U Flag)
+inline __arm Int32U AtomicExchange(Int32U State, pInt32U Flag)
 {
-  asm("swp  r0, r0, [r1]");
-  return(State);
+	asm("swp  r0, r0, [r1]");
+	return (State);
 }
 #endif
 #define LongToBin(n) (((n >> 21) & 0x80) | \
@@ -92,4 +92,4 @@ inline __arm Int32U AtomicExchange (Int32U State, pInt32U Flag)
                             (((u32_t)__BIN(b3)) <<  8ul) + \
                               (u32_t)__BIN(b4))
 
-#endif // __ARM_COMM_DEF_H
+#endif				// __ARM_COMM_DEF_H

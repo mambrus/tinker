@@ -27,18 +27,17 @@
 
 /* Exported types ------------------------------------------------------------*/
 /* UART Init Structure definition */
-typedef struct
-{
-  u32 USART_BaudRate;
-  u16 USART_WordLength;
-  u16 USART_StopBits;
-  u16 USART_Parity;
-  u16 USART_HardwareFlowControl;
-  u16 USART_Mode;
-  u16 USART_Clock;
-  u16 USART_CPOL;
-  u16 USART_CPHA;
-  u16 USART_LastBit;
+typedef struct {
+	u32 USART_BaudRate;
+	u16 USART_WordLength;
+	u16 USART_StopBits;
+	u16 USART_Parity;
+	u16 USART_HardwareFlowControl;
+	u16 USART_Mode;
+	u16 USART_Clock;
+	u16 USART_CPOL;
+	u16 USART_CPHA;
+	u16 USART_LastBit;
 } USART_InitTypeDef;
 
 /* Exported constants --------------------------------------------------------*/
@@ -188,32 +187,35 @@ typedef struct
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void USART_DeInit(USART_TypeDef* USARTx);
-void USART_Init(USART_TypeDef* USARTx, USART_InitTypeDef* USART_InitStruct);
-void USART_StructInit(USART_InitTypeDef* USART_InitStruct);
-void USART_Cmd(USART_TypeDef* USARTx, FunctionalState NewState);
-void USART_ITConfig(USART_TypeDef* USARTx, u16 USART_IT, FunctionalState NewState);
-void USART_DMACmd(USART_TypeDef* USARTx, u16 USART_DMAReq, FunctionalState NewState);
-void USART_SetAddress(USART_TypeDef* USARTx, u8 USART_Address);
-void USART_WakeUpConfig(USART_TypeDef* USARTx, u16 USART_WakeUp);
-void USART_ReceiverWakeUpCmd(USART_TypeDef* USARTx, FunctionalState NewState);
-void USART_LINBreakDetectLengthConfig(USART_TypeDef* USARTx, u16 USART_LINBreakDetectLength);
-void USART_LINCmd(USART_TypeDef* USARTx, FunctionalState NewState);
-void USART_SendData(USART_TypeDef* USARTx, u16 Data);
-u16 USART_ReceiveData(USART_TypeDef* USARTx);
-void USART_SendBreak(USART_TypeDef* USARTx);
-void USART_SetGuardTime(USART_TypeDef* USARTx, u8 USART_GuardTime);
-void USART_SetPrescaler(USART_TypeDef* USARTx, u8 USART_Prescaler);
-void USART_SmartCardCmd(USART_TypeDef* USARTx, FunctionalState NewState);
-void USART_SmartCardNACKCmd(USART_TypeDef* USARTx, FunctionalState NewState);
-void USART_HalfDuplexCmd(USART_TypeDef* USARTx, FunctionalState NewState);
-void USART_IrDAConfig(USART_TypeDef* USARTx, u16 USART_IrDAMode);
-void USART_IrDACmd(USART_TypeDef* USARTx, FunctionalState NewState);
-FlagStatus USART_GetFlagStatus(USART_TypeDef* USARTx, u16 USART_FLAG);
-void USART_ClearFlag(USART_TypeDef* USARTx, u16 USART_FLAG);
-ITStatus USART_GetITStatus(USART_TypeDef* USARTx, u16 USART_IT);
-void USART_ClearITPendingBit(USART_TypeDef* USARTx, u16 USART_IT);
+void USART_DeInit(USART_TypeDef * USARTx);
+void USART_Init(USART_TypeDef * USARTx, USART_InitTypeDef * USART_InitStruct);
+void USART_StructInit(USART_InitTypeDef * USART_InitStruct);
+void USART_Cmd(USART_TypeDef * USARTx, FunctionalState NewState);
+void USART_ITConfig(USART_TypeDef * USARTx, u16 USART_IT,
+		    FunctionalState NewState);
+void USART_DMACmd(USART_TypeDef * USARTx, u16 USART_DMAReq,
+		  FunctionalState NewState);
+void USART_SetAddress(USART_TypeDef * USARTx, u8 USART_Address);
+void USART_WakeUpConfig(USART_TypeDef * USARTx, u16 USART_WakeUp);
+void USART_ReceiverWakeUpCmd(USART_TypeDef * USARTx, FunctionalState NewState);
+void USART_LINBreakDetectLengthConfig(USART_TypeDef * USARTx,
+				      u16 USART_LINBreakDetectLength);
+void USART_LINCmd(USART_TypeDef * USARTx, FunctionalState NewState);
+void USART_SendData(USART_TypeDef * USARTx, u16 Data);
+u16 USART_ReceiveData(USART_TypeDef * USARTx);
+void USART_SendBreak(USART_TypeDef * USARTx);
+void USART_SetGuardTime(USART_TypeDef * USARTx, u8 USART_GuardTime);
+void USART_SetPrescaler(USART_TypeDef * USARTx, u8 USART_Prescaler);
+void USART_SmartCardCmd(USART_TypeDef * USARTx, FunctionalState NewState);
+void USART_SmartCardNACKCmd(USART_TypeDef * USARTx, FunctionalState NewState);
+void USART_HalfDuplexCmd(USART_TypeDef * USARTx, FunctionalState NewState);
+void USART_IrDAConfig(USART_TypeDef * USARTx, u16 USART_IrDAMode);
+void USART_IrDACmd(USART_TypeDef * USARTx, FunctionalState NewState);
+FlagStatus USART_GetFlagStatus(USART_TypeDef * USARTx, u16 USART_FLAG);
+void USART_ClearFlag(USART_TypeDef * USARTx, u16 USART_FLAG);
+ITStatus USART_GetITStatus(USART_TypeDef * USARTx, u16 USART_IT);
+void USART_ClearITPendingBit(USART_TypeDef * USARTx, u16 USART_IT);
 
-#endif /* __STM32F10x_USART_H */
+#endif				/* __STM32F10x_USART_H */
 
 /******************* (C) COPYRIGHT 2007 STMicroelectronics *****END OF FILE****/

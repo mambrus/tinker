@@ -21,7 +21,6 @@
 #include <filesys/inode.h>
 #include <assert.h>
 
-
 #define DRV_IO_NAME( x, y ) \
 	x ##y
 
@@ -29,51 +28,53 @@
 #define DRV_IO( x ) \
 	DRV_IO_NAME( led_ , x )
 
-
 #define DEV_FILE_NAME( x ) \
 	"/dev/led" #x
 
-typedef struct{
-	int 		handle_data;
-}DRV_IO(hndl_data_t);
+typedef struct {
+	int handle_data;
+} DRV_IO(hndl_data_t);
 
-int ledstat_0=0;
-int ledstat_1=0;
-int ledstat_2=0;
-int ledstat_3=0;
+int ledstat_0 = 0;
+int ledstat_1 = 0;
+int ledstat_2 = 0;
+int ledstat_3 = 0;
 
-static const char DRV_IO(assert_info)[]="You're trying to access a non implemented function";
+static const char DRV_IO(assert_info)[] =
+    "You're trying to access a non implemented function";
 #include "led.h"
 #include <board/board.h>
 
-void led_on(led_id id, led_color color){
-	if (id==LED_2) {
-		if (color==LED_RED) {
-			bitclear_16(PADAT,8);
-		}else{
-			bitclear_16(PADAT,9);
+void led_on(led_id id, led_color color)
+{
+	if (id == LED_2) {
+		if (color == LED_RED) {
+			bitclear_16(PADAT, 8);
+		} else {
+			bitclear_16(PADAT, 9);
 		}
-	}else{
-		if (color==LED_RED) {
-			bitclear_16(PADAT,10);
-		}else{
-			bitclear_16(PADAT,11);
+	} else {
+		if (color == LED_RED) {
+			bitclear_16(PADAT, 10);
+		} else {
+			bitclear_16(PADAT, 11);
 		}
 	}
 }
 
-void led_off(led_id id, led_color color){
-	if (id==LED_2) {
-		if (color==LED_RED) {
-			bitset_16(PADAT,8);
-		}else{
-			bitset_16(PADAT,9);
+void led_off(led_id id, led_color color)
+{
+	if (id == LED_2) {
+		if (color == LED_RED) {
+			bitset_16(PADAT, 8);
+		} else {
+			bitset_16(PADAT, 9);
 		}
-	}else{
-		if (color==LED_RED) {
-			bitset_16(PADAT,10);
-		}else{
-			bitset_16(PADAT,11);
+	} else {
+		if (color == LED_RED) {
+			bitset_16(PADAT, 10);
+		} else {
+			bitset_16(PADAT, 11);
 		}
 	}
 }
@@ -81,63 +82,66 @@ void led_off(led_id id, led_color color){
 //=============================================================================
 // Open functions
 //=============================================================================
-int DRV_IO(open0)(const char *filename, int flags, ...){
+int DRV_IO(open0) (const char *filename, int flags, ...) {
 	va_list ap;
-		tk_fhandle_t *hndl;
-		tk_inode_t *inode;
-	va_start (ap, flags);
-		inode=va_arg(ap,tk_inode_t *);
+	tk_fhandle_t *hndl;
+	tk_inode_t *inode;
+	va_start(ap, flags);
+	inode = va_arg(ap, tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);
+	hndl = tk_new_handle(inode, flags);
 
-	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
-	((DRV_IO(hndl_data_t)*)(hndl->data))->handle_data=0x00;
+	hndl->data = calloc(1, sizeof(DRV_IO(hndl_data_t)));
+	((DRV_IO(hndl_data_t) *) (hndl->data))->handle_data = 0x00;
 
 	return (int)hndl;
 }
-int DRV_IO(open1)(const char *filename, int flags, ...){
+
+int DRV_IO(open1) (const char *filename, int flags, ...) {
 	va_list ap;
-		tk_fhandle_t *hndl;
-		tk_inode_t *inode;
-	va_start (ap, flags);
-		inode=va_arg(ap,tk_inode_t *);
+	tk_fhandle_t *hndl;
+	tk_inode_t *inode;
+	va_start(ap, flags);
+	inode = va_arg(ap, tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);
+	hndl = tk_new_handle(inode, flags);
 
-	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
-	((DRV_IO(hndl_data_t)*)(hndl->data))->handle_data=0x01;
+	hndl->data = calloc(1, sizeof(DRV_IO(hndl_data_t)));
+	((DRV_IO(hndl_data_t) *) (hndl->data))->handle_data = 0x01;
 
 	return (int)hndl;
 }
-int DRV_IO(open2)(const char *filename, int flags, ...){
+
+int DRV_IO(open2) (const char *filename, int flags, ...) {
 	va_list ap;
-		tk_fhandle_t *hndl;
-		tk_inode_t *inode;
-	va_start (ap, flags);
-		inode=va_arg(ap,tk_inode_t *);
+	tk_fhandle_t *hndl;
+	tk_inode_t *inode;
+	va_start(ap, flags);
+	inode = va_arg(ap, tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);
+	hndl = tk_new_handle(inode, flags);
 
-	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
-	((DRV_IO(hndl_data_t)*)(hndl->data))->handle_data=0x02;
+	hndl->data = calloc(1, sizeof(DRV_IO(hndl_data_t)));
+	((DRV_IO(hndl_data_t) *) (hndl->data))->handle_data = 0x02;
 
 	return (int)hndl;
 }
-int DRV_IO(open3)(const char *filename, int flags, ...){
+
+int DRV_IO(open3) (const char *filename, int flags, ...) {
 	va_list ap;
-		tk_fhandle_t *hndl;
-		tk_inode_t *inode;
-	va_start (ap, flags);
-		inode=va_arg(ap,tk_inode_t *);
+	tk_fhandle_t *hndl;
+	tk_inode_t *inode;
+	va_start(ap, flags);
+	inode = va_arg(ap, tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);
+	hndl = tk_new_handle(inode, flags);
 
-	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
-	((DRV_IO(hndl_data_t)*)(hndl->data))->handle_data=0x03;
+	hndl->data = calloc(1, sizeof(DRV_IO(hndl_data_t)));
+	((DRV_IO(hndl_data_t) *) (hndl->data))->handle_data = 0x03;
 
 	return (int)hndl;
 }
@@ -145,84 +149,89 @@ int DRV_IO(open3)(const char *filename, int flags, ...){
 //=============================================================================
 // Read functions
 //=============================================================================
-int DRV_IO(close0)(int file) {
-	assert(DRV_IO(assert_info) == NULL);
-	return -1;
-}
-int DRV_IO(close1)(int file) {
-	assert(DRV_IO(assert_info) == NULL);
-	return -1;
-}
-int DRV_IO(close2)(int file) {
-	assert(DRV_IO(assert_info) == NULL);
-	return -1;
-}
-int DRV_IO(close3)(int file) {
+int DRV_IO(close0) (int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return -1;
 }
 
+int DRV_IO(close1) (int file) {
+	assert(DRV_IO(assert_info) == NULL);
+	return -1;
+}
+
+int DRV_IO(close2) (int file) {
+	assert(DRV_IO(assert_info) == NULL);
+	return -1;
+}
+
+int DRV_IO(close3) (int file) {
+	assert(DRV_IO(assert_info) == NULL);
+	return -1;
+}
 
 //=============================================================================
 // Read functions
 //=============================================================================
-int DRV_IO(read0)(int file, char *ptr, int len) {
-	switch (len){
-		case 1:
-			*(__uint8_t*)ptr=ledstat_0;
-			break;
-		case 2:
-			*(__uint16_t*)ptr=ledstat_0;
-			break;
-		case 4:
-			*(__uint32_t*)ptr=ledstat_0;
-			break;
-		assert("Wrong size of data requested"==NULL);
+int DRV_IO(read0) (int file, char *ptr, int len) {
+	switch (len) {
+	case 1:
+		*(__uint8_t *) ptr = ledstat_0;
+		break;
+	case 2:
+		*(__uint16_t *) ptr = ledstat_0;
+		break;
+	case 4:
+		*(__uint32_t *) ptr = ledstat_0;
+		break;
+		assert("Wrong size of data requested" == NULL);
 	}
 	return len;
 }
-int DRV_IO(read1)(int file, char *ptr, int len) {
-	switch (len){
-		case 1:
-			*(__uint8_t*)ptr=ledstat_1;
-			break;
-		case 2:
-			*(__uint16_t*)ptr=ledstat_1;
-			break;
-		case 4:
-			*(__uint32_t*)ptr=ledstat_1;
-			break;
-		assert("Wrong size of data requested"==NULL);
+
+int DRV_IO(read1) (int file, char *ptr, int len) {
+	switch (len) {
+	case 1:
+		*(__uint8_t *) ptr = ledstat_1;
+		break;
+	case 2:
+		*(__uint16_t *) ptr = ledstat_1;
+		break;
+	case 4:
+		*(__uint32_t *) ptr = ledstat_1;
+		break;
+		assert("Wrong size of data requested" == NULL);
 	}
 	return len;
 }
-int DRV_IO(read2)(int file, char *ptr, int len) {
-	switch (len){
-		case 1:
-			*(__uint8_t*)ptr=ledstat_2;
-			break;
-		case 2:
-			*(__uint16_t*)ptr=ledstat_2;
-			break;
-		case 4:
-			*(__uint32_t*)ptr=ledstat_2;
-			break;
-		assert("Wrong size of data requested"==NULL);
+
+int DRV_IO(read2) (int file, char *ptr, int len) {
+	switch (len) {
+	case 1:
+		*(__uint8_t *) ptr = ledstat_2;
+		break;
+	case 2:
+		*(__uint16_t *) ptr = ledstat_2;
+		break;
+	case 4:
+		*(__uint32_t *) ptr = ledstat_2;
+		break;
+		assert("Wrong size of data requested" == NULL);
 	}
 	return len;
 }
-int DRV_IO(read3)(int file, char *ptr, int len) {
-	switch (len){
-		case 1:
-			*(__uint8_t*)ptr=ledstat_3;
-			break;
-		case 2:
-			*(__uint16_t*)ptr=ledstat_3;
-			break;
-		case 4:
-			*(__uint32_t*)ptr=ledstat_3;
-			break;
-		assert("Wrong size of data requested"==NULL);
+
+int DRV_IO(read3) (int file, char *ptr, int len) {
+	switch (len) {
+	case 1:
+		*(__uint8_t *) ptr = ledstat_3;
+		break;
+	case 2:
+		*(__uint16_t *) ptr = ledstat_3;
+		break;
+	case 4:
+		*(__uint32_t *) ptr = ledstat_3;
+		break;
+		assert("Wrong size of data requested" == NULL);
 	}
 	return len;
 }
@@ -237,19 +246,19 @@ int DRV_IO(read3)(int file, char *ptr, int len) {
 	3: (LED2_green)
 */
 
-int DRV_IO(write0)(int file, char *ptr, int len) {
-	if (len<=sizeof(int)){
-		switch (len){
-			case 1:
-				ledstat_0=*(__uint8_t*)ptr;
-				break;
-			case 2:
-				ledstat_0=*(__uint16_t*)ptr;
-				break;
-			case 4:
-				ledstat_0=*(__uint32_t*)ptr;
-				break;
-			assert("Wrong size of data passed"==NULL);
+int DRV_IO(write0) (int file, char *ptr, int len) {
+	if (len <= sizeof(int)) {
+		switch (len) {
+		case 1:
+			ledstat_0 = *(__uint8_t *) ptr;
+			break;
+		case 2:
+			ledstat_0 = *(__uint16_t *) ptr;
+			break;
+		case 4:
+			ledstat_0 = *(__uint32_t *) ptr;
+			break;
+			assert("Wrong size of data passed" == NULL);
 		}
 	}
 
@@ -260,20 +269,21 @@ int DRV_IO(write0)(int file, char *ptr, int len) {
 
 	return len;
 }
-int DRV_IO(write1)(int file, char *ptr, int len) {
+
+int DRV_IO(write1) (int file, char *ptr, int len) {
 	int ledstat_;
-	if (len<=sizeof(int)){
-		switch (len){
-			case 1:
-				ledstat_1=*(__uint8_t*)ptr;
-				break;
-			case 2:
-				ledstat_1=*(__uint16_t*)ptr;
-				break;
-			case 4:
-				ledstat_1=*(__uint32_t*)ptr;
-				break;
-			assert("Wrong size of data passed"==NULL);
+	if (len <= sizeof(int)) {
+		switch (len) {
+		case 1:
+			ledstat_1 = *(__uint8_t *) ptr;
+			break;
+		case 2:
+			ledstat_1 = *(__uint16_t *) ptr;
+			break;
+		case 4:
+			ledstat_1 = *(__uint32_t *) ptr;
+			break;
+			assert("Wrong size of data passed" == NULL);
 		}
 	}
 
@@ -284,20 +294,21 @@ int DRV_IO(write1)(int file, char *ptr, int len) {
 
 	return len;
 }
-int DRV_IO(write2)(int file, char *ptr, int len) {
+
+int DRV_IO(write2) (int file, char *ptr, int len) {
 	int ledstat_;
-	if (len<=sizeof(int)){
-		switch (len){
-			case 1:
-				ledstat_2=*(__uint8_t*)ptr;
-				break;
-			case 2:
-				ledstat_2=*(__uint16_t*)ptr;
-				break;
-			case 4:
-				ledstat_2=*(__uint32_t*)ptr;
-				break;
-			assert("Wrong size of data passed"==NULL);
+	if (len <= sizeof(int)) {
+		switch (len) {
+		case 1:
+			ledstat_2 = *(__uint8_t *) ptr;
+			break;
+		case 2:
+			ledstat_2 = *(__uint16_t *) ptr;
+			break;
+		case 4:
+			ledstat_2 = *(__uint32_t *) ptr;
+			break;
+			assert("Wrong size of data passed" == NULL);
 		}
 	}
 
@@ -308,20 +319,21 @@ int DRV_IO(write2)(int file, char *ptr, int len) {
 
 	return len;
 }
-int DRV_IO(write3)(int file, char *ptr, int len) {
+
+int DRV_IO(write3) (int file, char *ptr, int len) {
 	int ledstat_;
-	if (len<=sizeof(int)){
-		switch (len){
-			case 1:
-				ledstat_3=*(__uint8_t*)ptr;
-				break;
-			case 2:
-				ledstat_3=*(__uint16_t*)ptr;
-				break;
-			case 4:
-				ledstat_3=*(__uint32_t*)ptr;
-				break;
-			assert("Wrong size of data passed"==NULL);
+	if (len <= sizeof(int)) {
+		switch (len) {
+		case 1:
+			ledstat_3 = *(__uint8_t *) ptr;
+			break;
+		case 2:
+			ledstat_3 = *(__uint16_t *) ptr;
+			break;
+		case 4:
+			ledstat_3 = *(__uint32_t *) ptr;
+			break;
+			assert("Wrong size of data passed" == NULL);
 		}
 	}
 
@@ -337,18 +349,18 @@ int DRV_IO(write3)(int file, char *ptr, int len) {
 // Buffered mode access determination
 //=============================================================================
 /*This should never need to be called, but provided just in case */
-int DRV_IO(isatty)(int file) {
+int DRV_IO(isatty) (int file) {
 	return 0;
 }
 
-int DRV_IO(fstat)(int file, struct stat *st) {
-	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
+int DRV_IO(fstat) (int file, struct stat * st) {
+	tk_fhandle_t *hndl = (tk_fhandle_t *) file;
 	if (hndl->inode->mode != ISA_UNKNOWN)
 		st->st_mode = hndl->inode->mode;
 	else
 		st->st_mode = S_IFBLK;
 
-	st->st_blksize = sizeof(int);		//Should not be needed since blk & ubuff
+	st->st_blksize = sizeof(int);	//Should not be needed since blk & ubuff
 
 	return 0;
 }
@@ -357,101 +369,107 @@ int DRV_IO(fstat)(int file, struct stat *st) {
 // IO structures - pre-assigned
 //=============================================================================
 static const tk_iohandle_t DRV_IO(io0) = {
-        DRV_IO(close0),
-	        fs_ifblk_fcntl,	DRV_IO(fstat),	DRV_IO(isatty),fs_ifblk_link,	fs_ifblk_lseek,
-        DRV_IO(open0),
-        DRV_IO(read0),
-        	fs_ifblk_stat,	fs_ifblk_unlink,
-        DRV_IO(write0)
-};
-static const tk_iohandle_t DRV_IO(io1) = {
-        DRV_IO(close1),
-	        fs_ifblk_fcntl,	DRV_IO(fstat),	DRV_IO(isatty),fs_ifblk_link,	fs_ifblk_lseek,
-        DRV_IO(open1),
-        DRV_IO(read1),
-        	fs_ifblk_stat,	fs_ifblk_unlink,
-        DRV_IO(write1)
-};
-static const tk_iohandle_t DRV_IO(io2) = {
-        DRV_IO(close2),
-	        fs_ifblk_fcntl,	DRV_IO(fstat),	DRV_IO(isatty),fs_ifblk_link,	fs_ifblk_lseek,
-        DRV_IO(open2),
-        DRV_IO(read2),
-        	fs_ifblk_stat,	fs_ifblk_unlink,
-        DRV_IO(write2)
-};
-static const tk_iohandle_t DRV_IO(io3) = {
-        DRV_IO(close3),
-	        fs_ifblk_fcntl,	DRV_IO(fstat),	DRV_IO(isatty),fs_ifblk_link,	fs_ifblk_lseek,
-        DRV_IO(open3),
-        DRV_IO(read3),
-        	fs_ifblk_stat,	fs_ifblk_unlink,
-        DRV_IO(write3)
+	DRV_IO(close0),
+	    fs_ifblk_fcntl, DRV_IO(fstat), DRV_IO(isatty), fs_ifblk_link,
+	    fs_ifblk_lseek, DRV_IO(open0), DRV_IO(read0), fs_ifblk_stat,
+	    fs_ifblk_unlink, DRV_IO(write0)
 };
 
-static const char DRV_IO(info_str)[]="led   @ " DEV_FILE_NAME()"[0-4]";
+static const tk_iohandle_t DRV_IO(io1) = {
+	DRV_IO(close1),
+	    fs_ifblk_fcntl, DRV_IO(fstat), DRV_IO(isatty), fs_ifblk_link,
+	    fs_ifblk_lseek, DRV_IO(open1), DRV_IO(read1), fs_ifblk_stat,
+	    fs_ifblk_unlink, DRV_IO(write1)
+};
+
+static const tk_iohandle_t DRV_IO(io2) = {
+	DRV_IO(close2),
+	    fs_ifblk_fcntl, DRV_IO(fstat), DRV_IO(isatty), fs_ifblk_link,
+	    fs_ifblk_lseek, DRV_IO(open2), DRV_IO(read2), fs_ifblk_stat,
+	    fs_ifblk_unlink, DRV_IO(write2)
+};
+
+static const tk_iohandle_t DRV_IO(io3) = {
+	DRV_IO(close3),
+	    fs_ifblk_fcntl, DRV_IO(fstat), DRV_IO(isatty), fs_ifblk_link,
+	    fs_ifblk_lseek, DRV_IO(open3), DRV_IO(read3), fs_ifblk_stat,
+	    fs_ifblk_unlink, DRV_IO(write3)
+};
+
+static const char DRV_IO(info_str)[] = "led   @ " DEV_FILE_NAME()"[0-4]";
 
 /* Init function(s) */
-void *DRV_IO(init_0__)(void *inarg) {
-	assert(inarg==NULL);
-	assure(mknod(DEV_FILE_NAME(0_red),S_IFBLK, (dev_t)&DRV_IO(io0))	==0);
-	return 0;
-}
-void *DRV_IO(init_1__)(void *inarg) {
-	assert(inarg==NULL);
-	assure(mknod(DEV_FILE_NAME(0_green),S_IFBLK, (dev_t)&DRV_IO(io1))	==0);
-	return 0;
-}
-void *DRV_IO(init_2__)(void *inarg) {
-	assert(inarg==NULL);
-	assure(mknod(DEV_FILE_NAME(1_red),S_IFBLK, (dev_t)&DRV_IO(io2))	==0);
-	return 0;
-}
-void *DRV_IO(init_3__)(void *inarg) {
-	assert(inarg==NULL);
-	assure(mknod(DEV_FILE_NAME(1_green),S_IFBLK, (dev_t)&DRV_IO(io3))	==0);
+void *DRV_IO(init_0__) (void *inarg)
+{
+	assert(inarg == NULL);
+	assure(mknod(DEV_FILE_NAME(0 _red), S_IFBLK, (dev_t) & DRV_IO(io0)) ==
+	       0);
 	return 0;
 }
 
-void *DRV_IO(init__)(void *inarg) {
-	assert(inarg==NULL);
-	DRV_IO(init_0__)(NULL);
-	DRV_IO(init_1__)(NULL);
-	DRV_IO(init_2__)(NULL);
-	DRV_IO(init_3__)(NULL);
-	return (void*)DRV_IO(info_str);
+void *DRV_IO(init_1__) (void *inarg) {
+	assert(inarg == NULL);
+	assure(mknod(DEV_FILE_NAME(0 _green), S_IFBLK, (dev_t) & DRV_IO(io1)) ==
+	       0);
+	return 0;
+}
+
+void *DRV_IO(init_2__) (void *inarg) {
+	assert(inarg == NULL);
+	assure(mknod(DEV_FILE_NAME(1 _red), S_IFBLK, (dev_t) & DRV_IO(io2)) ==
+	       0);
+	return 0;
+}
+
+void *DRV_IO(init_3__) (void *inarg) {
+	assert(inarg == NULL);
+	assure(mknod(DEV_FILE_NAME(1 _green), S_IFBLK, (dev_t) & DRV_IO(io3)) ==
+	       0);
+	return 0;
+}
+
+void *DRV_IO(init__) (void *inarg) {
+	assert(inarg == NULL);
+	DRV_IO(init_0__) (NULL);
+	DRV_IO(init_1__) (NULL);
+	DRV_IO(init_2__) (NULL);
+	DRV_IO(init_3__) (NULL);
+	return (void *)DRV_IO(info_str);
 }
 
 /* Fini function(s) */
-void *DRV_IO(fini_0__)(void *inarg) {
-	assert(inarg==NULL);
+void *DRV_IO(fini_0__) (void *inarg) {
+	assert(inarg == NULL);
 	return 0;
 }
-void *DRV_IO(fini_1__)(void *inarg) {
-	assert(inarg==NULL);
+
+void *DRV_IO(fini_1__) (void *inarg) {
+	assert(inarg == NULL);
 	return 0;
 }
-void *DRV_IO(fini_2__)(void *inarg) {
-	assert(inarg==NULL);
+
+void *DRV_IO(fini_2__) (void *inarg) {
+	assert(inarg == NULL);
 	return 0;
 }
-void *DRV_IO(fini_3__)(void *inarg) {
-	assert(inarg==NULL);
+
+void *DRV_IO(fini_3__) (void *inarg) {
+	assert(inarg == NULL);
 	return 0;
 }
-void *DRV_IO(fini__)(void *inarg) {
-	assert(inarg==NULL);
-	DRV_IO(fini_0__)(NULL);
-	DRV_IO(fini_1__)(NULL);
-	DRV_IO(fini_2__)(NULL);
-	DRV_IO(fini_3__)(NULL);
-	return (void*)DRV_IO(info_str);
+
+void *DRV_IO(fini__) (void *inarg) {
+	assert(inarg == NULL);
+	DRV_IO(fini_0__) (NULL);
+	DRV_IO(fini_1__) (NULL);
+	DRV_IO(fini_2__) (NULL);
+	DRV_IO(fini_3__) (NULL);
+	return (void *)DRV_IO(info_str);
 }
 
 /*Put the main init/fini in corresponding sections so that filesys can pick them up */
-drv_finit_t DRV_IO(init) __attribute__ ((section (".drvinit"))) =DRV_IO(init__);
-drv_finit_t DRV_IO(fini) __attribute__ ((section (".drvfini"))) =DRV_IO(fini__);
-
+drv_finit_t DRV_IO(init) __attribute__ ((section(".drvinit"))) = DRV_IO(init__);
+drv_finit_t DRV_IO(fini) __attribute__ ((section(".drvfini"))) = DRV_IO(fini__);
 
 /*
 int DRV_IO(fcntl)(int file, int command, ...){
@@ -494,4 +512,3 @@ int DRV_IO(unlink)(char *name) {
 	return -1;
 }
 */
-

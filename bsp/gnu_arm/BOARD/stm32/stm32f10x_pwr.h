@@ -76,6 +76,6 @@ void PWR_EnterSTANDBYMode(void);
 FlagStatus PWR_GetFlagStatus(u32 PWR_FLAG);
 void PWR_ClearFlag(u32 PWR_FLAG);
 
-#endif /* __STM32F10x_PWR_H */
+#endif				/* __STM32F10x_PWR_H */
 
 /******************* (C) COPYRIGHT 2007 STMicroelectronics *****END OF FILE****/

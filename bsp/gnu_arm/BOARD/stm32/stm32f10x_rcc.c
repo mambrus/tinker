@@ -102,8 +102,9 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-static uc8 APBAHBPrescTable[16] = {0, 0, 0, 0, 1, 2, 3, 4, 1, 2, 3, 4, 6, 7, 8, 9};
-static uc8 ADCPrescTable[4] = {2, 4, 6, 8};
+static uc8 APBAHBPrescTable[16] =
+    { 0, 0, 0, 0, 1, 2, 3, 4, 1, 2, 3, 4, 6, 7, 8, 9 };
+static uc8 ADCPrescTable[4] = { 2, 4, 6, 8 };
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -122,38 +123,38 @@ static uc8 ADCPrescTable[4] = {2, 4, 6, 8};
 *******************************************************************************/
 void RCC_DeInit(void)
 {
-  /* Disable APB2 Peripheral Reset */
-  RCC->APB2RSTR = 0x00000000;
+	/* Disable APB2 Peripheral Reset */
+	RCC->APB2RSTR = 0x00000000;
 
-  /* Disable APB1 Peripheral Reset */
-  RCC->APB1RSTR = 0x00000000;
+	/* Disable APB1 Peripheral Reset */
+	RCC->APB1RSTR = 0x00000000;
 
-  /* FLITF and SRAM Clock ON */
-  RCC->AHBENR = 0x00000014;
+	/* FLITF and SRAM Clock ON */
+	RCC->AHBENR = 0x00000014;
 
-  /* Disable APB2 Peripheral Clock */
-  RCC->APB2ENR = 0x00000000;
+	/* Disable APB2 Peripheral Clock */
+	RCC->APB2ENR = 0x00000000;
 
-  /* Disable APB1 Peripheral Clock */
-  RCC->APB1ENR = 0x00000000;
+	/* Disable APB1 Peripheral Clock */
+	RCC->APB1ENR = 0x00000000;
 
-  /* Set HSION bit */
-  RCC->CR |= (u32)0x00000001;
+	/* Set HSION bit */
+	RCC->CR |= (u32) 0x00000001;
 
-  /* Reset SW[1:0], HPRE[3:0], PPRE1[2:0], PPRE2[2:0], ADCPRE[1:0] and MCO[2:0] bits*/
-  RCC->CFGR &= 0xF8FF0000;
+	/* Reset SW[1:0], HPRE[3:0], PPRE1[2:0], PPRE2[2:0], ADCPRE[1:0] and MCO[2:0] bits */
+	RCC->CFGR &= 0xF8FF0000;
 
-  /* Reset HSEON, CSSON and PLLON bits */
-  RCC->CR &= 0xFEF6FFFF;
+	/* Reset HSEON, CSSON and PLLON bits */
+	RCC->CR &= 0xFEF6FFFF;
 
-  /* Reset HSEBYP bit */
-  RCC->CR &= 0xFFFBFFFF;
+	/* Reset HSEBYP bit */
+	RCC->CR &= 0xFFFBFFFF;
 
-  /* Reset PLLSRC, PLLXTPRE, PLLMUL[3:0] and USBPRE bits */
-  RCC->CFGR &= 0xFF80FFFF;
+	/* Reset PLLSRC, PLLXTPRE, PLLMUL[3:0] and USBPRE bits */
+	RCC->CFGR &= 0xFF80FFFF;
 
-  /* Disable all interrupts */
-  RCC->CIR = 0x00000000;
+	/* Disable all interrupts */
+	RCC->CIR = 0x00000000;
 }
 
 /*******************************************************************************
@@ -170,32 +171,31 @@ void RCC_DeInit(void)
 *******************************************************************************/
 void RCC_HSEConfig(u32 RCC_HSE)
 {
-  /* Check the parameters */
-  assert(IS_RCC_HSE(RCC_HSE));
+	/* Check the parameters */
+	assert(IS_RCC_HSE(RCC_HSE));
 
-  /* Reset HSEON and HSEBYP bits before configuring the HSE ------------------*/
-  /* Reset HSEON bit */
-  RCC->CR &= CR_HSEON_Reset;
+	/* Reset HSEON and HSEBYP bits before configuring the HSE ------------------ */
+	/* Reset HSEON bit */
+	RCC->CR &= CR_HSEON_Reset;
 
-  /* Reset HSEBYP bit */
-  RCC->CR &= CR_HSEBYP_Reset;
+	/* Reset HSEBYP bit */
+	RCC->CR &= CR_HSEBYP_Reset;
 
-  /* Configure HSE (RCC_HSE_OFF is already covered by the code section above) */
-  switch(RCC_HSE)
-  {
-    case RCC_HSE_ON:
-      /* Set HSEON bit */
-      RCC->CR |= CR_HSEON_Set;
-      break;
+	/* Configure HSE (RCC_HSE_OFF is already covered by the code section above) */
+	switch (RCC_HSE) {
+	case RCC_HSE_ON:
+		/* Set HSEON bit */
+		RCC->CR |= CR_HSEON_Set;
+		break;
 
-    case RCC_HSE_Bypass:
-      /* Set HSEBYP and HSEON bits */
-      RCC->CR |= CR_HSEBYP_Set | CR_HSEON_Set;
-      break;
+	case RCC_HSE_Bypass:
+		/* Set HSEBYP and HSEON bits */
+		RCC->CR |= CR_HSEBYP_Set | CR_HSEON_Set;
+		break;
 
-    default:
-      break;
-  }
+	default:
+		break;
+	}
 }
 
 /*******************************************************************************
@@ -209,21 +209,21 @@ void RCC_HSEConfig(u32 RCC_HSE)
 *******************************************************************************/
 void RCC_AdjustHSICalibrationValue(u8 HSICalibrationValue)
 {
-  u32 tmpreg = 0;
+	u32 tmpreg = 0;
 
-  /* Check the parameters */
-  assert(IS_RCC_CALIBRATION_VALUE(HSICalibrationValue));
+	/* Check the parameters */
+	assert(IS_RCC_CALIBRATION_VALUE(HSICalibrationValue));
 
-  tmpreg = RCC->CR;
+	tmpreg = RCC->CR;
 
-  /* Clear HSITRIM[7:3] bits */
-  tmpreg &= CR_HSITRIM_Mask;
+	/* Clear HSITRIM[7:3] bits */
+	tmpreg &= CR_HSITRIM_Mask;
 
-  /* Set the HSITRIM[7:3] bits according to HSICalibrationValue value */
-  tmpreg |= (u32)HSICalibrationValue << 3;
+	/* Set the HSITRIM[7:3] bits according to HSICalibrationValue value */
+	tmpreg |= (u32) HSICalibrationValue << 3;
 
-  /* Store the new value */
-  RCC->CR = tmpreg;
+	/* Store the new value */
+	RCC->CR = tmpreg;
 }
 
 /*******************************************************************************
@@ -238,10 +238,10 @@ void RCC_AdjustHSICalibrationValue(u8 HSICalibrationValue)
 *******************************************************************************/
 void RCC_HSICmd(FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert(IS_FUNCTIONAL_STATE(NewState));
+	/* Check the parameters */
+	assert(IS_FUNCTIONAL_STATE(NewState));
 
-  *(vu32 *) CR_HSION_BB = (u32)NewState;
+	*(vu32 *) CR_HSION_BB = (u32) NewState;
 }
 
 /*******************************************************************************
@@ -263,22 +263,22 @@ void RCC_HSICmd(FunctionalState NewState)
 *******************************************************************************/
 void RCC_PLLConfig(u32 RCC_PLLSource, u32 RCC_PLLMul)
 {
-  u32 tmpreg = 0;
+	u32 tmpreg = 0;
 
-  /* Check the parameters */
-  assert(IS_RCC_PLL_SOURCE(RCC_PLLSource));
-  assert(IS_RCC_PLL_MUL(RCC_PLLMul));
+	/* Check the parameters */
+	assert(IS_RCC_PLL_SOURCE(RCC_PLLSource));
+	assert(IS_RCC_PLL_MUL(RCC_PLLMul));
 
-  tmpreg = RCC->CFGR;
+	tmpreg = RCC->CFGR;
 
-  /* Clear PLLSRC, PLLXTPRE and PLLMUL[21:18] bits */
-  tmpreg &= CFGR_PLL_Mask;
+	/* Clear PLLSRC, PLLXTPRE and PLLMUL[21:18] bits */
+	tmpreg &= CFGR_PLL_Mask;
 
-  /* Set the PLL configuration bits */
-  tmpreg |= RCC_PLLSource | RCC_PLLMul;
+	/* Set the PLL configuration bits */
+	tmpreg |= RCC_PLLSource | RCC_PLLMul;
 
-  /* Store the new value */
-  RCC->CFGR = tmpreg;
+	/* Store the new value */
+	RCC->CFGR = tmpreg;
 }
 
 /*******************************************************************************
@@ -292,10 +292,10 @@ void RCC_PLLConfig(u32 RCC_PLLSource, u32 RCC_PLLMul)
 *******************************************************************************/
 void RCC_PLLCmd(FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert(IS_FUNCTIONAL_STATE(NewState));
+	/* Check the parameters */
+	assert(IS_FUNCTIONAL_STATE(NewState));
 
-  *(vu32 *) CR_PLLON_BB = (u32)NewState;
+	*(vu32 *) CR_PLLON_BB = (u32) NewState;
 }
 
 /*******************************************************************************
@@ -311,21 +311,21 @@ void RCC_PLLCmd(FunctionalState NewState)
 *******************************************************************************/
 void RCC_SYSCLKConfig(u32 RCC_SYSCLKSource)
 {
-  u32 tmpreg = 0;
+	u32 tmpreg = 0;
 
-  /* Check the parameters */
-  assert(IS_RCC_SYSCLK_SOURCE(RCC_SYSCLKSource));
+	/* Check the parameters */
+	assert(IS_RCC_SYSCLK_SOURCE(RCC_SYSCLKSource));
 
-  tmpreg = RCC->CFGR;
+	tmpreg = RCC->CFGR;
 
-  /* Clear SW[1:0] bits */
-  tmpreg &= CFGR_SW_Mask;
+	/* Clear SW[1:0] bits */
+	tmpreg &= CFGR_SW_Mask;
 
-  /* Set SW[1:0] bits according to RCC_SYSCLKSource value */
-  tmpreg |= RCC_SYSCLKSource;
+	/* Set SW[1:0] bits according to RCC_SYSCLKSource value */
+	tmpreg |= RCC_SYSCLKSource;
 
-  /* Store the new value */
-  RCC->CFGR = tmpreg;
+	/* Store the new value */
+	RCC->CFGR = tmpreg;
 }
 
 /*******************************************************************************
@@ -341,7 +341,7 @@ void RCC_SYSCLKConfig(u32 RCC_SYSCLKSource)
 *******************************************************************************/
 u8 RCC_GetSYSCLKSource(void)
 {
-  return ((u8)(RCC->CFGR & CFGR_SWS_Mask));
+	return ((u8) (RCC->CFGR & CFGR_SWS_Mask));
 }
 
 /*******************************************************************************
@@ -364,21 +364,21 @@ u8 RCC_GetSYSCLKSource(void)
 *******************************************************************************/
 void RCC_HCLKConfig(u32 RCC_HCLK)
 {
-  u32 tmpreg = 0;
+	u32 tmpreg = 0;
 
-  /* Check the parameters */
-  assert(IS_RCC_HCLK(RCC_HCLK));
+	/* Check the parameters */
+	assert(IS_RCC_HCLK(RCC_HCLK));
 
-  tmpreg = RCC->CFGR;
+	tmpreg = RCC->CFGR;
 
-  /* Clear HPRE[7:4] bits */
-  tmpreg &= CFGR_HPRE_Reset_Mask;
+	/* Clear HPRE[7:4] bits */
+	tmpreg &= CFGR_HPRE_Reset_Mask;
 
-  /* Set HPRE[7:4] bits according to RCC_HCLK value */
-  tmpreg |= RCC_HCLK;
+	/* Set HPRE[7:4] bits according to RCC_HCLK value */
+	tmpreg |= RCC_HCLK;
 
-  /* Store the new value */
-  RCC->CFGR = tmpreg;
+	/* Store the new value */
+	RCC->CFGR = tmpreg;
 }
 
 /*******************************************************************************
@@ -397,21 +397,21 @@ void RCC_HCLKConfig(u32 RCC_HCLK)
 *******************************************************************************/
 void RCC_PCLK1Config(u32 RCC_PCLK1)
 {
-  u32 tmpreg = 0;
+	u32 tmpreg = 0;
 
-  /* Check the parameters */
-  assert(IS_RCC_PCLK(RCC_PCLK1));
+	/* Check the parameters */
+	assert(IS_RCC_PCLK(RCC_PCLK1));
 
-  tmpreg = RCC->CFGR;
+	tmpreg = RCC->CFGR;
 
-  /* Clear PPRE1[10:8] bits */
-  tmpreg &= CFGR_PPRE1_Reset_Mask;
+	/* Clear PPRE1[10:8] bits */
+	tmpreg &= CFGR_PPRE1_Reset_Mask;
 
-  /* Set PPRE1[10:8] bits according to RCC_PCLK1 value */
-  tmpreg |= RCC_PCLK1;
+	/* Set PPRE1[10:8] bits according to RCC_PCLK1 value */
+	tmpreg |= RCC_PCLK1;
 
-  /* Store the new value */
-  RCC->CFGR = tmpreg;
+	/* Store the new value */
+	RCC->CFGR = tmpreg;
 }
 
 /*******************************************************************************
@@ -430,21 +430,21 @@ void RCC_PCLK1Config(u32 RCC_PCLK1)
 *******************************************************************************/
 void RCC_PCLK2Config(u32 RCC_PCLK2)
 {
-  u32 tmpreg = 0;
+	u32 tmpreg = 0;
 
-  /* Check the parameters */
-  assert(IS_RCC_PCLK(RCC_PCLK2));
+	/* Check the parameters */
+	assert(IS_RCC_PCLK(RCC_PCLK2));
 
-  tmpreg = RCC->CFGR;
+	tmpreg = RCC->CFGR;
 
-  /* Clear PPRE2[13:11] bits */
-  tmpreg &= CFGR_PPRE2_Reset_Mask;
+	/* Clear PPRE2[13:11] bits */
+	tmpreg &= CFGR_PPRE2_Reset_Mask;
 
-  /* Set PPRE2[13:11] bits according to RCC_PCLK2 value */
-  tmpreg |= RCC_PCLK2 << 3;
+	/* Set PPRE2[13:11] bits according to RCC_PCLK2 value */
+	tmpreg |= RCC_PCLK2 << 3;
 
-  /* Store the new value */
-  RCC->CFGR = tmpreg;
+	/* Store the new value */
+	RCC->CFGR = tmpreg;
 }
 
 /*******************************************************************************
@@ -465,20 +465,17 @@ void RCC_PCLK2Config(u32 RCC_PCLK2)
 *******************************************************************************/
 void RCC_ITConfig(u8 RCC_IT, FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert(IS_RCC_IT(RCC_IT));
-  assert(IS_FUNCTIONAL_STATE(NewState));
+	/* Check the parameters */
+	assert(IS_RCC_IT(RCC_IT));
+	assert(IS_FUNCTIONAL_STATE(NewState));
 
-  if (NewState != DISABLE)
-  {
-    /* Perform Byte access to RCC_CIR[12:8] bits to enable the selected interrupts */
-    *(vu8 *) 0x40021009 |= RCC_IT;
-  }
-  else
-  {
-    /* Perform Byte access to RCC_CIR[12:8] bits to disable the selected interrupts */
-    *(vu8 *) 0x40021009 &= ~(u32)RCC_IT;
-  }
+	if (NewState != DISABLE) {
+		/* Perform Byte access to RCC_CIR[12:8] bits to enable the selected interrupts */
+		*(vu8 *) 0x40021009 |= RCC_IT;
+	} else {
+		/* Perform Byte access to RCC_CIR[12:8] bits to disable the selected interrupts */
+		*(vu8 *) 0x40021009 &= ~(u32) RCC_IT;
+	}
 }
 
 /*******************************************************************************
@@ -496,10 +493,10 @@ void RCC_ITConfig(u8 RCC_IT, FunctionalState NewState)
 *******************************************************************************/
 void RCC_USBCLKConfig(u32 RCC_USBCLKSource)
 {
-  /* Check the parameters */
-  assert(IS_RCC_USBCLK_SOURCE(RCC_USBCLKSource));
+	/* Check the parameters */
+	assert(IS_RCC_USBCLK_SOURCE(RCC_USBCLKSource));
 
-  *(vu32 *) CFGR_USBPRE_BB = RCC_USBCLKSource;
+	*(vu32 *) CFGR_USBPRE_BB = RCC_USBCLKSource;
 }
 
 /*******************************************************************************
@@ -517,21 +514,21 @@ void RCC_USBCLKConfig(u32 RCC_USBCLKSource)
 *******************************************************************************/
 void RCC_ADCCLKConfig(u32 RCC_ADCCLK)
 {
-  u32 tmpreg = 0;
+	u32 tmpreg = 0;
 
-  /* Check the parameters */
-  assert(IS_RCC_ADCCLK(RCC_ADCCLK));
+	/* Check the parameters */
+	assert(IS_RCC_ADCCLK(RCC_ADCCLK));
 
-  tmpreg = RCC->CFGR;
+	tmpreg = RCC->CFGR;
 
-  /* Clear ADCPRE[15:14] bits */
-  tmpreg &= CFGR_ADCPRE_Reset_Mask;
+	/* Clear ADCPRE[15:14] bits */
+	tmpreg &= CFGR_ADCPRE_Reset_Mask;
 
-  /* Set ADCPRE[15:14] bits according to RCC_ADCCLK value */
-  tmpreg |= RCC_ADCCLK;
+	/* Set ADCPRE[15:14] bits according to RCC_ADCCLK value */
+	tmpreg |= RCC_ADCCLK;
 
-  /* Store the new value */
-  RCC->CFGR = tmpreg;
+	/* Store the new value */
+	RCC->CFGR = tmpreg;
 }
 
 /*******************************************************************************
@@ -548,32 +545,31 @@ void RCC_ADCCLKConfig(u32 RCC_ADCCLK)
 *******************************************************************************/
 void RCC_LSEConfig(u32 RCC_LSE)
 {
-  /* Check the parameters */
-  assert(IS_RCC_LSE(RCC_LSE));
+	/* Check the parameters */
+	assert(IS_RCC_LSE(RCC_LSE));
 
-  /* Reset LSEON and LSEBYP bits before configuring the LSE ------------------*/
-  /* Reset LSEON bit */
-  *(vu8 *) BDCR_BASE = RCC_LSE_OFF;
+	/* Reset LSEON and LSEBYP bits before configuring the LSE ------------------ */
+	/* Reset LSEON bit */
+	*(vu8 *) BDCR_BASE = RCC_LSE_OFF;
 
-  /* Reset LSEBYP bit */
-  *(vu8 *) BDCR_BASE = RCC_LSE_OFF;
+	/* Reset LSEBYP bit */
+	*(vu8 *) BDCR_BASE = RCC_LSE_OFF;
 
-  /* Configure LSE (RCC_LSE_OFF is already covered by the code section above) */
-  switch(RCC_LSE)
-  {
-    case RCC_LSE_ON:
-      /* Set LSEON bit */
-      *(vu8 *) BDCR_BASE = RCC_LSE_ON;
-      break;
+	/* Configure LSE (RCC_LSE_OFF is already covered by the code section above) */
+	switch (RCC_LSE) {
+	case RCC_LSE_ON:
+		/* Set LSEON bit */
+		*(vu8 *) BDCR_BASE = RCC_LSE_ON;
+		break;
 
-    case RCC_LSE_Bypass:
-      /* Set LSEBYP and LSEON bits */
-      *(vu8 *) BDCR_BASE = RCC_LSE_Bypass | RCC_LSE_ON;
-      break;
+	case RCC_LSE_Bypass:
+		/* Set LSEBYP and LSEON bits */
+		*(vu8 *) BDCR_BASE = RCC_LSE_Bypass | RCC_LSE_ON;
+		break;
 
-    default:
-      break;
-  }
+	default:
+		break;
+	}
 }
 
 /*******************************************************************************
@@ -587,10 +583,10 @@ void RCC_LSEConfig(u32 RCC_LSE)
 *******************************************************************************/
 void RCC_LSICmd(FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert(IS_FUNCTIONAL_STATE(NewState));
+	/* Check the parameters */
+	assert(IS_FUNCTIONAL_STATE(NewState));
 
-  *(vu32 *) CSR_LSION_BB = (u32)NewState;
+	*(vu32 *) CSR_LSION_BB = (u32) NewState;
 }
 
 /*******************************************************************************
@@ -611,11 +607,11 @@ void RCC_LSICmd(FunctionalState NewState)
 *******************************************************************************/
 void RCC_RTCCLKConfig(u32 RCC_RTCCLKSource)
 {
-  /* Check the parameters */
-  assert(IS_RCC_RTCCLK_SOURCE(RCC_RTCCLKSource));
+	/* Check the parameters */
+	assert(IS_RCC_RTCCLK_SOURCE(RCC_RTCCLKSource));
 
-  /* Select the RTC clock source */
-  RCC->BDCR |= RCC_RTCCLKSource;
+	/* Select the RTC clock source */
+	RCC->BDCR |= RCC_RTCCLKSource;
 }
 
 /*******************************************************************************
@@ -630,10 +626,10 @@ void RCC_RTCCLKConfig(u32 RCC_RTCCLKSource)
 *******************************************************************************/
 void RCC_RTCCLKCmd(FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert(IS_FUNCTIONAL_STATE(NewState));
+	/* Check the parameters */
+	assert(IS_FUNCTIONAL_STATE(NewState));
 
-  *(vu32 *) BDCR_RTCEN_BB = (u32)NewState;
+	*(vu32 *) BDCR_RTCEN_BB = (u32) NewState;
 }
 
 /*******************************************************************************
@@ -644,86 +640,82 @@ void RCC_RTCCLKCmd(FunctionalState NewState)
 * Output         : None
 * Return         : None
 *******************************************************************************/
-void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
+void RCC_GetClocksFreq(RCC_ClocksTypeDef * RCC_Clocks)
 {
-  u32 tmp = 0, pllmull = 0, pllsource = 0, presc = 0;
+	u32 tmp = 0, pllmull = 0, pllsource = 0, presc = 0;
 
-  /* Get SYSCLK source -------------------------------------------------------*/
-  tmp = RCC->CFGR & CFGR_SWS_Mask;
+	/* Get SYSCLK source ------------------------------------------------------- */
+	tmp = RCC->CFGR & CFGR_SWS_Mask;
 
-  switch (tmp)
-  {
-    case 0x00:  /* HSI used as system clock */
-      RCC_Clocks->SYSCLK_Frequency = HSI_Value;
-      break;
+	switch (tmp) {
+	case 0x00:		/* HSI used as system clock */
+		RCC_Clocks->SYSCLK_Frequency = HSI_Value;
+		break;
 
-    case 0x04:  /* HSE used as system clock */
-      RCC_Clocks->SYSCLK_Frequency = HSE_Value;
-      break;
+	case 0x04:		/* HSE used as system clock */
+		RCC_Clocks->SYSCLK_Frequency = HSE_Value;
+		break;
 
-    case 0x08:  /* PLL used as system clock */
-      /* Get PLL clock source and multiplication factor ----------------------*/
-      pllmull = RCC->CFGR & CFGR_PLLMull_Mask;
-      pllmull = ( pllmull >> 18) + 2;
+	case 0x08:		/* PLL used as system clock */
+		/* Get PLL clock source and multiplication factor ---------------------- */
+		pllmull = RCC->CFGR & CFGR_PLLMull_Mask;
+		pllmull = (pllmull >> 18) + 2;
 
-      pllsource = RCC->CFGR & CFGR_PLLSRC_Mask;
+		pllsource = RCC->CFGR & CFGR_PLLSRC_Mask;
 
-      if (pllsource == 0x00)
-      {/* HSI oscillator clock divided by 2 selected as PLL clock entry */
-        RCC_Clocks->SYSCLK_Frequency = (HSI_Value >> 1) * pllmull;
-      }
-      else
-      {/* HSE selected as PLL clock entry */
+		if (pllsource == 0x00) {	/* HSI oscillator clock divided by 2 selected as PLL clock entry */
+			RCC_Clocks->SYSCLK_Frequency =
+			    (HSI_Value >> 1) * pllmull;
+		} else {	/* HSE selected as PLL clock entry */
 
-        if ((RCC->CFGR & CFGR_PLLXTPRE_Mask) != (u32)RESET)
-        {/* HSE oscillator clock divided by 2 */
+			if ((RCC->CFGR & CFGR_PLLXTPRE_Mask) != (u32) RESET) {	/* HSE oscillator clock divided by 2 */
 
-          RCC_Clocks->SYSCLK_Frequency = (HSE_Value >> 1) * pllmull;
-        }
-        else
-        {
-          RCC_Clocks->SYSCLK_Frequency = HSE_Value * pllmull;
-        }
-      }
-      break;
+				RCC_Clocks->SYSCLK_Frequency =
+				    (HSE_Value >> 1) * pllmull;
+			} else {
+				RCC_Clocks->SYSCLK_Frequency =
+				    HSE_Value * pllmull;
+			}
+		}
+		break;
 
-    default:
-      RCC_Clocks->SYSCLK_Frequency = HSI_Value;
-      break;
-  }
+	default:
+		RCC_Clocks->SYSCLK_Frequency = HSI_Value;
+		break;
+	}
 
-  /* Compute HCLK, PCLK1, PCLK2 and ADCCLK clocks frequencies ----------------*/
-  /* Get HCLK prescaler */
-  tmp = RCC->CFGR & CFGR_HPRE_Set_Mask;
-  tmp = tmp >> 4;
-  presc = APBAHBPrescTable[tmp];
+	/* Compute HCLK, PCLK1, PCLK2 and ADCCLK clocks frequencies ---------------- */
+	/* Get HCLK prescaler */
+	tmp = RCC->CFGR & CFGR_HPRE_Set_Mask;
+	tmp = tmp >> 4;
+	presc = APBAHBPrescTable[tmp];
 
-  /* HCLK clock frequency */
-  RCC_Clocks->HCLK_Frequency = RCC_Clocks->SYSCLK_Frequency >> presc;
+	/* HCLK clock frequency */
+	RCC_Clocks->HCLK_Frequency = RCC_Clocks->SYSCLK_Frequency >> presc;
 
-  /* Get PCLK1 prescaler */
-  tmp = RCC->CFGR & CFGR_PPRE1_Set_Mask;
-  tmp = tmp >> 8;
-  presc = APBAHBPrescTable[tmp];
+	/* Get PCLK1 prescaler */
+	tmp = RCC->CFGR & CFGR_PPRE1_Set_Mask;
+	tmp = tmp >> 8;
+	presc = APBAHBPrescTable[tmp];
 
-  /* PCLK1 clock frequency */
-  RCC_Clocks->PCLK1_Frequency = RCC_Clocks->HCLK_Frequency >> presc;
+	/* PCLK1 clock frequency */
+	RCC_Clocks->PCLK1_Frequency = RCC_Clocks->HCLK_Frequency >> presc;
 
-  /* Get PCLK2 prescaler */
-  tmp = RCC->CFGR & CFGR_PPRE2_Set_Mask;
-  tmp = tmp >> 11;
-  presc = APBAHBPrescTable[tmp];
+	/* Get PCLK2 prescaler */
+	tmp = RCC->CFGR & CFGR_PPRE2_Set_Mask;
+	tmp = tmp >> 11;
+	presc = APBAHBPrescTable[tmp];
 
-  /* PCLK2 clock frequency */
-  RCC_Clocks->PCLK2_Frequency = RCC_Clocks->HCLK_Frequency >> presc;
+	/* PCLK2 clock frequency */
+	RCC_Clocks->PCLK2_Frequency = RCC_Clocks->HCLK_Frequency >> presc;
 
-  /* Get ADCCLK prescaler */
-  tmp = RCC->CFGR & CFGR_ADCPRE_Set_Mask;
-  tmp = tmp >> 14;
-  presc = ADCPrescTable[tmp];
+	/* Get ADCCLK prescaler */
+	tmp = RCC->CFGR & CFGR_ADCPRE_Set_Mask;
+	tmp = tmp >> 14;
+	presc = ADCPrescTable[tmp];
 
-  /* ADCCLK clock frequency */
-  RCC_Clocks->ADCCLK_Frequency = RCC_Clocks->PCLK2_Frequency ; // /presc;
+	/* ADCCLK clock frequency */
+	RCC_Clocks->ADCCLK_Frequency = RCC_Clocks->PCLK2_Frequency;	// /presc;
 }
 
 /*******************************************************************************
@@ -742,18 +734,15 @@ void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
 *******************************************************************************/
 void RCC_AHBPeriphClockCmd(u32 RCC_AHBPeriph, FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert(IS_RCC_AHB_PERIPH(RCC_AHBPeriph));
-  assert(IS_FUNCTIONAL_STATE(NewState));
+	/* Check the parameters */
+	assert(IS_RCC_AHB_PERIPH(RCC_AHBPeriph));
+	assert(IS_FUNCTIONAL_STATE(NewState));
 
-  if (NewState != DISABLE)
-  {
-    RCC->AHBENR |= RCC_AHBPeriph;
-  }
-  else
-  {
-    RCC->AHBENR &= ~RCC_AHBPeriph;
-  }
+	if (NewState != DISABLE) {
+		RCC->AHBENR |= RCC_AHBPeriph;
+	} else {
+		RCC->AHBENR &= ~RCC_AHBPeriph;
+	}
 }
 
 /*******************************************************************************
@@ -773,18 +762,15 @@ void RCC_AHBPeriphClockCmd(u32 RCC_AHBPeriph, FunctionalState NewState)
 *******************************************************************************/
 void RCC_APB2PeriphClockCmd(u32 RCC_APB2Periph, FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert(IS_RCC_APB2_PERIPH(RCC_APB2Periph));
-  assert(IS_FUNCTIONAL_STATE(NewState));
+	/* Check the parameters */
+	assert(IS_RCC_APB2_PERIPH(RCC_APB2Periph));
+	assert(IS_FUNCTIONAL_STATE(NewState));
 
-  if (NewState != DISABLE)
-  {
-    RCC->APB2ENR |= RCC_APB2Periph;
-  }
-  else
-  {
-    RCC->APB2ENR &= ~RCC_APB2Periph;
-  }
+	if (NewState != DISABLE) {
+		RCC->APB2ENR |= RCC_APB2Periph;
+	} else {
+		RCC->APB2ENR &= ~RCC_APB2Periph;
+	}
 }
 
 /*******************************************************************************
@@ -805,18 +791,15 @@ void RCC_APB2PeriphClockCmd(u32 RCC_APB2Periph, FunctionalState NewState)
 *******************************************************************************/
 void RCC_APB1PeriphClockCmd(u32 RCC_APB1Periph, FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert(IS_RCC_APB1_PERIPH(RCC_APB1Periph));
-  assert(IS_FUNCTIONAL_STATE(NewState));
+	/* Check the parameters */
+	assert(IS_RCC_APB1_PERIPH(RCC_APB1Periph));
+	assert(IS_FUNCTIONAL_STATE(NewState));
 
-  if (NewState != DISABLE)
-  {
-    RCC->APB1ENR |= RCC_APB1Periph;
-  }
-  else
-  {
-    RCC->APB1ENR &= ~RCC_APB1Periph;
-  }
+	if (NewState != DISABLE) {
+		RCC->APB1ENR |= RCC_APB1Periph;
+	} else {
+		RCC->APB1ENR &= ~RCC_APB1Periph;
+	}
 }
 
 /*******************************************************************************
@@ -835,18 +818,15 @@ void RCC_APB1PeriphClockCmd(u32 RCC_APB1Periph, FunctionalState NewState)
 *******************************************************************************/
 void RCC_APB2PeriphResetCmd(u32 RCC_APB2Periph, FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert(IS_RCC_APB2_PERIPH(RCC_APB2Periph));
-  assert(IS_FUNCTIONAL_STATE(NewState));
+	/* Check the parameters */
+	assert(IS_RCC_APB2_PERIPH(RCC_APB2Periph));
+	assert(IS_FUNCTIONAL_STATE(NewState));
 
-  if (NewState != DISABLE)
-  {
-    RCC->APB2RSTR |= RCC_APB2Periph;
-  }
-  else
-  {
-    RCC->APB2RSTR &= ~RCC_APB2Periph;
-  }
+	if (NewState != DISABLE) {
+		RCC->APB2RSTR |= RCC_APB2Periph;
+	} else {
+		RCC->APB2RSTR &= ~RCC_APB2Periph;
+	}
 }
 
 /*******************************************************************************
@@ -866,18 +846,15 @@ void RCC_APB2PeriphResetCmd(u32 RCC_APB2Periph, FunctionalState NewState)
 *******************************************************************************/
 void RCC_APB1PeriphResetCmd(u32 RCC_APB1Periph, FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert(IS_RCC_APB1_PERIPH(RCC_APB1Periph));
-  assert(IS_FUNCTIONAL_STATE(NewState));
+	/* Check the parameters */
+	assert(IS_RCC_APB1_PERIPH(RCC_APB1Periph));
+	assert(IS_FUNCTIONAL_STATE(NewState));
 
-  if (NewState != DISABLE)
-  {
-    RCC->APB1RSTR |= RCC_APB1Periph;
-  }
-  else
-  {
-    RCC->APB1RSTR &= ~RCC_APB1Periph;
-  }
+	if (NewState != DISABLE) {
+		RCC->APB1RSTR |= RCC_APB1Periph;
+	} else {
+		RCC->APB1RSTR &= ~RCC_APB1Periph;
+	}
 }
 
 /*******************************************************************************
@@ -890,10 +867,10 @@ void RCC_APB1PeriphResetCmd(u32 RCC_APB1Periph, FunctionalState NewState)
 *******************************************************************************/
 void RCC_BackupResetCmd(FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert(IS_FUNCTIONAL_STATE(NewState));
+	/* Check the parameters */
+	assert(IS_FUNCTIONAL_STATE(NewState));
 
-  *(vu32 *) BDCR_BDRST_BB = (u32)NewState;
+	*(vu32 *) BDCR_BDRST_BB = (u32) NewState;
 }
 
 /*******************************************************************************
@@ -906,10 +883,10 @@ void RCC_BackupResetCmd(FunctionalState NewState)
 *******************************************************************************/
 void RCC_ClockSecuritySystemCmd(FunctionalState NewState)
 {
-  /* Check the parameters */
-  assert(IS_FUNCTIONAL_STATE(NewState));
+	/* Check the parameters */
+	assert(IS_FUNCTIONAL_STATE(NewState));
 
-  *(vu32 *) CR_CSSON_BB = (u32)NewState;
+	*(vu32 *) CR_CSSON_BB = (u32) NewState;
 }
 
 /*******************************************************************************
@@ -927,11 +904,11 @@ void RCC_ClockSecuritySystemCmd(FunctionalState NewState)
 *******************************************************************************/
 void RCC_MCOConfig(u8 RCC_MCO)
 {
-  /* Check the parameters */
-  assert(IS_RCC_MCO(RCC_MCO));
+	/* Check the parameters */
+	assert(IS_RCC_MCO(RCC_MCO));
 
-  /* Perform Byte access to MCO[26:24] bits to select the MCO source */
-  *(vu8 *) 0x40021007 = RCC_MCO;
+	/* Perform Byte access to MCO[26:24] bits to select the MCO source */
+	*(vu8 *) 0x40021007 = RCC_MCO;
 }
 
 /*******************************************************************************
@@ -955,43 +932,36 @@ void RCC_MCOConfig(u8 RCC_MCO)
 *******************************************************************************/
 FlagStatus RCC_GetFlagStatus(u8 RCC_FLAG)
 {
-  u32 tmp = 0;
-  u32 statusreg = 0;
-  FlagStatus bitstatus = RESET;
+	u32 tmp = 0;
+	u32 statusreg = 0;
+	FlagStatus bitstatus = RESET;
 
-  /* Check the parameters */
-  assert(IS_RCC_FLAG(RCC_FLAG));
+	/* Check the parameters */
+	assert(IS_RCC_FLAG(RCC_FLAG));
 
-  /* Get the RCC register index */
-  tmp = RCC_FLAG >> 5;
+	/* Get the RCC register index */
+	tmp = RCC_FLAG >> 5;
 
-  if (tmp == 1)               /* The flag to check is in CR register */
-  {
-    statusreg = RCC->CR;
-  }
-  else if (tmp == 2)          /* The flag to check is in BDCR register */
-  {
-    statusreg = RCC->BDCR;
-  }
-  else                       /* The flag to check is in CSR register */
-  {
-    statusreg = RCC->CSR;
-  }
+	if (tmp == 1) {		/* The flag to check is in CR register */
+		statusreg = RCC->CR;
+	} else if (tmp == 2) {	/* The flag to check is in BDCR register */
+		statusreg = RCC->BDCR;
+	} else {		/* The flag to check is in CSR register */
 
-  /* Get the flag position */
-  tmp = RCC_FLAG & FLAG_Mask;
+		statusreg = RCC->CSR;
+	}
 
-  if ((statusreg & ((u32)1 << tmp)) != (u32)RESET)
-  {
-    bitstatus = SET;
-  }
-  else
-  {
-    bitstatus = RESET;
-  }
+	/* Get the flag position */
+	tmp = RCC_FLAG & FLAG_Mask;
 
-  /* Return the flag status */
-  return bitstatus;
+	if ((statusreg & ((u32) 1 << tmp)) != (u32) RESET) {
+		bitstatus = SET;
+	} else {
+		bitstatus = RESET;
+	}
+
+	/* Return the flag status */
+	return bitstatus;
 }
 
 /*******************************************************************************
@@ -1006,8 +976,8 @@ FlagStatus RCC_GetFlagStatus(u8 RCC_FLAG)
 *******************************************************************************/
 void RCC_ClearFlag(void)
 {
-  /* Set RVMF bit to clear the reset flags */
-  RCC->CSR |= CSR_RVMF_Set;
+	/* Set RVMF bit to clear the reset flags */
+	RCC->CSR |= CSR_RVMF_Set;
 }
 
 /*******************************************************************************
@@ -1026,23 +996,20 @@ void RCC_ClearFlag(void)
 *******************************************************************************/
 ITStatus RCC_GetITStatus(u8 RCC_IT)
 {
-  ITStatus bitstatus = RESET;
+	ITStatus bitstatus = RESET;
 
-  /* Check the parameters */
-  assert(IS_RCC_GET_IT(RCC_IT));
+	/* Check the parameters */
+	assert(IS_RCC_GET_IT(RCC_IT));
 
-  /* Check the status of the specified RCC interrupt */
-  if ((RCC->CIR & RCC_IT) != (u32)RESET)
-  {
-    bitstatus = SET;
-  }
-  else
-  {
-    bitstatus = RESET;
-  }
+	/* Check the status of the specified RCC interrupt */
+	if ((RCC->CIR & RCC_IT) != (u32) RESET) {
+		bitstatus = SET;
+	} else {
+		bitstatus = RESET;
+	}
 
-  /* Return the RCC_IT status */
-  return  bitstatus;
+	/* Return the RCC_IT status */
+	return bitstatus;
 }
 
 /*******************************************************************************
@@ -1061,12 +1028,12 @@ ITStatus RCC_GetITStatus(u8 RCC_IT)
 *******************************************************************************/
 void RCC_ClearITPendingBit(u8 RCC_IT)
 {
-  /* Check the parameters */
-  assert(IS_RCC_CLEAR_IT(RCC_IT));
+	/* Check the parameters */
+	assert(IS_RCC_CLEAR_IT(RCC_IT));
 
-  /* Perform Byte access to RCC_CIR[23:16] bits to clear the selected interrupt
-     pending bits */
-  *(vu8 *) 0x4002100A = RCC_IT;
+	/* Perform Byte access to RCC_CIR[23:16] bits to clear the selected interrupt
+	   pending bits */
+	*(vu8 *) 0x4002100A = RCC_IT;
 }
 
 /******************* (C) COPYRIGHT 2007 STMicroelectronics *****END OF FILE****/

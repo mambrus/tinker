@@ -25,7 +25,6 @@
 
 #include <sys/types.h>
 
-
 /*
 
                           Table 14-9. SCCR Field Descriptions
@@ -118,36 +117,30 @@
 
 */
 
-
-typedef union{
+typedef union {
 	__uint32_t raw;
 	struct {
-		__uint32_t PADD_0		:1;
-		__uint32_t COM			:2;
-		__uint32_t PADD_1		:3;
+		__uint32_t PADD_0:1;
+		__uint32_t COM:2;
+		__uint32_t PADD_1:3;
 
-		__uint32_t TBS			:1;
-		__uint32_t RTDIV		:1;
-		__uint32_t RTSEL		:1;
-		__uint32_t CRQEN		:1;
-		__uint32_t PRQEN		:1;
+		__uint32_t TBS:1;
+		__uint32_t RTDIV:1;
+		__uint32_t RTSEL:1;
+		__uint32_t CRQEN:1;
+		__uint32_t PRQEN:1;
 
-		__uint32_t PADD_3		:2;
-		__uint32_t EBDF			:2;
-		__uint32_t PADD_4		:2;
-		__uint32_t DFSYNC		:2;
-		__uint32_t DFBRG		:2;
+		__uint32_t PADD_3:2;
+		__uint32_t EBDF:2;
+		__uint32_t PADD_4:2;
+		__uint32_t DFSYNC:2;
+		__uint32_t DFBRG:2;
 
-		__uint32_t DFNL			:3;
-		__uint32_t DFNH			:3;
+		__uint32_t DFNL:3;
+		__uint32_t DFNH:3;
 
-		__uint32_t PADD_5		:5;
-	}f;
-}sccr_t;
+		__uint32_t PADD_5:5;
+	} f;
+} sccr_t;
 
-
-
-
-
-#endif //CM_SCC_H
-
+#endif				//CM_SCC_H

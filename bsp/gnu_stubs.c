@@ -34,7 +34,6 @@ properly implement (since there are neither less nor more of them).
 
 */
 
-
 #ifdef USE_GNU_SYSCALL_STUBS
 
 #include <errno.h>
@@ -74,7 +73,6 @@ int bsp_printf(char *formatstr, ...){
 	va_end(ap);
 	rc = sprintf(mystr_buff[cidx],formatstr,argbuff);
 	cidx = (cidx+1) % MAX_STRINGS;
-
 
 	if ( (curr_tcb->Thid) == 0 ){
 		for (i=lidx; lidx != cidx; lidx = (lidx+1) % MAX_STRINGS ){
@@ -118,7 +116,8 @@ close
 Closes a file. Minimal implementation is shown in the following example (in
 which file stands for the filename to substitute).
 */
-int close(int file){
+int close(int file)
+{
 	return -1;
 }
 
@@ -134,8 +133,6 @@ char **environ = __env;
 */
 //@}
 
-
-
 /**
 execve
 Transfers control to a new process. Minimal implementation (for a system without
@@ -143,20 +140,21 @@ processes) is shown in the following example (in which name stands for the
 process name to substitute, argv stands for the argument value to subtitute, and
 env stands for the environment to substitute).
 */
-int execve(char *name, char **argv, char **env){
-   errno=ENOMEM;
-   return -1;
+int execve(char *name, char **argv, char **env)
+{
+	errno = ENOMEM;
+	return -1;
 }
-
 
 /**
 fork
 Create a new process. Minimal implementation (for a system without processes)
 is shown in the following example.
 */
-int fork() {
-   errno=EAGAIN;
-   return -1;
+int fork()
+{
+	errno = EAGAIN;
+	return -1;
 }
 
 /**
@@ -167,9 +165,10 @@ The sys/stat.h header file required is distributed in the include subdirectory
 for this C library.
 */
 #include <sys/stat.h>
-int fstat(int file, struct stat *st) {
-   st->st_mode = S_IFCHR;
-   return 0;
+int fstat(int file, struct stat *st)
+{
+	st->st_mode = S_IFCHR;
+	return 0;
 }
 
 /**
@@ -179,8 +178,9 @@ other processes. Minimal implementation, for a system without processes is
 shown in the following example.
 */
 
-int getpid() {
-   return 1;
+int getpid()
+{
+	return 1;
 }
 
 /**
@@ -199,9 +199,10 @@ int isatty(int file){
 kill
 Send a signal. Minimal implementation is shown in the following example.
 */
-int kill(int pid, int sig){
-errno=EINVAL;
-   return(-1);
+int kill(int pid, int sig)
+{
+	errno = EINVAL;
+	return (-1);
 }
 
 /**
@@ -209,25 +210,28 @@ link
 Establish a new name for an existing file. Minimal implementation is shown in the
 following example.
 */
-int link(char *old, char *new){
-   errno=EMLINK;
-   return -1;
+int link(char *old, char *new)
+{
+	errno = EMLINK;
+	return -1;
 }
 
 /**
 lseek
 Set position in a file. Minimal implementation is shown in the following example.
 */
-int lseek(int file, int ptr, int dir){
-   return 0;
+int lseek(int file, int ptr, int dir)
+{
+	return 0;
 }
 
 /**
 read
 Read from a file. Minimal implementation is shown in the following example.
 */
-int read(int file, char *ptr, int len){
-   return 0;
+int read(int file, char *ptr, int len)
+{
+	return 0;
 }
 
 /**
@@ -236,15 +240,16 @@ Increase program data space. As malloc and related functions depend on this, it 
 useful to have a working implementation. The following suffices for a standalone
 system; it exploits the symbol, end, automatically defined by the GNU linker, ld.
 */
-caddr_t sbrk(int incr){
-   extern char end;
-   /* Defined by the linker. */
-   static char *heap_end;
-   char *prev_heap_end;
-   if (heap_end == 0) {
-      heap_end = &end;
-   }
-   prev_heap_end = heap_end;
+caddr_t sbrk(int incr)
+{
+	extern char end;
+	/* Defined by the linker. */
+	static char *heap_end;
+	char *prev_heap_end;
+	if (heap_end == 0) {
+		heap_end = &end;
+	}
+	prev_heap_end = heap_end;
 /*
    if (heap_end + incr > stack_ptr)
    {
@@ -281,8 +286,9 @@ times
 Timing information for current process. Minimal implementation is shown in the
 following example.
 */
-clock_t times(struct tms *buf){
-   return -1;
+clock_t times(struct tms *buf)
+{
+	return -1;
 }
 
 /**
@@ -290,9 +296,10 @@ unlink
 Remove a file�s directory entry. Minimal implementation is shown in the
 following example.
 */
-int unlink(char *name){
-   errno=ENOENT;
-   return -1;
+int unlink(char *name)
+{
+	errno = ENOENT;
+	return -1;
 }
 
 /**
@@ -300,9 +307,10 @@ wait
 Wait for a child process. Minimal implementation is shown in the following
 example.
 */
-int wait(int *status) {
-   errno=ECHILD;
-   return -1;
+int wait(int *status)
+{
+	errno = ECHILD;
+	return -1;
 }
 
 /**
@@ -316,10 +324,11 @@ is an incomplete example; it relies on a writechar subroutine to actually perfor
 the output (a subroutine not provided here since it is usually in assembler form as
 examples provided by your hardware manufacturer).
 */
-int write(int file, char *ptr, int len){
-   int todo;
+int write(int file, char *ptr, int len)
+{
+	int todo;
 	for (todo = 0; todo < len; todo++) {
-	   //writechar(*ptr++);
+		//writechar(*ptr++);
 	}
 	return len;
 }
@@ -392,4 +401,3 @@ int write(int file, char *ptr, int len){
  *  ported for :D (/cheers)
  *
  */
-

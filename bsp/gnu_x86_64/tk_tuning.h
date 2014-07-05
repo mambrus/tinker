@@ -21,55 +21,53 @@
 #define TK_TUNING_H
 
 #if defined(__GNUC__)
-  #include <tinker/config.h>
+#include <tinker/config.h>
 #endif
 
 #if defined(__CYGWIN32__) || defined(__CYGWIN__)
-  #ifndef TK_NORMAL_STACK_SIZE
-    #define TK_NORMAL_STACK_SIZE 0xD000
-  #endif
-  #ifndef TK_MINIMUM_STACK_SIZE
-    #define TK_MINIMUM_STACK_SIZE 0x0D00
-  #endif
-#elif defined (__GNUC__) && TK_HOSTED
-  #ifndef TK_MAX_THREADS
-    #define TK_MAX_THREADS 0x1000
-  #endif
-  #ifndef TK_NORMAL_STACK_SIZE
-    #define TK_NORMAL_STACK_SIZE 0x4800
-  #endif
-  #ifndef TK_MINIMUM_STACK_SIZE
-    #define TK_MINIMUM_STACK_SIZE 0x2400
-  #endif
-#else
-  #ifndef TK_NORMAL_STACK_SIZE
-    #define TK_NORMAL_STACK_SIZE 0x1200
-  #endif
-  #ifndef TK_MINIMUM_STACK_SIZE
-    #define TK_MINIMUM_STACK_SIZE 0x0600
-  #endif
+#ifndef TK_NORMAL_STACK_SIZE
+#define TK_NORMAL_STACK_SIZE 0xD000
 #endif
-
+#ifndef TK_MINIMUM_STACK_SIZE
+#define TK_MINIMUM_STACK_SIZE 0x0D00
+#endif
+#elif defined (__GNUC__) && TK_HOSTED
+#ifndef TK_MAX_THREADS
+#define TK_MAX_THREADS 0x1000
+#endif
+#ifndef TK_NORMAL_STACK_SIZE
+#define TK_NORMAL_STACK_SIZE 0x4800
+#endif
+#ifndef TK_MINIMUM_STACK_SIZE
+#define TK_MINIMUM_STACK_SIZE 0x2400
+#endif
+#else
+#ifndef TK_NORMAL_STACK_SIZE
+#define TK_NORMAL_STACK_SIZE 0x1200
+#endif
+#ifndef TK_MINIMUM_STACK_SIZE
+#define TK_MINIMUM_STACK_SIZE 0x0600
+#endif
+#endif
 
 #ifndef TK_MAX_THREADS
-  #define TK_MAX_THREADS 0x100
+#define TK_MAX_THREADS 0x100
 #endif
 #ifndef TK_MAX_PRIO_LEVELS
-  #define TK_MAX_PRIO_LEVELS 0x10
+#define TK_MAX_PRIO_LEVELS 0x10
 #endif
-  #ifndef TK_MAX_THREADS_AT_PRIO
-  #define TK_MAX_THREADS_AT_PRIO TK_MAX_THREADS
+#ifndef TK_MAX_THREADS_AT_PRIO
+#define TK_MAX_THREADS_AT_PRIO TK_MAX_THREADS
 #endif
 #ifndef TK_THREAD_NAME_LEN
-  #define TK_THREAD_NAME_LEN 0x27
+#define TK_THREAD_NAME_LEN 0x27
 #endif
-
 
 #ifndef TK_MAX_BLOCKED_ON_Q
-  #define TK_MAX_BLOCKED_ON_Q TK_MAX_THREADS
+#define TK_MAX_BLOCKED_ON_Q TK_MAX_THREADS
 #endif
 #ifndef TK_MAX_NUM_Q
-  #define TK_MAX_NUM_Q 0x100
+#define TK_MAX_NUM_Q 0x100
 #endif
 
 #define TRAP(NUM) \

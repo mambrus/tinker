@@ -16,36 +16,36 @@
 /*                                                                     */
 /***********************************************************************/
 
-#define XMEM             // the xhuge version
+#define XMEM			// the xhuge version
 
 #include <string.h>
 #include <stdlib.h>
 
 #if defined (XMEM)
-  #define MTYP          xhuge
-  #define init_mempool  xinit_mempool
-  #define calloc        xcalloc
-  #define malloc        xmalloc
-  #define free          xfree
-  #define realloc       xrealloc
-  #define __mp__        __xmp__
-  #define TLEN          unsigned long
+#define MTYP          xhuge
+#define init_mempool  xinit_mempool
+#define calloc        xcalloc
+#define malloc        xmalloc
+#define free          xfree
+#define realloc       xrealloc
+#define __mp__        __xmp__
+#define TLEN          unsigned long
 #else
-  #define TLEN          unsigned int
-  #if (__MODEL__ == 5 || __MODEL__ == 6)
-    #define MTYP  huge   // for HCOMPACT and HLARGE
-  #else
-    #define MTYP  far    // for other models
-    #define memcpy      fmemcpy
-  #endif
+#define TLEN          unsigned int
+#if (__MODEL__ == 5 || __MODEL__ == 6)
+#define MTYP  huge		// for HCOMPACT and HLARGE
+#else
+#define MTYP  far		// for other models
+#define memcpy      fmemcpy
+#endif
 #endif
 
-struct __mp__  {                      /* memory pool */
-  struct __mp__ MTYP    *next;        /* single-linked list */
-  TLEN                    len;        /* length of following block */
+struct __mp__ {			/* memory pool */
+	struct __mp__ MTYP *next;	/* single-linked list */
+	TLEN len;		/* length of following block */
 };
 
-extern void MTYP * MTYP __mp__;       /* Memory Pool Header */
+extern void MTYP *MTYP __mp__;	/* Memory Pool Header */
 #define	HLEN	(sizeof(struct __mp__))
 
 /*  Memory pool header:  __mp__ points to the first available.
@@ -56,20 +56,22 @@ extern void MTYP * MTYP __mp__;       /* Memory Pool Header */
 
 #define MIN_BLOCK	(HLEN * 4)
 
-void MTYP *realloc (void MTYP *oldp, TLEN size)  {
+void MTYP *realloc(void MTYP * oldp, TLEN size)
+{
 #define p   ((struct __mp__ MTYP *) oldp)
-#define p0  ((struct __mp__ MTYP *)&p[-1]) /* block to realloc */
-  void MTYP *newp;
+#define p0  ((struct __mp__ MTYP *)&p[-1])	/* block to realloc */
+	void MTYP *newp;
 
 /*  Make sure that block is word aligned                                    */
-  size = (size + 1) & ~1L;
-  newp = malloc (size);
-  if (!newp) return (NULL);
-  if (oldp)  {
-    if (size > p0->len)  size = p0->len;
-    xmemcpy (newp, oldp, size);
-    free (oldp);
-  }
-  return (newp);
+	size = (size + 1) & ~1L;
+	newp = malloc(size);
+	if (!newp)
+		return (NULL);
+	if (oldp) {
+		if (size > p0->len)
+			size = p0->len;
+		xmemcpy(newp, oldp, size);
+		free(oldp);
+	}
+	return (newp);
 }
-

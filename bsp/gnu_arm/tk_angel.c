@@ -19,69 +19,68 @@
  ***************************************************************************/
 
  /*!
- @brief
+    @brief
 
- This is the Angel generic backend for TinKer. Each trap will execute
- a corresponding  function specific for a certaing board or uC (or for you,
- the application designer, to define and implement).
+    This is the Angel generic backend for TinKer. Each trap will execute
+    a corresponding  function specific for a certaing board or uC (or for you,
+    the application designer, to define and implement).
 
- */
+  */
 
 #include "swi.h"
 #include "tk_bsp.h"
 #include "../src/context.h"
 
-void Angel_Handler( void )__attribute__((interrupt("SWI")));
+void Angel_Handler(void) __attribute__ ((interrupt("SWI")));
 
-void Angel_Handler( void )
+void Angel_Handler(void)
 {
-   int reason; //Reason of the call (see swich case below)
-   void* arg;  //Arg can be anything - array, values e.t.a. All depends on the reason
-   int *value;  //The return value to the caller
+	int reason;		//Reason of the call (see swich case below)
+	void *arg;		//Arg can be anything - array, values e.t.a. All depends on the reason
+	int *value;		//The return value to the caller
 
-   //Pick up the Angel package. R0 is always intact, R2 *should* still be (prolog code seems OK)
-   asm volatile ("mov %1, r1; mov %0, r0"
-      : "=r" (reason), "=r" (arg) /* Outputs */
-      : /* Inputs */
-      : "r1", "memory"
-	/* Clobbers all */);
+	//Pick up the Angel package. R0 is always intact, R2 *should* still be (prolog code seems OK)
+	asm volatile ("mov %1, r1; mov %0, r0":"=r" (reason), "=r"(arg)	/* Outputs */
+		      :		/* Inputs */
+		      :"r1", "memory"
+		      /* Clobbers all */ );
 
 	//Fix the SP so that normal ret can be used.
-    asm volatile ( "ADD     LR, LR, #4" );
+	asm volatile ("ADD     LR, LR, #4");
 
-    GET_REG(r12, value);
-    value -= 8;                //Now points at the pushed R0
-                               //(Prolog pushes R0,R1,R2,R3,R11,R12,LR,PC)
+	GET_REG(r12, value);
+	value -= 8;		//Now points at the pushed R0
+	//(Prolog pushes R0,R1,R2,R3,R11,R12,LR,PC)
 
-   switch (reason){
+	switch (reason) {
 
-   case AngelSWI_Reason_Open            :
-      {
-         int  *block = (int*)arg;
-         char *name  = (char*)   block[0];
-         int   mode  =           block[1];
-         int   len   =           block[2];
+	case AngelSWI_Reason_Open:
+		{
+			int *block = (int *)arg;
+			char *name = (char *)block[0];
+			int mode = block[1];
+			int len = block[2];
 
-         *value = bsp_Open(name, mode, len);
-      }
-      break;
+			*value = bsp_Open(name, mode, len);
+		}
+		break;
 //   case AngelSWI_Reason_Close           :break;
 //   case AngelSWI_Reason_WriteC          :break;
 //   case AngelSWI_Reason_Write0          :break;
 
-   case AngelSWI_Reason_Write           :
-      {
-         int   *block = (int*)arg;
-         int   fh;
-         char  *ptr;
-         int   len;
+	case AngelSWI_Reason_Write:
+		{
+			int *block = (int *)arg;
+			int fh;
+			char *ptr;
+			int len;
 
-         fh  =        block[0];
-         ptr = (char*)block[1];
-         len =        block[2];
-         *value = bsp_Write(fh, ptr, len);
-      }
-      break;
+			fh = block[0];
+			ptr = (char *)block[1];
+			len = block[2];
+			*value = bsp_Write(fh, ptr, len);
+		}
+		break;
 
 //   case AngelSWI_Reason_Read            :break;
 //   case AngelSWI_Reason_ReadC           :break;
@@ -91,9 +90,9 @@ void Angel_Handler( void )
 //   case AngelSWI_Reason_TmpNam          :break;
 //   case AngelSWI_Reason_Remove          :break;
 //   case AngelSWI_Reason_Rename          :break;
-     case AngelSWI_Reason_Clock           :
-        *value = bsp_Clock();
-        break;
+	case AngelSWI_Reason_Clock:
+		*value = bsp_Clock();
+		break;
 //   case AngelSWI_Reason_Time            :break;
 //   case AngelSWI_Reason_System          :break;
 //   case AngelSWI_Reason_Errno           :break;
@@ -102,11 +101,11 @@ void Angel_Handler( void )
 //   case AngelSWI_Reason_EnterSVC        :break;
 //   case AngelSWI_Reason_ReportException :break;
 
-   default:
-      //Should never happen. But in case it does, return a really wacky value
-      //and let's hope the caller picks up the hint.
-      *value = -1; /*EOF*/
-   }
+	default:
+		//Should never happen. But in case it does, return a really wacky value
+		//and let's hope the caller picks up the hint.
+		*value = -1;
+	 /*EOF*/}
 }
 
 /*!
@@ -130,5 +129,3 @@ void Angel_Handler( void )
  *  blocking).
  *
  */
-
-

@@ -32,8 +32,6 @@ SCHED
 
 */
 
-
-
 #ifndef _IMPLEMENT_TK_H
 #define _IMPLEMENT_TK_H
 
@@ -54,28 +52,28 @@ corresponding bits. This is actually the only \e real reason for this enum to
 exist, since \ref STATEBITS does the same job.
 */
 typedef enum {
-   READY    =0x00,
-   _______T =0x01,
-   ______S_ =0x02,
-   ______ST =0x03,
-   _____Q__ =0x04,
-   _____Q_T =0x05,
-   _____QS_ =0x06,
-   _____QST =0x07,
-   ____Z___ =0x08,
-   ____Z__T =0x09,
-   ____Z_S_ =0x0A,
-   ____Z_ST =0x0B,
-   ____ZQ__ =0x0C,
-   ____ZQ_T =0x0D,
-   ____ZQS_ =0x0E,
-   ____ZQST =0x0F
-}PROCSTATE;
+	READY = 0x00,
+	_______T = 0x01,
+	______S_ = 0x02,
+	______ST = 0x03,
+	_____Q__ = 0x04,
+	_____Q_T = 0x05,
+	_____QS_ = 0x06,
+	_____QST = 0x07,
+	____Z___ = 0x08,
+	____Z__T = 0x09,
+	____Z_S_ = 0x0A,
+	____Z_ST = 0x0B,
+	____ZQ__ = 0x0C,
+	____ZQ_T = 0x0D,
+	____ZQS_ = 0x0E,
+	____ZQST = 0x0F
+} PROCSTATE;
 
-#define TERM  _______T	//!< "Terminated" state (simplyfied PROCSTATE)
-#define SLEEP ______S_	//!< "Sleeping" state (simplyfied PROCSTATE)
-#define QUEUE _____Q__	//!< "Blocked" state (simplyfied PROCSTATE)
-#define ZOMBI ____Z___	//!< "Zombi" state (simplyfied PROCSTATE)
+#define TERM  _______T		//!< "Terminated" state (simplyfied PROCSTATE)
+#define SLEEP ______S_		//!< "Sleeping" state (simplyfied PROCSTATE)
+#define QUEUE _____Q__		//!< "Blocked" state (simplyfied PROCSTATE)
+#define ZOMBI ____Z___		//!< "Zombi" state (simplyfied PROCSTATE)
 
 /*!
 @brief Defines what the threads is blocked on.
@@ -92,7 +90,7 @@ I.e. anything else than another thread, cancelation or native timeout.
 @brief Wake-up events.
 Wake-up events (i.e. last reason to go ready)
 */
-typedef enum{E_NONE, E_CHILDDEATH, E_TIMER, E_ITC, E_ITC2}wakeE_t;
+typedef enum { E_NONE, E_CHILDDEATH, E_TIMER, E_ITC, E_ITC2 } wakeE_t;
 
 /*
 If PROCSTATE has Q flag set, bOnID in \ref tk_tcb_t will contain
@@ -113,12 +111,12 @@ information about any of the following synch entities:
  - Ptimer
 */
 typedef enum {
-   BON_SCHED=0,        //!< Either other thread or self (native timer)
-   BON_ITC,            //!< Any of the native ITC entities
-   BON_PMUTEX,         //!< Pthread mutex
-   BON_SEMAPHORE,      //!< POSIX 1b semaphore
-   BON_PTIMER          //!< pTimer
-}bon_sel_t;
+	BON_SCHED = 0,		//!< Either other thread or self (native timer)
+	BON_ITC,		//!< Any of the native ITC entities
+	BON_PMUTEX,		//!< Pthread mutex
+	BON_SEMAPHORE,		//!< POSIX 1b semaphore
+	BON_PTIMER		//!< pTimer
+} bon_sel_t;
 
 /*!
 Information about what the thread is blocked on
@@ -128,14 +126,13 @@ packages so that they can have their own "place holder" in the TCB.
 
 */
 typedef struct bon_t_ {
-   bon_sel_t                  kind;
-   union {
-      struct tcb_t_           *tcb;
-      struct itc_t_           *itc;
-      struct pthread_mutex_t_ *mutex;
-   }entity;
-}bon_t;
-
+	bon_sel_t kind;
+	union {
+		struct tcb_t_ *tcb;
+		struct itc_t_ *itc;
+		struct pthread_mutex_t_ *mutex;
+	} entity;
+} bon_t;
 
 /*!
 Thread control block (TCB). This structure contains all
@@ -149,49 +146,47 @@ like the C166 family, this is a much more complex structure.
 @todo Insert a compile time chet that prevents number of threads to be larger than MAX_UNT/2 (i.e. negative int)
 */
 
-typedef struct tcb_t_{
-   thid_t         Thid,Gid;            //!< Process ID and Parent ID (Gid). A Gid of -1 would indicate a detached (parent-less) thread
-   int            noChilds;            //!< Numb of procs this has created
-   char           name[TK_THREAD_NAME_LEN+1]; //!< Name of the thread (+ 1 extra for byte terminating zero)
-   TK_BOOL           valid;               //!< This TCB is active and contains valid info about a thread.
-   PROCSTATE      state;               //!< State of the process
-   bon_t          bOnId;               //!< The ID of the \b main entity this thread is blocked on (either other threads-ID or ITC or ptimer-ID). If serveral entities are reason for blocking, ontly the main entity will be mentioned here.
-   int            _errno_;             //!< Support of per thread errno
-   stack_t        stack_begin;         //!< First address of stack memory       (This value will be static during execution)
-   stack_t        curr_sp;             //!< Current stackpointer of this thread (This value will vary during execution)
-   size_t         stack_size;          //!< Size of stack
-   unsigned long  stack_crc;           //!< Control value of integrity check
-   clock_t        wakeuptime;          //!< When to wake up if sleeping
-   wakeE_t        wakeupEvent;         //!< Helper variable mainly for ITC
-   void*          retval;              //!< The return value of a thread. Either return code or value of \ref tk_threadexit()
+typedef struct tcb_t_ {
+	thid_t Thid, Gid;	//!< Process ID and Parent ID (Gid). A Gid of -1 would indicate a detached (parent-less) thread
+	int noChilds;		//!< Numb of procs this has created
+	char name[TK_THREAD_NAME_LEN + 1];	//!< Name of the thread (+ 1 extra for byte terminating zero)
+	TK_BOOL valid;		//!< This TCB is active and contains valid info about a thread.
+	PROCSTATE state;	//!< State of the process
+	bon_t bOnId;		//!< The ID of the \b main entity this thread is blocked on (either other threads-ID or ITC or ptimer-ID). If serveral entities are reason for blocking, ontly the main entity will be mentioned here.
+	int _errno_;		//!< Support of per thread errno
+	stack_t stack_begin;	//!< First address of stack memory       (This value will be static during execution)
+	stack_t curr_sp;	//!< Current stackpointer of this thread (This value will vary during execution)
+	size_t stack_size;	//!< Size of stack
+	unsigned long stack_crc;	//!< Control value of integrity check
+	clock_t wakeuptime;	//!< When to wake up if sleeping
+	wakeE_t wakeupEvent;	//!< Helper variable mainly for ITC
+	void *retval;		//!< The return value of a thread. Either return code or value of \ref tk_threadexit()
 /*
    //Obsolete stuff - kept for reference
    start_func_f   start_funct;         //!< Address of the threads entry function. Used ONLY for debugging purposes
    init_func_f    init_funct;          //!< Support of the pThread <em>"once"</em> concept.
    void          *prmtRetAddr;         //!< Preempted return adress - used in preempted mode.
 */
-   unsigned int   Prio,Idx;            //!< Helpers, prevent need of lookup
-}tk_tcb_t;
+	unsigned int Prio, Idx;	//!< Helpers, prevent need of lookup
+} tk_tcb_t;
 
-
-typedef struct stat_t{
-   unsigned short procs_at_prio;    //Used for optimizing sheduler.
-   unsigned short curr_idx;
-}prio_stat_t;
+typedef struct stat_t {
+	unsigned short procs_at_prio;	//Used for optimizing sheduler.
+	unsigned short curr_idx;
+} prio_stat_t;
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-struct tcb_t_ *_tk_current_tcb( void );
-struct tcb_t_ *_tk_specific_tcb( thid_t id );
-void           _tk_main( void );
-void            tk_trap( int ec );
-int            _tk_try_detach_parent( thid_t, int);
-thid_t         _tk_next_runable_thread( void );
-void           _tk_context_switch_to_thread( thid_t, thid_t);
+struct tcb_t_ *_tk_current_tcb(void);
+struct tcb_t_ *_tk_specific_tcb(thid_t id);
+void _tk_main(void);
+void tk_trap(int ec);
+int _tk_try_detach_parent(thid_t, int);
+thid_t _tk_next_runable_thread(void);
+void _tk_context_switch_to_thread(thid_t, thid_t);
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 /* User-provided */
 extern int root(void);
-
 
 /*- public data **/
 
@@ -199,15 +194,15 @@ extern int root(void);
 extern int __tk_IntFlagCntr;
 
 #if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
-	clock_t clock_stubbed();
-	#define tk_clock()  clock_stubbed()
+clock_t clock_stubbed();
+#define tk_clock()  clock_stubbed()
 #else
-	#define tk_clock()  clock()
+#define tk_clock()  clock()
 #endif
 
 #if defined(TK_HOSTED)
 /* We don't care it's fast enough */
-#  define tk_difftime difftime
+#define tk_difftime difftime
 #else
 /* Light version of ANSI difftime with the only difference that it doesn't
    return a double, but a time_t instead. This guarantees correctness in
@@ -221,14 +216,15 @@ extern int __tk_IntFlagCntr;
  *    evaluation to constantly TRUE or constantly FALSE (NEW).
  *
  * */
-   static time_t _tk_difftime(time_t t1, time_t t0) {
-      return t1 - t0;
-   }
-#  define tk_difftime _tk_difftime
+static time_t _tk_difftime(time_t t1, time_t t0)
+{
+	return t1 - t0;
+}
+
+#define tk_difftime _tk_difftime
 #endif
 
-#endif /* _IMPLEMENT_TK_H */
-
+#endif				/* _IMPLEMENT_TK_H */
 
 /*!
  * @defgroup CVSLOG_implement_tk_h implement_tk_h
@@ -326,4 +322,3 @@ extern int __tk_IntFlagCntr;
  *
  *
  */
-

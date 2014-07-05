@@ -36,11 +36,10 @@
 #define VIC_CH_CAN1RX 26
 #define VIC_CH_CAN2RX 27
 
-typedef struct
-{
-  UNS_32 vecchannel;
-  UNS_8 vecaddr;           // 0-15
-  void *func;
+typedef struct {
+	UNS_32 vecchannel;
+	UNS_8 vecaddr;		// 0-15
+	void *func;
 } vic_control;
 
 //! \defgroup lpc2129_vic lpc2129_vic
@@ -57,21 +56,21 @@ typedef struct
 //!   vic_install_isr(&vc);            \n
 //! </pre>
 //! \ingroup lpc2129_vic
-void vic_install_isr(vic_control *vc);
+void vic_install_isr(vic_control * vc);
 
 //! Enable the interrupt for an installed ISR.
 //! @param *vc Pointer to initialized vic_control struct.
 //! \ingroup lpc2129_vic
-void vic_enable_int(vic_control *vc);
+void vic_enable_int(vic_control * vc);
 
 //! Disable the interrupt for an installed ISR.
 //! @param *vc Pointer to initialized vic_control struct.
 //! \ingroup lpc2129_vic
-void vic_disable_int(vic_control *vc);
+void vic_disable_int(vic_control * vc);
 
 //! Uninstall a previously installed ISR
 //! @param *vc Pointer to initialized vic_control struct.
 //! \ingroup lpc2129_vic
-void vic_remove_isr(vic_control *vc);
+void vic_remove_isr(vic_control * vc);
 
 #endif

@@ -42,42 +42,39 @@ used for hi-res calendar time-structs.
 #include <assert.h>
 
 #if defined (__GNUC__)
-   #include <tinker/config.h>
-   #include <sys/times.h>
-   #include <sys/time.h>
+#include <tinker/config.h>
+#include <sys/times.h>
+#include <sys/time.h>
 #else
 
-   #include "tk_tick.h"    //internal macros for tick handling in this header
-   #include "tk_hwclock.h"
-   #include <tk_hwsys.h>   //< Try to remove this one
-
-
+#include "tk_tick.h"		//internal macros for tick handling in this header
+#include "tk_hwclock.h"
+#include <tk_hwsys.h>		//< Try to remove this one
 
    /*!
-   An internal scaling factor that needs to be matched against the
-   timer resolution so that the POSIX requirements for CLOCKS_PER_SEC is
-   fullfilled. The current resolution is 1000 tics per second (1kHZ
-   interrupts). The POSIX CLOCKS_PER_SEC is preset to 1*10e6. How many
-   clock_ticks is there (or would there be) in a sys_mickey.
-   */
-   #define TICK_PER_CLK 1000ul  //<! How much a tick is advanced on
+      An internal scaling factor that needs to be matched against the
+      timer resolution so that the POSIX requirements for CLOCKS_PER_SEC is
+      fullfilled. The current resolution is 1000 tics per second (1kHZ
+      interrupts). The POSIX CLOCKS_PER_SEC is preset to 1*10e6. How many
+      clock_ticks is there (or would there be) in a sys_mickey.
+    */
+#define TICK_PER_CLK 1000ul	//<! How much a tick is advanced on
    //each interrupt
 
-
-   #include "tk_tick.h"
-   #if defined (HW_CLOCKED)
-      #define USE_HW_CLOCK      //!< Undef this to see the "error" in tk_msleep that happens each 17.2 minutes (see \Blog060227 for in-deapth discussion). Should be undefined if monitoring of ISR latency is turned off in the HW clock, since it will generate worse accuracy then reading only the sys_mikey_mickey alone.
-   #endif
+#include "tk_tick.h"
+#if defined (HW_CLOCKED)
+#define USE_HW_CLOCK		//!< Undef this to see the "error" in tk_msleep that happens each 17.2 minutes (see \Blog060227 for in-deapth discussion). Should be undefined if monitoring of ISR latency is turned off in the HW clock, since it will generate worse accuracy then reading only the sys_mikey_mickey alone.
+#endif
 
    /*!
-   Optionally this can be defined instead, but leave /ref
-   USE_HW_CLOCK defined (same reasoning remains though, accuracy will
-   be totally spoiled).
-   */
-   #define NO_SYSTIMER_WRAP_MONITOR
+      Optionally this can be defined instead, but leave /ref
+      USE_HW_CLOCK defined (same reasoning remains though, accuracy will
+      be totally spoiled).
+    */
+#define NO_SYSTIMER_WRAP_MONITOR
 
    //return (clock_t)(-1);
-#endif //defined (__GNUC__)
+#endif				//defined (__GNUC__)
 
 //---------------------------------------------------------------------------------------
 // The following section is used to figure out which funtion we can use to figure out
@@ -124,64 +121,64 @@ Implementation in principle the same as \ref getnanouptime
 */
 
 #ifndef HAVE_CLOCK
-clock_t clock(){
-   #if !defined (USE_HW_CLOCK)
-   return (TICK_PER_CLK * sys_mickey);  // This *HAS* to ne wrong
-   #else
-   signed int        	pebbles,p2;  // Remainig value in HWclock register
-   unsigned long        uS;       // Time passed since last update of tick expressed in uS.
-   unsigned long        TuS;      // Temp of the above
-   HWclock_stats_t      HWclock_stats;
-   //int                  ecnt = 0;
-   int                  zerocrossed = 0;
+clock_t clock()
+{
+#if !defined (USE_HW_CLOCK)
+	return (TICK_PER_CLK * sys_mickey);	// This *HAS* to ne wrong
+#else
+	signed int pebbles, p2;	// Remainig value in HWclock register
+	unsigned long uS;	// Time passed since last update of tick expressed in uS.
+	unsigned long TuS;	// Temp of the above
+	HWclock_stats_t HWclock_stats;
+	//int                  ecnt = 0;
+	int zerocrossed = 0;
 
+	pebbles = 0;
+	tk_getHWclock_Quality(CLK1, &HWclock_stats);
 
-   pebbles = 0;
-   tk_getHWclock_Quality( CLK1, &HWclock_stats );
+	TK_CLI();
+	tk_getHWclock(CLK1, &pebbles);
+	uS = sys_mickey;
+	TK_STI();
 
-   TK_CLI();
-   tk_getHWclock(         CLK1, &pebbles);
-   uS = sys_mickey;
-   TK_STI();
+	uS *= 1000uL;
 
+	if ((HWclock_stats.res > 16) && (HWclock_stats.freq_hz < 1000000)) {
+		assert
+		    ("tk: to high resolution HW clock. TinKer can't handle this ATM"
+		     == NULL);
+	}
 
-   uS *= 1000uL;
+	if (pebbles < 0) {
+		pebbles *= -1;
+		uS++;
+		zerocrossed = 1;
+	}
 
-   if ((HWclock_stats.res > 16) && (HWclock_stats.freq_hz < 1000000)) {
-      assert("tk: to high resolution HW clock. TinKer can't handle this ATM" == NULL);
-   }
+	/*
+	   for ( ecnt =0; (unsigned long)pebbles >= HWclock_stats.perPebbles; ecnt++ ){
+	   if (!zerocrossed)
+	   assert("How the fuck...!"==NULL);
+	   pebbles -= HWclock_stats.perPebbles;
+	   uS++;
+	   }
+	 */
 
-   if (pebbles <0){
-      pebbles *= -1;
-      uS++;
-      zerocrossed=1;
-   }
+	/*
+	   The following should be cought by the TISR and should never possible to happen.
+	   Enable if if you think you have a reason.
+	 */
+#ifndef NO_SYSTIMER_WRAP_MONITOR
+	assert(HWclock_stats.perPebbles > (unsigned long)pebbles);
+#endif
 
-   /*
-   for ( ecnt =0; (unsigned long)pebbles >= HWclock_stats.perPebbles; ecnt++ ){
-      if (!zerocrossed)
-         assert("How the fuck...!"==NULL);
-      pebbles -= HWclock_stats.perPebbles;
-      uS++;
-   }
-   */
+	// Calculate the nuber of uS since last update of tick
+	TuS = HWclock_stats.maxPebbles - pebbles;
+	TuS = (TuS * (1000000L / (HWclock_stats.freq_hz / 100))) / 100;
 
+	return (uS + TuS);
 
-   /*
-   The following should be cought by the TISR and should never possible to happen.
-   Enable if if you think you have a reason.
-   */
-   #ifndef NO_SYSTIMER_WRAP_MONITOR
-   assert(HWclock_stats.perPebbles > (unsigned long)pebbles);
-   #endif
-
-   // Calculate the nuber of uS since last update of tick
-   TuS = HWclock_stats.maxPebbles - pebbles;
-   TuS = (TuS * (1000000L / (HWclock_stats.freq_hz/100)))/100;
-
-   return (uS + TuS);
-
-   #endif
+#endif
 }
 #endif
 
@@ -201,14 +198,15 @@ I.e. this function emulates the case where RCT returns zero, which for relative 
 cases is just as good.
 */
 #ifndef HAVE_TIME
-time_t time (time_t *result){
-   time_t tresult;
-   tresult = (time_t)clock();
+time_t time(time_t * result)
+{
+	time_t tresult;
+	tresult = (time_t) clock();
 
-   if (result != NULL)
-      *result = tresult;
+	if (result != NULL)
+		*result = tresult;
 
-   return tresult;
+	return tresult;
 }
 #endif
 
@@ -220,10 +218,11 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#Processor%20Time
 
 */
 #ifndef HAVE_TIMES
-clock_t times (struct tms *buffer){
-   assert("Not implemented");
+clock_t times(struct tms * buffer)
+{
+	assert("Not implemented");
 
-   return clock();
+	return clock();
 }
 #endif
 
@@ -235,9 +234,10 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#High-Resolution%20Ca
 
 */
 #ifndef HAVE_GETTIMEOFDAY
-int gettimeofday (struct timeval *tp, struct timezone *tzp){
-   assert("Not implemented");
-   return 0;
+int gettimeofday(struct timeval *tp, struct timezone *tzp)
+{
+	assert("Not implemented");
+	return 0;
 }
 #endif
 
@@ -249,9 +249,10 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#High-Resolution%20Ca
 
 */
 #ifndef HAVE_SETTIMEOFDAY
-int settimeofday (const struct timeval *tp, const struct timezone *tzp){
-   assert("Not implemented");
-   return 0;
+int settimeofday(const struct timeval *tp, const struct timezone *tzp)
+{
+	assert("Not implemented");
+	return 0;
 }
 #endif
 
@@ -263,28 +264,25 @@ http://lists.freebsd.org/pipermail/freebsd-threads/2005-June/003123.html
 
 */
 #if !defined (__GNUC__)
-int clock_gettime (
-   clockid_t clock_id,
-   struct timespec *tp
-){
-    switch (clock_id) {
-      case CLOCK_REALTIME:
-         assert("CLOCK_REALTIME is not implemented yet" == 0);
-         //nanotime(tp);
-         break;
+int clock_gettime(clockid_t clock_id, struct timespec *tp)
+{
+	switch (clock_id) {
+	case CLOCK_REALTIME:
+		assert("CLOCK_REALTIME is not implemented yet" == 0);
+		//nanotime(tp);
+		break;
 
-      case CLOCK_MONOTONIC:
-         getnanouptime(tp);
-         break;
+	case CLOCK_MONOTONIC:
+		getnanouptime(tp);
+		break;
 
-      default:
-         return EINVAL;
-   }
+	default:
+		return EINVAL;
+	}
 
-   return ERR_OK;
+	return ERR_OK;
 }
-#endif //!defined (__GNUC__)
-
+#endif				//!defined (__GNUC__)
 
 /*!
 @brief Converts time from <i>struct timespec</i> to formatted time
@@ -299,16 +297,16 @@ interpretation back and forth to the user (or as debugging info).
 it's not a POSIX standard function. Hence the _np suffix.
 
 */
-void timespec2fmttime_np(
-   struct fmttime *totime,         //!< Converted time returned
-   const struct timespec *fromtime //!< Original representation
-){
-   totime->days     =   fromtime->tv_sec / 86400;
-   totime->hrs      =  (fromtime->tv_sec % 86400) / 3600;
-   totime->mins     = ((fromtime->tv_sec % 86400) % 3600) / 60;
-   totime->secs     = ((fromtime->tv_sec % 86400) % 3600) % 60;
+void timespec2fmttime_np(struct fmttime *totime,	//!< Converted time returned
+			 const struct timespec *fromtime	//!< Original representation
+    )
+{
+	totime->days = fromtime->tv_sec / 86400;
+	totime->hrs = (fromtime->tv_sec % 86400) / 3600;
+	totime->mins = ((fromtime->tv_sec % 86400) % 3600) / 60;
+	totime->secs = ((fromtime->tv_sec % 86400) % 3600) % 60;
 
-   totime->nanos    = fromtime->tv_nsec;
+	totime->nanos = fromtime->tv_nsec;
 }
 
 /*!
@@ -322,31 +320,30 @@ storing the result in RESULT.
 @returns 1 if the difference is negative, otherwise 0.
 */
 #if !defined (__GNUC__)
-int timeval_subtract (result, x, y)
-         struct timeval *result, *x, *y;
-   {
-      /* Perform the carry for the later subtraction by updating y. */
-      if (x->tv_usec < y->tv_usec) {
-      int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
-      y->tv_usec -= 1000000 * nsec;
-      y->tv_sec += nsec;
-      }
-      if (x->tv_usec - y->tv_usec > 1000000) {
-      int nsec = (x->tv_usec - y->tv_usec) / 1000000;
-      y->tv_usec += 1000000 * nsec;
-      y->tv_sec -= nsec;
-      }
+int timeval_subtract(result, x, y)
+struct timeval *result, *x, *y;
+{
+	/* Perform the carry for the later subtraction by updating y. */
+	if (x->tv_usec < y->tv_usec) {
+		int nsec = (y->tv_usec - x->tv_usec) / 1000000 + 1;
+		y->tv_usec -= 1000000 * nsec;
+		y->tv_sec += nsec;
+	}
+	if (x->tv_usec - y->tv_usec > 1000000) {
+		int nsec = (x->tv_usec - y->tv_usec) / 1000000;
+		y->tv_usec += 1000000 * nsec;
+		y->tv_sec -= nsec;
+	}
 
-   /* Compute the time remaining to wait.
-         tv_usec is certainly positive. */
-      result->tv_sec = x->tv_sec - y->tv_sec;
-      result->tv_usec = x->tv_usec - y->tv_usec;
+	/* Compute the time remaining to wait.
+	   tv_usec is certainly positive. */
+	result->tv_sec = x->tv_sec - y->tv_sec;
+	result->tv_usec = x->tv_usec - y->tv_usec;
 
-   /* Return 1 if result is negative. */
-      return x->tv_sec < y->tv_sec;
-   }
-#endif //!defined (__GNUC__)
-
+	/* Return 1 if result is negative. */
+	return x->tv_sec < y->tv_sec;
+}
+#endif				//!defined (__GNUC__)
 
 /*!
  * @defgroup CVSLOG_time_c time_c
@@ -463,10 +460,3 @@ int timeval_subtract (result, x, y)
  *
  *
  *******************************************************************/
-
-
-
-
-
-
-

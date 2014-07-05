@@ -18,22 +18,19 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 //------1---------2---------3---------4---------5---------6---------7---------8
 #ifndef TK_TUNING_H
 #define TK_TUNING_H
 
 #if defined(__GNUC__)
-   #include <tinker/config.h>
+#include <tinker/config.h>
 #endif
 
 #define TRAP( NUM )     \
    tk_trap( NUM )
 
-
 #include <arch/powerpc/bits.h>
 #include "CPU/860/mmap_regs.h"
-
 
 /*!
 Called by handler to notify inerrupt controller that ISR is finished (or interrupt is handled).
@@ -52,12 +49,10 @@ Called by handler to notify inerrupt controller that ISR is finished (or interru
 #define tk_isr_eoi(level) \
 		bitset(SIPEND,level);
 
-
 /* No need to set any more tunings here. This port exists only for GNU and configure.in
 at this level contains all the defaults we need. */
 
-#endif  //TK_TUNING_H
-
+#endif				//TK_TUNING_H
 
 /*!
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
@@ -93,13 +88,3 @@ at this level contains all the defaults we need. */
  *  Tinker will now compile for target powerpc-hixs-rtems
  *
  *******************************************************************/
-
-
-
-
-
-
-
-
-
-

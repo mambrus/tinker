@@ -42,178 +42,178 @@ void debug(void)
 
 /************************************* ADC ************************************/
 #ifdef _ADC1
-  ADC1 = (ADC_TypeDef *)  ADC1_BASE;
+	ADC1 = (ADC_TypeDef *) ADC1_BASE;
 #endif /*_ADC1 */
 
 #ifdef _ADC2
-  ADC2 = (ADC_TypeDef *)  ADC2_BASE;
+	ADC2 = (ADC_TypeDef *) ADC2_BASE;
 #endif /*_ADC2 */
 
 /************************************* BKP ************************************/
 #ifdef _BKP
-  BKP = (BKP_TypeDef *)  BKP_BASE;
+	BKP = (BKP_TypeDef *) BKP_BASE;
 #endif /*_BKP */
 
 /************************************* CAN ************************************/
 #ifdef _CAN
-  CAN = (CAN_TypeDef *)  CAN_BASE;
+	CAN = (CAN_TypeDef *) CAN_BASE;
 #endif /*_CAN */
 
 /************************************* DMA ************************************/
 #ifdef _DMA
-  DMA = (DMA_TypeDef *)  DMA_BASE;
+	DMA = (DMA_TypeDef *) DMA_BASE;
 #endif /*_DMA */
 
 #ifdef _DMA_Channel1
-  DMA_Channel1 = (DMA_Channel_TypeDef *)  DMA_Channel1_BASE;
+	DMA_Channel1 = (DMA_Channel_TypeDef *) DMA_Channel1_BASE;
 #endif /*_DMA_Channel1 */
 
 #ifdef _DMA_Channel2
-  DMA_Channel2 = (DMA_Channel_TypeDef *)  DMA_Channel2_BASE;
+	DMA_Channel2 = (DMA_Channel_TypeDef *) DMA_Channel2_BASE;
 #endif /*_DMA_Channel2 */
 
 #ifdef _DMA_Channel3
-  DMA_Channel3 = (DMA_Channel_TypeDef *)  DMA_Channel3_BASE;
+	DMA_Channel3 = (DMA_Channel_TypeDef *) DMA_Channel3_BASE;
 #endif /*_DMA_Channel3 */
 
 #ifdef _DMA_Channel4
-  DMA_Channel4 = (DMA_Channel_TypeDef *)  DMA_Channel4_BASE;
+	DMA_Channel4 = (DMA_Channel_TypeDef *) DMA_Channel4_BASE;
 #endif /*_DMA_Channel4 */
 
 #ifdef _DMA_Channel5
-  DMA_Channel5 = (DMA_Channel_TypeDef *)  DMA_Channel5_BASE;
+	DMA_Channel5 = (DMA_Channel_TypeDef *) DMA_Channel5_BASE;
 #endif /*_DMA_Channel5 */
 
 #ifdef _DMA_Channel6
-  DMA_Channel6 = (DMA_Channel_TypeDef *)  DMA_Channel6_BASE;
+	DMA_Channel6 = (DMA_Channel_TypeDef *) DMA_Channel6_BASE;
 #endif /*_DMA_Channel6 */
 
 #ifdef _DMA_Channel7
-  DMA_Channel7 = (DMA_Channel_TypeDef *)  DMA_Channel7_BASE;
+	DMA_Channel7 = (DMA_Channel_TypeDef *) DMA_Channel7_BASE;
 #endif /*_DMA_Channel7 */
 
 /************************************* EXTI ***********************************/
 #ifdef _EXTI
-  EXTI = (EXTI_TypeDef *)  EXTI_BASE;
+	EXTI = (EXTI_TypeDef *) EXTI_BASE;
 #endif /*_EXTI */
 
 /************************************* FLASH and Option Bytes *****************/
 #ifdef _FLASH
-  FLASH = (FLASH_TypeDef *)  FLASH_BASE;
-  OB = (OB_TypeDef *)  OB_BASE;
+	FLASH = (FLASH_TypeDef *) FLASH_BASE;
+	OB = (OB_TypeDef *) OB_BASE;
 #endif /*_FLASH */
 
 /************************************* GPIO ***********************************/
 #ifdef _GPIOA
-  GPIOA = (GPIO_TypeDef *)  GPIOA_BASE;
+	GPIOA = (GPIO_TypeDef *) GPIOA_BASE;
 #endif /*_GPIOA */
 
 #ifdef _GPIOB
-  GPIOB = (GPIO_TypeDef *)  GPIOB_BASE;
+	GPIOB = (GPIO_TypeDef *) GPIOB_BASE;
 #endif /*_GPIOB */
 
 #ifdef _GPIOC
-  GPIOC = (GPIO_TypeDef *)  GPIOC_BASE;
+	GPIOC = (GPIO_TypeDef *) GPIOC_BASE;
 #endif /*_GPIOC */
 
 #ifdef _GPIOD
-  GPIOD = (GPIO_TypeDef *)  GPIOD_BASE;
+	GPIOD = (GPIO_TypeDef *) GPIOD_BASE;
 #endif /*_GPIOD */
 
 #ifdef _GPIOE
-  GPIOE = (GPIO_TypeDef *)  GPIOE_BASE;
+	GPIOE = (GPIO_TypeDef *) GPIOE_BASE;
 #endif /*_GPIOE */
 
 #ifdef _AFIO
-  AFIO = (AFIO_TypeDef *)  AFIO_BASE;
+	AFIO = (AFIO_TypeDef *) AFIO_BASE;
 #endif /*_AFIO */
 
 /************************************* I2C ************************************/
 #ifdef _I2C1
-  I2C1 = (I2C_TypeDef *)  I2C1_BASE;
+	I2C1 = (I2C_TypeDef *) I2C1_BASE;
 #endif /*_I2C1 */
 
 #ifdef _I2C2
-  I2C2 = (I2C_TypeDef *)  I2C2_BASE;
+	I2C2 = (I2C_TypeDef *) I2C2_BASE;
 #endif /*_I2C2 */
 
 /************************************* IWDG ***********************************/
 #ifdef _IWDG
-  IWDG = (IWDG_TypeDef *) IWDG_BASE;
+	IWDG = (IWDG_TypeDef *) IWDG_BASE;
 #endif /*_IWDG */
 
 /************************************* NVIC ***********************************/
 #ifdef _NVIC
-  NVIC = (NVIC_TypeDef *)  NVIC_BASE;
+	NVIC = (NVIC_TypeDef *) NVIC_BASE;
 #endif /*_NVIC */
 
 #ifdef _SCB
-  SCB = (SCB_TypeDef *)  SCB_BASE;
+	SCB = (SCB_TypeDef *) SCB_BASE;
 #endif /*_SCB */
 
 /************************************* PWR ************************************/
 #ifdef _PWR
-  PWR = (PWR_TypeDef *)  PWR_BASE;
+	PWR = (PWR_TypeDef *) PWR_BASE;
 #endif /*_PWR */
 
 /************************************* RCC ************************************/
 #ifdef _RCC
-  RCC = (RCC_TypeDef *)  RCC_BASE;
+	RCC = (RCC_TypeDef *) RCC_BASE;
 #endif /*_RCC */
 
 /************************************* RTC ************************************/
 #ifdef _RTC
-  RTC = (RTC_TypeDef *)  RTC_BASE;
+	RTC = (RTC_TypeDef *) RTC_BASE;
 #endif /*_RTC */
 
 /************************************* SPI ************************************/
 #ifdef _SPI1
-  SPI1 = (SPI_TypeDef *)  SPI1_BASE;
+	SPI1 = (SPI_TypeDef *) SPI1_BASE;
 #endif /*_SPI1 */
 
 #ifdef _SPI2
-  SPI2 = (SPI_TypeDef *)  SPI2_BASE;
+	SPI2 = (SPI_TypeDef *) SPI2_BASE;
 #endif /*_SPI2 */
 
 /************************************* SysTick ********************************/
 #ifdef _SysTick
-  SysTick = (SysTick_TypeDef *)  SysTick_BASE;
+	SysTick = (SysTick_TypeDef *) SysTick_BASE;
 #endif /*_SysTick */
 
 /************************************* TIM1 ***********************************/
 #ifdef _TIM1
-  TIM1 = (TIM1_TypeDef *)  TIM1_BASE;
+	TIM1 = (TIM1_TypeDef *) TIM1_BASE;
 #endif /*_TIM1 */
 
 /************************************* TIM ************************************/
 #ifdef _TIM2
-  TIM2 = (TIM_TypeDef *)  TIM2_BASE;
+	TIM2 = (TIM_TypeDef *) TIM2_BASE;
 #endif /*_TIM2 */
 
 #ifdef _TIM3
-  TIM3 = (TIM_TypeDef *)  TIM3_BASE;
+	TIM3 = (TIM_TypeDef *) TIM3_BASE;
 #endif /*_TIM3 */
 
 #ifdef _TIM4
-  TIM4 = (TIM_TypeDef *)  TIM4_BASE;
+	TIM4 = (TIM_TypeDef *) TIM4_BASE;
 #endif /*_TIM4 */
 
 /************************************* USART **********************************/
 #ifdef _USART1
-  USART1 = (USART_TypeDef *) USART1_BASE;
+	USART1 = (USART_TypeDef *) USART1_BASE;
 #endif /*_USART1 */
 
 #ifdef _USART2
-  USART2 = (USART_TypeDef *) USART2_BASE;
+	USART2 = (USART_TypeDef *) USART2_BASE;
 #endif /*_USART2 */
 
 #ifdef _USART3
-  USART3 = (USART_TypeDef *) USART3_BASE;
+	USART3 = (USART_TypeDef *) USART3_BASE;
 #endif /*_USART3 */
 
 /************************************* WWDG ***********************************/
 #ifdef _WWDG
-  WWDG = (WWDG_TypeDef *)  WWDG_BASE;
+	WWDG = (WWDG_TypeDef *) WWDG_BASE;
 #endif /*_WWDG */
 }
 #endif

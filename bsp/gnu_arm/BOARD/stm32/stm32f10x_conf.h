@@ -109,7 +109,7 @@
 
 /* In the following line adjust the value of External High Speed oscillator (HSE)
    used in your application */
-#define HSE_Value    ((u32)8000000) /* Value of the External oscillator in Hz*/
+#define HSE_Value    ((u32)8000000)	/* Value of the External oscillator in Hz */
 
 /* Exported macro ------------------------------------------------------------*/
 #undef assert
@@ -124,13 +124,13 @@
 *                    If expr is true, it returns no value.
 * Return         : None
 *******************************************************************************/
-  #define assert(expr) ((expr) ? (void)0 : assert_failed((u8 *)__FILE__, __LINE__))
+#define assert(expr) ((expr) ? (void)0 : assert_failed((u8 *)__FILE__, __LINE__))
 /* Exported functions ------------------------------------------------------- */
-  void assert_failed(u8* file, u32 line);
+void assert_failed(u8 * file, u32 line);
 #else
-  #define assert(expr) ((void)0)
-#endif /* DEBUG */
+#define assert(expr) ((void)0)
+#endif				/* DEBUG */
 
-#endif /* __STM32F10x_CONF_H */
+#endif				/* __STM32F10x_CONF_H */
 
 /******************* (C) COPYRIGHT 2007 STMicroelectronics *****END OF FILE****/

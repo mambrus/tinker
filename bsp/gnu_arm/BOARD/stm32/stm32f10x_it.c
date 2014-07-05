@@ -27,11 +27,11 @@
 #include "STM32F_usb_cfg.h"
 
 #if USB_HIGH_PRIORITY_EVENT > 0
-extern void USB_HIGH_ISR (void);
-#endif // USB_HIGH_PRIORITY_EVENT > 0
-extern void USB_ISR (void);
+extern void USB_HIGH_ISR(void);
+#endif				// USB_HIGH_PRIORITY_EVENT > 0
+extern void USB_ISR(void);
 
-char j=0;
+char j = 0;
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -182,10 +182,13 @@ void TAMPER_IRQHandler(void)
 void RTC_IRQHandler(void)
 {
 
-  if((GPIOC->IDR)&(0x00001000)) { GPIOC->BRR |= 0x00001000; }
-  else                          { GPIOC->BSRR |= 0x00001000; }
+	if ((GPIOC->IDR) & (0x00001000)) {
+		GPIOC->BRR |= 0x00001000;
+	} else {
+		GPIOC->BSRR |= 0x00001000;
+	}
 
-  RTC_ClearFlag(RTC_IT_SEC);
+	RTC_ClearFlag(RTC_IT_SEC);
 }
 
 /*******************************************************************************
@@ -364,8 +367,8 @@ void ADC_IRQHandler(void)
 void USB_HP_CAN_TX_IRQHandler(void)
 {
 #if USB_HIGH_PRIORITY_EVENT > 0
- USB_HIGH_ISR();
-#endif // USB_HIGH_PRIORITY_EVENT > 0
+	USB_HIGH_ISR();
+#endif				// USB_HIGH_PRIORITY_EVENT > 0
 }
 
 /*******************************************************************************
@@ -378,7 +381,7 @@ void USB_HP_CAN_TX_IRQHandler(void)
 *******************************************************************************/
 void USB_LP_CAN_RX0_IRQHandler(void)
 {
-  USB_ISR();
+	USB_ISR();
 }
 
 /*******************************************************************************

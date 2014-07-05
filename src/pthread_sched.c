@@ -27,7 +27,6 @@
 The content of this source-file implement thread management. I.e.
 starting/stopping, setting attributes of the threads themselves.
 
-
 For in-depth discussions about this component, see \ref
 PTHREAD_SCHED
 
@@ -45,20 +44,23 @@ PTHREAD_SCHED
 
 unsigned long sem_once;
 
-unsigned long tk_pthread_sched( void ){
-   unsigned long rc = ERR_OK;
+unsigned long tk_pthread_sched(void)
+{
+	unsigned long rc = ERR_OK;
 
-   rc = sm_create("SOnc",1,FIFO,&sem_once);
+	rc = sm_create("SOnc", 1, FIFO, &sem_once);
 
-   return rc;
+	return rc;
 }
+
 //------1---------2---------3---------4---------5---------6---------7---------8
-unsigned long tk_pthread_sched_destruct( void ){
-   unsigned long rc = ERR_OK;
+unsigned long tk_pthread_sched_destruct(void)
+{
+	unsigned long rc = ERR_OK;
 
-   rc = sm_delete(sem_once);
+	rc = sm_delete(sem_once);
 
-   return rc;
+	return rc;
 
 }
 
@@ -74,54 +76,42 @@ Works exactlly as \ref pthread_create except that it provides TinKer with a name
 
 @todo Chech if the stack concpets fit. Unscertain...
 */
-int pthread_create_named_np (
-   pthread_t               *thread,
-   const pthread_attr_t    *attr,
-   void *(*start_routine)  (void *),
-   void *                  arg,
-   char                    *threadName
-){
-   thid_t thid;
-   struct tcb_t_ *tk_tcb;
+int pthread_create_named_np(pthread_t * thread,
+			    const pthread_attr_t * attr,
+			    void *(*start_routine) (void *),
+			    void *arg, char *threadName)
+{
+	thid_t thid;
+	struct tcb_t_ *tk_tcb;
 
-   if (attr != NULL){
-      thid = tk_create_thread(
-         threadName,
-         (*attr)->priority,
-         start_routine,
-         arg,
-         (*attr)->stacksize
-      );
-	  tk_tcb = _tk_specific_tcb(thid);
-	  //NOTICE! Uncertain about this line.
-      (*attr)->stackaddr = tk_tcb->stack_begin;
+	if (attr != NULL) {
+		thid = tk_create_thread(threadName,
+					(*attr)->priority,
+					start_routine, arg, (*attr)->stacksize);
+		tk_tcb = _tk_specific_tcb(thid);
+		//NOTICE! Uncertain about this line.
+		(*attr)->stackaddr = tk_tcb->stack_begin;
 
-   }else{
-      thid = tk_create_thread(
-         threadName,
-         TK_MAX_PRIO_LEVELS/2,
-         start_routine,
-         arg,
-         TK_NORMAL_STACK_SIZE
-      );
-   };
-   //Types are the same, but avoid warnings
-   *thread=(pthread_t)_tk_specific_tcb(thid);
+	} else {
+		thid = tk_create_thread(threadName,
+					TK_MAX_PRIO_LEVELS / 2,
+					start_routine,
+					arg, TK_NORMAL_STACK_SIZE);
+	};
+	//Types are the same, but avoid warnings
+	*thread = (pthread_t) _tk_specific_tcb(thid);
 
-   return 0;
+	return 0;
 }
 
-int pthread_join (
-   pthread_t               thread,
-   void**                  arg_return
-){
-   return tk_join(thread->Thid,arg_return);
+int pthread_join(pthread_t thread, void **arg_return)
+{
+	return tk_join(thread->Thid, arg_return);
 }
 
-int pthread_detach (
-   pthread_t               thread
-){
-   return tk_detach(thread->Thid);
+int pthread_detach(pthread_t thread)
+{
+	return tk_detach(thread->Thid);
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -141,8 +131,9 @@ kernel or in reference based \ref pthread_t kernel.
 @see http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/pthread_self.3.html#//apple_ref/doc/man/3/pthread_self
 @see http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/pthread_equal.3.html#//apple_ref/doc/man/3/pthread_equal
 */
-pthread_t pthread_self (void){
-   return _tk_current_tcb();
+pthread_t pthread_self(void)
+{
+	return _tk_current_tcb();
 }
 
 /*!
@@ -155,97 +146,94 @@ Compare thread id's with each other.
 
 @see pthread_self
 */
-int pthread_equal(pthread_t t1, pthread_t t2){
-   return (t1->Thid == t2->Thid);
+int pthread_equal(pthread_t t1, pthread_t t2)
+{
+	return (t1->Thid == t2->Thid);
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
 @see http://www.opengroup.org/onlinepubs/009695399/functions/pthread_once.html
 */
-int pthread_once (
-   pthread_once_t          *once_control,
-   void (*init_routine) (void)
-){
-   int            need2run = 0;
-   unsigned long  rc = ERR_OK;
+int pthread_once(pthread_once_t * once_control, void (*init_routine) (void)
+    )
+{
+	int need2run = 0;
+	unsigned long rc = ERR_OK;
 
-   if (once_control==NULL){
-      return EINVAL;
-   }else{
-      //Proper way
-      //--- Detect ---
-      rc = sm_p(sem_once,WAIT,/*TK_FOREVER*/1000);
-      assert(rc==ERR_OK);
-      if (once_control->started < 0){
-         need2run = 1;
-         once_control->started++;
-      }
-      rc = sm_v(sem_once);
-      assert(rc==ERR_OK);
+	if (once_control == NULL) {
+		return EINVAL;
+	} else {
+		//Proper way
+		//--- Detect ---
+		rc = sm_p(sem_once, WAIT, /*TK_FOREVER */ 1000);
+		assert(rc == ERR_OK);
+		if (once_control->started < 0) {
+			need2run = 1;
+			once_control->started++;
+		}
+		rc = sm_v(sem_once);
+		assert(rc == ERR_OK);
 
-      //--- Run if requred ---
-      if (need2run){
+		//--- Run if requred ---
+		if (need2run) {
 
-         init_routine();
+			init_routine();
 
-         //--- Mark as finished ---
-         rc = sm_p(sem_once,WAIT,/*TK_FOREVER*/1000);
-         assert(rc==ERR_OK);
+			//--- Mark as finished ---
+			rc = sm_p(sem_once, WAIT, /*TK_FOREVER */ 1000);
+			assert(rc == ERR_OK);
 
-         once_control->done = 1;
-         rc = sm_v(sem_once);
-         assert(rc==ERR_OK);
-      }
-   }
+			once_control->done = 1;
+			rc = sm_v(sem_once);
+			assert(rc == ERR_OK);
+		}
+	}
 
-   return 0;
-}
-/*!
-@todo: Very stubbed. Make this more complient!
-*/
-int pthread_cancel (pthread_t thread){
-   assert ( tk_delete_thread(thread->Thid) == TK_OK );
-   return 0;
+	return 0;
 }
 
 /*!
 @todo: Very stubbed. Make this more complient!
 */
-int pthread_yield    (void){
-   tk_yield();
-   return 0;
+int pthread_cancel(pthread_t thread)
+{
+	assert(tk_delete_thread(thread->Thid) == TK_OK);
+	return 0;
+}
+
+/*!
+@todo: Very stubbed. Make this more complient!
+*/
+int pthread_yield(void)
+{
+	tk_yield();
+	return 0;
 }
 
 /*!
 @todo: tinker tcb needs a policy field. policy not handled.
 */
-int pthread_setschedparam (
-   pthread_t thread,
-   int policy,
-   const struct sched_param *param
-){
-   int y = 0;
-   y = tk_change_prio(thread->Thid, param->sched_priority);
-   _PTHREAD_NO_WARN_VAR(policy);
-
-   if (y)
-      tk_yield();
-
-   return 0;
-}
-
-int pthread_getschedparam (
-   pthread_t thread,
-   int *policy,
-   struct sched_param *param)
+int pthread_setschedparam(pthread_t thread,
+			  int policy, const struct sched_param *param)
 {
-   param->sched_priority = thread->Prio;
-   _PTHREAD_NO_WARN_VAR(policy);
-   return 0;
+	int y = 0;
+	y = tk_change_prio(thread->Thid, param->sched_priority);
+	_PTHREAD_NO_WARN_VAR(policy);
+
+	if (y)
+		tk_yield();
+
+	return 0;
 }
 
-
+int pthread_getschedparam(pthread_t thread,
+			  int *policy, struct sched_param *param)
+{
+	param->sched_priority = thread->Prio;
+	_PTHREAD_NO_WARN_VAR(policy);
+	return 0;
+}
 
 /** @defgroup PTHREAD_SCHED PTHREAD_SCHED: POSIX 1003.1c API - scheduling
 @ingroup PTHREAD
@@ -257,7 +245,6 @@ int pthread_getschedparam (
 
 <p><b>Go gack to</b> \ref COMPONENTS</p>
 */
-
 
 /*!
  *  @defgroup CVSLOG_pthread_sched_c pthread_sched_c
@@ -370,17 +357,3 @@ int pthread_getschedparam (
  *
  *
  *******************************************************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-

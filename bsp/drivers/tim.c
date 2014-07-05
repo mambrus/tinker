@@ -67,131 +67,125 @@ for the sake of simplicity. The drivers behavior is instead hard-coded
 #define DRV_IO( x ) \
 	DRV_IO_NAME( tim_ , x )
 
-
 #define DEV_FILE_NAME( x ) \
 	"/dev/time" #x
 
+static const char DRV_IO(assert_info)[] =
+    "You're trying to access a non implemented function";
 
-static const char DRV_IO(assert_info)[]="You're trying to access a non implemented function";
+typedef struct {
+	clock_t time_open;
+	clock_t time_offset;
+} DRV_IO(hndl_data_t);
 
-typedef struct{
-	clock_t		time_open;
-	clock_t		time_offset;
-}DRV_IO(hndl_data_t);
-
-
-int DRV_IO(close)(int file) {
+int DRV_IO(close) (int file)
+{
 	assert(DRV_IO(assert_info) == NULL);
 	return -1;
 }
 
-int DRV_IO(fcntl)(int file, int command, ...){
+int DRV_IO(fcntl) (int file, int command, ...) {
 	assert(DRV_IO(assert_info) == NULL);
 	errno = ENOSYS;
 	return -1;
 }
 
-int DRV_IO(fstat)(int file, struct stat *st) {
-	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
+int DRV_IO(fstat) (int file, struct stat * st) {
+	tk_fhandle_t *hndl = (tk_fhandle_t *) file;
 	st->st_mode = hndl->inode->mode;;
 	return 0;
 }
 
-int DRV_IO(isatty)(int file) {
+int DRV_IO(isatty) (int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 1;
 }
 
-int DRV_IO(link)(char *old, char *new) {
+int DRV_IO(link) (char *old, char *new) {
 	assert(DRV_IO(assert_info) == NULL);
-	errno=EMLINK;
+	errno = EMLINK;
 	return -1;
 }
 
-int DRV_IO(lseek)(int file, int ptr, int dir) {
+int DRV_IO(lseek) (int file, int ptr, int dir) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 0;
 }
 
-int DRV_IO(open)(const char *filename, int flags, ...){
+int DRV_IO(open) (const char *filename, int flags, ...) {
 	va_list ap;
-		tk_fhandle_t *hndl;
-		tk_inode_t *inode;
-	va_start (ap, flags);
-		inode=va_arg(ap,tk_inode_t *);
+	tk_fhandle_t *hndl;
+	tk_inode_t *inode;
+	va_start(ap, flags);
+	inode = va_arg(ap, tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);
+	hndl = tk_new_handle(inode, flags);
 
-	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
-	((DRV_IO(hndl_data_t)*)(hndl->data))->time_open=clock();
+	hndl->data = calloc(1, sizeof(DRV_IO(hndl_data_t)));
+	((DRV_IO(hndl_data_t) *) (hndl->data))->time_open = clock();
 
 	return (int)hndl;
 }
 
-int DRV_IO(read)(int file, char *ptr, int len) {
-	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	clock_t ctime=clock();
-	ctime-=((DRV_IO(hndl_data_t)*)(hndl->data))->time_offset;
-	memcpy(ptr,&ctime,sizeof(clock_t));
+int DRV_IO(read) (int file, char *ptr, int len) {
+	tk_fhandle_t *hndl = (tk_fhandle_t *) file;
+	clock_t ctime = clock();
+	ctime -= ((DRV_IO(hndl_data_t) *) (hndl->data))->time_offset;
+	memcpy(ptr, &ctime, sizeof(clock_t));
 	return sizeof(clock_t);
 }
 
-int DRV_IO(stat)(const char *file, struct stat *st) {
+int DRV_IO(stat) (const char *file, struct stat * st) {
 	assert(DRV_IO(assert_info) == NULL);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
 
-int DRV_IO(unlink)(char *name) {
+int DRV_IO(unlink) (char *name) {
 	assert(DRV_IO(assert_info) == NULL);
-	errno=ENOENT;
+	errno = ENOENT;
 	return -1;
 }
 
-int DRV_IO(write)(int file, char *ptr, int len) {
-	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	((DRV_IO(hndl_data_t)*)(hndl->data))->time_offset=clock();
+int DRV_IO(write) (int file, char *ptr, int len) {
+	tk_fhandle_t *hndl = (tk_fhandle_t *) file;
+	((DRV_IO(hndl_data_t) *) (hndl->data))->time_offset = clock();
 	return sizeof(len);
 }
 
 /*IO structure - pre-assigned*/
 static const tk_iohandle_t DRV_IO(io) = {
-        DRV_IO(close),
-	//DRV_IO(execve),
-        DRV_IO(fcntl),
-        DRV_IO(fstat),
-        DRV_IO(isatty),
-        DRV_IO(link),
-        DRV_IO(lseek),
-        DRV_IO(open),
-        DRV_IO(read),
-        //DRV_IO(sbrk),
-        DRV_IO(stat),
-        DRV_IO(unlink),
-        DRV_IO(write)
+	DRV_IO(close),
+	    //DRV_IO(execve),
+	    DRV_IO(fcntl),
+	    DRV_IO(fstat),
+	    DRV_IO(isatty),
+	    DRV_IO(link), DRV_IO(lseek), DRV_IO(open), DRV_IO(read),
+	    //DRV_IO(sbrk),
+	    DRV_IO(stat), DRV_IO(unlink), DRV_IO(write)
 };
 
-static const char DRV_IO(info_str)[]="time  @ " DEV_FILE_NAME();
+static const char DRV_IO(info_str)[] = "time  @ " DEV_FILE_NAME();
 
 /* Init function(s) */
-void *DRV_IO(init_0__)(void *inarg) {
-	assert(inarg==NULL);
-	assure(mknod(DEV_FILE_NAME(),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
-	return (void*)DRV_IO(info_str);
+void *DRV_IO(init_0__) (void *inarg)
+{
+	assert(inarg == NULL);
+	assure(mknod(DEV_FILE_NAME(), S_IFBLK, (dev_t) & DRV_IO(io)) == 0);
+	return (void *)DRV_IO(info_str);
 }
 
 /* Fini function(s) */
-void *DRV_IO(fini_0__)(void *inarg) {
-	assert(inarg==NULL);
+void *DRV_IO(fini_0__) (void *inarg) {
+	assert(inarg == NULL);
 	//tdelete(DEV_FILE_NAME(0),S_IFBLK, &DRV_IO(io));
-	return (void*)DRV_IO(info_str);
+	return (void *)DRV_IO(info_str);
 }
 
 /*Put the init/fini in corresponding sections so that filesys can pick them up */
 
-drv_finit_t DRV_IO(init_0) __attribute__ ((section (".drvinit"))) =DRV_IO(init_0__);
-drv_finit_t DRV_IO(fini_0) __attribute__ ((section (".drvfini"))) =DRV_IO(fini_0__);
-
-
-
+drv_finit_t DRV_IO(init_0) __attribute__ ((section(".drvinit"))) =
+DRV_IO(init_0__);
+drv_finit_t DRV_IO(fini_0) __attribute__ ((section(".drvfini"))) =
+DRV_IO(fini_0__);

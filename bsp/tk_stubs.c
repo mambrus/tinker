@@ -42,16 +42,16 @@ long int stub_mickey = 0;
 /*!
 Simulates time by increasing a variable everytime function is called.
  */
-clock_t clock_stubbed(){
-   stub_sub_mickey++;
-   if (stub_sub_mickey >=100){
-      stub_sub_mickey = 0;
-      stub_mickey++;
-   }
-   return (clock_t)stub_mickey;
+clock_t clock_stubbed()
+{
+	stub_sub_mickey++;
+	if (stub_sub_mickey >= 100) {
+		stub_sub_mickey = 0;
+		stub_mickey++;
+	}
+	return (clock_t) stub_mickey;
 }
 #endif
-
 
 /*!
  * @defgroup CVSLOG_tk_stubs_c tk_stubs_c
@@ -104,6 +104,3 @@ clock_t clock_stubbed(){
  *  ported for :D (/cheers)
  *
  */
-
-
-

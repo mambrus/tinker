@@ -20,11 +20,10 @@
 #ifndef LED_H
 #define LED_H
 
-typedef enum {LED_GREEN, LED_RED} led_color;
-typedef enum {LED_1=0, LED_2=1} led_id;
+typedef enum { LED_GREEN, LED_RED } led_color;
+typedef enum { LED_1 = 0, LED_2 = 1 } led_id;
 
 void led_on(led_id id, led_color color);
 void led_off(led_id id, led_color color);
 
-#endif //LED_H
-
+#endif				//LED_H

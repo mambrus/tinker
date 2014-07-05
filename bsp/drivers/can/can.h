@@ -26,13 +26,13 @@
 (both in and out)
 */
 typedef struct {
-			__uint32_t 	id;
-			__uint8_t 	data[8];
-}can_t;
+	__uint32_t id;
+	__uint8_t data[8];
+} can_t;
 
 //int can_init();
 
-int can_init(__uint32_t, int, int, int, int, __uint32_t, __uint32_t );
-int can_fini( int );
+int can_init(__uint32_t, int, int, int, int, __uint32_t, __uint32_t);
+int can_fini(int);
 
-#endif // CAN_H
+#endif				// CAN_H

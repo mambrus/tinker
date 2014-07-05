@@ -19,11 +19,11 @@
  ***************************************************************************/
 
  /*!
- @brief Low level GNU_ARM based systimer for LPC2129
+    @brief Low level GNU_ARM based systimer for LPC2129
 
- Low level GNU_ARM based systimer for LPC2129
+    Low level GNU_ARM based systimer for LPC2129
 
- */
+  */
 
 #include "lpc2129_vic.h"
 #include "lpc21xx.h"
@@ -32,43 +32,41 @@
 #include "../../tk_systimer.h"
 #include <../src/tk_tick.h>
 
-
-#define FCLK            VPB_CLOCK /*!< Which is hard coded to 60000000ul */
-#define PRES            12        /*!< Make one pebble 200nS worth (i.e. fo=5MHz*/
-#define X_CLK           -76422 /*-76509*/ /*-88889*/    /*!< Scaling factor that states how much off the
-                                       oscillator is in PPM. (i.e. scaled X 1000000).
-                                       <em>This one you measure & set</em>. */
+#define FCLK            VPB_CLOCK	/*!< Which is hard coded to 60000000ul */
+#define PRES            12	/*!< Make one pebble 200nS worth (i.e. fo=5MHz */
+#define X_CLK           -76422 /*-76509*/ /*-88889*/	/*!< Scaling factor that states how much off the
+							   oscillator is in PPM. (i.e. scaled X 1000000).
+							   <em>This one you measure & set</em>. */
 #if (PERT < (100*PRES))
-#   define REGVAL          ( ((FCLK/MICKEYS_PER_SEC)*PERT)/PRES -1)
+#define REGVAL          ( ((FCLK/MICKEYS_PER_SEC)*PERT)/PRES -1)
 #else
-#   define REGVAL          ((FCLK/MICKEYS_PER_SEC)*(PERT/PRES) -1)
+#define REGVAL          ((FCLK/MICKEYS_PER_SEC)*(PERT/PRES) -1)
 #endif
 
 #if (REGVAL < 2000)
-#   define RELOADVAL  ( ( (1000000uL + X_CLK) * REGVAL)/1000000uL )
+#define RELOADVAL  ( ( (1000000uL + X_CLK) * REGVAL)/1000000uL )
 #else
-#   define RELOADVAL  ( ( (1000000uL + X_CLK)/1000uL * REGVAL)/1000uL )
+#define RELOADVAL  ( ( (1000000uL + X_CLK)/1000uL * REGVAL)/1000uL )
 #endif
 
 void systimer_init(void *vc)
 {
-   TIMER0_TCR  &= ~BIT(TCR_ENABLE);
-   TIMER0_TCR  |=  BIT(TCR_RESET);
-   TIMER0_TCR  &= ~BIT(TCR_RESET);
+	TIMER0_TCR &= ~BIT(TCR_ENABLE);
+	TIMER0_TCR |= BIT(TCR_RESET);
+	TIMER0_TCR &= ~BIT(TCR_RESET);
 
-   vic_install_isr((vic_control*)vc);
-   vic_enable_int((vic_control*)vc);
+	vic_install_isr((vic_control *) vc);
+	vic_enable_int((vic_control *) vc);
 
-   TIMER0_PR   =   PRES;
+	TIMER0_PR = PRES;
 
-   TIMER0_IR   |=  BIT( IR_MR0 );  //Reset interrupt
-   VICVectAddr = 0x0;
+	TIMER0_IR |= BIT(IR_MR0);	//Reset interrupt
+	VICVectAddr = 0x0;
 
-   TIMER0_MCR  =   BIT( MCR0_INT ) | BIT( MCR0_RES ); //Re-occuring interrupts on Match #0. All we have to do is reset the interrupt in the ISR
-   TIMER0_MR0  =   RELOADVAL;
+	TIMER0_MCR = BIT(MCR0_INT) | BIT(MCR0_RES);	//Re-occuring interrupts on Match #0. All we have to do is reset the interrupt in the ISR
+	TIMER0_MR0 = RELOADVAL;
 
-
-   TIMER0_TCR  |=  BIT(TCR_ENABLE);
+	TIMER0_TCR |= BIT(TCR_ENABLE);
 }
 
 /*!
@@ -86,6 +84,3 @@ void systimer_init(void *vc)
  *
  *
  */
-
-
-

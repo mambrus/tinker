@@ -19,17 +19,17 @@
  ***************************************************************************/
 
  /*!
- @brief Bit definitions for LPC21xx
+    @brief Bit definitions for LPC21xx
 
- Bits for the various control registers.
+    Bits for the various control registers.
 
- The contents is based on the Philips documentation:
- LPC2119/2129/2194/2292/2294 Users Manual, 2004 May 03
+    The contents is based on the Philips documentation:
+    LPC2119/2129/2194/2292/2294 Users Manual, 2004 May 03
 
- @note The content is believed to be correct, but you should really double
- check.
+    @note The content is believed to be correct, but you should really double
+    check.
 
- */
+  */
 
 #ifndef LPC21XX_BITS_H
 #define LPC21XX_BITS_H
@@ -67,42 +67,42 @@ for reference.
 #define TCR_RESET  1
 
 //Bits for the IR
-#define IR_MR0 0   //!< Interrupt Interrupt flag for match channel 0. 0
-#define IR_MR1 1   //!< Interrupt Interrupt flag for match channel 1. 0
-#define IR_MR2 2   //!< Interrupt Interrupt flag for match channel 2. 0
-#define IR_MR3 3   //!< Interrupt Interrupt flag for match channel 3. 0
-#define IR_CR0 4   //!< Interrupt Interrupt flag for capture channel 0 event. 0
-#define IR_CR1 5   //!< Interrupt Interrupt flag for capture channel 1 event. 0
-#define IR_CR2 6   //!< Interrupt Interrupt flag for capture channel 2 event. 0
-#define IR_CR3 7   //!< Interrupt Interrupt flag for capture channel 3 event. 0
+#define IR_MR0 0		//!< Interrupt Interrupt flag for match channel 0. 0
+#define IR_MR1 1		//!< Interrupt Interrupt flag for match channel 1. 0
+#define IR_MR2 2		//!< Interrupt Interrupt flag for match channel 2. 0
+#define IR_MR3 3		//!< Interrupt Interrupt flag for match channel 3. 0
+#define IR_CR0 4		//!< Interrupt Interrupt flag for capture channel 0 event. 0
+#define IR_CR1 5		//!< Interrupt Interrupt flag for capture channel 1 event. 0
+#define IR_CR2 6		//!< Interrupt Interrupt flag for capture channel 2 event. 0
+#define IR_CR3 7		//!< Interrupt Interrupt flag for capture channel 3 event. 0
 
 //Bits for Match Control Register (MCR)
-#define MCR0_INT 0  //!< Interrupt on MR0
-#define MCR0_RES 1  //!< Reset on MR0 When one, the TC will be reset if MR0 matches it. When zero this feature is disabled.
-#define MCR0_STP 2  //!< Stop on MR0
-#define MCR1_INT 3  //!< Interrupt on MR1
-#define MCR1_RES 4  //!< Reset on MR1 When one, the TC will be reset if MR1 matches it. When zero this feature is disabled.
-#define MCR1_STP 5  //!< Stop on MR1
-#define MCR2_INT 6  //!< Interrupt on MR2
-#define MCR2_RES 7  //!< Reset on MR2 When one, the TC will be reset if MR2 matches it. When zero this feature is disabled.
-#define MCR2_STP 8  //!< Stop on MR2
-#define MCR3_INT 9  //!< Interrupt on MR3
-#define MCR3_RES 10 //!< Reset on MR3 When one, the TC will be reset if MR3 matches it. When zero this feature is disabled.
-#define MCR3_STP 11 //!< Stop on MR3
+#define MCR0_INT 0		//!< Interrupt on MR0
+#define MCR0_RES 1		//!< Reset on MR0 When one, the TC will be reset if MR0 matches it. When zero this feature is disabled.
+#define MCR0_STP 2		//!< Stop on MR0
+#define MCR1_INT 3		//!< Interrupt on MR1
+#define MCR1_RES 4		//!< Reset on MR1 When one, the TC will be reset if MR1 matches it. When zero this feature is disabled.
+#define MCR1_STP 5		//!< Stop on MR1
+#define MCR2_INT 6		//!< Interrupt on MR2
+#define MCR2_RES 7		//!< Reset on MR2 When one, the TC will be reset if MR2 matches it. When zero this feature is disabled.
+#define MCR2_STP 8		//!< Stop on MR2
+#define MCR3_INT 9		//!< Interrupt on MR3
+#define MCR3_RES 10		//!< Reset on MR3 When one, the TC will be reset if MR3 matches it. When zero this feature is disabled.
+#define MCR3_STP 11		//!< Stop on MR3
 
 //Bits for Capture Control Register (CCR)
-#define CCR0_RISE 0  //!< Capture on CAPn.0 rising edge When one, a sequence of 0 then 1 on CAPn.0 will cause CR0 to be loaded with the contents of the TC. When zero, this feature is disabled.
-#define CCR0_FALL 1  //!< Capture on CAPn.0 falling edge When one, a sequence of 1 then 0 on CAPn.0 will cause CR0 to be loaded with the contents of TC. When zero, this feature is disabled.
-#define CCR0_INT  2  //!< Interrupt on CAPn.0 event When one, a CR0 load due to a CAPn.0 event will generate an interrupt. When zero, this feature is disabled.
-#define CCR1_RISE 3  //!< Capture on CAPn.1 rising edge When one, a sequence of 0 then 1 on CAPn.1 will cause CR1 to be loaded with the contents of the TC. When zero, this feature is disabled.
-#define CCR1_FALL 4  //!< Capture on CAPn.1 falling edge When one, a sequence of 1 then 0 on CAPn.1 will cause CR1 to be loaded with the contents of TC. When zero, this feature is disabled.
-#define CCR1_INT  5  //!< Interrupt on CAPn.1 event When one, a CR1 load due to a CAPn.1 event will generate an interrupt. When zero, this feature is disabled.
-#define CCR2_RISE 6  //!< Capture on CAPn.2 rising edge When one, a sequence of 0 then 1 on CAPn.2 will cause CR2 to be loaded with the contents of the TC. When zero, this feature is disabled.
-#define CCR2_FALL 7  //!< Capture on CAPn.2 falling edge When one, a sequence of 1 then 0 on CAPn.2 will cause CR2 to be loaded with the contents of TC. When zero, this feature is disabled.
-#define CCR2_INT  8  //!< Interrupt on CAPn.2 event When one, a CR2 load due to a CAPn.2 event will generate an interrupt. When zero, this feature is disabled.
-#define CCR3_RISE 9  //!< Capture on CAPn.3 rising edge When one, a sequence of 0 then 1 on CAPn.3 will cause CR3 to be loaded with the contents of TC. When zero, this feature is disabled.
-#define CCR3_FALL 10 //!< Capture on CAPn.3 falling edge When one, a sequence of 1 then 0 on CAPn.3 will cause CR3 to be loaded with the contents of TC. When zero, this feature is disabled.
-#define CCR3_INT  11 //!< Interrupt on CAPn.3 event When one, a CR3 load due to a CAPn.3 event will generate an interrupt. When zero, this feature is disabled.
+#define CCR0_RISE 0		//!< Capture on CAPn.0 rising edge When one, a sequence of 0 then 1 on CAPn.0 will cause CR0 to be loaded with the contents of the TC. When zero, this feature is disabled.
+#define CCR0_FALL 1		//!< Capture on CAPn.0 falling edge When one, a sequence of 1 then 0 on CAPn.0 will cause CR0 to be loaded with the contents of TC. When zero, this feature is disabled.
+#define CCR0_INT  2		//!< Interrupt on CAPn.0 event When one, a CR0 load due to a CAPn.0 event will generate an interrupt. When zero, this feature is disabled.
+#define CCR1_RISE 3		//!< Capture on CAPn.1 rising edge When one, a sequence of 0 then 1 on CAPn.1 will cause CR1 to be loaded with the contents of the TC. When zero, this feature is disabled.
+#define CCR1_FALL 4		//!< Capture on CAPn.1 falling edge When one, a sequence of 1 then 0 on CAPn.1 will cause CR1 to be loaded with the contents of TC. When zero, this feature is disabled.
+#define CCR1_INT  5		//!< Interrupt on CAPn.1 event When one, a CR1 load due to a CAPn.1 event will generate an interrupt. When zero, this feature is disabled.
+#define CCR2_RISE 6		//!< Capture on CAPn.2 rising edge When one, a sequence of 0 then 1 on CAPn.2 will cause CR2 to be loaded with the contents of the TC. When zero, this feature is disabled.
+#define CCR2_FALL 7		//!< Capture on CAPn.2 falling edge When one, a sequence of 1 then 0 on CAPn.2 will cause CR2 to be loaded with the contents of TC. When zero, this feature is disabled.
+#define CCR2_INT  8		//!< Interrupt on CAPn.2 event When one, a CR2 load due to a CAPn.2 event will generate an interrupt. When zero, this feature is disabled.
+#define CCR3_RISE 9		//!< Capture on CAPn.3 rising edge When one, a sequence of 0 then 1 on CAPn.3 will cause CR3 to be loaded with the contents of TC. When zero, this feature is disabled.
+#define CCR3_FALL 10		//!< Capture on CAPn.3 falling edge When one, a sequence of 1 then 0 on CAPn.3 will cause CR3 to be loaded with the contents of TC. When zero, this feature is disabled.
+#define CCR3_INT  11		//!< Interrupt on CAPn.3 event When one, a CR3 load due to a CAPn.3 event will generate an interrupt. When zero, this feature is disabled.
 
 //EMR bits
 
@@ -148,4 +148,3 @@ output.*/
  *
  *
  */
-

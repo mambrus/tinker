@@ -31,33 +31,31 @@
 
 #define MICKEYS_PER_SEC		1000
 
-typedef union{
+typedef union {
 	__uint16_t raw;
 
 	struct {
 		__uint16_t PIRQ:8;	// Periodic interrupt request level.
-			// Conﬁgures internal interrupt levels
-			// for periodic interrupts.
-		__uint16_t PS:1; // Periodic interrupt status. Can be cleared
-			//by writing a 1 to it (zero has no effect)
-		__uint16_t ZERO:4; // Reserverd (should be cleared)
-		__uint16_t PIE:1; // Periodic interrupt enable
+		// Conﬁgures internal interrupt levels
+		// for periodic interrupts.
+		__uint16_t PS:1;	// Periodic interrupt status. Can be cleared
+		//by writing a 1 to it (zero has no effect)
+		__uint16_t ZERO:4;	// Reserverd (should be cleared)
+		__uint16_t PIE:1;	// Periodic interrupt enable
 
-		__uint16_t PITF:1; // PIT freeze enable
+		__uint16_t PITF:1;	// PIT freeze enable
 
-		__uint16_t PTE:1; // Periodic timer enable
+		__uint16_t PTE:1;	// Periodic timer enable
 
-
-	}f;
-}piscr_t;
-typedef union{
+	} f;
+} piscr_t;
+typedef union {
 	__uint32_t raw;
 	struct {
 		__uint16_t COUNT:16;	// Value
-		__uint16_t ZERO:16; 	// Reserved (should be cleared)
-	}f;
-}pitcnt_t;
-
+		__uint16_t ZERO:16;	// Reserved (should be cleared)
+	} f;
+} pitcnt_t;
 
 extern __uint32_t __sys_mickey;
 extern __uint32_t __sys_mackey;
@@ -65,7 +63,6 @@ extern __uint32_t __sys_mackey;
 void systimer_init();
 //#define __interrupt  __attribute__((interrupt))
 //void __interrupt__ systimer_Handler( void );
-void systimer_Handler( void );
+void systimer_Handler(void);
 
-#endif //SYSTIMER_H
-
+#endif				//SYSTIMER_H

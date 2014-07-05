@@ -49,24 +49,24 @@ SCHED
 #include <time.h>
 #include <assert.h>
 
+extern struct tcb_t_ __tk_threadPool[TK_MAX_THREADS];
+extern thid_t __tk_schedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
+extern struct stat_t __tk_roundrobin_prio_idxs[TK_MAX_PRIO_LEVELS];
+extern thid_t __tk_thread_to_run;
+extern thid_t __tk_active_thread;
 
-extern struct tcb_t_ 	__tk_threadPool[TK_MAX_THREADS];
-extern thid_t 		__tk_schedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
-extern struct stat_t 	__tk_roundrobin_prio_idxs[TK_MAX_PRIO_LEVELS];
-extern thid_t 		__tk_thread_to_run;
-extern thid_t 		__tk_active_thread;
-
-static int npreempt	= 0;
-static int inpreempt	= 0;
-static int outpreempt	= 0;
+static int npreempt = 0;
+static int inpreempt = 0;
+static int outpreempt = 0;
 thid_t preemptlist[TK_MAX_THREADS];
 
 /*!
 Called by _ny versions of itc. A special ready-list for preemptable threads
 */
-void	tk_preemplist(thid_t thid){
+void tk_preemplist(thid_t thid)
+{
 	npreempt++;
-	preemptlist[inpreempt]=thid;
+	preemptlist[inpreempt] = thid;
 	inpreempt++;
 	inpreempt = inpreempt % TK_MAX_THREADS;
 }
@@ -103,40 +103,46 @@ blocking timeouts in \ref ITC and was never intended for high-precision
 time keeping (even though that works quite well also).
 
 */
-void _tk_wakeup_timedout_threads( void ){
+void _tk_wakeup_timedout_threads(void)
+{
 	thid_t i;
 	clock_t act_time_us;
 	int _npreempt;
 
 	//act_time = tk_clock();
-	act_time_us    = tk_clock() * (1000000uL/CLOCKS_PER_SEC);
+	act_time_us = tk_clock() * (1000000uL / CLOCKS_PER_SEC);
 	//Note: The following is not just a sanity check, the list might be
 	//fragmented.Explains also why the whole table (pool) has to be
 	//traversed, and not just [0..procs_in_use]
-	for(i=0;i<TK_MAX_THREADS;i++){
+	for (i = 0; i < TK_MAX_THREADS; i++) {
 		TK_CLI();
 		_npreempt = npreempt;
 		TK_STI();
 
-		if (_npreempt > 0){
+		if (_npreempt > 0) {
 			return;
 		}
 
 		TK_CLI();
-		if (__tk_threadPool[i].valid){
-			if (__tk_threadPool[i].state & SLEEP){  //This one is sleeping. Time to wake him up?
+		if (__tk_threadPool[i].valid) {
+			if (__tk_threadPool[i].state & SLEEP) {	//This one is sleeping. Time to wake him up?
 				//if ( act_time >= __tk_threadPool[i].wakeuptime ){
 				//if ( (signed long)(act_time - __tk_threadPool[i].wakeuptime) >= 0 ){
-				if ( tk_difftime(act_time_us,__tk_threadPool[i].wakeuptime) >= 0 ){
-               /*Release queues also (but not the TERM bit)*/
-					__tk_threadPool[i].state = (PROCSTATE)(__tk_threadPool[i].state & ~_____QS_);
-					__tk_threadPool[i].wakeupEvent = E_TIMER;
+				if (tk_difftime
+				    (act_time_us,
+				     __tk_threadPool[i].wakeuptime) >= 0) {
+					/*Release queues also (but not the TERM bit) */
+					__tk_threadPool[i].state =
+					    (PROCSTATE) (__tk_threadPool[i].
+							 state & ~_____QS_);
+					__tk_threadPool[i].wakeupEvent =
+					    E_TIMER;
 				}
 			}
-
 			//This thread wants to die (zombied). But make sure someone else is doing it
 			//(otherwise we would remove our own stack, which is both ugly and dangerous)
-			if ((__tk_threadPool[i].state & ZOMBI) && (i != __tk_active_thread)){
+			if ((__tk_threadPool[i].state & ZOMBI)
+			    && (i != __tk_active_thread)) {
 
 				//We should not really need to do the following line. Should
 				//have been done in any canceling mechanism of the thread.
@@ -144,8 +150,7 @@ void _tk_wakeup_timedout_threads( void ){
 
 				//_tk_detach_children(i);
 
-
-				if ( _tk_try_detach_parent(i, TK_FALSE) ){
+				if (_tk_try_detach_parent(i, TK_FALSE)) {
 					//Finally, it should now be safe to send the zombied thread to Nirvana
 					tk_delete_thread(i);
 				}
@@ -157,7 +162,6 @@ void _tk_wakeup_timedout_threads( void ){
 		TK_STI();
 	}
 }
-
 
 /*!
 Dispatch or yield to another thread that has more "right" to run.
@@ -193,8 +197,9 @@ that there is no prefix-postfix stuff happening on the stack, neither
 before the first PUSHALL nor after the last POPALL.
 
 */
-void tk_yield( void ){
-	assert(__tk_IntFlagCntr==0);
+void tk_yield(void)
+{
+	assert(__tk_IntFlagCntr == 0);
 
 	TK_CLI();
 	PUSHALL();
@@ -202,23 +207,20 @@ void tk_yield( void ){
 
 	_tk_wakeup_timedout_threads();
 
-
 	TK_CLI();
 
 	//Do not premit interrupts between the following two. Proc statuses
 	//(i.e. thread statuses) frozen in time.
-	if (npreempt > 0){
-		assert(npreempt<2);
+	if (npreempt > 0) {
+		assert(npreempt < 2);
 		npreempt--;
-		__tk_thread_to_run=preemptlist[outpreempt];
+		__tk_thread_to_run = preemptlist[outpreempt];
 		outpreempt++;
 		outpreempt = outpreempt % TK_MAX_THREADS;
 	}
 
 	__tk_thread_to_run = _tk_next_runable_thread();
-	_tk_context_switch_to_thread(
-		__tk_thread_to_run,
-		__tk_active_thread);
+	_tk_context_switch_to_thread(__tk_thread_to_run, __tk_active_thread);
 
 	POPALL();
 	TK_STI();
@@ -236,16 +238,12 @@ and to be called from an event source (i.e. ISR).
 @see void tk_yield( void )
 
 */
-void tk_yield_event( void ){
+void tk_yield_event(void)
+{
 	TK_CLI();
 	PUSHALL();
 	__tk_thread_to_run = _tk_next_runable_thread();
-	_tk_context_switch_to_thread(
-		__tk_thread_to_run,
-		__tk_active_thread);
+	_tk_context_switch_to_thread(__tk_thread_to_run, __tk_active_thread);
 	POPALL();
 	TK_STI();
 }
-
-
-

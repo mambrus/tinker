@@ -24,6 +24,3 @@
 #include "stypes-gnu_powerpc-eabi.h"
 
 #endif
-
-
-

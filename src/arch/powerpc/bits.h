@@ -23,11 +23,11 @@
 
 #include <sys/types.h>
 
-
 /* Helpers for revbits (see below) */
-static __inline__ __uint8_t revbits_8(__uint8_t in){
-	__uint8_t d = (sizeof(in)*8)-1;
-	__uint8_t l = (sizeof(in)*8)/2;
+static __inline__ __uint8_t revbits_8(__uint8_t in)
+{
+	__uint8_t d = (sizeof(in) * 8) - 1;
+	__uint8_t l = (sizeof(in) * 8) / 2;
 	__uint8_t i;
 	__uint8_t out = 0;
 	__uint8_t hm = 0x80;
@@ -35,7 +35,7 @@ static __inline__ __uint8_t revbits_8(__uint8_t in){
 	__uint8_t hv;
 	__uint8_t lv;
 
-	for (i=0; i<l;i++){
+	for (i = 0; i < l; i++) {
 		hv = in & hm;
 		lv = in & lm;
 		hv = hv >> d;
@@ -49,9 +49,10 @@ static __inline__ __uint8_t revbits_8(__uint8_t in){
 	return out;
 }
 
-static __inline__ __uint16_t revbits_16(__uint16_t in){
-	__uint8_t d = (sizeof(in)*8)-1;
-	__uint8_t l = (sizeof(in)*8)/2;
+static __inline__ __uint16_t revbits_16(__uint16_t in)
+{
+	__uint8_t d = (sizeof(in) * 8) - 1;
+	__uint8_t l = (sizeof(in) * 8) / 2;
 	__uint8_t i;
 	__uint16_t out = 0;
 	__uint16_t hm = 0x8000;
@@ -59,7 +60,7 @@ static __inline__ __uint16_t revbits_16(__uint16_t in){
 	__uint16_t hv;
 	__uint16_t lv;
 
-	for (i=0; i<l;i++){
+	for (i = 0; i < l; i++) {
 		hv = in & hm;
 		lv = in & lm;
 		hv = hv >> d;
@@ -73,10 +74,10 @@ static __inline__ __uint16_t revbits_16(__uint16_t in){
 	return out;
 }
 
-
-static __inline__ __uint32_t revbits_32(__uint32_t in){
-	__uint8_t d = (sizeof(in)*8)-1;
-	__uint8_t l = (sizeof(in)*8)/2;
+static __inline__ __uint32_t revbits_32(__uint32_t in)
+{
+	__uint8_t d = (sizeof(in) * 8) - 1;
+	__uint8_t l = (sizeof(in) * 8) / 2;
 	__uint8_t i;
 	__uint32_t out = 0;
 	__uint32_t hm = 0x80000000;
@@ -84,7 +85,7 @@ static __inline__ __uint32_t revbits_32(__uint32_t in){
 	__uint32_t hv;
 	__uint32_t lv;
 
-	for (i=0; i<l;i++){
+	for (i = 0; i < l; i++) {
 		hv = in & hm;
 		lv = in & lm;
 		hv = hv >> d;
@@ -106,14 +107,12 @@ static __inline__ __uint32_t revbits_32(__uint32_t in){
 	(sizeof(in) == 2) ? revbits_16(in) : 	\
 	(sizeof(in) == 4) ? revbits32(in) : 0x0
 
-
 /* Helpers for bit set/clear (see below) */
 #define bitset_8( d, n ) \
 	d = d | (0x80 >> n)
 
 #define bitclear_8( d, n ) \
 	d = d & ~(0x80 >> n)
-
 
 #define bitset_16( d, n ) \
 	d = d | (0x8000 >> n)
@@ -126,7 +125,6 @@ static __inline__ __uint32_t revbits_32(__uint32_t in){
 
 #define bitclear_32( d, n ) \
 	d = d & ~(0x80000000 >> n)
-
 
 /* Set and Clear specific bits in an integer type valiable (1,2,4 byte
    integers supported) 							     */
@@ -148,7 +146,6 @@ static __inline__ __uint32_t revbits_32(__uint32_t in){
 	if (sizeof(d) == 4)			\
 		bitclear_32(d, n);
 
-
 /* Support for reading and writing SPR  (Special Purpose Registers)	     */
 /* ------------------------------------------------------------------------- */
 #define SET_SPR( SPRc, INc ) 				\
@@ -169,14 +166,13 @@ static __inline__ __uint32_t revbits_32(__uint32_t in){
 	__asm__ __volatile__ ("lwz %[GPRa],%[INa]"	\
 	:						\
 	: [GPRa] "i" (GPRc), [INa] "m" (INc)		\
-	); /*Note, no clobber (intentional)*/
+	);			/*Note, no clobber (intentional) */
 
 #define GET_GPR( GPRc, OUTc ) 				\
 	__asm__ __volatile__ ("stw %[GPRa],%[OUTa]"	\
 	: [OUTa] "=m" (OUTc)				\
 	: [GPRa] "i" (GPRc)				\
 	: "memory" );
-
 
 /* Support for reading and writing CR  (Condition Register)	             */
 /* ------------------------------------------------------------------------- */
@@ -206,9 +202,4 @@ static __inline__ __uint32_t revbits_32(__uint32_t in){
 	: 						\
 	: "memory" );
 
-
-
-#endif //bits_h
-
-
-
+#endif				//bits_h

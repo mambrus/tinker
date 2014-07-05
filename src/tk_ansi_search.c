@@ -37,8 +37,7 @@ kernel_reimpl_ansi
 #include "tk_ansi.h"
 #include <string.h>
 #include <stdlib.h>
-#define MAX_SORT_ELEMENT_SIZE 255  //!< Limitation of each sorting elements size
-
+#define MAX_SORT_ELEMENT_SIZE 255	//!< Limitation of each sorting elements size
 
 /*
 #if !defined(APP_NEEDS_INTERNALS)
@@ -67,22 +66,20 @@ certain these limitation doesn't affect you're usage.
 this function non re-entrant and non thread safe.
 */
 
-
-
-void _swap (
-   void *a,              //!< The array to be sorted
-   int l,                //!< left index
-   int r,                //!< right index
-   int sz                //!< Size of each element
-){
-   char t[MAX_SORT_ELEMENT_SIZE];
-   memcpy(t,                  &((char*)a)[l*sz],   sz);
-   memcpy(&((char*)a)[l*sz],  &((char*)a)[r*sz],   sz);
-   memcpy(&((char*)a)[r*sz],  t,                   sz);
+void _swap(void *a,		//!< The array to be sorted
+	   int l,		//!< left index
+	   int r,		//!< right index
+	   int sz		//!< Size of each element
+    )
+{
+	char t[MAX_SORT_ELEMENT_SIZE];
+	memcpy(t, &((char *)a)[l * sz], sz);
+	memcpy(&((char *)a)[l * sz], &((char *)a)[r * sz], sz);
+	memcpy(&((char *)a)[r * sz], t, sz);
 }
 
-unsigned int qsort_depth = 0; //!< @brief Recursion debug variable @internal
-unsigned int curr_depth = 0;  //!< @brief Recursion debug variable @internal
+unsigned int qsort_depth = 0;	//!< @brief Recursion debug variable @internal
+unsigned int curr_depth = 0;	//!< @brief Recursion debug variable @internal
 /*!
 @brief Quicksort algorithm (the back-end of ANSI reimpl. \ref qsort)
 
@@ -137,13 +134,11 @@ int my_strvcmp ( const void *L, const void *R ){
 
 @note <b>This is a recursive version of quick-sort</b>
 
-
 @note The algorithm is said to be unstable if not a sentinel at a[0]
 is present, which is guaranteed to be less than any other a[1]..a[N].
 The front-end doesn't bother with this a.t.m. since we plan to invoke
 the <i>median-of-three</i> partitioning optimization (which as a
 side-effect takes care of this rare special case).
-
 
 @todo I'm not sure if the sorting function (\ref comparison_fn_t)
 behavior is how ANSI qsort expects it to work. Better check this.
@@ -155,36 +150,40 @@ behavior is how ANSI qsort expects it to work. Better check this.
 @todo Develop a <i>median-of-three</i> partitioning optimization
 
 */
-void _tk_quicksort (
-   void *a,              //!< The array to be sorted
-   int l,                //!< left index
-   int r,                //!< right index
-   int sz,               //!< Size of each element
-   comparison_fn_t cmp   //!< Comparison function
-){
-   int i,j;
-   void *v;
+void _tk_quicksort(void *a,	//!< The array to be sorted
+		   int l,	//!< left index
+		   int r,	//!< right index
+		   int sz,	//!< Size of each element
+		   comparison_fn_t cmp	//!< Comparison function
+    )
+{
+	int i, j;
+	void *v;
 
-   curr_depth++;
-   if (curr_depth > qsort_depth)
-      qsort_depth=curr_depth;
+	curr_depth++;
+	if (curr_depth > qsort_depth)
+		qsort_depth = curr_depth;
 
-   if ( r > l ){
+	if (r > l) {
 
-      v = (void**)(((char*)a)+(r*sz));
-      i = l-1; j = r;
-      for (;;){
-         while ( cmp(  (void**)(((char*)a)+(++i*sz)), v ) < 0) ;
-         while ( cmp(  (void**)(((char*)a)+(--j*sz)), v ) > 0) ;
-         if (i >= j) break;
-         _swap(a,i,j,sz);
-      }
-      _swap(a,i,r,sz);
+		v = (void **)(((char *)a) + (r * sz));
+		i = l - 1;
+		j = r;
+		for (;;) {
+			while (cmp((void **)(((char *)a) + (++i * sz)), v) <
+			       0) ;
+			while (cmp((void **)(((char *)a) + (--j * sz)), v) >
+			       0) ;
+			if (i >= j)
+				break;
+			_swap(a, i, j, sz);
+		}
+		_swap(a, i, r, sz);
 
-      _tk_quicksort(a,l,i-1  ,sz,cmp);
-      _tk_quicksort(a,i+1,r  ,sz,cmp);
-   }
-   curr_depth--;
+		_tk_quicksort(a, l, i - 1, sz, cmp);
+		_tk_quicksort(a, i + 1, r, sz, cmp);
+	}
+	curr_depth--;
 }
 
 /*!
@@ -258,51 +257,51 @@ i_R \f$, the resulting value after transformation is always positive
 
 */
 
-int _tk_bsearch (
-   void *v,              //!< Search for this key
-   void *a,              //!< The array to be seached
-   int l,                //!< left index
-   int r,                //!< right index
-   int sz,               //!< Size of each element
-   comparison_fn_t cmp   //!< Comparison function
-){
-   int   x;              // Current mid index
-   void *m;              // Mid element
-   int   rc;             // Last compare result
+int _tk_bsearch(void *v,	//!< Search for this key
+		void *a,	//!< The array to be seached
+		int l,		//!< left index
+		int r,		//!< right index
+		int sz,		//!< Size of each element
+		comparison_fn_t cmp	//!< Comparison function
+    )
+{
+	int x;			// Current mid index
+	void *m;		// Mid element
+	int rc;			// Last compare result
 
-   while ( r >= l ){
-      x = (r+l)/2;
+	while (r >= l) {
+		x = (r + l) / 2;
 
-      m = (void**)(((char*)a)+ (x*sz) );
+		m = (void **)(((char *)a) + (x * sz));
 
-      rc = cmp( v, m );
-      if ( rc == 0)
-         return x;
+		rc = cmp(v, m);
+		if (rc == 0)
+			return x;
 
-      if ( rc < 0)
-         r = x - 1;
-      else
-         l = x + 1;
-   }
-   if ( rc < 0){
-      //Key should had been to the left of the last evaluated index.
-      /*
-      printf("<--- [%d]\n",x);
-      printf("[%d]..x..[%d]\n",x-1,x);
-      printf("------------------------\n");
-      printf("After transform, RL=%d\n\n",x);
-      */
-      return  ( -1*x -1);
-   }else{
-      //Key should had been to the right of the last evaluated index.
-      /*
-      printf("[%d] --->\n",x);
-      printf("[%d]..x..[%d]\n",x,x+1);
-      printf("------------------------\n");
-      printf("After transform, RL=%d\n\n",x+1);
-      */
-      return  ( -1*x -2);
-   }
+		if (rc < 0)
+			r = x - 1;
+		else
+			l = x + 1;
+	}
+	if (rc < 0) {
+		//Key should had been to the left of the last evaluated index.
+		/*
+		   printf("<--- [%d]\n",x);
+		   printf("[%d]..x..[%d]\n",x-1,x);
+		   printf("------------------------\n");
+		   printf("After transform, RL=%d\n\n",x);
+		 */
+		return (-1 * x - 1);
+	} else {
+		//Key should had been to the right of the last evaluated index.
+		/*
+		   printf("[%d] --->\n",x);
+		   printf("[%d]..x..[%d]\n",x,x+1);
+		   printf("------------------------\n");
+		   printf("After transform, RL=%d\n\n",x+1);
+		 */
+		return (-1 * x - 2);
+	}
 }
 
 #ifdef TINKER_SEARCH_SORT
@@ -325,7 +324,6 @@ return an integer less than, equal to, or greater than zero
 corresponding to whether its first argument is considered less than,
 equal to, or greater than its second argument.
 
-
 @note Warning: If two objects compare as equal, their order after sorting is
 unpredictable. That is to say, the sorting is not stable. This can make
 a difference when the comparison considers only part of the elements.
@@ -340,14 +338,14 @@ do it only if necessary.
 GNU reference: @see http://www.gnu.org/software/libc/manual/html_mono/libc.html#Array%20Sort%20Function
 
 */
-void qsort (
-   void *array,             //!< The array to be sorted
-   size_t count,            //!< Number of elements in the array
-   size_t size,             //!< Size of each element
-   comparison_fn_t compare  //!< Comparison function
-){
-   qsort_depth = 0;
-   _tk_quicksort(array,0,count-1,size,compare);
+void qsort(void *array,		//!< The array to be sorted
+	   size_t count,	//!< Number of elements in the array
+	   size_t size,		//!< Size of each element
+	   comparison_fn_t compare	//!< Comparison function
+    )
+{
+	qsort_depth = 0;
+	_tk_quicksort(array, 0, count - 1, size, compare);
 }
 
 /*!
@@ -370,7 +368,6 @@ than, equal to, or greater than zero corresponding to whether its first
 argument is considered less than, equal to, or greater than its second
 argument. <i>The elements of the array must already be sorted in
 ascending order according to this comparison function.</i>
-
 
 @return The return value is a pointer to the matching array element, or
 a null pointer if no match is found. If the array contains more than one
@@ -425,23 +422,23 @@ char[] + one extra variable more convenient.
 
 
 */
-void *bsearch (
-   const void *key,         //!< Serch for this key
-   const void *array,       //!< Sorted array to search for key
-   size_t count,            //!< Number of elements in the array
-   size_t size,             //!< Size of each element
-   comparison_fn_t compare  //!< Comparison function
-){
-   int i;
+void *bsearch(const void *key,	//!< Serch for this key
+	      const void *array,	//!< Sorted array to search for key
+	      size_t count,	//!< Number of elements in the array
+	      size_t size,	//!< Size of each element
+	      comparison_fn_t compare	//!< Comparison function
+    )
+{
+	int i;
 
-   i = _tk_bsearch((void*)key,(void*)array,0,count-1,size,compare);
-   if (i>=0)
-      return (void**)(((char*)array)+ (i*size) );
-   else
-      return NULL;
+	i = _tk_bsearch((void *)key, (void *)array, 0, count - 1, size,
+			compare);
+	if (i >= 0)
+		return (void **)(((char *)array) + (i * size));
+	else
+		return NULL;
 }
 #endif
-
 
 /*!
  * @defgroup CVSLOG_tk_search_c tk_search_c
@@ -504,17 +501,3 @@ void *bsearch (
  *
  *
  *******************************************************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-

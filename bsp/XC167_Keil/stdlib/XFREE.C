@@ -18,34 +18,34 @@
 
 #pragma WARNING disable = 113
 
-#define XMEM             // the xhuge version
+#define XMEM			// the xhuge version
 
 #include <stdlib.h>
 
 #if defined (XMEM)
-  #define MTYP          xhuge
-  #define init_mempool  xinit_mempool
-  #define calloc        xcalloc
-  #define malloc        xmalloc
-  #define free          xfree
-  #define realloc       xrealloc
-  #define __mp__        __xmp__
-  #define TLEN          unsigned long
+#define MTYP          xhuge
+#define init_mempool  xinit_mempool
+#define calloc        xcalloc
+#define malloc        xmalloc
+#define free          xfree
+#define realloc       xrealloc
+#define __mp__        __xmp__
+#define TLEN          unsigned long
 #else
-  #define TLEN          unsigned int
-  #if (__MODEL__ == 5 || __MODEL__ == 6)
-    #define MTYP  huge   // for HCOMPACT and HLARGE
-  #else
-    #define MTYP  far    // for other models
-  #endif
+#define TLEN          unsigned int
+#if (__MODEL__ == 5 || __MODEL__ == 6)
+#define MTYP  huge		// for HCOMPACT and HLARGE
+#else
+#define MTYP  far		// for other models
+#endif
 #endif
 
-struct __mp__  {                      /* memory pool */
-  struct __mp__ MTYP    *next;        /* single-linked list */
-  TLEN                    len;        /* length of following block */
+struct __mp__ {			/* memory pool */
+	struct __mp__ MTYP *next;	/* single-linked list */
+	TLEN len;		/* length of following block */
 };
 
-extern void MTYP * MTYP __mp__;       /* Memory Pool Header */
+extern void MTYP *MTYP __mp__;	/* Memory Pool Header */
 
 #define	HLEN	(sizeof(struct __mp__))
 
@@ -56,8 +56,8 @@ extern void MTYP * MTYP __mp__;       /* Memory Pool Header */
  *  block with the lowest address.  That block points to the block with the
  *  next higher address and so on.                                          */
 
-
-void free (void MTYP *memp)  {
+void free(void MTYP * memp)
+{
 /*  FREE attempts to organize Q, P0, and P so that Q < P0 < P.  Then, P0 is
  *  inserted into the free list so that the list is maintained in address
  *  order.
@@ -67,53 +67,51 @@ void free (void MTYP *memp)  {
  *  you will have a single block that is the size of the memory pool.  The
  *  overhead for the merge is very minimal.                                */
 
-  struct __mp__ MTYP *q;                  /* ptr to free block */
-  struct __mp__ MTYP *p;                  /* q->next */
-#define p0 ((struct __mp__ MTYP *) memp)  /* block to free */
+	struct __mp__ MTYP *q;	/* ptr to free block */
+	struct __mp__ MTYP *p;	/* q->next */
+#define p0 ((struct __mp__ MTYP *) memp)	/* block to free */
 
 /*  If the user tried to free NULL, get out now.  Otherwise, get the address
  *  of the header of the memp block (P0).  Then, try to locate Q and P such
  *  that Q < P0 < P.                                                       */
 
-  if (!memp)  return;
+	if (!memp)
+		return;
 
-  memp = &p0 [-1];              /* get address of header */
+	memp = &p0[-1];		/* get address of header */
 
 /*  Initialize.  Q = Location of first available block.                    */
-  q = __mp__;
-  if (!q)  {
-    __mp__ = p0;
-    return;
-  }
+	q = __mp__;
+	if (!q) {
+		__mp__ = p0;
+		return;
+	}
 
 /*  B2. Advance P. Hop through the list until we find a free block that is
  *  located in memory AFTER the block we're trying to free.                */
-  while (1)  {
-    p = q->next;
-    if (!p || (p > memp)) break;
-    q = p;
-  }
+	while (1) {
+		p = q->next;
+		if (!p || (p > memp))
+			break;
+		q = p;
+	}
 
 /*  B3. Check upper bound. If P0 and P are contiguous, merge block P into
  *  block P0.                                                              */
 
-  if (p && ((((char MTYP *)p0) + p0->len + HLEN) == (char MTYP *) p))  {
-    p0->len += p->len + HLEN;
-    p0->next = p->next;
-  }
-  else  {
-    p0->next = p;
-  }
-
+	if (p && ((((char MTYP *)p0) + p0->len + HLEN) == (char MTYP *)p)) {
+		p0->len += p->len + HLEN;
+		p0->next = p->next;
+	} else {
+		p0->next = p;
+	}
 
 /*  B4. Check lower bound. If Q and P0 are contiguous, merge P0 into Q.  */
 
-  if ((((char MTYP *)q) + q->len + HLEN) == (char MTYP *) p0)  {
-    q->len += p0->len + HLEN;
-    q->next = p0->next;
-  }
-  else  {
-    q->next = p0;
-  }
+	if ((((char MTYP *)q) + q->len + HLEN) == (char MTYP *)p0) {
+		q->len += p0->len + HLEN;
+		q->next = p0->next;
+	} else {
+		q->next = p0;
+	}
 }
-

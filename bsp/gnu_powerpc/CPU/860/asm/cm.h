@@ -27,39 +27,37 @@
 #include <tinker/config.h>
 
 #if defined(TK_DCPU)
-	#if TK_DCPU==__tk_860__
-		#include <CPU/860/mmap_regs.h>
-	#else
-		#Sorry, TinKer doesn't know how to use your CPU
-	#endif
+#if TK_DCPU==__tk_860__
+#include <CPU/860/mmap_regs.h>
 #else
-	#error Must have CPU for board to work
+#Sorry, TinKer doesn't know how to use your CPU
 #endif
-
+#else
+#error Must have CPU for board to work
+#endif
 
 #define DP_ERAM 3
 
 #if (DP_ERAM==3)
-	/*Our definitions of the DP memory map (assuming DP is configured for worst case)*/
-	#define DP_BD_0	 (DMM1+0x2800)	/* 0x2800 - 0x2E00	DP_BD_0		Descriptors/Data */
-	#define DP_BD_1	 (DMM1+0x3800)	/* 0x3800 - 0x3A00	DP_BD_1		Descriptors/Data */
-	#define DP_PARA	 (DMM1+0x3C00)	/* 0x3C00 - 0x3E00	DP_PARA		Parameter area   */
+	/*Our definitions of the DP memory map (assuming DP is configured for worst case) */
+#define DP_BD_0	 (DMM1+0x2800)	/* 0x2800 - 0x2E00      DP_BD_0         Descriptors/Data */
+#define DP_BD_1	 (DMM1+0x3800)	/* 0x3800 - 0x3A00      DP_BD_1         Descriptors/Data */
+#define DP_PARA	 (DMM1+0x3C00)	/* 0x3C00 - 0x3E00      DP_PARA         Parameter area   */
 
-	/*Same thing, but as offset counting from start of DP RAM*/
-	#define DP_BD_0_OFFS	 (0x2800-0x2000)
-	#define DP_BD_1_OFFS	 (0x3800-0x2000)
-	#define DP_PARA_OFFS	 (0x3C00-0x2000)
+	/*Same thing, but as offset counting from start of DP RAM */
+#define DP_BD_0_OFFS	 (0x2800-0x2000)
+#define DP_BD_1_OFFS	 (0x3800-0x2000)
+#define DP_PARA_OFFS	 (0x3C00-0x2000)
 #elif (DP_ERAM==0)
 
 	//#ifdef NEVER
-	#define DP_BD_0	 (DMM1+0x2000)	/* 0x2800 - 0x2E00	DP_BD_0		Descriptors/Data */
-	#define DP_PARA	 (DMM1+0x3C00)	/* 0x3C00 - 0x3E00	DP_PARA		Parameter area   */
+#define DP_BD_0	 (DMM1+0x2000)	/* 0x2800 - 0x2E00      DP_BD_0         Descriptors/Data */
+#define DP_PARA	 (DMM1+0x3C00)	/* 0x3C00 - 0x3E00      DP_PARA         Parameter area   */
 
-	/*Same thing, but as offset counting from start of DP RAM*/
-	#define DP_BD_0_OFFS	 (0x2000-0x2000)
-	#define DP_PARA_OFFS	 (0x3C00-0x2000)
+	/*Same thing, but as offset counting from start of DP RAM */
+#define DP_BD_0_OFFS	 (0x2000-0x2000)
+#define DP_PARA_OFFS	 (0x3C00-0x2000)
 #endif
-
 
 /*
   0   RST    CP reset command. Set by the core and cleared by the CP. Executing this command clears RST
@@ -90,7 +88,6 @@
   15  FLG    Command semaphore ﬂag. Set by the core and cleared by the CP.
              0 CP is ready for a new command.
              1 CP is currently processing a command—cleared when the command is done or after reset.
-
 
 ==================================================================================
 
@@ -131,8 +128,6 @@
   1100          —              —            —            —               —           —         —
   1101          —              —            —            —               —           —         —
   111X           U              U           U             U              U           U         U
-
-
 
                Initialize transmit and receive parameters. Initializes the CP’s temporary Tx and Rx parameters in
 INIT TX AND RX
@@ -217,7 +212,7 @@ U
 #define GCI_ABORT_REQUEST	0xA
 #define STOP_IDMA		0xB
 
-typedef union{
+typedef union {
 	__uint16_t raw;
 
 	struct {
@@ -227,8 +222,8 @@ typedef union{
 		__uint32_t CH_NUM:4;
 		__uint32_t PADD_1:3;
 		__uint32_t FLG:1;
-	}f;
-}cpcr_t;
+	} f;
+} cpcr_t;
 
 /* RCCR stuff... (RISC Controller Conﬁguration Register (RCCR))*/
 /*
@@ -273,7 +268,7 @@ typedef union{
 
 */
 
-typedef union{
+typedef union {
 	__uint16_t raw;
 	struct {
 		__uint16_t TIME:1;
@@ -285,9 +280,8 @@ typedef union{
 		__uint16_t EIE:1;
 		__uint16_t SCD:1;
 		__uint16_t ERAM:2;
-	}f;
-}rccr_t;
-
+	} f;
+} rccr_t;
 
 /*Parameter memory mapping (predefined)*/
 /*
@@ -324,7 +318,6 @@ typedef union{
 #define DP_PARA_SMC2_PIP		(DP_BASE+0x1F80)
 #define DP_PARA_Reserved_1		(DP_BASE+0x1FC0)
 
-
 /* Buffer Descriptor (BD) stuff */
 /*
 Note: that the status and control field (BD_Status) is differend depending on what type of
@@ -340,16 +333,12 @@ Note: control and status is the same for SCC and SMC, Direction differs however.
                      0x06       Low-order of buffer pointer
 */
 
-
 /*Generic BD destriptor. Don't use this - use a specific instead*/
-typedef struct{
+typedef struct {
 	__uint16_t BD_Status;
 	__uint16_t BD_Length;
 	__uint32_t BD_Pointer;
-}_bd_t;
-
-
-
+} _bd_t;
 
 /*
                          Table 20-13. BRGCn Field Descriptions
@@ -387,18 +376,18 @@ typedef struct{
             0 Divide by 1.
             1 Divide by 16.
 */
-typedef union{
+typedef union {
 	__uint32_t raw;
 	struct {
-		__uint32_t PADD_0		:14;
-		__uint32_t RST			:1;
-		__uint32_t EN			:1;
-		__uint32_t EXTC			:2;
-		__uint32_t ATB			:1;
-		__uint32_t CD			:12;
-		__uint32_t DIV16		:1;
-	}f;
-}brgc_t;
+		__uint32_t PADD_0:14;
+		__uint32_t RST:1;
+		__uint32_t EN:1;
+		__uint32_t EXTC:2;
+		__uint32_t ATB:1;
+		__uint32_t CD:12;
+		__uint32_t DIV16:1;
+	} f;
+} brgc_t;
 
 //=============================================================================
 // CPIC registers follow (registers for controlling interrupts btw SIU and CM)
@@ -435,7 +424,6 @@ priority between the SCCs, and the highest priority interrupt.
               Figure 34-3. CPM Interrupt Conﬁguration Register (CICR)
 This register is affected by HRESET but is not affected by SRESET. CICR bits are
 described in Table 34-3.
-
 
                                     Table 34-3. CICR Field Descriptions
    Bits   Name                                                    Description
@@ -482,7 +470,7 @@ described in Table 34-3.
 
 */
 
-typedef union{
+typedef union {
 	__uint32_t raw;
 	struct {
 		__uint32_t PADD_0:8;
@@ -495,10 +483,8 @@ typedef union{
 		__uint32_t IEN:1;
 		__uint32_t PADD_1:6;
 		__uint32_t SPS:1;
-	}f;
-}cicr_t;
-
-
+	} f;
+} cicr_t;
 
 #define CPMIV_Parallel_I_O_PC15 	0x1F
 #define CPMIV_SCC1 			0x1E
@@ -533,7 +519,7 @@ typedef union{
 #define CPMIV_Parallel_I_O_PC4		0x01
 #define CPMIV_Error			0x00
 
-typedef enum{
+typedef enum {
 	cme_Error,
 	cmid_Parallel_I_O_PC4,
 	cmid_Parallel_I_O_PC5,
@@ -567,7 +553,6 @@ typedef enum{
 
 	cmid_Timer_1,
 
-
 	cmid_Parallel_I_O_PC14,
 	cmid_SCC4,
 	cmid_SCC3,
@@ -575,8 +560,7 @@ typedef enum{
 	cmid_SCC1,
 
 	cmid_Parallel_I_O_PC15
-}cpmid_t;
-
+} cpmid_t;
 
 /*
 34.5.5 CPM Interrupt Vector Register (CIVR)
@@ -590,15 +574,14 @@ is affected by HRESET and SRESET.
           corresponding to the sub-block with the highest current priority. IACK is cleared after one clock cycle.
 */
 
-
-typedef union{
+typedef union {
 	__uint16_t raw;
 	struct {
 		__uint16_t VN:5;
 		__uint16_t PADD_0:10;
 		__uint16_t IACK:1;
-	}f;
-}civr_t;
+	} f;
+} civr_t;
 
 /*
         0     1    2     3     4    5      6     7      8      9    10    11  12      13   14  15
@@ -616,8 +599,7 @@ Figure 34-4. CPM Interrupt Pending/Mask/In-Service Registers (CIPR/CIMR/CISR)
 
 */
 
-
-typedef union{
+typedef union {
 	__uint32_t raw;
 	struct {
 		__uint32_t PC15:1;
@@ -656,15 +638,12 @@ typedef union{
 		__uint32_t PC4:1;
 		__uint32_t _rsv_3:1;
 
-	}f;
-}ciid_t;
+	} f;
+} ciid_t;
 
 #include <CPU/860/isr.h>
 void CM_init();
-void CM_Handler( void );
-int  CM_isr_install(int level, isr_handler isr);
+void CM_Handler(void);
+int CM_isr_install(int level, isr_handler isr);
 
-
-
-#endif //CM_H
-
+#endif				//CM_H

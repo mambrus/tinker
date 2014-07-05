@@ -30,7 +30,6 @@ Registers common to all 3 modes (Reset, Basic, Pelican)
 
 */
 
-
 //-----------------------------------------------------------------------------
 /*!
 Table 44 Bit interpretation of bus timing register 0 (BTR0); CAN address 6
@@ -50,10 +49,10 @@ re-synchronize on any relevant signal edge of the current transmission. The sync
 maximum number of clock cycles a bit period may be shortened or lengthened by one re-synchronization:
 tSJW = tscl × (2 × SJW.1 + SJW.0 + 1)
 */
-typedef struct{
-	__uint8_t SJW:2; 	//!< Synchronization Jump Width (SJW)
-	__uint8_t BRP:6; 	//!< Baud Rate Prescaler (BRP)
-}sja1000_btr0_t;
+typedef struct {
+	__uint8_t SJW:2;	//!< Synchronization Jump Width (SJW)
+	__uint8_t BRP:6;	//!< Baud Rate Prescaler (BRP)
+} sja1000_btr0_t;
 
 /*!
 6.5.2    BUS TIMING REGISTER 1 (BTR1)
@@ -63,8 +62,6 @@ In operating mode, this register is read only, if the PeliCAN mode is selected. 
 Table 45 Bit interpretation of bus timing register 1 (BTR1); CAN address 7
      BIT 7          BIT 6            BIT 5           BIT 4          BIT 3           BIT 2          BIT 1           BIT 0
      SAM          TSEG2.2          TSEG2.1         TSEG2.0       TSEG1.3          TSEG1.2         TSEG1.1        TSEG1.0
-
-
 
  SAM                  1         triple; the bus is sampled three times; recommended for low/medium speed buses
                                 (class A and B) where ﬁltering spikes on the bus line is beneﬁcial
@@ -77,12 +74,11 @@ tTSEG1 = tscl × (8 × TSEG1.3 + 4 × TSEG1.2 + 2 × TSEG1.1 + TSEG1.0 + 1)
 tTSEG2 = tscl × (4 × TSEG2.2 + 2 × TSEG2.1 + TSEG2.0 + 1)
 
 */
-typedef struct{
-	__uint8_t SAM:1; 	//!< Sampling (SAM)
-	__uint8_t TSEG2:3; 	//!< Time Segment 2 (TSEG2)
-	__uint8_t TSEG1:4; 	//!< Time Segment 1 (TSEG1)
-}sja1000_btr1_t;
-
+typedef struct {
+	__uint8_t SAM:1;	//!< Sampling (SAM)
+	__uint8_t TSEG2:3;	//!< Time Segment 2 (TSEG2)
+	__uint8_t TSEG1:4;	//!< Time Segment 1 (TSEG1)
+} sja1000_btr1_t;
 
 /*!
 6.5.3    OUTPUT CONTROL REGISTER (OCR)                         This register may be accessed (read/write) if the reset
@@ -104,15 +100,15 @@ Table 47 Interpretation of OCMODE bits
 
 
 */
-typedef struct{
-	__uint8_t OCTP1:1; 	//!<
-	__uint8_t OCTN1:1; 	//!<
-	__uint8_t OCPOL1:1; 	//!<
-	__uint8_t OCTP0:1; 	//!<
-	__uint8_t OCTN0:1; 	//!<
-	__uint8_t OCPOL0:1; 	//!<
-	__uint8_t OCMODE:2; 	//!<
-}sja1000_ocr_t;
+typedef struct {
+	__uint8_t OCTP1:1;	//!<
+	__uint8_t OCTN1:1;	//!<
+	__uint8_t OCPOL1:1;	//!<
+	__uint8_t OCTP0:1;	//!<
+	__uint8_t OCTN0:1;	//!<
+	__uint8_t OCPOL0:1;	//!<
+	__uint8_t OCMODE:2;	//!<
+} sja1000_ocr_t;
 
 /*!
 6.5.4    CLOCK DIVIDER REGISTER (CDR)
@@ -137,8 +133,6 @@ Table 49 Bit interpretation of the clock divider register (CDR); CAN address 31
   CAN mode          CBP           RXINTEN                        clock off        CD.2  CD.1  CD.0
 Note
 1. This bit cannot be written. During read-out of this register always a zero is given.
-
-
 
 6.5.4.1      CD.2 to CD.0
 The bits CD.2 to CD.0 are accessible without restrictions in reset mode as well as in operating mode. These bits are used
@@ -190,17 +184,14 @@ the output control register (see also Section 6.5.3). A write     Write access i
 access is only possible in reset mode.
 
 
-
 */
-typedef struct{
-	__uint8_t PELICAN:1; 	//!< CAN mode (1 is peican, 0 is basic)
-	__uint8_t CBP:1; 	//!< Bypass the CAN input comparator
-	__uint8_t RXINTEN:1; 	//!< TX1 output used as a dedicated receive interrupt output.
-	__uint8_t zero:1; 	//!< Padding. Always read as zero
-	__uint8_t CLK_OFF:1; 	//!< External CLKOUT pin of the SJA1000 is disabled.
-	__uint8_t CD:3; 	//!< CLKOUT frequency
-}sja1000_cdr_t;
+typedef struct {
+	__uint8_t PELICAN:1;	//!< CAN mode (1 is peican, 0 is basic)
+	__uint8_t CBP:1;	//!< Bypass the CAN input comparator
+	__uint8_t RXINTEN:1;	//!< TX1 output used as a dedicated receive interrupt output.
+	__uint8_t zero:1;	//!< Padding. Always read as zero
+	__uint8_t CLK_OFF:1;	//!< External CLKOUT pin of the SJA1000 is disabled.
+	__uint8_t CD:3;		//!< CLKOUT frequency
+} sja1000_cdr_t;
 
-
-#endif //SJA1000_common_H
-
+#endif				//SJA1000_common_H

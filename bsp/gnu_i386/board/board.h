@@ -24,15 +24,13 @@
 #include <tinker/config.h>
 
 #if defined(TK_DCPU)
-	#if TK_DCPU==__tk_i386__
+#if TK_DCPU==__tk_i386__
 
-	#else
-		#error Sorry, TinKer doesn't know how to use your CPU
-	#endif
 #else
-	#error Must have CPU for board to work
+#error Sorry, TinKer doesn't know how to use your CPU
+#endif
+#else
+#error Must have CPU for board to work
 #endif
 
-
-#endif // BOARD_H
-
+#endif				// BOARD_H

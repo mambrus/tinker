@@ -25,7 +25,6 @@ This code has not been thouroughly tested nor is complete.
 
 */
 
-
 #ifndef CM_SCC_H
 #define CM_SCC_H
 
@@ -94,7 +93,6 @@ scc_rx_control_descriptor
 14 OV Overrun. Set when a receiver overrun occurs during reception.
 15 CD Carrier detect lost. Set when the carrier detect signal is negated during reception.
 
-
 scc_TX_control_descriptor
 ===============================================================================
 0 R Ready.
@@ -136,57 +134,54 @@ scc_TX_control_descriptor
         1 CTS negated during transmission.
 */
 
-
-typedef union{
+typedef union {
 	__uint16_t raw;
 	struct {
-		__uint16_t E_Empty					:1;
-		__uint16_t Padd_0					:1;
-		__uint16_t W_Wrap					:1;
-		__uint16_t I_Interrupt					:1;
-		__uint16_t C_Control_character				:1;
-		__uint16_t A_Address					:1;
-		__uint16_t CM_Continuous_mode				:1;
-		__uint16_t ID_Buffer_closed_on_reception_of_idles	:1;
-		__uint16_t AM_Address_match				:1;
-		__uint16_t Padd_1					:1;
-		__uint16_t BR_Break_received				:1;
-		__uint16_t FR_Framing_error				:1;
-		__uint16_t PR_Parity_error				:1;
-		__uint16_t Padd_2					:1;
-		__uint16_t OV_Overrun					:1;
-		__uint16_t CD_Carrier_detect_lost			:1;
-	}f;
-}bd_ctrl_scc_rx_t;
+		__uint16_t E_Empty:1;
+		__uint16_t Padd_0:1;
+		__uint16_t W_Wrap:1;
+		__uint16_t I_Interrupt:1;
+		__uint16_t C_Control_character:1;
+		__uint16_t A_Address:1;
+		__uint16_t CM_Continuous_mode:1;
+		__uint16_t ID_Buffer_closed_on_reception_of_idles:1;
+		__uint16_t AM_Address_match:1;
+		__uint16_t Padd_1:1;
+		__uint16_t BR_Break_received:1;
+		__uint16_t FR_Framing_error:1;
+		__uint16_t PR_Parity_error:1;
+		__uint16_t Padd_2:1;
+		__uint16_t OV_Overrun:1;
+		__uint16_t CD_Carrier_detect_lost:1;
+	} f;
+} bd_ctrl_scc_rx_t;
 
-typedef union{
+typedef union {
 	__uint16_t raw;
 	struct {
-		__uint16_t R_Ready					:1;
-		__uint16_t Padd_0					:1;
-		__uint16_t W_Wrap					:1;
-		__uint16_t I_Interrupt					:1;
-		__uint16_t CR_Clear_to_send_report			:1;
-		__uint16_t A_Address					:1;
-		__uint16_t CM_Continuous_mode				:1;
-		__uint16_t P_Preamble					:1;
-		__uint16_t NS_No_stop_bit_sent				:1;
-		__uint16_t Padd_1					:5;
-		__uint16_t CT_CTS_lost					:1;
-	}f;
-}bd_ctrl_scc_tx_t;
+		__uint16_t R_Ready:1;
+		__uint16_t Padd_0:1;
+		__uint16_t W_Wrap:1;
+		__uint16_t I_Interrupt:1;
+		__uint16_t CR_Clear_to_send_report:1;
+		__uint16_t A_Address:1;
+		__uint16_t CM_Continuous_mode:1;
+		__uint16_t P_Preamble:1;
+		__uint16_t NS_No_stop_bit_sent:1;
+		__uint16_t Padd_1:5;
+		__uint16_t CT_CTS_lost:1;
+	} f;
+} bd_ctrl_scc_tx_t;
 
-
-
-typedef struct{
+typedef struct {
 	union {
 		__uint16_t raw;
-		bd_ctrl_scc_rx_t SCC_RX;	/*Note: same as for SMC*/
-		bd_ctrl_scc_tx_t SCC_TX;	/*Note: same as for SMC*/
-	}BD_Status;
+		bd_ctrl_scc_rx_t SCC_RX;	/*Note: same as for SMC */
+		bd_ctrl_scc_tx_t SCC_TX;	/*Note: same as for SMC */
+	} BD_Status;
 	__uint16_t BD_Length;
 	__uint32_t BD_Pointer;
-}bd_scc_t;
+} bd_scc_t;
 
 /* Function code register (for RFCR and TFCR in scc_param_t)*/
 /*
@@ -201,15 +196,15 @@ typedef struct{
             Note AT[0] is driven high to identify this SDMA channel access as a DMA type.
 */
 
-typedef union{
+typedef union {
 	__uint8_t raw;
 	struct {
 		__uint8_t PADD_0:3;
 		__uint8_t BO:2;
 		__uint8_t AT:3;
 
-	}f;
-}scc_fcr_t;
+	} f;
+} scc_fcr_t;
 
 /*Protocol specific areas*/
 /*
@@ -276,58 +271,59 @@ SCC_UART_STUFF
                       break length down to a bit resolution: (BRKLN + number of zeros in RLBC).
 */
 
-typedef struct{
-/*0x30 PADD_0*/		__uint32_t	PADD_0;
-/*0x34 PADD_1*/		__uint32_t	PADD_1;
-/*0x38 MAX_IDL*/	__uint16_t	MAX_IDL;
-/*0x3A  IDLC*/		__uint16_t	IDLC;
-/*0x3C BRKCR*/		__uint16_t	BRKCR;
-/*0x3E PAREC*/		__uint16_t	PAREC;
-/*0x40 FRMEC*/		__uint16_t	FRMEC;
-/*0x42 NOSEC*/		__uint16_t	NOSEC;
-/*0x44 BRKEC*/		__uint16_t	BRKEC;
-/*0x46 BRKLN*/		__uint16_t	BRKLN;
-/*0x48 UADDR1*/		__uint16_t	UADDR1;
-/*0x4A UADDR2*/		__uint16_t	UADDR2;
-/*0x4C RTEMP*/		__uint16_t	RTEMP;
-/*0x4E TOSEQ*/		__uint16_t	TOSEQ;
-/*0x50 CHARACTER1*/	__uint16_t	CHARACTER1;
-/*0x52 CHARACTER2*/	__uint16_t	CHARACTER2;
-/*0x54 CHARACTER3*/	__uint16_t	CHARACTER3;
-/*0x56 CHARACTER4*/	__uint16_t	CHARACTER4;
-/*0x58 CHARACTER5*/	__uint16_t	CHARACTER5;
-/*0x5A CHARACTER6*/	__uint16_t	CHARACTER6;
-/*0x5C CHARACTER7*/	__uint16_t	CHARACTER7;
-/*0x5E CHARACTER8*/	__uint16_t	CHARACTER8;
-/*0x60 RCCM*/		__uint16_t	RCCM;
-/*0x62 RCCR*/		__uint16_t	_RCCR;	/*Note: this is also the name of a SPR (hence the prefix)*/
-/*0x64 RLBC*/		__uint16_t	RLBC;
-}proto_scc_uart_t;
+typedef struct {
+/*0x30 PADD_0*/ __uint32_t PADD_0;
+/*0x34 PADD_1*/ __uint32_t PADD_1;
+/*0x38 MAX_IDL*/ __uint16_t MAX_IDL;
+/*0x3A  IDLC*/ __uint16_t IDLC;
+/*0x3C BRKCR*/ __uint16_t BRKCR;
+/*0x3E PAREC*/ __uint16_t PAREC;
+/*0x40 FRMEC*/ __uint16_t FRMEC;
+/*0x42 NOSEC*/ __uint16_t NOSEC;
+/*0x44 BRKEC*/ __uint16_t BRKEC;
+/*0x46 BRKLN*/ __uint16_t BRKLN;
+/*0x48 UADDR1*/ __uint16_t UADDR1;
+/*0x4A UADDR2*/ __uint16_t UADDR2;
+/*0x4C RTEMP*/ __uint16_t RTEMP;
+/*0x4E TOSEQ*/ __uint16_t TOSEQ;
+/*0x50 CHARACTER1*/ __uint16_t CHARACTER1;
+/*0x52 CHARACTER2*/ __uint16_t CHARACTER2;
+/*0x54 CHARACTER3*/ __uint16_t CHARACTER3;
+/*0x56 CHARACTER4*/ __uint16_t CHARACTER4;
+/*0x58 CHARACTER5*/ __uint16_t CHARACTER5;
+/*0x5A CHARACTER6*/ __uint16_t CHARACTER6;
+/*0x5C CHARACTER7*/ __uint16_t CHARACTER7;
+/*0x5E CHARACTER8*/ __uint16_t CHARACTER8;
+/*0x60 RCCM*/ __uint16_t RCCM;
+	/*0x62 RCCR */ __uint16_t _RCCR;
+	/*Note: this is also the name of a SPR (hence the prefix) */
+/*0x64 RLBC*/ __uint16_t RLBC;
+} proto_scc_uart_t;
 
+typedef struct {
+/*0x00 RBASE*/ __uint16_t RBASE;
+/*0x02 TBASE*/ __uint16_t TBASE;
+	/*0x04 RFCR */ scc_fcr_t RFCR;
+						/*__uint8_t*/
+	/*0x05 TFCR */ scc_fcr_t TFCR;
+						/*__uint8_t*/
+/*0x06 MRBLR*/ __uint16_t MRBLR;
+/*0x08 RSTATE*/ __uint32_t RSTATE;
+/*0x0C   RIP*/ __uint32_t RIP;
+/*0x10 RBPTR*/ __uint16_t RBPTR;
+/*0x12 RCOUN_T*/ __uint16_t RCOUN_T;
+/*0x14 RTEMP*/ __uint32_t RTEMP;
+/*0x18 TSTATE*/ __uint32_t TSTATE;
+/*0x1C   TIP*/ __uint32_t TIP;
+/*0x20 TBPTR*/ __uint16_t TBPTR;
+/*0x22 TCOUN*/ __uint16_t TCOUN;
+/*0x24 TTEMP_T*/ __uint32_t TTEMP_T;
+/*0x28  RCRC*/ __uint32_t RCRC;
+/*0x2C  TCRC*/ __uint32_t TCRC;
 
-typedef struct{
-/*0x00 RBASE*/		__uint16_t	RBASE;
-/*0x02 TBASE*/		__uint16_t	TBASE;
-/*0x04 RFCR*/		scc_fcr_t	RFCR;	/*__uint8_t*/
-/*0x05 TFCR*/		scc_fcr_t	TFCR;	/*__uint8_t*/
-/*0x06 MRBLR*/		__uint16_t	MRBLR;
-/*0x08 RSTATE*/		__uint32_t	RSTATE;
-/*0x0C   RIP*/		__uint32_t	RIP;
-/*0x10 RBPTR*/		__uint16_t 	RBPTR;
-/*0x12 RCOUN_T*/	__uint16_t	RCOUN_T;
-/*0x14 RTEMP*/		__uint32_t	RTEMP;
-/*0x18 TSTATE*/		__uint32_t	TSTATE;
-/*0x1C   TIP*/		__uint32_t	TIP;
-/*0x20 TBPTR*/		__uint16_t 	TBPTR;
-/*0x22 TCOUN*/		__uint16_t	TCOUN;
-/*0x24 TTEMP_T*/	__uint32_t	TTEMP_T;
-/*0x28  RCRC*/		__uint32_t	RCRC;
-/*0x2C  TCRC*/		__uint32_t	TCRC;
+/*0x30*/ union {
+		proto_scc_uart_t SCC_UART;
+	} PROTO;
+} scc_param_t;
 
-/*0x30*/union{
- 			proto_scc_uart_t	SCC_UART;
-	}PROTO;
-}scc_param_t;
-
-#endif //CM_SCC_H
-
+#endif				//CM_SCC_H

@@ -10,7 +10,6 @@
  *
  *******************************************************************/
 
-
 #ifndef TK_HWTYPES_MSVCX86_H
 #define TK_HWTYPES_MSVCX86_H
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -24,18 +23,14 @@ Architecture specific representation of a stack adress. In x86 this can be a
 simple char* even in 16bit modes, since a pointer contains both segment and
 offset.
 */
-typedef struct{
-   char * tstack;
-   size_t stack_size;
+typedef struct {
+	char *tstack;
+	size_t stack_size;
 } stack_t;
-
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-
 #endif
-
-
 
 /*!
  * @defgroup CVSLOGtk_hwtypes_borlandX86_h tk_hwtypes_borlandX86_h

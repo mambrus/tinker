@@ -22,7 +22,6 @@
 Communications module
 */
 
-
 #include <asm/cm.h>
 #include <mmap_regs.h>
 
@@ -30,11 +29,12 @@ Communications module
 
 int CM_default_nn = 0;
 
-void CM_default_handler(){
+void CM_default_handler()
+{
 	CM_default_nn++;
 };
 
-isr_handler _cm_isr_table[32]={
+isr_handler _cm_isr_table[32] = {
 	CM_default_handler,
 	CM_default_handler,
 	CM_default_handler,
@@ -69,8 +69,6 @@ isr_handler _cm_isr_table[32]={
 	CM_default_handler
 };
 
-
-
 /*
 Notes on how to handle CM interrupts:
 1. Set the CIVR[IACK].
@@ -83,19 +81,20 @@ Notes on how to handle CM interrupts:
 
 */
 
-void CM_Handler( void ){
-	civr_t *civr_p = (civr_t*)&CIVR;
-	civr_p->f.IACK=1;
+void CM_Handler(void)
+{
+	civr_t *civr_p = (civr_t *) & CIVR;
+	civr_p->f.IACK = 1;
 	civr_t civr_temp = *civr_p;
 
 	int i;
 	__uint32_t cisr_raw;
 
-	cicr_t *cicr_p = (cicr_t*)&CICR;
+	cicr_t *cicr_p = (cicr_t *) & CICR;
 
-	ciid_t *cipr_p = (ciid_t*)&CIPR;
-	ciid_t *cimr_p = (ciid_t*)&CIMR;
-	ciid_t *cisr_p = (ciid_t*)&CISR;
+	ciid_t *cipr_p = (ciid_t *) & CIPR;
+	ciid_t *cimr_p = (ciid_t *) & CIMR;
+	ciid_t *cisr_p = (ciid_t *) & CISR;
 
 /*
 	civr_t civr_temp;
@@ -107,16 +106,16 @@ void CM_Handler( void ){
 
 	//Note that several CM IRQ bits might be set.
 	/*
-	for (i=0;i<32;i++){
-		if (civr_temp.f.VN & m){
-			_cm_isr_table[i]();
-			cisr_p->raw |= m;    //Set the corresponding bit. I.e. notify that we're done
-		}
-		m = m << 1;
-	}
-	*/
+	   for (i=0;i<32;i++){
+	   if (civr_temp.f.VN & m){
+	   _cm_isr_table[i]();
+	   cisr_p->raw |= m;    //Set the corresponding bit. I.e. notify that we're done
+	   }
+	   m = m << 1;
+	   }
+	 */
 
-	_cm_isr_table[civr_temp.f.VN]();
+	_cm_isr_table[civr_temp.f.VN] ();
 	cisr_p->raw |= (0x01 << civr_temp.f.VN);
 	//cisr_p->raw &= (~(0x01 << civr_temp.f.VN));
 
@@ -127,21 +126,22 @@ Attach an interrupt handler routine to a certain CM event
 This is second level IRQ handling defined by HW.
 @note Mimics TinKer 1'st level IRQ
 */
-int CM_isr_install(int level, isr_handler isr){
-	_cm_isr_table[level]=isr;
+int CM_isr_install(int level, isr_handler isr)
+{
+	_cm_isr_table[level] = isr;
 	return 0;
 };
 
+void CM_init()
+{
+	cicr_t *cicr_p = (cicr_t *) & CICR;
 
-void CM_init(){
-	cicr_t *cicr_p = (cicr_t*)&CICR;
+	cicr_p->f.IRL = 5;
+	cicr_p->f.IEN = 1;
 
-	cicr_p->f.IRL=5;
-	cicr_p->f.IEN=1;
+	civr_t *civr_p = (civr_t *) & CIVR;
+	civr_p->f.IACK = 1;
 
-	civr_t *civr_p = (civr_t*)&CIVR;
-	civr_p->f.IACK=1;
-
-	tk_isr_install(lvl_Intrnl_5,CM_Handler);
+	tk_isr_install(lvl_Intrnl_5, CM_Handler);
 
 }

@@ -148,7 +148,6 @@ Clock divider          CDR          Clock Divider Register    00000000 Intel; X
 @endverbatim.
 */
 
-
 /*!
 @verbatim.
 Table 12 Bit interpretation of the mode register (MOD); CAN address ‘0’
@@ -180,16 +179,14 @@ Table 12 Bit interpretation of the mode register (MOD); CAN address ‘0’
 @endverbatim.
 */
 
-
-typedef struct{
-	__uint8_t padd:3; 	//!< Padding
-	__uint8_t SM:1; 	//!< Sleep mode
-	__uint8_t AFM:1; 	//!< Acceptance Filter Mode
-	__uint8_t STM:1; 	//!< Self Test Mode
-	__uint8_t LOM:1; 	//!< Listen Only Mode
-	__uint8_t RM:1; 	//!< Reset Mode
-}sja1000_pelican_mod_t;
-
+typedef struct {
+	__uint8_t padd:3;	//!< Padding
+	__uint8_t SM:1;		//!< Sleep mode
+	__uint8_t AFM:1;	//!< Acceptance Filter Mode
+	__uint8_t STM:1;	//!< Self Test Mode
+	__uint8_t LOM:1;	//!< Listen Only Mode
+	__uint8_t RM:1;		//!< Reset Mode
+} sja1000_pelican_mod_t;
 
 /*!
 6.4.4     COMMAND REGISTER (CMR)
@@ -228,19 +225,19 @@ Table 13 Bit interpretation of the command register (CMR); CAN address 1
 @endverbatim.
 */
 
-typedef	struct{
-	__uint8_t padd:3; 	//!< Padding
-	__uint8_t SRR:1; 	//!< Self Reception Request
-	__uint8_t CDO:1; 	//!< Clear Data Overrun
-	__uint8_t RRB:1; 	//!< Release Receive Buffer
-	__uint8_t AT:1; 	//!< Abort Transmission
-	__uint8_t TR:1; 	//!< Transmission Request
-}sja1000_pelican_cmrbits_t;
+typedef struct {
+	__uint8_t padd:3;	//!< Padding
+	__uint8_t SRR:1;	//!< Self Reception Request
+	__uint8_t CDO:1;	//!< Clear Data Overrun
+	__uint8_t RRB:1;	//!< Release Receive Buffer
+	__uint8_t AT:1;		//!< Abort Transmission
+	__uint8_t TR:1;		//!< Transmission Request
+} sja1000_pelican_cmrbits_t;
 
-typedef union{
-	__uint8_t cmd;			//!< For setting multiple bits simultaneously
-	sja1000_pelican_cmrbits_t bits; //!< @see sja1000_pelican_cmrbits_t
-}sja1000_pelican_cmr_t;
+typedef union {
+	__uint8_t cmd;		//!< For setting multiple bits simultaneously
+	sja1000_pelican_cmrbits_t bits;	//!< @see sja1000_pelican_cmrbits_t
+} sja1000_pelican_cmr_t;
 /*
 #if defined (__BIG_ENDIAN__)
 	#define BIT_TR 	(80 >> 0)
@@ -249,11 +246,11 @@ typedef union{
 	#define BIT_CDO	(80 >> 3)
 	#define BIT_SRR	(80 >> 4)
 #else*/
-	#define BIT_TR 	(1 << 0)
-	#define BIT_AT 	(1 << 1)
-	#define BIT_RRB	(1 << 2)
-	#define BIT_CDO	(1 << 3)
-	#define BIT_SRR	(1 << 4)
+#define BIT_TR 	(1 << 0)
+#define BIT_AT 	(1 << 1)
+#define BIT_RRB	(1 << 2)
+#define BIT_CDO	(1 << 3)
+#define BIT_SRR	(1 << 4)
 //#endif
 
 /*!
@@ -300,16 +297,16 @@ SR.0 RBS Receive Buffer Status; 1 full; one or more complete messages are availa
 
 @endverbatim.
 */
-typedef struct{
-	__uint8_t BS:1; 	//!< Bus Status
-	__uint8_t ES:1; 	//!< Error Status
-	__uint8_t TS:1; 	//!< Transmit Status
-	__uint8_t RS:1; 	//!< Receive Status
-	__uint8_t TCS:1; 	//!< Transmission Complete Status
-	__uint8_t TBS:1; 	//!< Transmit Buffer Status
-	__uint8_t DOS:1; 	//!< Data Overrun Status
-	__uint8_t RBS:1; 	//!< Receive Buffer Status
-}sja1000_pelican_sr_t;
+typedef struct {
+	__uint8_t BS:1;		//!< Bus Status
+	__uint8_t ES:1;		//!< Error Status
+	__uint8_t TS:1;		//!< Transmit Status
+	__uint8_t RS:1;		//!< Receive Status
+	__uint8_t TCS:1;	//!< Transmission Complete Status
+	__uint8_t TBS:1;	//!< Transmit Buffer Status
+	__uint8_t DOS:1;	//!< Data Overrun Status
+	__uint8_t RBS:1;	//!< Receive Buffer Status
+} sja1000_pelican_sr_t;
 
 /*!
 @verbatim.
@@ -352,16 +349,16 @@ IR.0 RI  Receive Interrupt; note 2  1 set; this bit is set while the receive FIF
                                       RXFIFO
 @endverbatim.
 */
-typedef struct{
-	__uint8_t BEI:1; 	//!< Bus Error Interrupt
-	__uint8_t ALI:1; 	//!< Arbitration Lost Interrupt
-	__uint8_t EPI:1; 	//!< Error Passive Interrupt
-	__uint8_t WUI:1; 	//!< Wake-Up Interrupt
-	__uint8_t DOI:1; 	//!< Data Overrun Interrupt
-	__uint8_t EI:1; 	//!< Error Warning Interrupt
-	__uint8_t TI:1; 	//!< Transmit Interrupt
-	__uint8_t RI:1; 	//!< Receive Interrupt
-}sja1000_pelican_ir_t;
+typedef struct {
+	__uint8_t BEI:1;	//!< Bus Error Interrupt
+	__uint8_t ALI:1;	//!< Arbitration Lost Interrupt
+	__uint8_t EPI:1;	//!< Error Passive Interrupt
+	__uint8_t WUI:1;	//!< Wake-Up Interrupt
+	__uint8_t DOI:1;	//!< Data Overrun Interrupt
+	__uint8_t EI:1;		//!< Error Warning Interrupt
+	__uint8_t TI:1;		//!< Transmit Interrupt
+	__uint8_t RI:1;		//!< Receive Interrupt
+} sja1000_pelican_ir_t;
 
 /*!
 @verbatim.
@@ -400,16 +397,16 @@ Table 16 Bit interpretation of the interrupt enable register (IER); CAN address 
                                                              0        disabled
 @endverbatim.
 */
-typedef struct{
-	__uint8_t BEIE:1; 	//!< Bus Error Interrupt Enable
-	__uint8_t ALIE:1; 	//!< Arbitration Lost Interrupt Enable
-	__uint8_t EPIE:1; 	//!< Error Passive Interrupt Enable
-	__uint8_t WUIE:1; 	//!< Wake-Up Interrupt Enable
-	__uint8_t DOIE:1; 	//!< Data Overrun Interrupt Enable
-	__uint8_t EIE:1; 	//!< Error Warning Interrupt Enable
-	__uint8_t TIE:1; 	//!< Transmit Interrupt Enable
-	__uint8_t RIE:1; 	//!< Receive Interrupt Enable
-}sja1000_pelican_ier_t;
+typedef struct {
+	__uint8_t BEIE:1;	//!< Bus Error Interrupt Enable
+	__uint8_t ALIE:1;	//!< Arbitration Lost Interrupt Enable
+	__uint8_t EPIE:1;	//!< Error Passive Interrupt Enable
+	__uint8_t WUIE:1;	//!< Wake-Up Interrupt Enable
+	__uint8_t DOIE:1;	//!< Data Overrun Interrupt Enable
+	__uint8_t EIE:1;	//!< Error Warning Interrupt Enable
+	__uint8_t TIE:1;	//!< Transmit Interrupt Enable
+	__uint8_t RIE:1;	//!< Receive Interrupt Enable
+} sja1000_pelican_ier_t;
 
 /*!
 @verbatim.
@@ -425,11 +422,10 @@ Table 17 Bit interpretation of the arbitration lost capture register (ALC); CAN 
  ALC.0        BITNO0       bit number 0
 @endverbatim.
 */
-typedef struct{
-	__uint8_t padd:3; 	//!< Padding
-	__uint8_t BITNO:5; 	//!< Bit number indicating where arbitration is lost. @note gap in value 11-12 (SRTR-IDE bits)
-}sja1000_pelican_alc_t;
-
+typedef struct {
+	__uint8_t padd:3;	//!< Padding
+	__uint8_t BITNO:5;	//!< Bit number indicating where arbitration is lost. @note gap in value 11-12 (SRTR-IDE bits)
+} sja1000_pelican_alc_t;
 
 /*!
 @verbatim.
@@ -470,7 +466,6 @@ Table 21 Bit interpretation of bits ECC.4 to ECC.0; note 1
 02     00010 	ID.28 to ID.21
 03     00011 	start of frame
 
-
 04     00100 	bit SRTR
 05     00101 	bit IDE
 06     00110 	ID.20 to ID.18
@@ -500,11 +495,11 @@ Table 21 Bit interpretation of bits ECC.4 to ECC.0; note 1
 1C     11100 	overload ﬂag
 @endverbatim.
 */
-typedef struct{
-	__uint8_t ERRC:2; 	//!<
-	__uint8_t DIR:1; 	//!<
-	__uint8_t SEG:5; 	//!<
-}sja1000_pelican_ecc_t;
+typedef struct {
+	__uint8_t ERRC:2;	//!<
+	__uint8_t DIR:1;	//!<
+	__uint8_t SEG:5;	//!<
+} sja1000_pelican_ecc_t;
 
 /*!
 @verbatim.
@@ -514,102 +509,97 @@ Table 25 TX frame information (SFF); CAN address 16
 @endverbatim.
 */
 
-typedef	struct{
-		__uint8_t FF:1; 	//!< 1=EFF; extended frame format
-		__uint8_t RTR:1; 	//!< Remote Transmission Request
-		__uint8_t padd:2; 	//!< Padding
-		__uint8_t DLC:4; 	//!<  Data length code
-	}sja1000_pelican_frame_info_t;
+typedef struct {
+	__uint8_t FF:1;		//!< 1=EFF; extended frame format
+	__uint8_t RTR:1;	//!< Remote Transmission Request
+	__uint8_t padd:2;	//!< Padding
+	__uint8_t DLC:4;	//!<  Data length code
+} sja1000_pelican_frame_info_t;
 
-typedef	struct{
-		__uint16_t	id:11;
-		__uint16_t	padd2:5;
-		__uint8_t	data[8];
-	}sja1000_pelican_frame_SFF_t;
+typedef struct {
+	__uint16_t id:11;
+	__uint16_t padd2:5;
+	__uint8_t data[8];
+} sja1000_pelican_frame_SFF_t;
 
-typedef	struct{
+typedef struct {
 
-		__uint32_t	id:29;
-		__uint32_t	padd2:3;
-		__uint8_t	data[8];
-	}sja1000_pelican_frame_EFF_t;
-
+	__uint32_t id:29;
+	__uint32_t padd2:3;
+	__uint8_t data[8];
+} sja1000_pelican_frame_EFF_t;
 
 typedef struct {
 	sja1000_pelican_frame_info_t frinfo;
-	union{
+	union {
 		sja1000_pelican_frame_SFF_t SFF;
 		sja1000_pelican_frame_EFF_t EFF;
-	}format;
-}__attribute__((__packed__)) sja1000_pelican_frame_t;
-
+	} format;
+} __attribute__ ((__packed__)) sja1000_pelican_frame_t;
 
 /*!
 sja1000_pelican_t struct mapped to memory layout.
 */
-typedef struct{
-	sja1000_pelican_mod_t	mod;	//!< MODE REGISTER (MOD)
-	sja1000_pelican_cmr_t	cmr;	//!< command register (CMR); CAN address 1
-	sja1000_pelican_sr_t	sr;	//!< status register (SR); CAN address 2
-	sja1000_pelican_ir_t	ir;	//!< interrupt register (IR); CAN address 3
-	sja1000_pelican_ier_t	ier;	//!< INTERRUPT ENABLE REGISTER (IER); CAN address 4
-	__uint8_t		_rsrvd0;//!< Reserved; CAN address 5
-	sja1000_btr0_t		btr0;	//!< BUS TIMING REGISTER 0 (BTR0); CAN address 6
-	sja1000_btr1_t		btr1;	//!< BUS TIMING REGISTER 1 (BTR1); CAN address 7
-	sja1000_ocr_t   	ocr;	//!< OUTPUT CONTROL REGISTER (OCR); CAN address 8
-	__uint8_t		test;	//!< test; CAN address 9
-	__uint8_t		_rsrvd1;//!< Reserved; CAN address 10
-	sja1000_pelican_alc_t	alc;	//!< ARBITRATION LOST CAPTURE REGISTER (ALC); CAN address 11
-	sja1000_pelican_ecc_t	ecc;	//!< Error Code Capture (ECC); CAN address 12
-	__uint8_t		ewl;	//!< Error Warning Limit; CAN address 13
-	__uint8_t		rxerr;	//!< RX Error Counter; CAN address 14
-	__uint8_t		txerr;	//!< TX Error Counter; CAN address 15
+typedef struct {
+	sja1000_pelican_mod_t mod;	//!< MODE REGISTER (MOD)
+	sja1000_pelican_cmr_t cmr;	//!< command register (CMR); CAN address 1
+	sja1000_pelican_sr_t sr;	//!< status register (SR); CAN address 2
+	sja1000_pelican_ir_t ir;	//!< interrupt register (IR); CAN address 3
+	sja1000_pelican_ier_t ier;	//!< INTERRUPT ENABLE REGISTER (IER); CAN address 4
+	__uint8_t _rsrvd0;	//!< Reserved; CAN address 5
+	sja1000_btr0_t btr0;	//!< BUS TIMING REGISTER 0 (BTR0); CAN address 6
+	sja1000_btr1_t btr1;	//!< BUS TIMING REGISTER 1 (BTR1); CAN address 7
+	sja1000_ocr_t ocr;	//!< OUTPUT CONTROL REGISTER (OCR); CAN address 8
+	__uint8_t test;		//!< test; CAN address 9
+	__uint8_t _rsrvd1;	//!< Reserved; CAN address 10
+	sja1000_pelican_alc_t alc;	//!< ARBITRATION LOST CAPTURE REGISTER (ALC); CAN address 11
+	sja1000_pelican_ecc_t ecc;	//!< Error Code Capture (ECC); CAN address 12
+	__uint8_t ewl;		//!< Error Warning Limit; CAN address 13
+	__uint8_t rxerr;	//!< RX Error Counter; CAN address 14
+	__uint8_t txerr;	//!< TX Error Counter; CAN address 15
 	union {
-		sja1000_pelican_frame_t	frame;	//!< Rx & Tx frame (depending on if reading or writing)
-		struct{
-			__uint32_t	code;
-			__uint32_t	mask;
-		}__attribute__((__packed__)) acceptance;
-	}fracc;				//!< TX/RX frame or acceptance; CAN address 16-28
-	__uint8_t		rmc;	//!< RX MESSAGE COUNTER (RMC); CAN address 29
-	__uint8_t		rbsa;	//!< RX BUFFER START ADDRESS REGISTER (RBSA); CAN address 30
-	sja1000_cdr_t		cdr;	//!< clock divider register (CDR); CAN address 31
+		sja1000_pelican_frame_t frame;	//!< Rx & Tx frame (depending on if reading or writing)
+		struct {
+			__uint32_t code;
+			__uint32_t mask;
+		} __attribute__ ((__packed__)) acceptance;
+	} fracc;		//!< TX/RX frame or acceptance; CAN address 16-28
+	__uint8_t rmc;		//!< RX MESSAGE COUNTER (RMC); CAN address 29
+	__uint8_t rbsa;		//!< RX BUFFER START ADDRESS REGISTER (RBSA); CAN address 30
+	sja1000_cdr_t cdr;	//!< clock divider register (CDR); CAN address 31
 
-}sja1000_pelican_t;
+} sja1000_pelican_t;
 
 /*!Same as sja1000_pelican_t but with some fields raw*/
-typedef struct{
-	sja1000_pelican_mod_t	mod;	//!< MODE REGISTER (MOD)
-	sja1000_pelican_cmr_t	cmr;	//!< command register (CMR); CAN address 1
-	sja1000_pelican_sr_t	sr;	//!< status register (SR); CAN address 2
-	__uint8_t		ir;	//!< interrupt register (IR); CAN address 3
-	__uint8_t		ier;	//!< INTERRUPT ENABLE REGISTER (IER); CAN address 4
-	__uint8_t		_rsrvd0;//!< Reserved; CAN address 5
-	__uint8_t		btr0_raw;//!< BUS TIMING REGISTER 0 (BTR0); CAN address 6
-	__uint8_t		btr1_raw;//!< BUS TIMING REGISTER 1 (BTR1); CAN address 7
-	__uint8_t		ocr_raw;//!< OUTPUT CONTROL REGISTER (OCR); CAN address 8
-	__uint8_t		test;	//!< test; CAN address 9
-	__uint8_t		_rsrvd1;//!< Reserved; CAN address 10
-	sja1000_pelican_alc_t	alc;	//!< ARBITRATION LOST CAPTURE REGISTER (ALC); CAN address 11
-	sja1000_pelican_ecc_t	ecc;	//!< Error Code Capture (ECC); CAN address 12
-	__uint8_t		ewl;	//!< Error Warning Limit; CAN address 13
-	__uint8_t		rxerr;	//!< RX Error Counter; CAN address 14
-	__uint8_t		txerr;	//!< TX Error Counter; CAN address 15
+typedef struct {
+	sja1000_pelican_mod_t mod;	//!< MODE REGISTER (MOD)
+	sja1000_pelican_cmr_t cmr;	//!< command register (CMR); CAN address 1
+	sja1000_pelican_sr_t sr;	//!< status register (SR); CAN address 2
+	__uint8_t ir;		//!< interrupt register (IR); CAN address 3
+	__uint8_t ier;		//!< INTERRUPT ENABLE REGISTER (IER); CAN address 4
+	__uint8_t _rsrvd0;	//!< Reserved; CAN address 5
+	__uint8_t btr0_raw;	//!< BUS TIMING REGISTER 0 (BTR0); CAN address 6
+	__uint8_t btr1_raw;	//!< BUS TIMING REGISTER 1 (BTR1); CAN address 7
+	__uint8_t ocr_raw;	//!< OUTPUT CONTROL REGISTER (OCR); CAN address 8
+	__uint8_t test;		//!< test; CAN address 9
+	__uint8_t _rsrvd1;	//!< Reserved; CAN address 10
+	sja1000_pelican_alc_t alc;	//!< ARBITRATION LOST CAPTURE REGISTER (ALC); CAN address 11
+	sja1000_pelican_ecc_t ecc;	//!< Error Code Capture (ECC); CAN address 12
+	__uint8_t ewl;		//!< Error Warning Limit; CAN address 13
+	__uint8_t rxerr;	//!< RX Error Counter; CAN address 14
+	__uint8_t txerr;	//!< TX Error Counter; CAN address 15
 	union {
-		sja1000_pelican_frame_t	frame;	//!< Rx & Tx frame (depending on if reading or writing)
-		struct{
-			__uint32_t	code;
-			__uint32_t	mask;
-		}__attribute__((__packed__)) acceptance;
-	}fracc;				//!< TX/RX frame or acceptance; CAN address 16-28
-	__uint8_t		rmc;	//!< RX MESSAGE COUNTER (RMC); CAN address 29
-	__uint8_t		rbsa;	//!< RX BUFFER START ADDRESS REGISTER (RBSA); CAN address 30
+		sja1000_pelican_frame_t frame;	//!< Rx & Tx frame (depending on if reading or writing)
+		struct {
+			__uint32_t code;
+			__uint32_t mask;
+		} __attribute__ ((__packed__)) acceptance;
+	} fracc;		//!< TX/RX frame or acceptance; CAN address 16-28
+	__uint8_t rmc;		//!< RX MESSAGE COUNTER (RMC); CAN address 29
+	__uint8_t rbsa;		//!< RX BUFFER START ADDRESS REGISTER (RBSA); CAN address 30
 
-	__uint8_t		cdr_raw;//!< clock divider register (CDR); CAN address 31
+	__uint8_t cdr_raw;	//!< clock divider register (CDR); CAN address 31
 
-}sja1000_pelican_raw_t;
+} sja1000_pelican_raw_t;
 
-
-
-#endif //MSR_H
-
+#endif				//MSR_H

@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 /*- include files **/
 
 #include <tk_itc.h>
@@ -28,12 +27,11 @@
 #include <string.h>
 #include <errno.h>
 
-
 /* default settings */
 
-#define SYSQ_LENGT 10   /*!< Lengt of each Q (i.e. the number of
-elements in each queue) Small number, but should be OK since these
-Q's are ment to be used by threads that run on highest prio. */
+#define SYSQ_LENGT 10		/*!< Lengt of each Q (i.e. the number of
+				   elements in each queue) Small number, but should be OK since these
+				   Q's are ment to be used by threads that run on highest prio. */
 
 /*- external functions **/
 
@@ -43,25 +41,25 @@ Q's are ment to be used by threads that run on highest prio. */
 unsigned long tk_sys_queues[TK_NUMBER_OF_SYSQ];
 
 /*- internal functions **/
-unsigned long _tk_create_system_queues( ){
-   int i;
-   unsigned long rc = ERR_OK;
-   char name[4]; // Queue name is deep-copied -> temp is ok to have on stack
+unsigned long _tk_create_system_queues()
+{
+	int i;
+	unsigned long rc = ERR_OK;
+	char name[4];		// Queue name is deep-copied -> temp is ok to have on stack
 
-   for (i=0; (i<TK_NUMBER_OF_SYSQ) && (rc==ERR_OK); i++){
+	for (i = 0; (i < TK_NUMBER_OF_SYSQ) && (rc == ERR_OK); i++) {
 
-      strncpy(name,"SQ",4);
-      if (i>10){
-         name[2] = 48 + i/10;
-         name[3] = 48 + i%10;
-      }
-      rc = q_create_ny(name,SYSQ_LENGT,FIFO,&tk_sys_queues[i]);
-   }
-   return rc;
+		strncpy(name, "SQ", 4);
+		if (i > 10) {
+			name[2] = 48 + i / 10;
+			name[3] = 48 + i % 10;
+		}
+		rc = q_create_ny(name, SYSQ_LENGT, FIFO, &tk_sys_queues[i]);
+	}
+	return rc;
 }
 
 /*- private data **/
-
 
 /*!
  * @defgroup CVSLOG_tk_sysqueues_c tk_sysqueues_c
@@ -131,4 +129,3 @@ unsigned long _tk_create_system_queues( ){
  *
  *
  *******************************************************************/
-

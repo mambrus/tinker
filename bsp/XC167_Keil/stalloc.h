@@ -6,7 +6,6 @@ This is the common header file for \ref STALLOC
 #ifndef STALLOCK_H
 #define STALLOCK_H
 
-
 /*
 #if defined (XMEM)
   #define MTYP          xhuge
@@ -30,11 +29,11 @@ This is the common header file for \ref STALLOC
 #define ST_MTYP           huge
 #define ST_NULL           ((void ST_MTYP*)0)
 
-void *stalloc             ( stsize_t size );
-void stalloc_free         ( void ST_MTYP* memp) ;
-void stalloc_init_mempool ( void ST_MTYP *pool, stsize_t size );
+void *stalloc(stsize_t size);
+void stalloc_free(void ST_MTYP * memp);
+void stalloc_init_mempool(void ST_MTYP * pool, stsize_t size);
 
-#endif //STALLOCK_H
+#endif				//STALLOCK_H
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 /** @defgroup STALLOC STALLOC - Stack malloc
@@ -44,7 +43,6 @@ void stalloc_init_mempool ( void ST_MTYP *pool, stsize_t size );
 This is a modified malloc to provide stack threads with their dedicated memory.
 
 The main reasons for this package are:
-
 
 - Improved debugging. By not having to see other memory blocks in the
 layout. It's easier to se in the mem-dump if things are operating as

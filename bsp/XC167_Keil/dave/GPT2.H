@@ -25,7 +25,7 @@ Note TinKer has choosen (atm) to work with only one pcysical timer as it's CLK2.
 The cosen timer is T6 (core timer, also called SYS_TIMER by DAvE)
 */
 
-void tk_getHWclock_Quality_CLK2(HWclock_stats_t *HWclock_stats);
+void tk_getHWclock_Quality_CLK2(HWclock_stats_t * HWclock_stats);
 
 #define tk_setHWclock_CLK2(ticks) ( GPT12E_T6 = ticks )
 #define tk_getHWclock_CLK2(ticks) ( *ticks = GPT12E_T6 )
@@ -33,8 +33,6 @@ void tk_getHWclock_Quality_CLK2(HWclock_stats_t *HWclock_stats);
 #define tk_disarmHWclock_CLK2()   ( ((IC_t*)(&GPT12E_T6IC))->IE = 0 )
 
 // USER CODE END
-
-
 
 #ifndef _GPT2_H_
 #define _GPT2_H_
@@ -47,7 +45,6 @@ void tk_getHWclock_Quality_CLK2(HWclock_stats_t *HWclock_stats);
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Macros
 //****************************************************************************
@@ -55,7 +52,6 @@ void tk_getHWclock_Quality_CLK2(HWclock_stats_t *HWclock_stats);
 // USER CODE BEGIN (GPT2_Header,3)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Defines
@@ -71,7 +67,6 @@ void tk_getHWclock_Quality_CLK2(HWclock_stats_t *HWclock_stats);
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Typedefs
 //****************************************************************************
@@ -79,7 +74,6 @@ void tk_getHWclock_Quality_CLK2(HWclock_stats_t *HWclock_stats);
 // USER CODE BEGIN (GPT2_Header,5)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Imported Global Variables
@@ -89,7 +83,6 @@ void tk_getHWclock_Quality_CLK2(HWclock_stats_t *HWclock_stats);
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Global Variables
 //****************************************************************************
@@ -97,7 +90,6 @@ void tk_getHWclock_Quality_CLK2(HWclock_stats_t *HWclock_stats);
 // USER CODE BEGIN (GPT2_Header,7)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Prototypes Of Global Functions
@@ -135,7 +127,6 @@ void GPT2_vInit(void);
 #define GPT2_vStartTmr_GPT2_TIMER_5() GPT12E_T5CON_T5R = 1
 #define GPT2_vStartTmr_SYS_TIMER() GPT12E_T6CON_T6R = 1
 
-
 //****************************************************************************
 // @Macro         GPT2_vStopTmr(TimerNr)
 //
@@ -163,15 +154,12 @@ void GPT2_vInit(void);
 #define GPT2_vStopTmr_GPT2_TIMER_5() GPT12E_T5CON_T5R = 0; GPT12E_T5CON_T5RC = 0
 #define GPT2_vStopTmr_SYS_TIMER() GPT12E_T6CON_T6R = 0
 
-
 //****************************************************************************
 // @Interrupt Vectors
 //****************************************************************************
-
 
 // USER CODE BEGIN (GPT2_Header,9)
 
 // USER CODE END
 
-
-#endif  // ifndef _GPT2_H_
+#endif				// ifndef _GPT2_H_

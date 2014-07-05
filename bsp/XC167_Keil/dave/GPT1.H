@@ -25,8 +25,7 @@ Note TinKer has choosen (atm) to work with only one pcysical timer as it's CLK1.
 The cosen timer is T3 (core timer)
 */
 
-void tk_getHWclock_Quality_CLK1( HWclock_stats_t *HWclock_stats );
-
+void tk_getHWclock_Quality_CLK1(HWclock_stats_t * HWclock_stats);
 
 #define tk_setHWclock_CLK1(ticks) ( GPT1_vLoadTmr(GPT1_TIMER_2, ticks) )
 #define tk_getHWclock_CLK1(ticks) ( *ticks = GPT1_uwReadTmr(GPT1_TIMER_2) )
@@ -44,7 +43,6 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 ******************************************************************************
 */
 
-
 #ifndef _GPT1_H_
 #define _GPT1_H_
 
@@ -56,7 +54,6 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Macros
 //****************************************************************************
@@ -64,7 +61,6 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 // USER CODE BEGIN (GPT1_Header,3)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Defines
@@ -79,11 +75,9 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 //   This parameter identifies GPT1 timer 4
 #define GPT1_TIMER_4 4
 
-
 // USER CODE BEGIN (GPT1_Header,4)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Typedefs
@@ -93,7 +87,6 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Imported Global Variables
 //****************************************************************************
@@ -101,7 +94,6 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 // USER CODE BEGIN (GPT1_Header,6)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Global Variables
@@ -111,18 +103,15 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Prototypes Of Global Functions
 //****************************************************************************
 
 void GPT1_vInit(void);
 
-
 // USER CODE BEGIN (GPT1_Header,8)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Macro         GPT1_vStartTmr(TimerNr)
@@ -151,7 +140,6 @@ void GPT1_vInit(void);
 #define GPT1_vStartTmr_GPT1_TIMER_2() GPT12E_T2CON_T2R = 1
 #define GPT1_vStartTmr_GPT1_TIMER_3() GPT12E_T3CON_T3R = 1
 #define GPT1_vStartTmr_GPT1_TIMER_4() GPT12E_T4CON_T4R = 1
-
 
 //****************************************************************************
 // @Macro         GPT1_vStopTmr(TimerNr)
@@ -182,7 +170,6 @@ void GPT1_vInit(void);
 #define GPT1_vStopTmr_GPT1_TIMER_3() GPT12E_T3CON_T3R = 0
 #define GPT1_vStopTmr_GPT1_TIMER_4() GPT12E_T4CON_T4R = 0; GPT12E_T4CON_T4RC = 0
 
-
 //****************************************************************************
 // @Macro         GPT1_uwReadTmr(TimerNr)
 //
@@ -212,7 +199,6 @@ void GPT1_vInit(void);
 #define GPT1_uwReadTmr_GPT1_TIMER_2() GPT12E_T2
 #define GPT1_uwReadTmr_GPT1_TIMER_3() GPT12E_T3
 #define GPT1_uwReadTmr_GPT1_TIMER_4() GPT12E_T4
-
 
 //****************************************************************************
 // @Macro         GPT1_vLoadTmr(TimerNr, Value)
@@ -245,7 +231,6 @@ void GPT1_vInit(void);
 #define GPT1_vLoadTmr_GPT1_TIMER_2(Value) GPT12E_T2 = Value
 #define GPT1_vLoadTmr_GPT1_TIMER_3(Value) GPT12E_T3 = Value
 #define GPT1_vLoadTmr_GPT1_TIMER_4(Value) GPT12E_T4 = Value
-
 
 //****************************************************************************
 // @Macro         GPT1_vCountUp(TimerNr)
@@ -281,7 +266,6 @@ void GPT1_vInit(void);
 #define GPT1_vCountUp_GPT1_TIMER_3() GPT12E_T3CON_T3UD = 0
 #define GPT1_vCountUp_GPT1_TIMER_4() GPT12E_T4CON_T4UD = 0
 
-
 //****************************************************************************
 // @Macro         GPT1_vCountDown(TimerNr)
 //
@@ -316,7 +300,6 @@ void GPT1_vInit(void);
 #define GPT1_vCountDown_GPT1_TIMER_3() GPT12E_T3CON_T3UD = 1
 #define GPT1_vCountDown_GPT1_TIMER_4() GPT12E_T4CON_T4UD = 1
 
-
 //****************************************************************************
 // @Interrupt Vectors
 //****************************************************************************
@@ -327,5 +310,4 @@ void GPT1_vInit(void);
 
 // USER CODE END
 
-
-#endif  // ifndef _GPT1_H_
+#endif				// ifndef _GPT1_H_

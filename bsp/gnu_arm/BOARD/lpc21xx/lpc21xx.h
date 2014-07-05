@@ -256,7 +256,6 @@
 #define WDFEED         (*((volatile unsigned char *) 0xE0000008u))
 #define WDTV           (*((volatile unsigned long *) 0xE000000Cu))
 
-
 /*** Fuer FreeRTOS ***/
 #define T0_PR           TIMER0_PR
 #define T0_IR           TIMER0_IR
@@ -264,5 +263,4 @@
 #define T0_MCR          TIMER0_MCR
 #define T0_TCR          TIMER0_TCR
 
-#endif  // __LPC21xx_H
-
+#endif				// __LPC21xx_H

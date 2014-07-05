@@ -22,7 +22,6 @@
 #define ISR_H
 #include <tk.h>
 
-
 /*
      IRQ0        0000_0000
 Internal Level 0 0000_0100
@@ -42,23 +41,22 @@ Internal Level 6 0011_0100
 Internal Level 7 0011_1100
 */
 
-
-#define     IRQ_0         0x00  /* 0000_0000 */
-#define Intrnl_0          0x04  /* 0000_0100 */
-#define      IRQ_1        0x08  /* 0000_1000 */
-#define Intrnl_1          0x0C  /* 0000_1100 */
-#define      IRQ_2        0x10  /* 0001_0000 */
-#define Intrnl_2          0x14  /* 0001_0100 */
-#define      IRQ_3        0x18  /* 0001_1000 */
-#define Intrnl_3          0x1C  /* 0001_1100 */
-#define      IRQ_4        0x20  /* 0010_0000 */
-#define Intrnl_4          0x24  /* 0010_0100 */
-#define      IRQ_5        0x28  /* 0010_1000 */
-#define Intrnl_5          0x2C  /* 0010_1100 */
-#define      IRQ_6        0x30  /* 0011_0000 */
-#define Intrnl_6          0x34  /* 0011_0100 */
-#define      IRQ_7        0x38  /* 0011_1000 */
-#define Intrnl_7          0x3C  /* 0011_1100 */
+#define     IRQ_0         0x00	/* 0000_0000 */
+#define Intrnl_0          0x04	/* 0000_0100 */
+#define      IRQ_1        0x08	/* 0000_1000 */
+#define Intrnl_1          0x0C	/* 0000_1100 */
+#define      IRQ_2        0x10	/* 0001_0000 */
+#define Intrnl_2          0x14	/* 0001_0100 */
+#define      IRQ_3        0x18	/* 0001_1000 */
+#define Intrnl_3          0x1C	/* 0001_1100 */
+#define      IRQ_4        0x20	/* 0010_0000 */
+#define Intrnl_4          0x24	/* 0010_0100 */
+#define      IRQ_5        0x28	/* 0010_1000 */
+#define Intrnl_5          0x2C	/* 0010_1100 */
+#define      IRQ_6        0x30	/* 0011_0000 */
+#define Intrnl_6          0x34	/* 0011_0100 */
+#define      IRQ_7        0x38	/* 0011_1000 */
+#define Intrnl_7          0x3C	/* 0011_1100 */
 
 /*
 typedef void handler_function_t();
@@ -67,7 +65,7 @@ typedef handler_function_t *handler_function;
 extern isr_handler isr_table[16];
 
 typedef enum {
-	lvl_IRQ_0=0,
+	lvl_IRQ_0 = 0,
 	lvl_Intrnl_0,
 	lvl_IRQ_1,
 	lvl_Intrnl_1,
@@ -83,8 +81,7 @@ typedef enum {
 	lvl_Intrnl_6,
 	lvl_IRQ_7,
 	lvl_Intrnl_7
-}irq_level;
-
+} irq_level;
 
 /*
    0101010101010101 = 0x5555 = mask all internal interrupts
@@ -93,9 +90,11 @@ typedef enum {
 */
 
  //                 0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
- typedef enum {_IRQ0=0, LVL0, IRQ1, LVL1, IRQ2, LVL2, IRQ3, LVL3, IRQ4, LVL4, IRQ5, LVL5, IRQ6, LVL6, IRQ7, LVL7} irq_bits;
+typedef enum { _IRQ0 =
+	    0, LVL0, IRQ1, LVL1, IRQ2, LVL2, IRQ3, LVL3, IRQ4, LVL4, IRQ5, LVL5,
+	IRQ6, LVL6, IRQ7, LVL7
+} irq_bits;
 
 void isr_external();
 
-#endif //ISR_H
-
+#endif				//ISR_H

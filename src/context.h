@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 #ifndef TK_HWSYS_H
 #define TK_HWSYS_H
 
@@ -30,7 +29,6 @@
 @ingroup kernel_internals
 
 @brief Sets a minimum safety area from stack bottom.
-
 
 This value is used when kernel is crashing due to stack-stavation
 Value should be set as low as possible, but just enough to allow a few extra
@@ -67,7 +65,6 @@ Thread with this stack size should be able to handle printf
 */
 #define TK_NORMAL_STACK_SIZE 0
 
-
 /**
 @ingroup kernel_internals
 
@@ -90,7 +87,6 @@ This aids nesting (should however be avoided),
 */
 #define TK_STI()
 
-
 /**
 @ingroup kernel_internals
 
@@ -102,7 +98,6 @@ that. On others, this is just a call to a function.
 
 */
 #define TRAP( NUM )
-
 
 /**
 @ingroup kernel_internals
@@ -164,7 +159,6 @@ is to have these variables in the code segment (i.e. globally declared).
    _stack_struct /*!< Some targets need to manipulate the TCB stack struct*/  \
 )
 
-
 /**
 @ingroup kernel_internals
 
@@ -208,7 +202,6 @@ from the corresponding threads TCB.
 
 #define GET_THREADS_RETVAL( THRETVAL )
 
-
 /**
 @ingroup kernel_internals
 
@@ -231,7 +224,6 @@ adress can be deducted from the system-stack address. However, note that
 to set everything up correct in the structure one has to run a
 post-operative stack normalization.
 
-
 @note This will work on the targets supported up until TinKer's state up
 until now (051123), but might need to be reworked or replaced with a
 function later on. In future implementations a stack_t might not carry
@@ -240,7 +232,6 @@ do at all.
 */
 
 #define STACK_PTR( ADDR )
-
 
 /*
 @brief Initialize or re-initialize a stack_t address
@@ -270,7 +261,6 @@ processors make a difference between those stacks.)
 
 */
 #define REAL_STACK_SIZE( ADDR )
-
 
 /*
 @brief Inspects the stack for overflow errors.
@@ -302,9 +292,6 @@ cases might want to replace this with a NOP.
 */
 #define INTEGRITY_CERTIFY_STACK( TCB_T, TEMP )
 
-
-
-
 /*
 @ingroup kernel_internals
 
@@ -312,19 +299,13 @@ cases might want to replace this with a NOP.
 
 Calculate a stack integryty value on the stack pointed out by arg 1
 
-
 @note Due to that this operation is rather costly, certain targets or
 cases might want to replace this with a NOP.
 
 */
 #define TRY_CATCH_STACK_INTEGRITY_VIOLATION( TCB_T, TEMP )
 
-
-
-
-
-
-#endif  //DOXYGEN_ONLY
+#endif				//DOXYGEN_ONLY
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 #if defined(_WIN32) &&  defined(_MSC_VER)
@@ -333,37 +314,30 @@ cases might want to replace this with a NOP.
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
 #include <../bsp/X86_Borland/tk_hwsys_borlandX86.h>
 
-
 #elif defined( __C166__ )
 #include <../bsp/XC167_Keil/tk_hwsys_keilC166.h>
 
-
 #elif defined(__GNUC__)
 
-   #ifndef ARCH
-   #  error For GNU targets, ARCH has to be defined
-   #endif
+#ifndef ARCH
+#error For GNU targets, ARCH has to be defined
+#endif
 
-   #define INCLNAME( farch ) \
+#define INCLNAME( farch ) \
       <../src/arch/farch/context-gnu_ farch.h>
 
-   #define INCLABI( farch, abi ) \
+#define INCLABI( farch, abi ) \
       <../src/arch/farch/context-gnu_ farch-abi.h>
 
+#ifdef ABI
+#include INCLABI( ARCH, ABI )
+#else
+#include INCLNAME( ARCH )
+#endif
 
-
-
-   #ifdef ABI
-   #   include INCLABI( ARCH, ABI )
-   #else
-   #   include INCLNAME( ARCH )
-   #endif
-
-
-   #undef str
-   #undef INCLNAME
-   #undef INCLABI
-
+#undef str
+#undef INCLNAME
+#undef INCLABI
 
 #else
 #error "Can\'t determine the target for the TINKER kernel"
@@ -372,8 +346,7 @@ cases might want to replace this with a NOP.
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-#endif  //TK_HWSYS_H
-
+#endif				//TK_HWSYS_H
 
 /*!
  * @defgroup CVSLOG_tk_hwsys_h tk_hwsys_h
@@ -478,9 +451,3 @@ cases might want to replace this with a NOP.
  *
  *
  *******************************************************************/
-
-
-
-
-
-

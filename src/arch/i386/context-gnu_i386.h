@@ -30,7 +30,7 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 
 #include <tinker/config.h>
 
-#define EXTRA_MARGIN 20                //<! Define SP this below the theoretical top (some compilers require it)
+#define EXTRA_MARGIN 20		//<! Define SP this below the theoretical top (some compilers require it)
 
 /*!
 @name Mapping stack allocation API for this target
@@ -51,11 +51,8 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #define TK_CLI()
 #define TK_STI()
 
-
-
 #define REAL_STACK_SIZE( TCB )            \
    ( TCB.stack_size )
-
 
 #define PREP_TOS( _oldTOS, _newSP, _temp1, _temp2, _stack_struct )   \
    PUSHALL();                             \
@@ -87,7 +84,6 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
    );                                     \
    POPALL();
 
-
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )  \
    PUSHALL();                             \
    asm __volatile__ (                     \
@@ -113,8 +109,7 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
       " movl %%ebx, %%esp"                \
       : /*no output*/                     \
       : "b" (TSP1)                        \
-   );  /*Note, no clobber (intentional)*/
-
+   );				/*Note, no clobber (intentional) */
 
 #define INIT_SP( _stack_SP, _stack_begin )\
    _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; 			\
@@ -143,7 +138,6 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
       " popf"                             \
    )
 
-
 //Allready a char', no need to do handle in any special way.
 #define STACK_PTR( ADDR ) \
    (ADDR.tstack)
@@ -152,7 +146,4 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #define REINIT_STACKADDR( ADDR, size ) \
    (ADDR.stack_size = size)
 
-
 #endif
-
-

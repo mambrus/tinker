@@ -29,7 +29,6 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 ******************************************************************************
 */
 
-
 //****************************************************************************
 // @Project Includes
 //****************************************************************************
@@ -39,7 +38,7 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 // USER CODE BEGIN (GPT1_General,2)
 
 #include <assert.h>
-#include <../bsp/XC167_Keil/tk_hwtypes_keilC166.h> //Note: This is a shaky thingy. This header must not in turn include any Keil regs.h
+#include <../bsp/XC167_Keil/tk_hwtypes_keilC166.h>	//Note: This is a shaky thingy. This header must not in turn include any Keil regs.h
 
 /*!
 If this is defied, it means that the whole program will break if
@@ -129,7 +128,6 @@ categorized as follows:
 - PERT \f$\bf \omega \f$       - Interrupt period time, expressed in mS
                                  <em>this one you set</em>
 
-
 <h2>Formulas explained</h2>
 The <em>theoretical</em> reload value based on frequency and prescalor:
 
@@ -141,8 +139,6 @@ The <em>theoretical</em> reload value based on frequency and prescalor:
 \f[
    R = \frac {\phi / \eta*1000}{\omega} -1
 \f]
-
-
 
 The <em>actual</em> reload (i.e. compensated) value:
 
@@ -156,13 +152,11 @@ The <em>actual</em> reload (i.e. compensated) value:
    \Rightarrow
 \f]
 
-
 \f[
    R_L = R - \underbrace{( T_i + R_Lx)}
 \f]
 
 But since we have meassured values of \f$ I_P \f$ allready, we need only express an equation system of two meassurements:
-
 
 \f[
    \left .
@@ -176,7 +170,6 @@ But since we have meassured values of \f$ I_P \f$ allready, we need only express
 
 The two unknowns that we seek are \f$ T_i \f$ and \f$ x \f$, hence we can derive the following expressions:
 
-
 (1)
 
 \f[
@@ -187,16 +180,13 @@ The two unknowns that we seek are \f$ T_i \f$ and \f$ x \f$, hence we can derive
    x = \frac{ I_{P_1} - T_i }{  R_{L_1} }
 \f]
 
-
 (2)
 
 \f[
    T_i = I_{P_2} - R_{L_2}x
 \f]
 
-
 (2 in 1) \f$ \Rightarrow  \f$
-
 
 \f[
    x = \frac{I_{P_1} - ( I_{P_2} - R_{L_2} ) }
@@ -212,7 +202,6 @@ The two unknowns that we seek are \f$ T_i \f$ and \f$ x \f$, hence we can derive
        \frac{R_{L_2}x }
           { R_{L_1} }
 \f]
-
 
 \f[
 
@@ -237,11 +226,7 @@ The two unknowns that we seek are \f$ T_i \f$ and \f$ x \f$, hence we can derive
          { R_{L_1} - R_{L_2} }
 \f]
 
-
-
 With actual numbers \f$ \Rightarrow  \f$
-
-
 
 \f[
    x =  \frac{ 15 - 9 }
@@ -253,9 +238,7 @@ With actual numbers \f$ \Rightarrow  \f$
    \bf {x = 1*10^{-4}}
 \f]
 
-
 and..
-
 
 \f[
    T_i = 9 - 4999*10^{-4}
@@ -264,7 +247,6 @@ and..
 \f[
    \bf {T_i = 8.5001}
 \f]
-
 
 <hr>
 
@@ -302,14 +284,12 @@ and..
 #define RELOADVAL       (REGVAL - CMPPEB)
 //@}
 
-
 #if ( REGVAL > 0xFFFF )
 #error "HW clock counter exceeds limits. You choosed either a \
         too long CLK1 ISR period time or a to high presision"
 #endif
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Macros
@@ -319,7 +299,6 @@ and..
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Defines
 //****************************************************************************
@@ -327,7 +306,6 @@ and..
 // USER CODE BEGIN (GPT1_General,4)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Typedefs
@@ -337,7 +315,6 @@ and..
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Imported Global Variables
 //****************************************************************************
@@ -345,7 +322,6 @@ and..
 // USER CODE BEGIN (GPT1_General,6)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Global Variables
@@ -355,7 +331,6 @@ and..
 
 // USER CODE END
 
-
 //****************************************************************************
 // @External Prototypes
 //****************************************************************************
@@ -364,7 +339,6 @@ and..
 
 // USER CODE END
 
-
 //****************************************************************************
 // @Prototypes Of Local Functions
 //****************************************************************************
@@ -372,7 +346,6 @@ and..
 // USER CODE BEGIN (GPT1_General,9)
 
 // USER CODE END
-
 
 //****************************************************************************
 // @Function      void GPT1_vInit(void)
@@ -399,97 +372,91 @@ and..
 
 void GPT1_vInit(void)
 {
-  // USER CODE BEGIN (Init,2)
-  unsigned int tmp1,tmp2;
+	// USER CODE BEGIN (Init,2)
+	unsigned int tmp1, tmp2;
 
-  // USER CODE END
+	// USER CODE END
 
-  ///  -----------------------------------------------------------------------
-  ///  Configuration of Timer Block Prescaler 1:
-  ///  -----------------------------------------------------------------------
-  ///  - prescaler for timer block 1 is 8
+	///  -----------------------------------------------------------------------
+	///  Configuration of Timer Block Prescaler 1:
+	///  -----------------------------------------------------------------------
+	///  - prescaler for timer block 1 is 8
 
+	///  -----------------------------------------------------------------------
+	///  Configuration of the GPT1 Core Timer 3:
+	///  -----------------------------------------------------------------------
+	///  - timer 3 works in timer mode
+	///  - external up/down control is disabled
+	///  - prescaler factor is 8
+	///  - up/down control bit is reset
+	///  - alternate output function T3OUT (P3.3) is disabled
+	///  - timer 3 output toggle latch (T3OTL) is set to 0
+	///  - timer 3 run bit is reset
 
-  ///  -----------------------------------------------------------------------
-  ///  Configuration of the GPT1 Core Timer 3:
-  ///  -----------------------------------------------------------------------
-  ///  - timer 3 works in timer mode
-  ///  - external up/down control is disabled
-  ///  - prescaler factor is 8
-  ///  - up/down control bit is reset
-  ///  - alternate output function T3OUT (P3.3) is disabled
-  ///  - timer 3 output toggle latch (T3OTL) is set to 0
-  ///  - timer 3 run bit is reset
+	GPT12E_T3CON = 0x0000;	// load timer 3 control register
+	GPT12E_T3 = 0x0000;	// load timer 3 register
 
-  GPT12E_T3CON   =  0x0000;      // load timer 3 control register
-  GPT12E_T3      =  0x0000;      // load timer 3 register
+	///  -----------------------------------------------------------------------
+	///  Configuration of the GPT1 Auxiliary Timer 2:
+	///  -----------------------------------------------------------------------
+	///  - timer 2 works in timer mode
+	///  - external up/down control is disabled
+	///  - prescaler factor is 8
+	///  - up/down control bit is set
+	///  - timer 2 run bit is reset
 
-  ///  -----------------------------------------------------------------------
-  ///  Configuration of the GPT1 Auxiliary Timer 2:
-  ///  -----------------------------------------------------------------------
-  ///  - timer 2 works in timer mode
-  ///  - external up/down control is disabled
-  ///  - prescaler factor is 8
-  ///  - up/down control bit is set
-  ///  - timer 2 run bit is reset
+	GPT12E_T2CON = 0x0080;	// load timer 2 control register
+	GPT12E_T2 = 0xFDE7;	// load timer 2 register
 
-  GPT12E_T2CON   =  0x0080;      // load timer 2 control register
-  GPT12E_T2      =  0xFDE7;      // load timer 2 register
+	///  -----------------------------------------------------------------------
+	///  Configuration of the GPT1 Auxiliary Timer 4:
+	///  -----------------------------------------------------------------------
+	///  - timer 4 works in timer mode
+	///  - external up/down control is disabled
+	///  - prescaler factor is 8
+	///  - up/down control bit is reset
+	///  - timer 4 run bit is reset
 
-  ///  -----------------------------------------------------------------------
-  ///  Configuration of the GPT1 Auxiliary Timer 4:
-  ///  -----------------------------------------------------------------------
-  ///  - timer 4 works in timer mode
-  ///  - external up/down control is disabled
-  ///  - prescaler factor is 8
-  ///  - up/down control bit is reset
-  ///  - timer 4 run bit is reset
+	GPT12E_T4CON = 0x0000;	// load timer 4 control register
+	GPT12E_T4 = 0x0000;	// load timer 4 register
 
-  GPT12E_T4CON   =  0x0000;      // load timer 4 control register
-  GPT12E_T4      =  0x0000;      // load timer 4 register
+	///  -----------------------------------------------------------------------
+	///  Configuration of the used GPT1 Port Pins:
+	///  -----------------------------------------------------------------------
 
-  ///  -----------------------------------------------------------------------
-  ///  Configuration of the used GPT1 Port Pins:
-  ///  -----------------------------------------------------------------------
+	///  -----------------------------------------------------------------------
+	///  Configuration of the used GPT1 Interrupts:
+	///  -----------------------------------------------------------------------
+	///  timer 2 service request node configuration:
+	///  - timer 2 interrupt priority level (ILVL) = 15
+	///  - timer 2 interrupt group level (GLVL) = 1
+	///  - timer 2 group priority extension (GPX) = 0
 
+	GPT12E_T2IC = 0x007D;
 
-  ///  -----------------------------------------------------------------------
-  ///  Configuration of the used GPT1 Interrupts:
-  ///  -----------------------------------------------------------------------
-  ///  timer 2 service request node configuration:
-  ///  - timer 2 interrupt priority level (ILVL) = 15
-  ///  - timer 2 interrupt group level (GLVL) = 1
-  ///  - timer 2 group priority extension (GPX) = 0
+	///  Use PEC channel 5 for GPT1 T2 INT:
+	///  - normal interrupt
+	///  - pointers are not modified
+	///  - transfer a word
+	///  - service End of PEC interrrupt by a EOP interrupt node is disabled
 
-  GPT12E_T2IC    =  0x007D;
+	PECC5 = 0x0000;		// load PECC5 control register
 
-  ///  Use PEC channel 5 for GPT1 T2 INT:
-  ///  - normal interrupt
-  ///  - pointers are not modified
-  ///  - transfer a word
-  ///  - service End of PEC interrrupt by a EOP interrupt node is disabled
+	// USER CODE BEGIN (GPT1_Function,3)
 
-  PECC5          =  0x0000;      // load PECC5 control register
+	/* testing the bit fields */
+	tmp1 = ((GPT1_ControlRegCore_t *) & GPT12E_T3CON)->BPS1;
+	tmp2 = tmp1;
+	((GPT1_ControlRegCore_t *) & GPT12E_T3CON)->BPS1 = tmp2;
 
+	tmp1 = ((GPT1_ControlRegAux_t *) & GPT12E_T2CON)->TaI;
+	tmp2 = tmp1;
+	((GPT1_ControlRegAux_t *) & GPT12E_T2CON)->TaI = tmp2;
+	/* testing the bit fields */
 
+	// USER CODE END
 
-  // USER CODE BEGIN (GPT1_Function,3)
-
-     /* testing the bit fields */
-     tmp1 = ((GPT1_ControlRegCore_t*)&GPT12E_T3CON)->BPS1;
-     tmp2 = tmp1;
-     ((GPT1_ControlRegCore_t*)&GPT12E_T3CON)->BPS1 = tmp2;
-
-     tmp1 = ((GPT1_ControlRegAux_t*)&GPT12E_T2CON)->TaI;
-     tmp2 = tmp1;
-     ((GPT1_ControlRegAux_t*)&GPT12E_T2CON)->TaI = tmp2;
-    /* testing the bit fields */
-
-
-  // USER CODE END
-
-} //  End of function GPT1_vInit
-
+}				//  End of function GPT1_vInit
 
 //****************************************************************************
 // @Function      void GPT1_viTmr2(void)
@@ -524,47 +491,40 @@ void GPT1_vInit(void)
 
 // USER CODE END
 
-void GPT1_viTmr2(void) interrupt T2INT
-{
-  // USER CODE BEGIN (Tmr2,2)
-  signed int pebbRest;
+void GPT1_viTmr2(void)
+interrupt T2INT {
+	// USER CODE BEGIN (Tmr2,2)
+	signed int pebbRest;
 
-  pebbRest = GPT1_uwReadTmr(GPT1_TIMER_2);
-  pebbRest *= -1;
+	pebbRest = GPT1_uwReadTmr(GPT1_TIMER_2);
+	pebbRest *= -1;
 
-  #ifdef MONITOR_TISR_LATENCY
-  assert(RELOADVAL > pebbRest );                    //<- Interrupt flag has been turned off for too long. Missed one whole event (at least).
-  #endif
+#ifdef MONITOR_TISR_LATENCY
+	assert(RELOADVAL > pebbRest);	//<- Interrupt flag has been turned off for too long. Missed one whole event (at least).
+#endif
 
-  //The following row CAN actually occure. But the test should work at
-  //least for several minuts. Renable to thest your config.
-  //assert( 0 < pebbRest );                           //<- Timer not counting past the event, i.e. latency correction not possible. Wrong config, correct your timer setup plz...
+	//The following row CAN actually occure. But the test should work at
+	//least for several minuts. Renable to thest your config.
+	//assert( 0 < pebbRest );                           //<- Timer not counting past the event, i.e. latency correction not possible. Wrong config, correct your timer setup plz...
 
-  GPT1_vLoadTmr(GPT1_TIMER_2,RELOADVAL+GPT1_uwReadTmr(GPT1_TIMER_2));  //<- Correct with the actual value. Notice the sign (+), this is intentional.
-  _tk_tick_advance_mS(PERT);
+	GPT1_vLoadTmr(GPT1_TIMER_2, RELOADVAL + GPT1_uwReadTmr(GPT1_TIMER_2));	//<- Correct with the actual value. Notice the sign (+), this is intentional.
+	_tk_tick_advance_mS(PERT);
 
-  // USER CODE END
+	// USER CODE END
 
+	// USER CODE BEGIN (Tmr2,5)
 
-  // USER CODE BEGIN (Tmr2,5)
+	// USER CODE END
 
-  // USER CODE END
-
-} //  End of function GPT1_viTmr2
-
-
-
-
+}				//  End of function GPT1_viTmr2
 // USER CODE BEGIN (GPT1_General,10)
-
-#define CLKOFS ((FCLK * X_CLK)/1000000) //!< Helper constant used locally in tk_getHWclock_Quality_CLK1
-
-void tk_getHWclock_Quality_CLK1(HWclock_stats_t *HWclock_stats){
-   HWclock_stats->freq_hz      = ((FCLK - CLKOFS) / PRES);
-   HWclock_stats->res          = 16;
-   HWclock_stats->perPebbles   = RELOADVAL;  /*The actual period time in pebbles time-unit*/
-   HWclock_stats->maxPebbles   = REGVAL;     /*The theoretical period time in pebbles time-unit*/
+#define CLKOFS ((FCLK * X_CLK)/1000000)	//!< Helper constant used locally in tk_getHWclock_Quality_CLK1
+void tk_getHWclock_Quality_CLK1(HWclock_stats_t * HWclock_stats)
+{
+	HWclock_stats->freq_hz = ((FCLK - CLKOFS) / PRES);
+	HWclock_stats->res = 16;
+	HWclock_stats->perPebbles = RELOADVAL;	/*The actual period time in pebbles time-unit */
+	HWclock_stats->maxPebbles = REGVAL;	/*The theoretical period time in pebbles time-unit */
 }
 
 // USER CODE END
-

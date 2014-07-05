@@ -19,8 +19,6 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 #define stalloc_free free
 //@}
 
-
-
 /*
 #define TK_CLI()                                                              \
    __asm{ CLI }
@@ -32,11 +30,8 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 #define TK_CLI()
 #define TK_STI()
 
-
-
 #define REAL_STACK_SIZE( TCB )  \
    ( TCB.stack_size )
-
 
 //Push & pops of all regs and flags possibly not needed
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                                                    \
@@ -52,14 +47,12 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 #define CHANGE_STACK( TSP1, TEMP )                                                                             \
     __asm{ mov esp,TSP1                 }
 
-
 #define INIT_SP( _stack_SP, _stack_begin )                                                                     \
    _stack_SP.stack_size = _stack_begin.stack_size;                                                             \
    _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size;
 
 //Does nothing on this port
 #define BIND_STACK( _stack_struct, _temp2 )
-
 
 /*!
 On MSVC this will never ever work since EAX is actually \b trashed
@@ -105,7 +98,6 @@ bla...
     __asm{ popad                        }                                                                      \
     __asm{ popfd                        }
 
-
 //Allready a char', no need to do handle in any special way.
 #define STACK_PTR( ADDR ) \
    ((char *)ADDR.tstack)
@@ -119,5 +111,3 @@ bla...
    exit( NUM )
 
 #endif
-
-

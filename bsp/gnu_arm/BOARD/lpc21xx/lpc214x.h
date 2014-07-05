@@ -361,4 +361,4 @@
 #define USBSysErrIntClr (*((volatile unsigned long *) 0xE00900BC))
 #define USBSysErrIntSet (*((volatile unsigned long *) 0xE00900C0))
 
-#endif  // __LPC214x_H
+#endif				// __LPC214x_H

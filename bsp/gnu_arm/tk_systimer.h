@@ -19,32 +19,32 @@
  ***************************************************************************/
 
  /*!
- @brief systimer for GNU_ARM
+    @brief systimer for GNU_ARM
 
- This is the generic systimer header file..
+    This is the generic systimer header file..
 
- PERT stands for PERIod Time and is the time between two timer tick
- interrupts.
+    PERT stands for PERIod Time and is the time between two timer tick
+    interrupts.
 
- Choosing a value for PERT is not critical for embedded ARM. The HW is
- really marvelous and values from 1uS to 10mS are tested without disturbing
- the kernel much.
+    Choosing a value for PERT is not critical for embedded ARM. The HW is
+    really marvelous and values from 1uS to 10mS are tested without disturbing
+    the kernel much.
 
- It's recomended to use a value of PERT as high as possible up to
- 1/CLOCKS_PER_SEC which is normaly 10000 on a UN*X tool-chain. Using higher
- values might affect the presition on the clock() function but not nesesarily
- even thats is not always true).
+    It's recomended to use a value of PERT as high as possible up to
+    1/CLOCKS_PER_SEC which is normaly 10000 on a UN*X tool-chain. Using higher
+    values might affect the presition on the clock() function but not nesesarily
+    even thats is not always true).
 
- Choosing lower values will not add presition (wich one might tink), since TinKer uses the HW to
- read fractions of time in HW on each readout. That way  we can get high
- accurancy without stressing the system with a high interrupt SYSTIMER frequency.
+    Choosing lower values will not add presition (wich one might tink), since TinKer uses the HW to
+    read fractions of time in HW on each readout. That way  we can get high
+    accurancy without stressing the system with a high interrupt SYSTIMER frequency.
 
- For high accurancy timer events another unrelated mechanism is used, so
- that is not a reason for using low PERT either.
+    For high accurancy timer events another unrelated mechanism is used, so
+    that is not a reason for using low PERT either.
 
- Conclusion: On this target, use a value of PERT equal to 1/CLOCKS_PER_SEC.
+    Conclusion: On this target, use a value of PERT equal to 1/CLOCKS_PER_SEC.
 
- */
+  */
 
 #ifndef TK_SYSTIMER_H
 #define TK_SYSTIMER_H
@@ -54,14 +54,12 @@
 
 #include <time.h>
 #include <../src/tk_tick.h>
-#define PERT (MICKEYS_PER_SEC/CLOCKS_PER_SEC)  //!< I.e. 1/CLOCKS_PER_SEC expressed in mickey unit (1uS)
-
-
+#define PERT (MICKEYS_PER_SEC/CLOCKS_PER_SEC)	//!< I.e. 1/CLOCKS_PER_SEC expressed in mickey unit (1uS)
 
 void systimer_init(void *);
-void systimer_Handler( void )__attribute__((interrupt("IRQ")));
+void systimer_Handler(void) __attribute__ ((interrupt("IRQ")));
 
-#endif //TK_SYSTIMER_H
+#endif				//TK_SYSTIMER_H
 
 /*!
  * @defgroup CVSLOG_tk_systimer_h tk_systimer_h
@@ -78,5 +76,3 @@ void systimer_Handler( void )__attribute__((interrupt("IRQ")));
  *
  *
  */
-
-

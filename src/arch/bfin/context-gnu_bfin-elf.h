@@ -31,9 +31,8 @@ This file is a Blackfin elf
 
 #include <setjmp.h>
 
-#define EXTRA_MARGIN 20                //<! Define SP this below the theoretical top (some compilers require it)
+#define EXTRA_MARGIN 20		//<! Define SP this below the theoretical top (some compilers require it)
 #define JUMPER_BASED
-
 
 /*!
 @name Mapping stack allocation API for this target
@@ -43,17 +42,16 @@ This file is a Blackfin elf
 #define stalloc_free free
 //@}
 
-
 #define MAGIC_NUMBER 7327
 
-#define TK_CLI()  /*TBD FIXME*/
-#define TK_STI()  /*TBD FIXME*/
+#define TK_CLI()		/*TBD FIXME */
+#define TK_STI()		/*TBD FIXME */
 
 #define REAL_STACK_SIZE( TCB )            \
    ( TCB.stack_size )
 
-#define PUSHALL()	/*No need to PUSHALL on this target- Allready done by setjmp*/
-#define POPALL()	/*No need to POPALL on this target- Allready done by longjmp*/
+#define PUSHALL()		/*No need to PUSHALL on this target- Allready done by setjmp */
+#define POPALL()		/*No need to POPALL on this target- Allready done by longjmp */
 
 #define GET_SP( OUT_SP ) 						\
 	asm __volatile__ (							\
@@ -68,7 +66,7 @@ This file is a Blackfin elf
 		"SP = %[mystack];"						\
       : /**/									\
       : [mystack] "m" (IN_SP)					\
-   );  /*Note, no clobber (intentional)*/
+   );				/*Note, no clobber (intentional) */
 
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )     \
    GET_SP( TSP1 )								\
@@ -78,7 +76,6 @@ This file is a Blackfin elf
 
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )		\
 	longjmp( TSP1 - (_JBLEN*sizeof(double)) - EXTRA_MARGIN, active_thread+1);
-
 
 #define CHANGE_STACK( TSP1, TEMP )        		\
   SET_SP( TSP1 )
@@ -100,7 +97,4 @@ This file is a Blackfin elf
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-
 #endif
-
-

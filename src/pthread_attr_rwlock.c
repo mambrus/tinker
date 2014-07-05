@@ -24,7 +24,6 @@
 
 @brief This implements the attribute API for pThread RW locks
 
-
 For in-depth discussions about this component, see \ref
 PTHREAD_SYNC
 
@@ -40,38 +39,36 @@ PTHREAD_SYNC
 #include "implement_pthread.h"
 #include "implement_tk.h"
 
-
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
 http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_init.html
 
 @todo Stubbed. Impl TBD
 */
-int pthread_rwlockattr_init (pthread_rwlockattr_t *__attr){
-   assert("Not implemented yet" == 0);
-   _PTHREAD_NO_WARN_VAR(__attr);
-   return 0;
+int pthread_rwlockattr_init(pthread_rwlockattr_t * __attr)
+{
+	assert("Not implemented yet" == 0);
+	_PTHREAD_NO_WARN_VAR(__attr);
+	return 0;
 }
-
 
 /*!
 http://www.opengroup.org/onlinepubs/009695399/functions/pthread_rwlock_init.html
 
 @todo Stubbed. Impl TBD
 */
-int pthread_rwlockattr_destroy (pthread_rwlockattr_t *__attr){
-   assert (__attr->valid);
-   assert("Not implemented yet" == 0);
-   _PTHREAD_NO_WARN_VAR(__attr);
-   return 0;
+int pthread_rwlockattr_destroy(pthread_rwlockattr_t * __attr)
+{
+	assert(__attr->valid);
+	assert("Not implemented yet" == 0);
+	_PTHREAD_NO_WARN_VAR(__attr);
+	return 0;
 }
-
 
 //->int pthread_rwlockattr_getpshared (const pthread_rwlockattr_t *attr,int *pshared);
 //->int pthread_rwlockattr_setpshared (pthread_rwlockattr_t *attr, int pshared);
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-
 
 /*!
  *  @defgroup CVSLOG_pthread_attr_rwlock_c pthread_attr_rwlock_c
@@ -95,17 +92,3 @@ int pthread_rwlockattr_destroy (pthread_rwlockattr_t *__attr){
  *
  *
  *******************************************************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-

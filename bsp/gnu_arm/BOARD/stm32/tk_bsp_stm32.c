@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-
 #include <tinker/config.h>
 
 #include "../../tk_bsp.h"
@@ -38,10 +37,10 @@
 #include <time.h>
 
 #if (TK_SYSTEM==__SYS_HIXS__) || (TK_SYSTEM==__ANGEL_SWI__)
-   #include <sys/stat.h>
-   #include <sys/types.h>
-   #include <sys/times.h>
-   #include <sys/time.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/times.h>
+#include <sys/time.h>
 #endif
 
 #define DEV_STDIN  0
@@ -55,11 +54,11 @@
 #define NAME_TELETYPE ":tt"
 
 #if !defined(BOARD)
-   #error BOARD needs to be defined
+#error BOARD needs to be defined
 #endif
 
 #if !defined(TK_SYSTEM)
-   #error System needs to be defined
+#error System needs to be defined
 #endif
 
 #if !defined(__SYS_DEFAULT__)
@@ -67,58 +66,91 @@
 #endif
 
 #if (TK_SYSTEM == __SYS_HIXS__)
-	extern struct hixs_t  hixs;
+extern struct hixs_t hixs;
 #else
-	#error "System either not supported or provided"
+#error "System either not supported or provided"
 #endif
 
-int bsp_Open            (char *name, int mode, int len){
-  /*
-   if ( strncmp(name,NAME_TELETYPE,len) == 0 ){  //Lib wants handles for std- in/out/err
-      if (mode == MODE_READ)
-         return DEV_STDIN;
-      if (mode == MODE_WRITE)
-         return DEV_STDOUT;
-      if (mode == MODE_APPEND)
-         return DEV_STDERR;
-   }
-   //If you reach here, bad FF is requested. Try output something usefull.
-   assert("Open error: Bad filename requested." == 0);
-   */
+int bsp_Open(char *name, int mode, int len)
+{
+	/*
+	   if ( strncmp(name,NAME_TELETYPE,len) == 0 ){  //Lib wants handles for std- in/out/err
+	   if (mode == MODE_READ)
+	   return DEV_STDIN;
+	   if (mode == MODE_WRITE)
+	   return DEV_STDOUT;
+	   if (mode == MODE_APPEND)
+	   return DEV_STDERR;
+	   }
+	   //If you reach here, bad FF is requested. Try output something usefull.
+	   assert("Open error: Bad filename requested." == 0);
+	 */
 }
 
-int bsp_Close           (/*TBD*/){}
-int bsp_WriteC          (/*TBD*/){}
-int bsp_Write0          (/*TBD*/){}
-
-int bsp_Write           (int fh, char *ptr,int len){
-   int i;
-   /*
-   switch (fh){
-   case DEV_STDOUT :
-      for (i=0; i<len; i++)
-         uart_polled_putchar(&uc0,ptr[i]);
-      break;
-   case DEV_STDERR :
-      for (i=0; i<len; i++)
-         uart_polled_putchar(&uc1,ptr[i]);
-      break;
-   default:
-      assert("Write error: Bad filehandle" == 0);
-   }
-*/
-   //Return #chars not written (i.e. 0)
-   return 0;
+int bsp_Close( /*TBD*/)
+{
 }
 
-int bsp_Read            (/*TBD*/){}
-int bsp_ReadC           (/*TBD*/){}
-int bsp_IsTTY           (/*TBD*/){}
-int bsp_Seek            (/*TBD*/){}
-int bsp_FLen            (/*TBD*/){}
-int bsp_TmpNam          (/*TBD*/){}
-int bsp_Remove          (/*TBD*/){}
-int bsp_Rename          (/*TBD*/){}
+int bsp_WriteC( /*TBD*/)
+{
+}
+
+int bsp_Write0( /*TBD*/)
+{
+}
+
+int bsp_Write(int fh, char *ptr, int len)
+{
+	int i;
+	/*
+	   switch (fh){
+	   case DEV_STDOUT :
+	   for (i=0; i<len; i++)
+	   uart_polled_putchar(&uc0,ptr[i]);
+	   break;
+	   case DEV_STDERR :
+	   for (i=0; i<len; i++)
+	   uart_polled_putchar(&uc1,ptr[i]);
+	   break;
+	   default:
+	   assert("Write error: Bad filehandle" == 0);
+	   }
+	 */
+	//Return #chars not written (i.e. 0)
+	return 0;
+}
+
+int bsp_Read( /*TBD*/)
+{
+}
+
+int bsp_ReadC( /*TBD*/)
+{
+}
+
+int bsp_IsTTY( /*TBD*/)
+{
+}
+
+int bsp_Seek( /*TBD*/)
+{
+}
+
+int bsp_FLen( /*TBD*/)
+{
+}
+
+int bsp_TmpNam( /*TBD*/)
+{
+}
+
+int bsp_Remove( /*TBD*/)
+{
+}
+
+int bsp_Rename( /*TBD*/)
+{
+}
 
 /*
  This function needs working. Among others we need to read mickeys/mackes
@@ -126,67 +158,90 @@ int bsp_Rename          (/*TBD*/){}
  and second part (potential wrap-around).
 */
 
-int bsp_Clock           (){
+int bsp_Clock()
+{
 	/*
-	unsigned int TuS_low  = sys_mickey;           //Low  32 bit uS worth value
-	long long    TuS_high = sys_mackey;           //High 32 bit uS worth value
-	unsigned int cratio = MICKEYS_PER_SEC/CLOCKS_PER_SEC;
+	   unsigned int TuS_low  = sys_mickey;           //Low  32 bit uS worth value
+	   long long    TuS_high = sys_mackey;           //High 32 bit uS worth value
+	   unsigned int cratio = MICKEYS_PER_SEC/CLOCKS_PER_SEC;
 
-	long long Tcl = ((TuS_high << 32) + TuS_low ) / cratio;
+	   long long Tcl = ((TuS_high << 32) + TuS_low ) / cratio;
 
-	return Tcl; //Trunc it on purpose (best we can do anyway)
-	*/
+	   return Tcl; //Trunc it on purpose (best we can do anyway)
+	 */
 	static i = 0;
-	return i+=10;
+	return i += 10;
 }
 
-int bsp_Time            (/*TBD*/){}
-int bsp_System          (/*TBD*/){}
-int bsp_Errno           (/*TBD*/){}
-int bsp_GetCmdLine      (/*TBD*/){}
-int bsp_HeapInfo        (/*TBD*/){}
-int bsp_EnterSVC        (/*TBD*/){}
-int bsp_ReportException (/*TBD*/){}
+int bsp_Time( /*TBD*/)
+{
+}
 
+int bsp_System( /*TBD*/)
+{
+}
 
-clock_t bsp_Times(struct tms *buf){
-   (*buf).tms_utime  = (clock_t)bsp_Clock();
-   buf->tms_stime  = 0;
-   buf->tms_cutime = 0;
-   buf->tms_cstime = 0;
+int bsp_Errno( /*TBD*/)
+{
+}
+
+int bsp_GetCmdLine( /*TBD*/)
+{
+}
+
+int bsp_HeapInfo( /*TBD*/)
+{
+}
+
+int bsp_EnterSVC( /*TBD*/)
+{
+}
+
+int bsp_ReportException( /*TBD*/)
+{
+}
+
+clock_t bsp_Times(struct tms *buf)
+{
+	(*buf).tms_utime = (clock_t) bsp_Clock();
+	buf->tms_stime = 0;
+	buf->tms_cutime = 0;
+	buf->tms_cstime = 0;
 }
 
 extern void abort(void);
 /* Overloaded due to that Newlib linker-script is incompatible and for
    additional sanity/OOM detection */
-caddr_t bsp_Sbrk(int incr) {
-   /* The external addresses below are defined by the linker. */
-   extern char end;
-   extern char stack_start;
+caddr_t bsp_Sbrk(int incr)
+{
+	/* The external addresses below are defined by the linker. */
+	extern char end;
+	extern char stack_start;
 
-   static char *heap_end;
-   char *prev_heap_end;
+	static char *heap_end;
+	char *prev_heap_end;
 
-   if (heap_end == 0) {
-      heap_end = &end;
-   }
-   prev_heap_end = heap_end;
+	if (heap_end == 0) {
+		heap_end = &end;
+	}
+	prev_heap_end = heap_end;
 
-   if (heap_end + incr > &stack_start) {
-      /* Would crash into root stack. Not OK as context will be stored at
-         BOS */
-      tk_trap(TC_NOMEM);
-      tk_exit(TC_NOMEM);
-      /*Should never reach this line*/
-      abort();
-   }
+	if (heap_end + incr > &stack_start) {
+		/* Would crash into root stack. Not OK as context will be stored at
+		   BOS */
+		tk_trap(TC_NOMEM);
+		tk_exit(TC_NOMEM);
+		/*Should never reach this line */
+		abort();
+	}
 
-   heap_end += incr;
-   return (caddr_t) prev_heap_end;
+	heap_end += incr;
+	return (caddr_t) prev_heap_end;
 }
 
-void (*bsp_syscall)(void);
-void bsp_Syscall_mon(void *hix_syscall){
+void (*bsp_syscall) (void);
+void bsp_Syscall_mon(void *hix_syscall)
+{
 	bsp_syscall = hix_syscall;
 };
 
@@ -197,32 +252,32 @@ void bsp_Syscall_mon(void *hix_syscall){
  other's ISR's)
 
  */
-int tk_bsp_sysinit (void){
+int tk_bsp_sysinit(void)
+{
 	//Hook up the lib (nobody else will)
 	//They allready have pre-set values by the linker so we need
 	//to activly re-assign them
 
-	hixs.close        = hixs.close;
-	hixs.exit         = hixs.exit;
-	hixs.execve       = hixs.execve;
-	//hixs.fcntl        = ppc_fcntl;		// <- NOTE
-	hixs.fork         = hixs.fork;
-	hixs.fstat        = hixs.fstat;
-	hixs.getpid       = hixs.getpid;
+	hixs.close = hixs.close;
+	hixs.exit = hixs.exit;
+	hixs.execve = hixs.execve;
+	//hixs.fcntl        = ppc_fcntl;                // <- NOTE
+	hixs.fork = hixs.fork;
+	hixs.fstat = hixs.fstat;
+	hixs.getpid = hixs.getpid;
 	hixs.gettimeofday = hixs.gettimeofday;
-	hixs.isatty       = hixs.isatty;
-	hixs.kill         = hixs.kill;
-	hixs.link         = hixs.link;
-	hixs.lseek        = hixs.lseek;
-	//hixs.open         = ppc_open;		// <- NOTE
-	//hixs.read         = ppc_read;		// <- NOTE
-	hixs.sbrk         = bsp_Sbrk;		   // <- NOTE Newlib ditto is incompatible
+	hixs.isatty = hixs.isatty;
+	hixs.kill = hixs.kill;
+	hixs.link = hixs.link;
+	hixs.lseek = hixs.lseek;
+	//hixs.open         = ppc_open;         // <- NOTE
+	//hixs.read         = ppc_read;         // <- NOTE
+	hixs.sbrk = bsp_Sbrk;	// <- NOTE Newlib ditto is incompatible
 	hixs.settimeofday = hixs.settimeofday;
-	hixs.stat         = hixs.stat;
-	hixs.times        = bsp_Times;		// <- NOTE
-	hixs.unlink       = hixs.unlink;
-	hixs.wait         = hixs.wait;
-	hixs.write        = bsp_Write;		// <- NOTE
-	hixs.syscall_mon  = bsp_Syscall_mon;	// <- NOTE
+	hixs.stat = hixs.stat;
+	hixs.times = bsp_Times;	// <- NOTE
+	hixs.unlink = hixs.unlink;
+	hixs.wait = hixs.wait;
+	hixs.write = bsp_Write;	// <- NOTE
+	hixs.syscall_mon = bsp_Syscall_mon;	// <- NOTE
 }
-

@@ -25,9 +25,6 @@
 
 #include <sys/types.h>
 
-
-
-
 /*
 20.2.4.2 SI Mode Register (SIMODE)
 The SI mode register (SIMODE), shown in Figure 20-13., deﬁnes the SI operation modes
@@ -43,8 +40,6 @@ Reset                                    0
 Reset                                    0
  R/W                                    R/W
  Addr                                  0xAE2
-
-
 
  Bits  Name                                              Description
  0, 16 SMCx SMCx connection
@@ -108,7 +103,6 @@ Reset                                    0
             0 Falling edge. Use for IDL and GCI.
             1 Rising edge.
 
-
 13, 29  GM   Grant mode for TDMa/b.
              0 GCI/SCIT mode. The GCI/SCIT D channel grant mechanism for transmission is supported
                 internally. The grant is signalled by one bit of the Rx frame and is marked by setting SIRAM[CSEL]
@@ -130,33 +124,32 @@ Reset                                    0
 
 */
 
-typedef union{
+typedef union {
 	__uint32_t raw;
 	struct {
-		__uint32_t SMC2 		:1;
-		__uint32_t SMC2CS 		:3;
-		__uint32_t SDMb 		:2;
-		__uint32_t RFSDb 		:2;
-		__uint32_t DSCb 		:1;
-		__uint32_t CRTb 		:1;
-		__uint32_t STZb 		:1;
-		__uint32_t CEb 			:1;
-		__uint32_t FEb 			:1;
-		__uint32_t GMb 			:1;
-		__uint32_t TFSDb 		:2;
+		__uint32_t SMC2:1;
+		__uint32_t SMC2CS:3;
+		__uint32_t SDMb:2;
+		__uint32_t RFSDb:2;
+		__uint32_t DSCb:1;
+		__uint32_t CRTb:1;
+		__uint32_t STZb:1;
+		__uint32_t CEb:1;
+		__uint32_t FEb:1;
+		__uint32_t GMb:1;
+		__uint32_t TFSDb:2;
 
-		__uint32_t SMC1 		:1;
-		__uint32_t SMC1CS 		:3;
-		__uint32_t SDMa 		:2;
-		__uint32_t RFSDa 		:2;
-		__uint32_t DSCa 		:1;
-		__uint32_t CRTa 		:1;
-		__uint32_t STZa 		:1;
-		__uint32_t CEa 			:1;
-		__uint32_t FEa 			:1;
-		__uint32_t GMa 			:1;
-		__uint32_t TFSDa 		:2;
-	}f;
-}simode_t;
-#endif //SI_H
-
+		__uint32_t SMC1:1;
+		__uint32_t SMC1CS:3;
+		__uint32_t SDMa:2;
+		__uint32_t RFSDa:2;
+		__uint32_t DSCa:1;
+		__uint32_t CRTa:1;
+		__uint32_t STZa:1;
+		__uint32_t CEa:1;
+		__uint32_t FEa:1;
+		__uint32_t GMa:1;
+		__uint32_t TFSDa:2;
+	} f;
+} simode_t;
+#endif				//SI_H

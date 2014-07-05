@@ -96,16 +96,15 @@
 
 */
 
-
 #define GDB_KNOWS_OF_UNSIGNED
 
 #if defined(GDB_KNOWS_OF_UNSIGNED)
-	#define UINT32 __uint32_t
+#define UINT32 __uint32_t
 #else
-	#define UINT32 __int32_t
+#define UINT32 __int32_t
 #endif
 
-typedef union{
+typedef union {
 	UINT32 raw;
 
 	struct {
@@ -128,8 +127,7 @@ typedef union{
 		UINT32 RI:1;
 		UINT32 LE:1;
 
-	}f;
-}msr_t;
+	} f;
+} msr_t;
 
-#endif //MSR_H
-
+#endif				//MSR_H

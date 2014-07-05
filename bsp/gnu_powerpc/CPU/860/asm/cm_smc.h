@@ -73,27 +73,27 @@ smc_rx_control_descriptor
 15 CD Carrier detect lost. Set when the carrier detect signal is negated during reception.
 */
 
-typedef union{
+typedef union {
 	__uint16_t raw;
 	struct {
-		__uint16_t E_Empty					:1;
-		__uint16_t Padd_0					:1;
-		__uint16_t W_Wrap					:1;
-		__uint16_t I_Interrupt					:1;
-		__uint16_t C_Control_character				:1;
-		__uint16_t A_Address					:1;
-		__uint16_t CM_Continuous_mode				:1;
-		__uint16_t ID_Buffer_closed_on_reception_of_idles	:1;
-		__uint16_t AM_Address_match				:1;
-		__uint16_t Padd_1					:1;
-		__uint16_t BR_Break_received				:1;
-		__uint16_t FR_Framing_error				:1;
-		__uint16_t PR_Parity_error				:1;
-		__uint16_t Padd_2					:1;
-		__uint16_t OV_Overrun					:1;
-		__uint16_t CD_Carrier_detect_lost			:1;
-	}f;
-}bd_ctrl_smc_rx_t;
+		__uint16_t E_Empty:1;
+		__uint16_t Padd_0:1;
+		__uint16_t W_Wrap:1;
+		__uint16_t I_Interrupt:1;
+		__uint16_t C_Control_character:1;
+		__uint16_t A_Address:1;
+		__uint16_t CM_Continuous_mode:1;
+		__uint16_t ID_Buffer_closed_on_reception_of_idles:1;
+		__uint16_t AM_Address_match:1;
+		__uint16_t Padd_1:1;
+		__uint16_t BR_Break_received:1;
+		__uint16_t FR_Framing_error:1;
+		__uint16_t PR_Parity_error:1;
+		__uint16_t Padd_2:1;
+		__uint16_t OV_Overrun:1;
+		__uint16_t CD_Carrier_detect_lost:1;
+	} f;
+} bd_ctrl_smc_rx_t;
 
 /*
 smc_TX_control_descriptor
@@ -137,23 +137,22 @@ smc_TX_control_descriptor
         1 CTS negated during transmission.
 */
 
-
-typedef union{
+typedef union {
 	__uint16_t raw;
 	struct {
-		__uint16_t R_Ready					:1;
-		__uint16_t Padd_0					:1;
-		__uint16_t W_Wrap					:1;
-		__uint16_t I_Interrupt					:1;
-		__uint16_t CR_Clear_to_send_report			:1;
-		__uint16_t A_Address					:1;
-		__uint16_t CM_Continuous_mode				:1;
-		__uint16_t P_Preamble					:1;
-		__uint16_t NS_No_stop_bit_sent				:1;
-		__uint16_t Padd_1					:5;
-		__uint16_t CT_CTS_lost					:1;
-	}f;
-}bd_ctrl_smc_tx_t;
+		__uint16_t R_Ready:1;
+		__uint16_t Padd_0:1;
+		__uint16_t W_Wrap:1;
+		__uint16_t I_Interrupt:1;
+		__uint16_t CR_Clear_to_send_report:1;
+		__uint16_t A_Address:1;
+		__uint16_t CM_Continuous_mode:1;
+		__uint16_t P_Preamble:1;
+		__uint16_t NS_No_stop_bit_sent:1;
+		__uint16_t Padd_1:5;
+		__uint16_t CT_CTS_lost:1;
+	} f;
+} bd_ctrl_smc_tx_t;
 
 /* Buffer Descriptor (BD) stuff */
 /*
@@ -170,15 +169,15 @@ Note: control and status is the same for SCC and SMC, Direction differs however.
                      0x06       Low-order of buffer pointer
 */
 
-typedef struct{
+typedef struct {
 	union {
 		__uint16_t raw;
-		bd_ctrl_smc_rx_t SMC_RX;	/*Note: same as for SCC*/
-		bd_ctrl_smc_tx_t SMC_TX;	/*Note: same as for SCC*/
-	}BD_Status;
+		bd_ctrl_smc_rx_t SMC_RX;	/*Note: same as for SCC */
+		bd_ctrl_smc_tx_t SMC_TX;	/*Note: same as for SCC */
+	} BD_Status;
 	__uint16_t BD_Length;
 	__uint32_t BD_Pointer;
-}bd_smc_t;
+} bd_smc_t;
 
 /* Function code register (for RFCR and TFCR in smc_param_t)*/
 /*
@@ -193,24 +192,22 @@ typedef struct{
             Note AT[0] is driven high to identify this SDMA channel access as a DMA type.
 */
 
-
 /*Note: This happens to be the same as for SCC, but we differ between them anyway because
 not all fcr are the same (CM has more then SCC and SMC) and we want to follow some
 convention*/
-typedef union{
+typedef union {
 	__uint8_t raw;
 	struct {
 		__uint8_t PADD_0:3;
 		__uint8_t BO:2;
 		__uint8_t AT:3;
 
-	}f;
-}smc_fcr_t;
+	} f;
+} smc_fcr_t;
 
 /*
          Table 29-2. SMC UART and Transparent Parameter RAM Memory Map
 Offset 1  Name   Width                                           Description
-
 
  0x00    RBASE  Hword  RxBDs and TxBDs base address. (BD table pointer) Deﬁne starting points in the dual-port
                        RAM of the set of BDs for the SMC send and receive functions. They allow ﬂexible
@@ -266,15 +263,11 @@ Offset 1  Name   Width                                           Description
  0x24    —      Word
                        Tx temp. 2 Can be used only by the CP.
 
-
 0x28 — Hword First half-word of protocol-speciﬁc area.
 0x32 — Hword Last half-word of protocol-speciﬁc area.
 
-
-
 SMC_UART_STUFF
 ===============================================================================
-
 
 0x28 MAX_IDL Hword Maximum idle characters. When a character is received on the line, the SMC starts
                    counting idle characters received. If MAX_IDL idle characters arrive before the next
@@ -303,49 +296,45 @@ SMC_UART_STUFF
 
 */
 
-typedef struct{
+typedef struct {
 
-/*0x28 MAX_IDL*/ 	__uint16_t MAX_IDL;
-/*0x2A IDLC*/    	__uint16_t IDLC;
-/*0x2C BRKLN*/   	__uint16_t BRKLN;
-/*0x2E BRKEC*/   	__uint16_t BRKEC;
-/*0x30 BRKCR*/   	__uint16_t BRKCR;
-/*0x32 R_MASK*/  	__uint16_t R_MASK;
+/*0x28 MAX_IDL*/ __uint16_t MAX_IDL;
+/*0x2A IDLC*/ __uint16_t IDLC;
+/*0x2C BRKLN*/ __uint16_t BRKLN;
+/*0x2E BRKEC*/ __uint16_t BRKEC;
+/*0x30 BRKCR*/ __uint16_t BRKCR;
+/*0x32 R_MASK*/ __uint16_t R_MASK;
 
-}proto_smc_uart_t;
+} proto_smc_uart_t;
 
+typedef struct {
+	__uint16_t RBASE;	/*0x00 */
+	__uint16_t TBASE;	/*0x02 */
 
+	smc_fcr_t RFCR;		/*0x04 */
+	smc_fcr_t TFCR;		/*0x05 */
 
+	__uint16_t MRBLR;	/*0x06 */
 
-typedef struct{
-	__uint16_t	RBASE;			/*0x00*/
-	__uint16_t	TBASE;			/*0x02*/
+	__uint32_t RSTATE;	/*0x08 */
+	__uint32_t UNKNOW_0;	/*0x0C */
 
-	smc_fcr_t	RFCR;			/*0x04*/
-	smc_fcr_t	TFCR;			/*0x05*/
+	__uint16_t RBPTR;	/*0x10 */
+	__uint16_t UNKNOW_1;	/*0x12 */
 
-	__uint16_t	MRBLR;			/*0x06*/
+	__uint32_t UNKNOW_2;	/*0x14 */
+	__uint32_t TSTATE;	/*0x18 */
+	__uint32_t UNKNOW_3;	/*0x1C */
 
-	__uint32_t	RSTATE;			/*0x08*/
-	__uint32_t	UNKNOW_0;		/*0x0C*/
+	__uint16_t TBPTR;	/*0x20 */
+	__uint16_t UNKNOW_4;	/*0x22 */
 
-	__uint16_t	RBPTR;			/*0x10*/
-	__uint16_t	UNKNOW_1;		/*0x12*/
+	__uint32_t UNKNOW_5;	/*0x24 */
+	struct {		/*0X28 */
+		proto_smc_uart_t SMC_UART;
+	} PROTO;
 
-	__uint32_t	UNKNOW_2;		/*0x14*/
-	__uint32_t	TSTATE;			/*0x18*/
-	__uint32_t	UNKNOW_3;		/*0x1C*/
-
-	__uint16_t	TBPTR;			/*0x20*/
-	__uint16_t	UNKNOW_4;		/*0x22*/
-
-	__uint32_t	UNKNOW_5;		/*0x24*/
-	struct {				/*0X28*/
-		proto_smc_uart_t	SMC_UART;
-	}PROTO;
-
-}smc_param_t;
-
+} smc_param_t;
 
 /*
                    Table 29-10. SMCE/SMCM Field Descriptions
@@ -366,7 +355,6 @@ Bits Name                                               Description
 
 */
 
-
 #define SMCE_BRKE			(1<<6)
 
 #define SMCE_BRK			(1<<4)
@@ -374,20 +362,20 @@ Bits Name                                               Description
 #define SMCE_BSY			(1<<2)
 #define SMCE_TX				(1<<1)
 #define SMCE_RX				(1<<0)
-typedef union{
+typedef union {
 	__uint8_t raw;
 
 	struct {
-		__uint8_t PAD_0		:1;
-		__uint8_t BRKE		:1;
-		__uint8_t PAD_1		:1;
-		__uint8_t BRK		:1;
-		__uint8_t PAD_2		:1;
-		__uint8_t BSY		:1;
-		__uint8_t TX		:1;
-		__uint8_t RX		:1;
-	}f;
-}smce_smcm_t;
+		__uint8_t PAD_0:1;
+		__uint8_t BRKE:1;
+		__uint8_t PAD_1:1;
+		__uint8_t BRK:1;
+		__uint8_t PAD_2:1;
+		__uint8_t BSY:1;
+		__uint8_t TX:1;
+		__uint8_t RX:1;
+	} f;
+} smce_smcm_t;
 
 /*
                Table 29-1. SMCMR Field Descriptions (continued)
@@ -458,103 +446,98 @@ Bits Name                                                 Description
           1 SMC receiver enabled.
 */
 
-
 /*Generic for - bugged, don't use this (FIXME)*/
-typedef union{
+typedef union {
 	__uint16_t raw;
 
 	struct {
-		__uint16_t PAD_0			:1;
-		__uint16_t CLEN				:4;
+		__uint16_t PAD_0:1;
+		__uint16_t CLEN:4;
 		union {
-			struct{
-				__uint16_t SL		:1;
-				__uint16_t PEN		:1;
-				__uint16_t PM		:1;
-			}uart;
-			struct{
-				__uint16_t PAD_0_1	:1;
-				__uint16_t BS		:1;
-				__uint16_t REVD		:1;
-			}transp;
-			struct{
+			struct {
+				__uint16_t SL:1;
+				__uint16_t PEN:1;
+				__uint16_t PM:1;
+			} uart;
+			struct {
+				__uint16_t PAD_0_1:1;
+				__uint16_t BS:1;
+				__uint16_t REVD:1;
+			} transp;
+			struct {
 
-				__uint16_t ME		:1;
-				__uint16_t PAD_0_2	:1;
-				__uint16_t C_NR		:1;
-			}gci;
-		}mode;
-		__uint16_t PAD_1			:2;
-		__uint16_t SM				:2;
-		__uint16_t DM				:2;
-		__uint16_t TEN				:1;
-		__uint16_t REN				:1;
+				__uint16_t ME:1;
+				__uint16_t PAD_0_2:1;
+				__uint16_t C_NR:1;
+			} gci;
+		} mode;
+		__uint16_t PAD_1:2;
+		__uint16_t SM:2;
+		__uint16_t DM:2;
+		__uint16_t TEN:1;
+		__uint16_t REN:1;
 
-	}f;
-}_smcmr_t;
+	} f;
+} _smcmr_t;
 
-typedef union{
+typedef union {
 	__uint16_t raw;
 
 	struct {
-		__uint16_t PAD_0			:1;
-		__uint16_t CLEN				:4;
-				__uint16_t SL		:1;
-				__uint16_t PEN		:1;
-				__uint16_t PM		:1;
-		__uint16_t PAD_1			:2;
-		__uint16_t SM				:2;
-		__uint16_t DM				:2;
-		__uint16_t TEN				:1;
-		__uint16_t REN				:1;
+		__uint16_t PAD_0:1;
+		__uint16_t CLEN:4;
+		__uint16_t SL:1;
+		__uint16_t PEN:1;
+		__uint16_t PM:1;
+		__uint16_t PAD_1:2;
+		__uint16_t SM:2;
+		__uint16_t DM:2;
+		__uint16_t TEN:1;
+		__uint16_t REN:1;
 
-	}f;
-}_smcmr_uart_t;
+	} f;
+} _smcmr_uart_t;
 
-typedef union{
+typedef union {
 	__uint16_t raw;
 
 	struct {
-		__uint16_t PAD_0			:1;
-		__uint16_t CLEN				:4;
-				__uint16_t PAD_0_1	:1;
-				__uint16_t BS		:1;
-				__uint16_t REVD		:1;
-		__uint16_t PAD_1			:2;
-		__uint16_t SM				:2;
-		__uint16_t DM				:2;
-		__uint16_t TEN				:1;
-		__uint16_t REN				:1;
+		__uint16_t PAD_0:1;
+		__uint16_t CLEN:4;
+		__uint16_t PAD_0_1:1;
+		__uint16_t BS:1;
+		__uint16_t REVD:1;
+		__uint16_t PAD_1:2;
+		__uint16_t SM:2;
+		__uint16_t DM:2;
+		__uint16_t TEN:1;
+		__uint16_t REN:1;
 
-	}f;
-}_smcmr_transp_t;
+	} f;
+} _smcmr_transp_t;
 
-typedef union{
+typedef union {
 	__uint16_t raw;
 
 	struct {
-		__uint16_t PAD_0			:1;
-		__uint16_t CLEN				:4;
-				__uint16_t ME		:1;
-				__uint16_t PAD_0_2	:1;
-				__uint16_t C_NR		:1;
-		__uint16_t PAD_1			:2;
-		__uint16_t SM				:2;
-		__uint16_t DM				:2;
-		__uint16_t TEN				:1;
-		__uint16_t REN				:1;
+		__uint16_t PAD_0:1;
+		__uint16_t CLEN:4;
+		__uint16_t ME:1;
+		__uint16_t PAD_0_2:1;
+		__uint16_t C_NR:1;
+		__uint16_t PAD_1:2;
+		__uint16_t SM:2;
+		__uint16_t DM:2;
+		__uint16_t TEN:1;
+		__uint16_t REN:1;
 
-	}f;
-}_smcmr_gci_t;
+	} f;
+} _smcmr_gci_t;
 
-typedef union{
-	_smcmr_uart_t 		uart;
-	_smcmr_transp_t 	transp;
-	_smcmr_gci_t  		gci;
-}smcmr_t;
+typedef union {
+	_smcmr_uart_t uart;
+	_smcmr_transp_t transp;
+	_smcmr_gci_t gci;
+} smcmr_t;
 
-
-
-
-#endif //CM_SMC_H
-
+#endif				//CM_SMC_H

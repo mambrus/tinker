@@ -21,7 +21,6 @@
 #ifndef TK_HWSYS_BORLANDX86_H
 #define TK_HWSYS_BORLANDX86_H
 
-
 /*!
 How printk is implemented on this target
 */
@@ -32,7 +31,6 @@ How printk is implemented on this target
 How initializing the BSP is done on this target (Only needed for bare bone targets).
 */
 #define tk_bsp_sysinit() ((void*)0)
-
 
 /*!
 @name Mapping stack allocation API for this target
@@ -53,11 +51,8 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 #define TK_CLI()
 #define TK_STI()
 
-
-
 #define REAL_STACK_SIZE( TCB )  \
    ( TCB.stack_size )
-
 
 //Push & pops of all regs and flags possibly not needed
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                                                    \
@@ -80,7 +75,6 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 //Does nothing on this port
 #define BIND_STACK( _stack_struct, _temp2 )
 
-
 //function enters as a result of a ret instruction. EAX is passed
 //as the return value. Not shure if it works on every processor
 
@@ -95,7 +89,6 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
     __asm{ popad                        }                                                                      \
     __asm{ popfd                        }
 
-
 //Allready a char', no need to do handle in any special way.
 #define STACK_PTR( ADDR ) \
    ((char *)ADDR.tstack)
@@ -109,5 +102,3 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
    exit( NUM )
 
 #endif
-
-

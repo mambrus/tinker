@@ -33,18 +33,16 @@ combo.
 #include <tinker/config.h>
 
 #if !defined(BOARD)
-   #error BOARD needs to be defined
+#error BOARD needs to be defined
 #endif
 
 #if !defined(TK_SYSTEM)
-   #error System needs to be defined
+#error System needs to be defined
 #endif
-
 
 // Board ID definitions
 #define BITFIRE            0
 #define lpc21xx            BITFIRE
-
 
 #if (BOARD == BITFIRE)
 #define bsp_Open            BF_Open
@@ -71,30 +69,30 @@ combo.
 //#define tk_bsp_sysinit      TK_BF_sysinit
 #endif
 
-int bsp_Open            (/*TBD*/);
-int bsp_Close           (/*TBD*/);
-int bsp_WriteC          (/*TBD*/);
-int bsp_Write0          (/*TBD*/);
-int bsp_Write           (int fh, char *ptr,int len);
-int bsp_Read            (/*TBD*/);
-int bsp_ReadC           (/*TBD*/);
-int bsp_IsTTY           (/*TBD*/);
-int bsp_Seek            (/*TBD*/);
-int bsp_FLen            (/*TBD*/);
-int bsp_TmpNam          (/*TBD*/);
-int bsp_Remove          (/*TBD*/);
-int bsp_Rename          (/*TBD*/);
-int bsp_Clock           (/*TBD*/);
-int bsp_Time            (/*TBD*/);
-int bsp_System          (/*TBD*/);
-int bsp_Errno           (/*TBD*/);
-int bsp_GetCmdLine      (/*TBD*/);
-int bsp_HeapInfo        (/*TBD*/);
-int bsp_EnterSVC        (/*TBD*/);
-int bsp_ReportException (/*TBD*/);
+int bsp_Open( /*TBD*/);
+int bsp_Close( /*TBD*/);
+int bsp_WriteC( /*TBD*/);
+int bsp_Write0( /*TBD*/);
+int bsp_Write(int fh, char *ptr, int len);
+int bsp_Read( /*TBD*/);
+int bsp_ReadC( /*TBD*/);
+int bsp_IsTTY( /*TBD*/);
+int bsp_Seek( /*TBD*/);
+int bsp_FLen( /*TBD*/);
+int bsp_TmpNam( /*TBD*/);
+int bsp_Remove( /*TBD*/);
+int bsp_Rename( /*TBD*/);
+int bsp_Clock( /*TBD*/);
+int bsp_Time( /*TBD*/);
+int bsp_System( /*TBD*/);
+int bsp_Errno( /*TBD*/);
+int bsp_GetCmdLine( /*TBD*/);
+int bsp_HeapInfo( /*TBD*/);
+int bsp_EnterSVC( /*TBD*/);
+int bsp_ReportException( /*TBD*/);
 //int tk_bsp_sysinit      (void);
 
-#endif  //TK_BSP_H
+#endif				//TK_BSP_H
 
 /*!
  * @defgroup CVSLOG_tk_bsp_h tk_bsp_h
@@ -135,4 +133,3 @@ int bsp_ReportException (/*TBD*/);
  *  blocking).
  *
  */
-

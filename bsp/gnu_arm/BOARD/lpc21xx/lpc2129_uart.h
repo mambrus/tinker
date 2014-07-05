@@ -39,15 +39,12 @@
 #define UART_ERR_NOT_INIT       0x01
 #define UART_ERR_NO_CHAR_READY  0x02
 
-typedef struct
-{
-  UNS_8 port;
-  UNS_8 status;
-  UNS_8 LCR;      // Line Control Register
-  UNS_32 baudrate;
-  UNS_8 vecaddr;  // which IRQ vecaddr to use (must be unique!)
+typedef struct {
+	UNS_8 port;
+	UNS_8 status;
+	UNS_8 LCR;		// Line Control Register
+	UNS_32 baudrate;
+	UNS_8 vecaddr;		// which IRQ vecaddr to use (must be unique!)
 } uart_control;
 
-
 #endif
-
