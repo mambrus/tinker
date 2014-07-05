@@ -847,18 +847,18 @@ cancel.
 
 When a thread that has children dies without joining it's children, it
 implicitly means that he will never join them (obvious right? ;) ).
-After executing this function, any children will be orfans.
+After executing this function, any children will be orphans.
 
-When those childern exit, it means the following
+When those children exit, it means the following
 
-- Exiting thread can imediatlly cancel (go to nirvans). It doesn't
+- Exiting thread can immediately cancel (go to Nirvana). It doesn't
 have to wait for any parent to (maybe) join them. The opposite, when a
-child dies before it's parent (assuming it's still atached), it has to
-consider that the parent \b might deside to join later. The child can
+child dies before it's parent (assuming it's still attached), it has to
+consider that the parent \b might decide to join later. The child can
 not know this, so it has to stay in \ref ZOMBI state until there is no
 question about intent any more.
 
-- The TCB for each exiting thread can be reclaimed imediatlly. Meaning,
+- The TCB for each exiting thread can be reclaimed immediately. Meaning,
 if you have a small system with only resources for a few threads, you
 should always show intent by detaching threads after creating them, if
 you never intend to join them (will save resources).
@@ -868,8 +868,8 @@ void _tk_detach_children(
    thid_t thid
 ){
    thid_t j;
-
-   if (  __tk_threadPool[thid].noChilds > 0 ){  //Dang! We must make our own children parentless ;(
+   /* We must make our own children parentless */
+   if (  __tk_threadPool[thid].noChilds > 0 ){
       for(j=0;(__tk_threadPool[thid].noChilds>0) && (j<TK_MAX_THREADS);j++){
          if (__tk_threadPool[j].valid && __tk_threadPool[j].Gid == thid){
             /*Foud a poor sod*/
@@ -889,49 +889,49 @@ Break the relation to the parent of the \e thid
 
 This function is normally called as a step by a thread on it's way to
 cancel. When this function is executed, it means that \e this is an
-orfan. (Any children it has is however still attached to it. I.e.that
+orphan. (Any children it has is however still attached to it. I.e.that
 relation is unchanged.)
 
-The only duty a exiting thread really has is to umblock it's parent \b once.
-When this is done, the thread has no other obligations and can safelly cancel.
+The only duty a exiting thread really has is to unblock it's parent \b once.
+When this is done, the thread has no other obligations and can safely cancel.
 
-\returns The function will return succes (TK_TRUE) or faliure (TK_FALSE).
+\returns The function will return success (TK_TRUE) or failure (TK_FALSE).
 
 When we detach from a parent, we mean the following:
 
 - That the parent can't join with (at least) us any longer.
 
-- When \e thid exits, it can cancel emediatly and doesnt have to
-consider any parent who \e might deside to join with us later.
+- When \e thid exits, it can cancel immediately and doesn't have to
+consider any parent who \e might decide to join with us later.
 
 The following rules apply to this function:
 
-- Should it happen that a parent is allreadu joining us when this
+- Should it happen that a parent is already joining us when this
 function is called, we release it (no matter of the status of \e force
 attribute).
 
-- To detach a parent that might deside us later, we have to explicitly
-say so by setting \e force to TK_TRUE. Otherwize, detachement will only be
-a succes if a parent is joining on us.
+- To detach a parent that might decide us later, we have to explicitly
+say so by setting \e force to TK_TRUE. Otherwise, detachment will only be
+a success if a parent is joining on us.
 
-- If \e thid is allready detached once, the function alwas returns TK_TRUE
+- If \e thid is already detached once, the function always returns TK_TRUE
 
 */
 
 int _tk_try_detach_parent(
-   thid_t thid,                  //!< The thread id whos parent we are concerned with
+   thid_t thid,                  //!< The thread id who's parent we are concerned with
    int force                     //!< Force detachment
 ){
    int succeded_unblocking_parent = TK_FALSE;
 
    if (  __tk_threadPool[thid].Gid == -1 )
-      return TK_TRUE;                     //allready orphan
+      return TK_TRUE;                     //already orphan
 
    // (if con't) Yes, I have a parent, but is it waiting for my death or not?
    assert (__tk_threadPool[__tk_threadPool[thid].Gid].valid);  //sanity check
    //We must have faith now, that the Gid is actually the one that created us, and
-   //not a reused identity (which should not be possible to happen - mybe invent a
-   //snity check for this?)
+   //not a reused identity (which should not be possible to happen - maybe invent a
+   //sanity check for this?)
 
 
    //If waiting for me (not my bro or sis) death, unblock the parent. (i.e. parent executed a tk_join)
@@ -939,9 +939,10 @@ int _tk_try_detach_parent(
       (__tk_threadPool[__tk_threadPool[thid].Gid].state & TERM) &&
       __tk_threadPool[__tk_threadPool[thid].Gid].bOnId.entity.tcb == &__tk_threadPool[thid] )
    {
-      __tk_threadPool[__tk_threadPool[thid].Gid].state = (PROCSTATE)(__tk_threadPool[__tk_threadPool[thid].Gid].state & ~_______T); //Release the waiting parent
+      __tk_threadPool[__tk_threadPool[thid].Gid].state = /* Release the waiting parent */
+            (PROCSTATE)(__tk_threadPool[__tk_threadPool[thid].Gid].state & ~_______T);
       __tk_threadPool[__tk_threadPool[thid].Gid].wakeupEvent = E_CHILDDEATH;
-      //Special case, if both ___S_ and ____T (i.e. timeoutable join)
+      /* Special case, if both ___S_ and ____T (i.e. timeoutable join) */
       if (__tk_threadPool[__tk_threadPool[thid].Gid].state == READY) { //What must be left is __S_
          __tk_threadPool[__tk_threadPool[thid].Gid].bOnId.entity.tcb = NULL;
          __tk_threadPool[__tk_threadPool[thid].Gid].bOnId.kind       = BON_SCHED;
@@ -951,7 +952,7 @@ int _tk_try_detach_parent(
       }
 
       succeded_unblocking_parent = TK_TRUE;
-      //We are likelly to get out of context before the parent can read our retval. Therefore make an
+      //We are likely to get out of context before the parent can read our retval. Therefore make an
       //active copy to the parent's retval instead. The parent will know of this case and use that one
       //instead of trying to read a potentially invalid TCB.
       __tk_threadPool[__tk_threadPool[thid].Gid].retval = __tk_threadPool[thid].retval;
