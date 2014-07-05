@@ -77,19 +77,19 @@ _POSIX_THREADS among other pthread retated things.
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 #if defined(_WIN32) &&  defined(_MSC_VER)
-   #define CHAINPATH C:\Program Files\Microsoft Visual Studio\VC98\Include
+#define CHAINPATH C:\Program Files\Microsoft Visual Studio\VC98\Include
 
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
-   #define CHAINPATH C:/BC5/INCLUDE
+#define CHAINPATH C:/BC5/INCLUDE
 
 #elif defined( __C166__ )
 // #define CHAINPATH C:\Program Files\Keil\C166\INC
-   #define CHAINPATH C:\Keil\C166\INC
+#define CHAINPATH C:\Keil\C166\INC
 
-#elif defined(__GNUC__) /*|| defined(__CYGWIN32__)  || defined(__CYGWIN__)*/
-   #ifndef CHAINPATH
-      #define CHAINPATH /usr/include
-   #endif
+#elif defined(__GNUC__)		/*|| defined(__CYGWIN32__)  || defined(__CYGWIN__) */
+#ifndef CHAINPATH
+#define CHAINPATH /usr/include
+#endif
 
 //Getting rid of other build-ins that will interfear
 // NOTE Inspect tool-chain builtins by invoking:
@@ -97,30 +97,30 @@ _POSIX_THREADS among other pthread retated things.
 // Look for macros that don't have '__' prefix and suffix
 
 //The following workarounds are necessary for our BUILDCHAIN macro to work
-   #ifdef bfin
-      #warning Workaround enabled for GCC builtin macro bug: bfin
-      #undef bfin
-      #ifndef __bfin__
-         #define __bfin__
-      #endif
-   #endif
-   #ifdef BFIN
-      #warning Workaround enabled for GCC builtin macro bug: BFIN
-      #undef BFIN
-      #ifndef __BFIN__
-         #define __BFIN__
-      #endif
-   #endif
-   #ifdef i386
+#ifdef bfin
+#warning Workaround enabled for GCC builtin macro bug: bfin
+#undef bfin
+#ifndef __bfin__
+#define __bfin__
+#endif
+#endif
+#ifdef BFIN
+#warning Workaround enabled for GCC builtin macro bug: BFIN
+#undef BFIN
+#ifndef __BFIN__
+#define __BFIN__
+#endif
+#endif
+#ifdef i386
 //      #warning Workaround enabled for GCC builtin macro bug: i386
-      #undef i386
-      #ifndef __i386__
-         #define __i386__
-      #endif
-   #endif
+#undef i386
+#ifndef __i386__
+#define __i386__
+#endif
+#endif
 
 #else
-   #error "Can\'t determine the target for the TINKER kernel"
+#error "Can\'t determine the target for the TINKER kernel"
 #endif
 //------1---------2---------3---------4---------5---------6---------7---------8
 

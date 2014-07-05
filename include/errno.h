@@ -37,7 +37,6 @@ so we'll include them all.
 
 @see kernel_reimpl_ansi
 
-
 <HR>
 
 <H2>Checking for Errors</H2>
@@ -115,8 +114,6 @@ reason fails in its attempt to extend the stack. If this ever happens,
 you should probably try using statically or dynamically allocated memory
 instead of stack memory on that system.
 
-
-
 <H2>Error Codes</H2>
 The error code macros are defined in the header file errno.h. All of
 them expand into integer constant values. Some of these error codes
@@ -128,7 +125,6 @@ on other systems.
 #ifndef ERRNO_H_TK
 #define ERRNO_H_TK
 
-
 #include <tk_ansi.h>
 /*
 #if !defined(__C166__)
@@ -138,7 +134,7 @@ on other systems.
 */
 
 #if defined(errno)
-   #undef errno          //!< We'll define our own errno \e "varialble"
+#undef errno			//!< We'll define our own errno \e "varialble"
 #endif
 
 //#include <tk.h>
@@ -147,17 +143,14 @@ on other systems.
 extern "C" {
 #endif
 
-int           *_tk_errno();
+	int *_tk_errno();
 
 #if defined(__cplusplus) && (TK_CPLUSPLUS==0)
 }
 #endif
-
 #if apa
 #error Hehe
 #endif
-
-
 /*!
 @brief Access thread-internal errno variable
 
@@ -165,19 +158,12 @@ Map to an internal variable unique to the current threads. You use this
 exactly as if it would be a variable, but it's not.
 */
 #define errno (*_tk_errno())
-
 #define DEF_EC( ec ) \
 	ec ANSI_#ec
-
 #define DEF_ES( ec, estr )
-
-
-
-//#if !defined(__GNUC__) && !( defined(_WIN32) || defined(_MSC_VER)) FIXME
-//#if !defined(__GNUC__)
-
+//#if !defined(__GNUC__) && !( defined(_WIN32) || defined(_MSC_VER)) FIXME//#if !defined(__GNUC__)
 #define ECODES_ONLY
-#include <tk_mem.h>  //Last in error-codes in TK-error chain
+#include <tk_mem.h>		//Last in error-codes in TK-error chain
 /*!
 To make life easier and not to have to trim every tiny errorcode, all
 are put in this enumertion list.  ANSI error codes are normally defined
@@ -191,8 +177,7 @@ The first part of the enumeration is a TinKer code specific area. It
 should be fairlly small and even shrink over time the close we get to
 following ANSI standard.
 
-*/
-enum ANSI_ERROR_CODES{
+*/ enum ANSI_ERROR_CODES {
 ///*First are TiNker codes*/
 ///*COMPONENT SCHED*/
 //TK_OK            ,//!< @brief Operation returned without errors
@@ -226,147 +211,147 @@ enum ANSI_ERROR_CODES{
 //
 
 /*ANSI codes*/
-ANSI_EPERM=ERR_KMEM_SENTINEL , //!< @brief \ref EPERM
-ANSI_ENOENT           , //!< @brief \ref ENOENT
-ANSI_ESRCH            , //!< @brief \ref ESRCH
-ANSI_EINTR            , //!< @brief \ref EINTR
-ANSI_EIO              , //!< @brief \ref EIO
-ANSI_ENXIO            , //!< @brief \ref ENXIO
-ANSI_E2BIG            , //!< @brief \ref E2BIG
-ANSI_ENOEXEC          , //!< @brief \ref ENOEXEC
-ANSI_EBADF            , //!< @brief \ref EBADF
-ANSI_ECHILD           , //!< @brief \ref ECHILD
-ANSI_EDEADLK          , //!< @brief \ref EDEADLK
-ANSI_ENOMEM           , //!< @brief \ref ENOMEM
-ANSI_EACCES           , //!< @brief \ref EACCES
-ANSI_EFAULT           , //!< @brief \ref EFAULT
-ANSI_ENOTBLK          , //!< @brief \ref ENOTBLK
-ANSI_EBUSY            , //!< @brief \ref EBUSY
-ANSI_EEXIST           , //!< @brief \ref EEXIST
-ANSI_EXDEV            , //!< @brief \ref EXDEV
-ANSI_ENODEV           , //!< @brief \ref ENODEV
-ANSI_ENOTDIR          , //!< @brief \ref ENOTDIR
-ANSI_EISDIR           , //!< @brief \ref EISDIR
-ANSI_EINVAL           , //!< @brief \ref EINVAL
-ANSI_EMFILE           , //!< @brief \ref EMFILE
-ANSI_ENFILE           , //!< @brief \ref ENFILE
-ANSI_ENOTTY           , //!< @brief \ref ENOTTY
-ANSI_ETXTBSY          , //!< @brief \ref ETXTBSY
-ANSI_EFBIG            , //!< @brief \ref EFBIG
-ANSI_ENOSPC           , //!< @brief \ref ENOSPC
-ANSI_ESPIPE           , //!< @brief \ref ESPIPE
-ANSI_EROFS            , //!< @brief \ref EROFS
-ANSI_EMLINK           , //!< @brief \ref EMLINK
-ANSI_EPIPE            , //!< @brief \ref EPIPE
-ANSI_EDOM             , //!< @brief \ref EDOM
-ANSI_ERANGE           , //!< @brief \ref ERANGE
-ANSI_EAGAIN           , //!< @brief \ref EAGAIN
-ANSI_EWOULDBLOCK      , //!< @brief \ref EWOULDBLOCK
-ANSI_EINPROGRESS      , //!< @brief \ref EINPROGRESS
-ANSI_EALREADY         , //!< @brief \ref EALREADY
-ANSI_ENOTSOCK         , //!< @brief \ref ENOTSOCK
-ANSI_EMSGSIZE         , //!< @brief \ref EMSGSIZE
-ANSI_EPROTOTYPE       , //!< @brief \ref EPROTOTYPE
-ANSI_ENOPROTOOPT      , //!< @brief \ref ENOPROTOOPT
-ANSI_EPROTONOSUPPORT  , //!< @brief \ref EPROTONOSUPPORT
-ANSI_ESOCKTNOSUPPORT  , //!< @brief \ref ESOCKTNOSUPPORT
-ANSI_EOPNOTSUPP       , //!< @brief \ref EOPNOTSUPP
-ANSI_EPFNOSUPPORT     , //!< @brief \ref EPFNOSUPPORT
-ANSI_EAFNOSUPPORT     , //!< @brief \ref EAFNOSUPPORT
-ANSI_EADDRINUSE       , //!< @brief \ref EADDRINUSE
-ANSI_EADDRNOTAVAIL    , //!< @brief \ref EADDRNOTAVAIL
-ANSI_ENETDOWN         , //!< @brief \ref ENETDOWN
-ANSI_ENETUNREACH      , //!< @brief \ref ENETUNREACH
-ANSI_ENETRESET        , //!< @brief \ref ENETRESET
-ANSI_ECONNABORTED     , //!< @brief \ref ECONNABORTED
-ANSI_ECONNRESET       , //!< @brief \ref ECONNRESET
-ANSI_ENOBUFS          , //!< @brief \ref ENOBUFS
-ANSI_EISCONN          , //!< @brief \ref EISCONN
-ANSI_ENOTCONN         , //!< @brief \ref ENOTCONN
-ANSI_EDESTADDRREQ     , //!< @brief \ref EDESTADDRREQ
-ANSI_ESHUTDOWN        , //!< @brief \ref ESHUTDOWN
-ANSI_ETOOMANYREFS     , //!< @brief \ref ETOOMANYREFS
-ANSI_ETIMEDOUT        , //!< @brief \ref ETIMEDOUT
-ANSI_ECONNREFUSED     , //!< @brief \ref ECONNREFUSED
-ANSI_ELOOP            , //!< @brief \ref ELOOP
-ANSI_ENAMETOOLONG     , //!< @brief \ref ENAMETOOLONG
-ANSI_EHOSTDOWN        , //!< @brief \ref EHOSTDOWN
-ANSI_EHOSTUNREACH     , //!< @brief \ref EHOSTUNREACH
-ANSI_ENOTEMPTY        , //!< @brief \ref ENOTEMPTY
-ANSI_EPROCLIM         , //!< @brief \ref EPROCLIM
-ANSI_EUSERS           , //!< @brief \ref EUSERS
-ANSI_EDQUOT           , //!< @brief \ref EDQUOT
-ANSI_ESTALE           , //!< @brief \ref ESTALE
-ANSI_EREMOTE          , //!< @brief \ref EREMOTE
-ANSI_EBADRPC          , //!< @brief \ref EBADRPC
-ANSI_ERPCMISMATCH     , //!< @brief \ref ERPCMISMATCH
-ANSI_EPROGUNAVAIL     , //!< @brief \ref EPROGUNAVAIL
-ANSI_EPROGMISMATCH    , //!< @brief \ref EPROGMISMATCH
-ANSI_EPROCUNAVAIL     , //!< @brief \ref EPROCUNAVAIL
-ANSI_ENOLCK           , //!< @brief \ref ENOLCK
-ANSI_EFTYPE           , //!< @brief \ref EFTYPE
-ANSI_EAUTH            , //!< @brief \ref EAUTH
-ANSI_ENEEDAUTH        , //!< @brief \ref ENEEDAUTH
-ANSI_ENOSYS           , //!< @brief \ref ENOSYS
-ANSI_ENOTSUP          , //!< @brief \ref ENOTSUP
-ANSI_EILSEQ           , //!< @brief \ref EILSEQ
-ANSI_EBACKGROUND      , //!< @brief \ref EBACKGROUND
-ANSI_EDIED            , //!< @brief \ref EDIED
-ANSI_ED               , //!< @brief \ref ED
-ANSI_EGREGIOUS        , //!< @brief \ref EGREGIOUS
-ANSI_EIEIO            , //!< @brief \ref EIEIO
-ANSI_EGRATUITOUS      , //!< @brief \ref EGRATUITOUS
-ANSI_EBADMSG          , //!< @brief \ref EBADMSG
-ANSI_EIDRM            , //!< @brief \ref EIDRM
-ANSI_EMULTIHOP        , //!< @brief \ref EMULTIHOP
-ANSI_ENODATA          , //!< @brief \ref ENODATA
-ANSI_ENOLINK          , //!< @brief \ref ENOLINK
-ANSI_ENOMSG           , //!< @brief \ref ENOMSG
-ANSI_ENOSR            , //!< @brief \ref ENOSR
-ANSI_ENOSTR           , //!< @brief \ref ENOSTR
-ANSI_EOVERFLOW        , //!< @brief \ref EOVERFLOW
-ANSI_EPROTO           , //!< @brief \ref EPROTO
-ANSI_ETIME            , //!< @brief \ref ETIME
-ANSI_ECANCELED        , //!< @brief \ref ECANCELED
-ANSI_ERESTART         , //!< @brief \ref ERESTART
-ANSI_ECHRNG           , //!< @brief \ref ECHRNG
-ANSI_EL2NSYNC         , //!< @brief \ref EL2NSYNC
-ANSI_EL3HLT           , //!< @brief \ref EL3HLT
-ANSI_EL3RST           , //!< @brief \ref EL3RST
-ANSI_ELNRNG           , //!< @brief \ref ELNRNG
-ANSI_EUNATCH          , //!< @brief \ref EUNATCH
-ANSI_ENOCSI           , //!< @brief \ref ENOCSI
-ANSI_EL2HLT           , //!< @brief \ref EL2HLT
-ANSI_EBADE            , //!< @brief \ref EBADE
-ANSI_EBADR            , //!< @brief \ref EBADR
-ANSI_EXFULL           , //!< @brief \ref EXFULL
-ANSI_ENOANO           , //!< @brief \ref ENOANO
-ANSI_EBADRQC          , //!< @brief \ref EBADRQC
-ANSI_EBADSLT          , //!< @brief \ref EBADSLT
-ANSI_EDEADLOCK        , //!< @brief \ref EDEADLOCK
-ANSI_EBFONT           , //!< @brief \ref EBFONT
-ANSI_ENONET           , //!< @brief \ref ENONET
-ANSI_ENOPKG           , //!< @brief \ref ENOPKG
-ANSI_EADV             , //!< @brief \ref EADV
-ANSI_ESRMNT           , //!< @brief \ref ESRMNT
-ANSI_ECOMM            , //!< @brief \ref ECOMM
-ANSI_EDOTDOT          , //!< @brief \ref EDOTDOT
-ANSI_ENOTUNIQ         , //!< @brief \ref ENOTUNIQ
-ANSI_EBADFD           , //!< @brief \ref EBADFD
-ANSI_EREMCHG          , //!< @brief \ref EREMCHG
-ANSI_ELIBACC          , //!< @brief \ref ELIBACC
-ANSI_ELIBBAD          , //!< @brief \ref ELIBBAD
-ANSI_ELIBSCN          , //!< @brief \ref ELIBSCN
-ANSI_ELIBMAX          , //!< @brief \ref ELIBMAX
-ANSI_ELIBEXEC         , //!< @brief \ref ELIBEXEC
-ANSI_ESTRPIPE         , //!< @brief \ref ESTRPIPE
-ANSI_EUCLEAN          , //!< @brief \ref EUCLEAN
-ANSI_ENOTNAM          , //!< @brief \ref ENOTNAM
-ANSI_ENAVAIL          , //!< @brief \ref ENAVAIL
-ANSI_EISNAM           , //!< @brief \ref EISNAM
-ANSI_EREMOTEIO        , //!< @brief \ref EREMOTEIO
-ANSI_ENOMEDIUM        , //!< @brief \ref ENOMEDIUM
-ANSI_EMEDIUMTYPE        //!< @brief \ref ANSI_EMEDIUMTYPE
+	ANSI_EPERM = ERR_KMEM_SENTINEL,	//!< @brief \ref EPERM
+	ANSI_ENOENT,		//!< @brief \ref ENOENT
+	ANSI_ESRCH,		//!< @brief \ref ESRCH
+	ANSI_EINTR,		//!< @brief \ref EINTR
+	ANSI_EIO,		//!< @brief \ref EIO
+	ANSI_ENXIO,		//!< @brief \ref ENXIO
+	ANSI_E2BIG,		//!< @brief \ref E2BIG
+	ANSI_ENOEXEC,		//!< @brief \ref ENOEXEC
+	ANSI_EBADF,		//!< @brief \ref EBADF
+	ANSI_ECHILD,		//!< @brief \ref ECHILD
+	ANSI_EDEADLK,		//!< @brief \ref EDEADLK
+	ANSI_ENOMEM,		//!< @brief \ref ENOMEM
+	ANSI_EACCES,		//!< @brief \ref EACCES
+	ANSI_EFAULT,		//!< @brief \ref EFAULT
+	ANSI_ENOTBLK,		//!< @brief \ref ENOTBLK
+	ANSI_EBUSY,		//!< @brief \ref EBUSY
+	ANSI_EEXIST,		//!< @brief \ref EEXIST
+	ANSI_EXDEV,		//!< @brief \ref EXDEV
+	ANSI_ENODEV,		//!< @brief \ref ENODEV
+	ANSI_ENOTDIR,		//!< @brief \ref ENOTDIR
+	ANSI_EISDIR,		//!< @brief \ref EISDIR
+	ANSI_EINVAL,		//!< @brief \ref EINVAL
+	ANSI_EMFILE,		//!< @brief \ref EMFILE
+	ANSI_ENFILE,		//!< @brief \ref ENFILE
+	ANSI_ENOTTY,		//!< @brief \ref ENOTTY
+	ANSI_ETXTBSY,		//!< @brief \ref ETXTBSY
+	ANSI_EFBIG,		//!< @brief \ref EFBIG
+	ANSI_ENOSPC,		//!< @brief \ref ENOSPC
+	ANSI_ESPIPE,		//!< @brief \ref ESPIPE
+	ANSI_EROFS,		//!< @brief \ref EROFS
+	ANSI_EMLINK,		//!< @brief \ref EMLINK
+	ANSI_EPIPE,		//!< @brief \ref EPIPE
+	ANSI_EDOM,		//!< @brief \ref EDOM
+	ANSI_ERANGE,		//!< @brief \ref ERANGE
+	ANSI_EAGAIN,		//!< @brief \ref EAGAIN
+	ANSI_EWOULDBLOCK,	//!< @brief \ref EWOULDBLOCK
+	ANSI_EINPROGRESS,	//!< @brief \ref EINPROGRESS
+	ANSI_EALREADY,		//!< @brief \ref EALREADY
+	ANSI_ENOTSOCK,		//!< @brief \ref ENOTSOCK
+	ANSI_EMSGSIZE,		//!< @brief \ref EMSGSIZE
+	ANSI_EPROTOTYPE,	//!< @brief \ref EPROTOTYPE
+	ANSI_ENOPROTOOPT,	//!< @brief \ref ENOPROTOOPT
+	ANSI_EPROTONOSUPPORT,	//!< @brief \ref EPROTONOSUPPORT
+	ANSI_ESOCKTNOSUPPORT,	//!< @brief \ref ESOCKTNOSUPPORT
+	ANSI_EOPNOTSUPP,	//!< @brief \ref EOPNOTSUPP
+	ANSI_EPFNOSUPPORT,	//!< @brief \ref EPFNOSUPPORT
+	ANSI_EAFNOSUPPORT,	//!< @brief \ref EAFNOSUPPORT
+	ANSI_EADDRINUSE,	//!< @brief \ref EADDRINUSE
+	ANSI_EADDRNOTAVAIL,	//!< @brief \ref EADDRNOTAVAIL
+	ANSI_ENETDOWN,		//!< @brief \ref ENETDOWN
+	ANSI_ENETUNREACH,	//!< @brief \ref ENETUNREACH
+	ANSI_ENETRESET,		//!< @brief \ref ENETRESET
+	ANSI_ECONNABORTED,	//!< @brief \ref ECONNABORTED
+	ANSI_ECONNRESET,	//!< @brief \ref ECONNRESET
+	ANSI_ENOBUFS,		//!< @brief \ref ENOBUFS
+	ANSI_EISCONN,		//!< @brief \ref EISCONN
+	ANSI_ENOTCONN,		//!< @brief \ref ENOTCONN
+	ANSI_EDESTADDRREQ,	//!< @brief \ref EDESTADDRREQ
+	ANSI_ESHUTDOWN,		//!< @brief \ref ESHUTDOWN
+	ANSI_ETOOMANYREFS,	//!< @brief \ref ETOOMANYREFS
+	ANSI_ETIMEDOUT,		//!< @brief \ref ETIMEDOUT
+	ANSI_ECONNREFUSED,	//!< @brief \ref ECONNREFUSED
+	ANSI_ELOOP,		//!< @brief \ref ELOOP
+	ANSI_ENAMETOOLONG,	//!< @brief \ref ENAMETOOLONG
+	ANSI_EHOSTDOWN,		//!< @brief \ref EHOSTDOWN
+	ANSI_EHOSTUNREACH,	//!< @brief \ref EHOSTUNREACH
+	ANSI_ENOTEMPTY,		//!< @brief \ref ENOTEMPTY
+	ANSI_EPROCLIM,		//!< @brief \ref EPROCLIM
+	ANSI_EUSERS,		//!< @brief \ref EUSERS
+	ANSI_EDQUOT,		//!< @brief \ref EDQUOT
+	ANSI_ESTALE,		//!< @brief \ref ESTALE
+	ANSI_EREMOTE,		//!< @brief \ref EREMOTE
+	ANSI_EBADRPC,		//!< @brief \ref EBADRPC
+	ANSI_ERPCMISMATCH,	//!< @brief \ref ERPCMISMATCH
+	ANSI_EPROGUNAVAIL,	//!< @brief \ref EPROGUNAVAIL
+	ANSI_EPROGMISMATCH,	//!< @brief \ref EPROGMISMATCH
+	ANSI_EPROCUNAVAIL,	//!< @brief \ref EPROCUNAVAIL
+	ANSI_ENOLCK,		//!< @brief \ref ENOLCK
+	ANSI_EFTYPE,		//!< @brief \ref EFTYPE
+	ANSI_EAUTH,		//!< @brief \ref EAUTH
+	ANSI_ENEEDAUTH,		//!< @brief \ref ENEEDAUTH
+	ANSI_ENOSYS,		//!< @brief \ref ENOSYS
+	ANSI_ENOTSUP,		//!< @brief \ref ENOTSUP
+	ANSI_EILSEQ,		//!< @brief \ref EILSEQ
+	ANSI_EBACKGROUND,	//!< @brief \ref EBACKGROUND
+	ANSI_EDIED,		//!< @brief \ref EDIED
+	ANSI_ED,		//!< @brief \ref ED
+	ANSI_EGREGIOUS,		//!< @brief \ref EGREGIOUS
+	ANSI_EIEIO,		//!< @brief \ref EIEIO
+	ANSI_EGRATUITOUS,	//!< @brief \ref EGRATUITOUS
+	ANSI_EBADMSG,		//!< @brief \ref EBADMSG
+	ANSI_EIDRM,		//!< @brief \ref EIDRM
+	ANSI_EMULTIHOP,		//!< @brief \ref EMULTIHOP
+	ANSI_ENODATA,		//!< @brief \ref ENODATA
+	ANSI_ENOLINK,		//!< @brief \ref ENOLINK
+	ANSI_ENOMSG,		//!< @brief \ref ENOMSG
+	ANSI_ENOSR,		//!< @brief \ref ENOSR
+	ANSI_ENOSTR,		//!< @brief \ref ENOSTR
+	ANSI_EOVERFLOW,		//!< @brief \ref EOVERFLOW
+	ANSI_EPROTO,		//!< @brief \ref EPROTO
+	ANSI_ETIME,		//!< @brief \ref ETIME
+	ANSI_ECANCELED,		//!< @brief \ref ECANCELED
+	ANSI_ERESTART,		//!< @brief \ref ERESTART
+	ANSI_ECHRNG,		//!< @brief \ref ECHRNG
+	ANSI_EL2NSYNC,		//!< @brief \ref EL2NSYNC
+	ANSI_EL3HLT,		//!< @brief \ref EL3HLT
+	ANSI_EL3RST,		//!< @brief \ref EL3RST
+	ANSI_ELNRNG,		//!< @brief \ref ELNRNG
+	ANSI_EUNATCH,		//!< @brief \ref EUNATCH
+	ANSI_ENOCSI,		//!< @brief \ref ENOCSI
+	ANSI_EL2HLT,		//!< @brief \ref EL2HLT
+	ANSI_EBADE,		//!< @brief \ref EBADE
+	ANSI_EBADR,		//!< @brief \ref EBADR
+	ANSI_EXFULL,		//!< @brief \ref EXFULL
+	ANSI_ENOANO,		//!< @brief \ref ENOANO
+	ANSI_EBADRQC,		//!< @brief \ref EBADRQC
+	ANSI_EBADSLT,		//!< @brief \ref EBADSLT
+	ANSI_EDEADLOCK,		//!< @brief \ref EDEADLOCK
+	ANSI_EBFONT,		//!< @brief \ref EBFONT
+	ANSI_ENONET,		//!< @brief \ref ENONET
+	ANSI_ENOPKG,		//!< @brief \ref ENOPKG
+	ANSI_EADV,		//!< @brief \ref EADV
+	ANSI_ESRMNT,		//!< @brief \ref ESRMNT
+	ANSI_ECOMM,		//!< @brief \ref ECOMM
+	ANSI_EDOTDOT,		//!< @brief \ref EDOTDOT
+	ANSI_ENOTUNIQ,		//!< @brief \ref ENOTUNIQ
+	ANSI_EBADFD,		//!< @brief \ref EBADFD
+	ANSI_EREMCHG,		//!< @brief \ref EREMCHG
+	ANSI_ELIBACC,		//!< @brief \ref ELIBACC
+	ANSI_ELIBBAD,		//!< @brief \ref ELIBBAD
+	ANSI_ELIBSCN,		//!< @brief \ref ELIBSCN
+	ANSI_ELIBMAX,		//!< @brief \ref ELIBMAX
+	ANSI_ELIBEXEC,		//!< @brief \ref ELIBEXEC
+	ANSI_ESTRPIPE,		//!< @brief \ref ESTRPIPE
+	ANSI_EUCLEAN,		//!< @brief \ref EUCLEAN
+	ANSI_ENOTNAM,		//!< @brief \ref ENOTNAM
+	ANSI_ENAVAIL,		//!< @brief \ref ENAVAIL
+	ANSI_EISNAM,		//!< @brief \ref EISNAM
+	ANSI_EREMOTEIO,		//!< @brief \ref EREMOTEIO
+	ANSI_ENOMEDIUM,		//!< @brief \ref ENOMEDIUM
+	ANSI_EMEDIUMTYPE	//!< @brief \ref ANSI_EMEDIUMTYPE
 };
 
 //#if defined(_WIN32) &&  defined(_MSC_VER)
@@ -413,7 +398,6 @@ EDEADLOCK
 EMSGSIZE
 */
 
-
 #define  EPERM ANSI_EPERM
 #define  ESTR_ANSI_EPERM \
 "Operation not permitted; only the owner of the file (or other resource) or priv processes allowed. "
@@ -441,7 +425,6 @@ No such file or directory. This is a "file doesn't exist" error for ordinary fil
 Interrupted function call; an asynchronous signal occurred and prevented completion of the call. When this happens, you should try the call again.
 You can choose to have functions resume after a signal that is handled, rather than failing with EINTR; see Interrupted Primitives.
 */
-
 
 #define  EIO ANSI_EIO
 #define  ESTR_ANSI_EIO \
@@ -581,14 +564,12 @@ Portability Note: In many older Unix systems, this condition was indicated by EW
 A temporary resource shortage made an operation impossible. fork can return this error. It indicates that the shortage is expected to pass, so your program can try the call again later and it may succeed. It is probably a good idea to delay for a few seconds before trying it again, to allow time for other processes to release scarce resources. Such shortages are usually fairly serious and affect the whole system, so usually an interactive program should report the error to the user and return to its command loop.
 */
 
-
 #define  EWOULDBLOCK ANSI_EWOULDBLOCK
 #define  ESTR_ANSI_EWOULDBLOCK \
 "Resource temporarily unavailable; the call might work if you try again later."
 
 /*In the GNU C library, this is another name for EAGAIN (above). The values are always the same, on every operating system.
 C libraries in many older Unix systems have EWOULDBLOCK as a separate error code. */
-
 
 #define  EINPROGRESS ANSI_EINPROGRESS
 #define  ESTR_ANSI_EINPROGRESS \
@@ -767,7 +748,6 @@ Inappropriate file type or format. The file was the wrong type for the operation
 On some systems chmod returns this error if you try to set the sticky bit on a non-directory file; see Setting Permissions.
 */
 
-
 #define  EAUTH ANSI_EAUTH
 #define  ESTR_ANSI_EAUTH \
 "???  "
@@ -824,16 +804,13 @@ If the entire function is not available at all in the implementation, it returns
 #define  ESTR_ANSI_EIDRM \
 "TBD"
 
-
 #define  EMULTIHOP ANSI_EMULTIHOP
 #define  ESTR_ANSI_EMULTIHOP \
 "TBD"
 
-
 #define  ENODATA ANSI_ENODATA
 #define  ESTR_ANSI_ENODATA \
 "TBD"
-
 
 #define  ENOLINK ANSI_ENOLINK
 #define  ESTR_ANSI_ENOLINK \
@@ -843,7 +820,6 @@ If the entire function is not available at all in the implementation, it returns
 #define  ESTR_ANSI_ENOMSG \
 "TBD"
 
-
 #define  ENOSR ANSI_ENOSR
 #define  ESTR_ANSI_ENOSR \
 "TBD"
@@ -852,22 +828,17 @@ If the entire function is not available at all in the implementation, it returns
 #define  ESTR_ANSI_ENOSTR \
 "TBD"
 
-
 #define  EOVERFLOW ANSI_EOVERFLOW
 #define  ESTR_ANSI_EOVERFLOW \
 "TBD"
-
 
 #define  EPROTO ANSI_EPROTO
 #define  ESTR_ANSI_EPROTO \
 "TBD"
 
-
 #define  ETIME ANSI_ETIME
 #define  ESTR_ANSI_ETIME \
 "TBD"
-
-
 
 #define  ECANCELED ANSI_ECANCELED
 #define  ESTR_ANSI_ECANCELED \
@@ -883,126 +854,101 @@ The following error codes are defined by the Linux/i386 kernel. They are not yet
 #define  ESTR_ANSI_ERESTART \
 "TBD"
 
-
 #define  ECHRNG ANSI_ECHRNG
 #define  ESTR_ANSI_ECHRNG \
 "TBD"
-
 
 #define  EL2NSYNC ANSI_EL2NSYNC
 #define  ESTR_ANSI_EL2NSYNC \
 "TBD"
 
-
 #define  EL3HLT ANSI_EL3HLT
 #define  ESTR_ANSI_EL3HLT \
 "TBD"
-
 
 #define  EL3RST ANSI_EL3RST
 #define  ESTR_ANSI_EL3RST \
 "TBD"
 
-
 #define  ELNRNG ANSI_ELNRNG
 #define  ESTR_ANSI_ELNRNG \
 "TBD"
-
 
 #define  EUNATCH ANSI_EUNATCH
 #define  ESTR_ANSI_EUNATCH \
 "TBD"
 
-
 #define  ENOCSI ANSI_ENOCSI
 #define  ESTR_ANSI_ENOCSI \
 "TBD"
-
 
 #define  EL2HLT ANSI_EL2HLT
 #define  ESTR_ANSI_EL2HLT \
 "TBD"
 
-
 #define  EBADE ANSI_EBADE
 #define  ESTR_ANSI_EBADE \
 "TBD"
-
 
 #define  EBADR ANSI_EBADR
 #define  ESTR_ANSI_EBADR \
 "TBD"
 
-
 #define  EXFULL ANSI_EXFULL
 #define  ESTR_ANSI_EXFULL \
 "TBD"
-
 
 #define  ENOANO ANSI_ENOANO
 #define  ESTR_ANSI_ENOANO \
 "TBD"
 
-
 #define  EBADRQC ANSI_EBADRQC
 #define  ESTR_ANSI_EBADRQC \
 "TBD"
-
 
 #define  EBADSLT ANSI_EBADSLT
 #define  ESTR_ANSI_EBADSLT \
 "TBD"
 
-
 #define  EDEADLOCK ANSI_EDEADLOCK
 #define  ESTR_ANSI_EDEADLOCK \
 "TBD"
-
 
 #define  EBFONT ANSI_EBFONT
 #define  ESTR_ANSI_EBFONT \
 "TBD"
 
-
 #define  ENONET ANSI_ENONET
 #define  ESTR_ANSI_ENONET \
 "TBD"
-
 
 #define  ENOPKG ANSI_ENOPKG
 #define  ESTR_ANSI_ENOPKG \
 "TBD"
 
-
 #define  EADV ANSI_EADV
 #define  ESTR_ANSI_EADV \
 "TBD"
-
 
 #define  ESRMNT ANSI_ESRMNT
 #define  ESTR_ANSI_ESRMNT \
 "TBD"
 
-
 #define  ECOMM ANSI_ECOMM
 #define  ESTR_ANSI_ECOMM \
 "TBD"
-
 
 #define  EDOTDOT ANSI_EDOTDOT
 #define  ESTR_ANSI_EDOTDOT \
 "TBD"
 
-
 #define  ENOTUNIQ ANSI_ENOTUNIQ
 #define  ESTR_ANSI_ENOTUNIQ \
 "TBD"
 
-
 #define  EBADFD ANSI_EBADFD
 #define  ESTR_ANSI_EBADFD \
 "TBD"
-
 
 #define  EREMCHG ANSI_EREMCHG
 #define  ESTR_ANSI_EREMCHG \
@@ -1012,61 +958,49 @@ The following error codes are defined by the Linux/i386 kernel. They are not yet
 #define  ESTR_ANSI_ELIBACC \
 "TBD"
 
-
 #define  ELIBBAD ANSI_ELIBBAD
 #define  ESTR_ANSI_ELIBBAD \
 "TBD"
-
 
 #define  ELIBSCN ANSI_ELIBSCN
 #define  ESTR_ANSI_ELIBSCN \
 "TBD"
 
-
 #define  ELIBMAX ANSI_ELIBMAX
 #define  ESTR_ANSI_ELIBMAX \
 "TBD"
-
 
 #define  ELIBEXEC ANSI_ELIBEXEC
 #define  ESTR_ANSI_ELIBEXEC \
 "TBD"
 
-
 #define  ESTRPIPE ANSI_ESTRPIPE
 #define  ESTR_ANSI_ESTRPIPE \
 "TBD"
-
 
 #define  EUCLEAN ANSI_EUCLEAN
 #define  ESTR_ANSI_EUCLEAN \
 "TBD"
 
-
 #define  ENOTNAM ANSI_ENOTNAM
 #define  ESTR_ANSI_ENOTNAM \
 "TBD"
-
 
 #define  ENAVAIL ANSI_ENAVAIL
 #define  ESTR_ANSI_ENAVAIL \
 "TBD"
 
-
 #define  EISNAM ANSI_EISNAM
 #define  ESTR_ANSI_EISNAM \
 "TBD"
-
 
 #define  EREMOTEIO ANSI_EREMOTEIO
 #define  ESTR_ANSI_EREMOTEIO \
 "TBD"
 
-
 #define  ENOMEDIUM ANSI_ENOMEDIUM
 #define  ESTR_ANSI_ENOMEDIUM \
 "TBD"
-
 
 #define  EMEDIUMTYPE ANSI_EMEDIUMTYPE
 #define  ESTR_ANSI_EMEDIUMTYPE \
@@ -1074,7 +1008,6 @@ The following error codes are defined by the Linux/i386 kernel. They are not yet
 
 //#endif // !(__GNUC__) FIXME
 /*NOTE TinKer error-strings follow*/
-
 
 #define ESTR_TK_OK            "Operation returned without errors"
 #define ESTR_TK_ERROR         "General TinKer catch all error"
@@ -1097,11 +1030,7 @@ The following error codes are defined by the Linux/i386 kernel. They are not yet
 #define ESTR_ERR_NO_MORE_TIMERS         "You try to exeed the maximum number of pending timers"
 #define ESTR_ERR_UNDEF_HEAPID           "No such or invalid heap"
 
-
-
-
-
-#endif //ERRNO_H
+#endif				//ERRNO_H
 
 /*!
  * @defgroup CVSLOG_errno_h errno_h
@@ -1157,5 +1086,3 @@ The following error codes are defined by the Linux/i386 kernel. They are not yet
  *
  *
  */
-
-

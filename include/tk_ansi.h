@@ -43,11 +43,9 @@ kernel_reimpl_ansi
 #ifndef TK_ANSI_H
 #define TK_ANSI_H
 
-
-#endif //TK_ANSI_H
+#endif				//TK_ANSI_H
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-
 
 /** @defgroup kernel_reimpl_ansi ANSI functions reimplemented
 @ingroup PACKAGES
@@ -71,7 +69,6 @@ compiled and you have to explicitly set each definition. This way when
 you port for a new target (assuming no conditionals have been set by you
 yet), you will know if a function is supported or not since the linker
 will produce link errors for functions not found.
-
 
 @section missing_functions Simply missing functions
 Typically a tool-chain comes with only partial of the stdlib. Here
@@ -184,18 +181,14 @@ determinism e.t.a.)
 
 - And many other reasons that I cant remember right now...
 
-
 @attention <b>Warning:</b> notice we're playing around with void
 pointers... All sorts of strange shit happens around void pointers, be
 cartful!
-
 
 <H3>References</H2>
 @see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnanchor/html/vc6anchor.asp
 @see http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vccore98/HTML/_PREDIR_Predefined_Macros.asp
 */
-
-
 
 /*!
  * @defgroup CVSLOG_tk_ansi_h tk_ansi_h

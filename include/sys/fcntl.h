@@ -31,7 +31,6 @@
 For in-depth discussions about re-implementing ANSI functions, see \ref
 kernel_reimpl_ansi.
 
-
 @see kernel_reimpl_ansi
 @note that for Newlib
 #define	O_RDONLY	0		// +1 == FREAD
@@ -44,40 +43,37 @@ I.e. we can safely redefine the first three (mqueu needs to test for O_RDONLY so
 */
 
 #if defined (__GNUC__)
-	#include <tk_ansi.h>
-	#include <tinker/config.h>
-	#include <tk_ansi_dirwrap.h>
+#include <tk_ansi.h>
+#include <tinker/config.h>
+#include <tk_ansi_dirwrap.h>
 
+#if defined(TK_MULTI_ARCH_TARGET)
+#include BUILDCHAIN_MUARCH(sys/fcntl.h)
+#else
+#include BUILDCHAIN(sys/fcntl.h)
+#endif
 
-	#if defined(TK_MULTI_ARCH_TARGET)
-		#include BUILDCHAIN_MUARCH(sys/fcntl.h)
-	#else
-		#include BUILDCHAIN(sys/fcntl.h)
-	#endif
-
-	/*The following flags are incompatible with tinker*/
-	#undef O_RDONLY
-	#undef O_WRONLY
-	#undef O_RDWR
+	/*The following flags are incompatible with tinker */
+#undef O_RDONLY
+#undef O_WRONLY
+#undef O_RDWR
 
 //The original values (we still need them)
-	#define O_RDONLY_NL	(FREAD-1)
-	#define O_WRONLY_NL	(FWRITE-1)
-	#define O_RDWR_NL	((FREAD|FWRITE) -1)
+#define O_RDONLY_NL	(FREAD-1)
+#define O_WRONLY_NL	(FWRITE-1)
+#define O_RDWR_NL	((FREAD|FWRITE) -1)
 
 #else
-	#define O_CREAT      0x10
-	#define O_EXCL       0x20
-	#define O_NONBLOCK   0x40
+#define O_CREAT      0x10
+#define O_EXCL       0x20
+#define O_NONBLOCK   0x40
 #endif
 
 #define O_RDONLY     0x01
 #define O_WRONLY     0x02
 #define O_RDWR       0x04
 
-
-#endif //SYS_TYPES_H_TK
-
+#endif				//SYS_TYPES_H_TK
 
 /*!
  * @defgroup CVSLOG_fcntl_h fcntl_h
@@ -107,4 +103,3 @@ I.e. we can safely redefine the first three (mqueu needs to test for O_RDONLY so
  *
  *
  */
-

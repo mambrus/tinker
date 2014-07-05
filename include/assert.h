@@ -21,40 +21,33 @@
 #ifndef ASSERT_H_TK
 #define ASSERT_H_TK
 
-
 //#include "kernel/src/tk_ansi.h"
 #include <tk_ansi.h>
 
 #if defined (HAVE_CONFIG_H)
-	#include <tinker/config.h>
+#include <tinker/config.h>
 #endif
 
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 extern "C" {
 #endif
 
-void _tk_assertfail(char *assertstr, char *filestr, int line);
+	void _tk_assertfail(char *assertstr, char *filestr, int line);
 
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 }
 #endif
-
-
-
 #if !defined(__C166__)
 #	include <tk_ansi_dirwrap.h>
 #	include BUILDCHAIN(assert.h)
 #endif
-
 #if   !defined (assert) && ( \
          defined(__CYGWIN32__)  || defined(__CYGWIN__)  || \
          defined(__GNUC__)      || defined(__USE_GNU)   || \
          defined(_WIN32)        || defined(__BORLANDC__) || defined(__BCPLUSPLUS__) \
       )
-
-   #error "DONT USE TINKER'S ASSERT FOR THIS TOOL_CHAIN"
+#error "DONT USE TINKER'S ASSERT FOR THIS TOOL_CHAIN"
 #endif
-
 /*
 #ifdef NDEBUG
 #  define assert(p)   ((void)0)
@@ -64,15 +57,11 @@ void _tk_assertfail(char *assertstr, char *filestr, int line);
                     #p, __FILE__, __LINE__ ) )
 #endif
 */
-
 #define assure(p) ((p) ? (void)0 : (void) _tk_assertfail( \
                     #p, __FILE__, __LINE__ ) )
-
-
 #if (TK_HOWTO_ASSERT == TK_FNK_RENAMED)
 #undef assert
 #endif
-
 #if   !defined (assert)
 /*!
 The assert macro.
@@ -80,10 +69,8 @@ The assert macro.
 @note Always assert, ignore NDEBUG setting
 */
 #define assert(p) assure(p)
-
 #endif
-
-#endif //ASSERT_H_TK
+#endif				//ASSERT_H_TK
 /*!
  * @defgroup CVSLOG_assert_h assert_h
  * @ingroup CVSLOG

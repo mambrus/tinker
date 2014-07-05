@@ -29,7 +29,6 @@ care of the issue.
 For in-depth discussions about re-implementing ANSI functions, see \ref
 kernel_reimpl_ansi.
 
-
 @see kernel_reimpl_ansi
 
 <HR>
@@ -44,7 +43,6 @@ pointers will most likely break in RUN-TIME*/
 #include BUILDCHAIN(stdlib.h)
 #include <tinker/config.h>
 
-
 #ifndef STDLIB_H_TK
 #define STDLIB_H_TK
 
@@ -52,9 +50,9 @@ pointers will most likely break in RUN-TIME*/
 #define exit     \
    tk_exit
 
-#include <stddef.h>  //Needed for size_t
+#include <stddef.h>		//Needed for size_t
 #if (!defined(TK_USE_BUILTIN_SORT) || (TK_USE_BUILTIN_SORT==1))
-	#define TINKER_SEARCH_SORT //!< Optional define, use to debug qsort & bsearch. Undefine to use tool-chains own versions
+#define TINKER_SEARCH_SORT	//!< Optional define, use to debug qsort & bsearch. Undefine to use tool-chains own versions
 #endif
 
 #include <tinker/config.h>
@@ -62,13 +60,11 @@ pointers will most likely break in RUN-TIME*/
 extern "C" {
 #endif
 
-
 /*!
 A comparison funtion definition type that ANSI search & sort funtions use.
 It's return value is supposed to have the same meaning as for strcmp
 
 @return \f$ = \cases{ 0, & if L = R \cr <0 , & if L < R \cr >0, & if L > R } \f$
-
 
 @return  0 if eq,
 @return <0 if L<R
@@ -85,10 +81,9 @@ systems and tools.
 
 */
 #if !defined (__GNUC__) || !defined(__USE_GNU)
-typedef int comparison_fn_t (
-   const void *L,  //!< <em>"Leftmost"</em> element to compare with
-   const void *R   //!< <em>"Rightmost"</em> element to compare with
-);
+	typedef int comparison_fn_t(const void *L,	//!< <em>"Leftmost"</em> element to compare with
+				    const void *R	//!< <em>"Rightmost"</em> element to compare with
+	    );
 #endif
 
 /*!
@@ -109,15 +104,15 @@ to them using their standard ANSI name.
 #endif
 //@}
 
-
 /*!
 @name
 
 Public functions that TinKer eiter needs or need wrapped versions of.
 */
 //@{
-void *bsearch (const void *, const void *, size_t , size_t , comparison_fn_t );
-void  qsort   (void *, size_t , size_t , comparison_fn_t );
+	void *bsearch(const void *, const void *, size_t, size_t,
+		      comparison_fn_t);
+	void qsort(void *, size_t, size_t, comparison_fn_t);
 //@}
 
 /*!
@@ -127,16 +122,14 @@ Internal functions. Do \b NOT use this if you want to write portable \b applicat
 
 */
 //@{
-void _tk_quicksort ( void *, int, int, int, comparison_fn_t );
-int  _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );
+	void _tk_quicksort(void *, int, int, int, comparison_fn_t);
+	int _tk_bsearch(void *, void *, int, int, int, comparison_fn_t);
 //@}
 
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 }
 #endif
-
-
-#endif //STDLIB_H_TK
+#endif				//STDLIB_H_TK
 /*!
  * @defgroup CVSLOG_stdlib_h stdlib_h
  * @ingroup CVSLOG
@@ -184,4 +177,3 @@ int  _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );
  *  introduced.
  *
  */
-

@@ -42,17 +42,13 @@ kernel_reimpl_ansi.
 
 #include BUILDCHAIN(stdio.h)
 
-
 #if defined (__GNUC__)
-	#define perror tk_perror
+#define perror tk_perror
 #else
-	void perror (const char *message);
+void perror(const char *message);
 #endif
 
-
-
-#endif //SYS_TYPES_H_TK
-
+#endif				//SYS_TYPES_H_TK
 
 /*!
  * @defgroup CVSLOG_stdio_h stdio_h
@@ -73,4 +69,3 @@ kernel_reimpl_ansi.
  *
  *
  */
-

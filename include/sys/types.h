@@ -32,28 +32,26 @@ care of the issue.
 For in-depth discussions about re-implementing ANSI functions, see \ref
 kernel_reimpl_ansi.
 
-
 @see kernel_reimpl_ansi
 
 <HR>
 */
 
 #if defined (__GNUC__)
-	#include <tk_ansi.h>
-	#include <tinker/config.h>
-	#include <tk_ansi_dirwrap.h>
+#include <tk_ansi.h>
+#include <tinker/config.h>
+#include <tk_ansi_dirwrap.h>
 
-	#define __DEV_T void*
-	#if defined(TK_MULTI_ARCH_TARGET)
-		#include BUILDCHAIN_MUARCH(sys/types.h)
-	#else
-		#include BUILDCHAIN(sys/types.h)
-	#endif
+#define __DEV_T void*
+#if defined(TK_MULTI_ARCH_TARGET)
+#include BUILDCHAIN_MUARCH(sys/types.h)
+#else
+#include BUILDCHAIN(sys/types.h)
+#endif
 #endif
 
 #ifndef SYS_TYPES_H_TK
 #define SYS_TYPES_H_TK
-
 
 /*!
 @name
@@ -92,32 +90,28 @@ normal pthread names (very nifty!).
 #define pthread_rwlockattr_t  tk_pthread_rwlockattr_t
 //@}
 
-
-
 #if !defined (__GNUC__)
    /*!
-   This is an integer data type used to represent file modes. In the GNU
-   system, this is equivalent to unsigned int.
-   */
-   typedef unsigned int mode_t;
-#endif   //defined (_GNU_)
-
+      This is an integer data type used to represent file modes. In the GNU
+      system, this is equivalent to unsigned int.
+    */
+typedef unsigned int mode_t;
+#endif				//defined (_GNU_)
 
    //typedef struct pthread_t_ *pthread_t; //No way I'm going to return a pointer to anything for this!
    //typedef unsigned int pthread_t;
-   typedef struct tcb_t_               *pthread_t;
-   typedef struct pthread_attr_t_      *pthread_attr_t;
-   typedef struct pthread_once_t_       pthread_once_t;
-   typedef struct pthread_key_t_       *pthread_key_t;
-   typedef struct pthread_mutex_t_      pthread_mutex_t;
-   typedef struct pthread_mutexattr_t_  pthread_mutexattr_t;
-   typedef struct pthread_cond_t_       pthread_cond_t;
-   typedef struct pthread_condattr_t_   pthread_condattr_t;
-   typedef struct pthread_rwlock_t_     pthread_rwlock_t;
-   typedef struct pthread_rwlockattr_t_ pthread_rwlockattr_t;
+typedef struct tcb_t_ *pthread_t;
+typedef struct pthread_attr_t_ *pthread_attr_t;
+typedef struct pthread_once_t_ pthread_once_t;
+typedef struct pthread_key_t_ *pthread_key_t;
+typedef struct pthread_mutex_t_ pthread_mutex_t;
+typedef struct pthread_mutexattr_t_ pthread_mutexattr_t;
+typedef struct pthread_cond_t_ pthread_cond_t;
+typedef struct pthread_condattr_t_ pthread_condattr_t;
+typedef struct pthread_rwlock_t_ pthread_rwlock_t;
+typedef struct pthread_rwlockattr_t_ pthread_rwlockattr_t;
 
-#endif //SYS_TYPES_H_TK
-
+#endif				//SYS_TYPES_H_TK
 
 /*!
  * @defgroup CVSLOG_types_h types_h
@@ -170,4 +164,3 @@ normal pthread names (very nifty!).
  *
  *
  */
-

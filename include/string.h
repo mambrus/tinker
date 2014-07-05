@@ -31,7 +31,6 @@
 For in-depth discussions about re-implementing ANSI functions, see \ref
 kernel_reimpl_ansi.
 
-
 @see kernel_reimpl_ansi
 
 <HR>
@@ -44,15 +43,12 @@ kernel_reimpl_ansi.
 #include BUILDCHAIN(string.h)
 
 #if defined (__GNUC__)
-	#define strerror tk_strerror
+#define strerror tk_strerror
 #else
-	char * strerror (int errnum);
+char *strerror(int errnum);
 #endif
 
-
-
-#endif //STRING_H_TK
-
+#endif				//STRING_H_TK
 
 /*!
  * @defgroup CVSLOG_string_h string_h
@@ -73,4 +69,3 @@ kernel_reimpl_ansi.
  *
  *
  */
-

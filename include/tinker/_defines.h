@@ -133,8 +133,7 @@ Some well known boards:
 /*
 Some well known function names for emergency consoles:
 */
-int console_write(const char*, int );
-int emrgcy_write(const char*, int );
+int console_write(const char *, int);
+int emrgcy_write(const char *, int);
 
-#endif // HIXS_H
-
+#endif				// HIXS_H

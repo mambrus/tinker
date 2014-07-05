@@ -37,35 +37,29 @@ POSIX_RT
 #define SEMAPHORE_H
 
 #if defined(__GNUC__)
-   #include <tinker/config.h>
-   #if (!defined(TK_COMP_POSIX_RT) || TK_COMP_POSIX_RT==0 ) && !defined(ECODES_ONLY)
-   #error "<semaphore.h> belongs to a component that your build of TinKer didn't include. Please reconfigure and rebuild TinKer."
-   #endif
+#include <tinker/config.h>
+#if (!defined(TK_COMP_POSIX_RT) || TK_COMP_POSIX_RT==0 ) && !defined(ECODES_ONLY)
+#error "<semaphore.h> belongs to a component that your build of TinKer didn't include. Please reconfigure and rebuild TinKer."
 #endif
-
+#endif
 
 #include <tinker/config.h>
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 extern "C" {
 #endif
 
+	typedef unsigned long sem_t;
 
-
-
-typedef unsigned long sem_t;
-
-int sem_init (sem_t * sem, int pshared, unsigned int value );
-int sem_destroy (sem_t * sem );
-int sem_trywait (sem_t * sem );
-int sem_wait (sem_t * sem );
-int sem_post (sem_t * sem);
+	int sem_init(sem_t * sem, int pshared, unsigned int value);
+	int sem_destroy(sem_t * sem);
+	int sem_trywait(sem_t * sem);
+	int sem_wait(sem_t * sem);
+	int sem_post(sem_t * sem);
 
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 }
 #endif
-
 #endif
-
 /*!
  * @defgroup CVSLOG_semaphore_h semaphore_h
  * @ingroup CVSLOG
@@ -100,4 +94,3 @@ int sem_post (sem_t * sem);
  *
  *
  */
-

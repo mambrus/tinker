@@ -29,26 +29,25 @@
 For in-depth discussions about re-implementing ANSI functions, see \ref
 kernel_reimpl_ansi.
 
-
 @see kernel_reimpl_ansi
 
 <HR>
 */
 
 #if defined (__GNUC__)
-   #include <tk_ansi.h>
-   #include <tk_ansi_dirwrap.h>
+#include <tk_ansi.h>
+#include <tk_ansi_dirwrap.h>
 
-   #if defined (__rtems__)
-   #undef __rtems__
-   #define __was_rtems__
-   #endif
+#if defined (__rtems__)
+#undef __rtems__
+#define __was_rtems__
+#endif
 
-   #include BUILDCHAIN(sys/stat.h)
+#include BUILDCHAIN(sys/stat.h)
 
-   #if defined (__was_rtems__)
-   #define __rtems__
-   #endif
+#if defined (__was_rtems__)
+#define __rtems__
+#endif
 
 /*!
 http://www.opengroup.org/onlinepubs/009695399/functions/mknod.html
@@ -64,8 +63,7 @@ int mkfifo(const char *path, mode_t mode);
 #ifndef SYS_TYPES_H_TK
 #define SYS_TYPES_H_TK
 
-#endif //SYS_TYPES_H_TK
-
+#endif				//SYS_TYPES_H_TK
 
 /*!
  * @defgroup CVSLOG_stat_h stat_h
@@ -84,4 +82,3 @@ int mkfifo(const char *path, mode_t mode);
  *  2) Filesystem - in progress
  *
  */
-

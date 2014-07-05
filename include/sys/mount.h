@@ -26,10 +26,8 @@
 
 @brief ANSI sys/mount.h file <b>IMPORTANT:</b> See the note in the detailed section!
 
-
 For in-depth discussions about re-implementing ANSI functions, see \ref
 kernel_reimpl_ansi.
-
 
 @see kernel_reimpl_ansi
 
@@ -107,7 +105,6 @@ when the directories are accessed while the filesystem in mounted.
 A so called "magic number". This macro is provided for standard complience.*/
 #define MS_MGC_VAL	(1<<16)
 
-
 //Bits for unmounting
 
 /*!
@@ -118,13 +115,11 @@ all, some, or no busy conditions.
 */
 #define MNT_FORCE	(1<<0)
 
+int mount(const char *special_file, const char *dir, const char *fstype,
+	  unsigned long int options, const void *data);
+int umount2(const char *file, int flags);
 
-
-int mount (const char *special_file, const char *dir, const char *fstype, unsigned long int options, const void *data);
-int umount2 (const char *file, int flags);
-
-#endif //MOUNT_H_TK
-
+#endif				//MOUNT_H_TK
 
 /*!
  * @defgroup CVSLOG_mount_h mount_h
@@ -135,4 +130,3 @@ int umount2 (const char *file, int flags);
  *
  *
  */
-
