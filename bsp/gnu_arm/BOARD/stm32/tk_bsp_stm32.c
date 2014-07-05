@@ -156,6 +156,35 @@ clock_t bsp_Times(struct tms *buf){
    buf->tms_cstime = 0;      
 }
 
+extern void abort(void);
+/* Overloaded due to that Newlib linker-script is incompatible and for
+   additional sanity/OOM detection */
+caddr_t bsp_Sbrk(int incr) {
+   /* The external addresses below are defined by the linker. */
+   extern char end;
+   extern char stack_start;
+
+   static char *heap_end;
+   char *prev_heap_end;
+
+   if (heap_end == 0) {
+      heap_end = &end;
+   }
+   prev_heap_end = heap_end;
+
+   if (heap_end + incr > &stack_start) {
+      /* Would crash into root stack. Not OK as context will be stored at
+         BOS */
+      tk_trap(TC_NOMEM);
+      tk_exit(TC_NOMEM);
+      /*Should never reach this line*/
+      abort();
+   }
+
+   heap_end += incr;
+   return (caddr_t) prev_heap_end;
+}
+
 void (*bsp_syscall)(void);
 void bsp_Syscall_mon(void *hix_syscall){
 	bsp_syscall = hix_syscall;
@@ -187,7 +216,7 @@ int tk_bsp_sysinit (void){
 	hixs.lseek        = hixs.lseek;
 	//hixs.open         = ppc_open;		// <- NOTE
 	//hixs.read         = ppc_read;		// <- NOTE
-	//hixs.sbrk         = ppc_sbrk;		// <- NOTE use built in -it's OK
+	hixs.sbrk         = bsp_Sbrk;		   // <- NOTE Newlib ditto is incompatible
 	hixs.settimeofday = hixs.settimeofday;
 	hixs.stat         = hixs.stat;
 	hixs.times        = bsp_Times;		// <- NOTE

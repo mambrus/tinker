@@ -88,12 +88,17 @@ SECTIONS
 
 	_end = .;
 	PROVIDE (end = .);
-
+/*
+ *
+HEAP lays here in-between of what is left
+ *
+ */
 	.stack (NOLOAD) :
 	{
 		/* Have stack in a section of is own. This becomes TinKer root stack */
 		/* Do not PROVIDE. Force code to define symbols */
 		_stack_start = . ;
+	   PROVIDE (stack_start = .);
 		*(stack)
 	} >RSTACK
 	. = ALIGN(4);
