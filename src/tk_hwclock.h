@@ -17,9 +17,9 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-   
 
- 
+
+
 #ifndef TK_HWCLOCK_H
 #define TK_HWCLOCK_H
 
@@ -29,10 +29,10 @@
 
 /*- public definitions **/
 
-/*! 
+/*!
 A 32 bit value (at least) representing the time in HW ticks in the HW clock.
 
-@note the lengt in physical time that each tick represents is different between 
+@note the lengt in physical time that each tick represents is different between
 different targets depending on HW timers resolution and frequency.
 */
 #define HWtick_t unsigned long
@@ -71,26 +71,26 @@ typedef struct{
 
 
 /*!
-Get the quality of the HWclock. Will assume this never changes after system 
+Get the quality of the HWclock. Will assume this never changes after system
 startup. (lower level must assure this to be true).
 
 HWclock_stats_t *HWclock_stats
 
-@note HWclockNR must be either CLK1 or CLK2. CLK1 is the system timer HW and CLK2 is 
+@note HWclockNR must be either CLK1 or CLK2. CLK1 is the system timer HW and CLK2 is
 used for high-res timeout events (ptime)
 
-@note This function must be provided by lower level BSP 
+@note This function must be provided by lower level BSP
 */
 #define tk_getHWclock_Quality(HWclockNR, HWclock_stats) tk_getHWclock_Quality_##HWclockNR(HWclock_stats)
 
 
 /*!
-Set new time in HWclock. Pending timer will be prevented from fireing and current 
+Set new time in HWclock. Pending timer will be prevented from fireing and current
 time will be overwritten.
 
 HWtick_t ticks - i.e. a non pointer variable
 
-@note HWclockNR must be either CLK1 or CLK2. CLK1 is the system timer HW and CLK2 is 
+@note HWclockNR must be either CLK1 or CLK2. CLK1 is the system timer HW and CLK2 is
 used for high-res timeout events (ptime)
 
 @note This function must be provided by lower level BSP and you <b>must make sure this is ATOMIC</b>
@@ -98,13 +98,13 @@ used for high-res timeout events (ptime)
 #define  tk_setHWclock(HWclockNR, ticks) tk_setHWclock_##HWclockNR(ticks)
 
 /*!
-Gets the time value in the HWclock while running (i.e. count down will not be 
-stopped). Pending timer will NOT be prevented from fireing while read is done. 
+Gets the time value in the HWclock while running (i.e. count down will not be
+stopped). Pending timer will NOT be prevented from fireing while read is done.
 To make an atomic read, first use disarmHWclock.
 
 HWtick_t *ticks - i.e. a <b>pointer return</b> variable
 
-@note HWclockNR must be either CLK1 or CLK2. CLK1 is the system timer HW and CLK2 is 
+@note HWclockNR must be either CLK1 or CLK2. CLK1 is the system timer HW and CLK2 is
 used for high-res timeout events (ptime)
 
 @note This function must be provided by lower level BSP and you <b>must make sure this is ATOMIC</b>
@@ -114,7 +114,7 @@ used for high-res timeout events (ptime)
 /*!
 Arms the HW clock so that it can fire (i.e. enables generating an interrupt).
 
-@note HWclockNR must be either CLK1 or CLK2. CLK1 is the system timer HW and CLK2 is 
+@note HWclockNR must be either CLK1 or CLK2. CLK1 is the system timer HW and CLK2 is
 used for high-res timeout events (ptime)
 
 @note This function must be provided by lower level BSP
@@ -125,7 +125,7 @@ used for high-res timeout events (ptime)
 /*!
 Disarms the HW clock so that it can NOT fire (i.e. disables generating an interrupt).
 
-@note HWclockNR must be either CLK1 or CLK2. CLK1 is the system timer HW and CLK2 is 
+@note HWclockNR must be either CLK1 or CLK2. CLK1 is the system timer HW and CLK2 is
 used for high-res timeout events (ptime)
 
 @note This function must be provided by lower level BSP
@@ -136,8 +136,8 @@ used for high-res timeout events (ptime)
 /*------------------------ obsolete follows? -----------------------------------*/
 
 /*!
-Arms the HWclock_ to trigger at a certain "time" from now. Time is expressed in 
-"ticks" and are normalized to have correspond to the actual time 
+Arms the HWclock_ to trigger at a certain "time" from now. Time is expressed in
+"ticks" and are normalized to have correspond to the actual time
 required (this is handled in this component based on the HWclock_ quality provided).
 
 @note This function must be provided by lower level BSP
@@ -145,8 +145,8 @@ required (this is handled in this component based on the HWclock_ quality provid
 //extern void armHWclock           (HWtick_t ticks);
 
 /*!
-Dissarms any pending fireing of the HWclock_. Function will return if it was 
-succesfull or not. Unsucessfull will most likelly mean that the fireing 
+Dissarms any pending fireing of the HWclock_. Function will return if it was
+succesfull or not. Unsucessfull will most likelly mean that the fireing
 allready happened.
 
 @note This function must be provided by lower level BSP
@@ -173,12 +173,12 @@ allready happened.
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
    #error "HW timers not implemented for this target yet"
 #elif defined( __C166__ )
-   #include <../bsp/XC167_Keil/dave/GPT1.H> 
+   #include <../bsp/XC167_Keil/dave/GPT1.H>
    #include <../bsp/XC167_Keil/dave/GPT2.H>
 #elif defined(__GNUC__)
    #error "Implementation (only simulated \"scheduler in process\" possible) for a GNU system not done yet"
 #else
-   #error "Can\'t determine the target for the TINKER kernel"   
+   #error "Can\'t determine the target for the TINKER kernel"
 #endif
 
 
@@ -186,8 +186,8 @@ allready happened.
 
 #endif
 
-  
-/*! 
+
+/*!
  * @defgroup CVSLOG_tk_hwclock_h tk_hwclock_h
  * @ingroup CVSLOG
  *
@@ -252,7 +252,7 @@ allready happened.
  *  Revision 1.1  2006/02/02 15:40:26  ambrmi09
  *  HW clock definitions added
  *
- *  
+ *
  *******************************************************************/
 
 

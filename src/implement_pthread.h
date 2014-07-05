@@ -22,7 +22,7 @@
 @file
 @ingroup PTHREAD
 
-@brief Definitions that don't need to be public 
+@brief Definitions that don't need to be public
 
 Definitions that don't need to be public for the \ref PTHREAD component.
 Keeps all the internals out of pthread.h
@@ -78,7 +78,7 @@ struct pthread_t_ {
 Describes the thread attributes. It should be considered an opaque
 record, the names of the fields can change anytime. Use the appropriate
 functions to set the thread attributes.
- 
+
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_attr_t.html
 */
 struct pthread_attr_t_ {
@@ -93,7 +93,7 @@ struct pthread_attr_t_ {
 
 /*!
 TBD
- 
+
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_key_t.html
 */
 struct pthread_key_t_ {
@@ -177,7 +177,7 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 //};
 //
 //
-///* 
+///*
 //* Special value to mark attribute objects as valid.
 //*/
 //#define _PTHREAD_ATTR_VALID ((unsigned long) 0xC4C0FFEE)
@@ -237,16 +237,16 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 //
 //struct pthread_cond_t_ {
 //long waiters;                       /* # waiting threads             */
-//pthread_mutex_t waitersLock;        /* Mutex that guards access to 
+//pthread_mutex_t waitersLock;        /* Mutex that guards access to
 //					waiter count                  */
-//sem_t sema;                         /* Queue up threads waiting for the 
+//sem_t sema;                         /* Queue up threads waiting for the
 //					condition to become signaled  */
-//HANDLE waitersDone;                 /* An auto reset event used by the 
-//					broadcast/signal thread to wait 
+//HANDLE waitersDone;                 /* An auto reset event used by the
+//					broadcast/signal thread to wait
 //					for the waiting thread(s) to wake
-//					up and get a chance at the  
+//					up and get a chance at the
 //					semaphore                     */
-//int wasBroadcast;                   /* keeps track if we are signaling 
+//int wasBroadcast;                   /* keeps track if we are signaling
 //					or broadcasting               */
 //};
 //
@@ -291,7 +291,7 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 //   *              The pthread_key_t->threads attribute is the head of
 //   *              a chain of assoctiations that runs through the
 //   *              nextThreads link. This chain provides the 1 to many
-//   *              relationship between a pthread_key_t and all the 
+//   *              relationship between a pthread_key_t and all the
 //   *              PThreads that have called pthread_setspecific for
 //   *              this pthread_key_t.
 //   *
@@ -433,7 +433,7 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
 //*/
 //#if defined(__CYGWIN32__) || defined(__CYGWIN__)
 //
-///* 
+///*
 //* Macro uses args so we can cast start_proc to LPTHREAD_START_ROUTINE
 //* in order to avoid warnings because of return type
 //*/
@@ -542,5 +542,5 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast);
  *  Revision 1.3  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
- *  
+ *
  */

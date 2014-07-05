@@ -101,12 +101,12 @@
 
 
 //****************************************************************************
-// @Function      void ASC1_vInit(void) 
+// @Function      void ASC1_vInit(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This is the initialization function of the ASC1 function 
-//                library. It is assumed that the SFRs used by this library 
-//                are in its reset state. 
+// @Description   This is the initialization function of the ASC1 function
+//                library. It is assumed that the SFRs used by this library
+//                are in its reset state.
 //
 //----------------------------------------------------------------------------
 // @Returnvalue   None
@@ -175,13 +175,13 @@ void ASC1_vInit(void)
   ///  - Rx interrupt group level (GLVL) = 0
   ///  - Rx group priority extension (GPX) = 0
 
-  ASC1_RIC       =  0x0064;     
+  ASC1_RIC       =  0x0064;
 
 
   //   -----------------------------------------------------------------------
   //   Default Settings for Service Request Flags:
   //   -----------------------------------------------------------------------
-  ASC1_TBIC_IR   =  1;           // indicates that the transmit buffer is 
+  ASC1_TBIC_IR   =  1;           // indicates that the transmit buffer is
                                  // empty
 
   // USER CODE BEGIN (ASC1_Function,3)
@@ -195,22 +195,22 @@ void ASC1_vInit(void)
 
 
 //****************************************************************************
-// @Function      void ASC1_vSendData(uword uwData) 
+// @Function      void ASC1_vSendData(uword uwData)
 //
 //----------------------------------------------------------------------------
-// @Description   This function writes a send data initialization word into 
+// @Description   This function writes a send data initialization word into
 //                the transmit buffer register.
-//                
-//                Note: 
-//                In a multiprocessor system the master with this function 
-//                has the possibility to send data to the selected slave. To 
+//
+//                Note:
+//                In a multiprocessor system the master with this function
+//                has the possibility to send data to the selected slave. To
 //                achieve this, the 9th bit must set on zero.
 //
 //----------------------------------------------------------------------------
 // @Returnvalue   None
 //
 //----------------------------------------------------------------------------
-// @Parameters    uwData: 
+// @Parameters    uwData:
 //                Data to be send
 //
 //----------------------------------------------------------------------------
@@ -224,17 +224,17 @@ void ASC1_vInit(void)
 
 void ASC1_vSendData(uword uwData)
 {
-  ASC1_TBIC_IR = 0;        //  reset transmit buffer interrupt request 
+  ASC1_TBIC_IR = 0;        //  reset transmit buffer interrupt request
   ASC1_TBUF    = uwData;   //  load transmit buffer register
 
 } //  End of function ASC1_vSendData
 
 
 //****************************************************************************
-// @Function      uword ASC1_uwGetData(void) 
+// @Function      uword ASC1_uwGetData(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This function reads out the content of the receive buffer 
+// @Description   This function reads out the content of the receive buffer
 //                register which contains the received data.
 //
 //----------------------------------------------------------------------------
@@ -260,12 +260,12 @@ uword ASC1_uwGetData(void)
 
 
 //****************************************************************************
-// @Function      void ASC1_viRx(void) 
+// @Function      void ASC1_viRx(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This is the receive interrupt service routine for the ASC1. 
-//                It is called if the data has been received. 
-//                Please note that you have to add application specific code 
+// @Description   This is the receive interrupt service routine for the ASC1.
+//                It is called if the data has been received.
+//                Please note that you have to add application specific code
 //                to this function.
 //
 //----------------------------------------------------------------------------
@@ -287,25 +287,25 @@ void ASC1_viRx(void) interrupt ASC1_RINT
 {
 
   // USER CODE BEGIN (Rx,2)
-      
+
    c1buff[0] = ASC1_uwGetData();
-   q_send_ny(tk_sys_queues[Q_SERIAL_1_I],c1buff);         
-   tk_yield_event(); 
-   
+   q_send_ny(tk_sys_queues[Q_SERIAL_1_I],c1buff);
+   tk_yield_event();
+
   // USER CODE END
 
 } //  End of function ASC1_viRx
 
 
 //****************************************************************************
-// @Function      void ASC1_vReceiverOn(void) 
+// @Function      void ASC1_vReceiverOn(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This function releases the receive function of the ASC1. 
-//                After initialization this function does not need to be 
-//                recalled. 
-//                Note: 
-//                This function must be called everytime data is to be 
+// @Description   This function releases the receive function of the ASC1.
+//                After initialization this function does not need to be
+//                recalled.
+//                Note:
+//                This function must be called everytime data is to be
 //                received in synchronous mode.
 //
 //----------------------------------------------------------------------------

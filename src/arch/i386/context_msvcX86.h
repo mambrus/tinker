@@ -27,23 +27,23 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 
 #define TK_STI()	                                                            \
    __asm{ STI }
-*/   
+*/
 
 #define TK_CLI()
 #define TK_STI()
 
 
-   
+
 #define REAL_STACK_SIZE( TCB )  \
-   ( TCB.stack_size ) 
-   
+   ( TCB.stack_size )
+
 
 //Push & pops of all regs and flags possibly not needed
 #define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                                                    \
     __asm{ pushfd                       }                                                                      \
     __asm{ pushad                       }                                                                      \
     __asm{ mov TSP1,esp                 }
-  
+
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )                                                                     \
     __asm{ mov esp,TSP1                 }                                                                      \
     __asm{ popad                        }                                                                      \
@@ -59,12 +59,12 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 
 //Does nothing on this port
 #define BIND_STACK( _stack_struct, _temp2 )
-    
+
 
 /*!
-On MSVC this will never ever work since EAX is actually \b trashed 
+On MSVC this will never ever work since EAX is actually \b trashed
 on entry of each function :/
-None of the 3 canlling conventions (_cdecl, _stdcall. _fastcall) will not 
+None of the 3 canlling conventions (_cdecl, _stdcall. _fastcall) will not
 trash EAX. It's almost like MS did this on purpose for some obscure reason.
 
 See the following dissasembly output for _cdecl
@@ -88,7 +88,7 @@ In MSCV's case there is a workaround, and that is to declare the function in que
 
 __declspec(naked) void   * _tk_destructor( void *foo )
 {
-bla... 
+bla...
 }
 
 @todo Threads normal exit and selfdestruct. This issue is not solved and will come back!
@@ -110,7 +110,7 @@ bla...
 #define STACK_PTR( ADDR ) \
    ((char *)ADDR.tstack)
 
-//Not needed to do anything really. But just in case, follow the new convention 
+//Not needed to do anything really. But just in case, follow the new convention
 #define REINIT_STACKADDR( ADDR, size ) \
    (ADDR.stack_size = size)
 

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *

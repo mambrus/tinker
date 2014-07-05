@@ -2,7 +2,7 @@
 // mtrojer@arrownordic.com
 // $WCREV$
 //! Defines the speed of the CPU and VPB clock.
-//! \page AEB01 aeb01.h 
+//! \page AEB01 aeb01.h
 //! \ingroup BSPINC
 
 #ifndef _AEB01_H

@@ -27,7 +27,7 @@ int	setjmp(jmp_buf __jmpb){
 }
 
 #if 0
-  asm __volatile__ ( 
+  asm __volatile__ (
       "stw %%sp,%[mystack]"
       : [mystack] "=m" (OUT_SP)
       : /**/
@@ -51,7 +51,7 @@ int tk_bsp_sysinit (void){
       #if (TK_SYSTEM==__SYS_DEFAULT__)
 /*
          extern void    initialise_monitor_handles _PARAMS ((void));
-         initialise_monitor_handles(); 
+         initialise_monitor_handles();
 */
       #elif (TK_SYSTEM==__SYS_HIXS__)
          extern int     (*hixs_close)        (int file);
@@ -81,8 +81,8 @@ int tk_bsp_sysinit (void){
          hixs_fork         = hixs_fork;
          hixs_fstat        = hixs_fstat;
          hixs_getpid       = hixs_getpid;
-         hixs_gettimeofday = hixs_gettimeofday; 
-         hixs_isatty       = hixs_isatty; 
+         hixs_gettimeofday = hixs_gettimeofday;
+         hixs_isatty       = hixs_isatty;
          hixs_kill         = hixs_kill;
          hixs_link         = hixs_link;
          hixs_lseek        = hixs_lseek;
@@ -90,11 +90,11 @@ int tk_bsp_sysinit (void){
          hixs_sbrk         = hixs_sbrk;
          hixs_settimeofday = hixs_settimeofday;
          hixs_stat         = hixs_stat;
-         hixs_times        = hixs_times;           
+         hixs_times        = hixs_times;
          hixs_unlink       = hixs_unlink;
          hixs_wait         = hixs_wait;
-         hixs_write        = hixs_write;            
-         hixs_syscall_mon  = hixs_syscall_mon;     
+         hixs_write        = hixs_write;
+         hixs_syscall_mon  = hixs_syscall_mon;
 
       #else
          #error "System either not supported or provided"
@@ -120,7 +120,7 @@ int tk_bsp_sysinit (void){
 
       //Showing our ISR intentions
       vc.func       = systimer_Handler;
-      vc.vecaddr    = VICVectAddr7;              
+      vc.vecaddr    = VICVectAddr7;
       vc.vecchannel = VIC_CH_TIMER0;
 
       systimer_init(&vc);

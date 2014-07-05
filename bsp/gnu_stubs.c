@@ -17,14 +17,14 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 /*!
 @file
 @brief stubbed low level functions for GNU
 
 This file contains low level stub-functions that GNU libc would require.
 
-These stubs would enable you to build and link any GNU SW, but most 
+These stubs would enable you to build and link any GNU SW, but most
 importantly glibc.
 
 If you allready have a working GNU tool-chain, It's quite likely that it
@@ -38,7 +38,7 @@ properly implement (since there are neither less nor more of them).
 #ifdef USE_GNU_SYSCALL_STUBS
 
 #include <errno.h>
-#include <time.h>    
+#include <time.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -68,18 +68,18 @@ int bsp_printf(char *formatstr, ...){
 	va_list ap;
 	int rc,i;
 	tk_tcb_t *curr_tcb = _tk_current_tcb();
-	
+
 	va_start(ap, formatstr);
 	memcpy(argbuff,ap,255);
 	va_end(ap);
 	rc = sprintf(mystr_buff[cidx],formatstr,argbuff);
-	cidx = (cidx+1) % MAX_STRINGS; 
-	
-	
+	cidx = (cidx+1) % MAX_STRINGS;
+
+
 	if ( (curr_tcb->Thid) == 0 ){
 		for (i=lidx; lidx != cidx; lidx = (lidx+1) % MAX_STRINGS ){
 			printf("%s",mystr_buff[lidx]);
-		}      
+		}
 		fflush(stdout);
 	}else{
 		return 0;
@@ -96,12 +96,12 @@ int bsp_printf(char *formatstr, ...){
 
 /**
 _exit
-The _exit function is the primitive used for process termination by exit. It 
-is declared in the header file unistd.h. 
+The _exit function is the primitive used for process termination by exit. It
+is declared in the header file unistd.h.
 
-The _exit function is the primitive for causing a process to terminate with 
-status status. Calling this function does not execute cleanup functions 
-registered with atexit or on_exit.  
+The _exit function is the primitive for causing a process to terminate with
+status status. Calling this function does not execute cleanup functions
+registered with atexit or on_exit.
 
 Exits a program without cleaning up files. If your system doesn�t provide this
 routine, it is best to avoid linking with subroutines that require it (such as exit or
@@ -109,7 +109,7 @@ system).
 */
 /*
 void _exit (int status){
-   while(1); 
+   while(1);
 };
 */
 
@@ -251,20 +251,20 @@ caddr_t sbrk(int incr){
       _write (1, "Heap and stack collision\n", 25);
       abort ();
    }
-   heap_end += incr;   
+   heap_end += incr;
    return (caddr_t) prev_heap_end;
-*/   
+*/
 }
 
 /**
 stat
 
-The stat function returns information about the attributes of the file named 
-by filename in the structure pointed to by buf. 
+The stat function returns information about the attributes of the file named
+by filename in the structure pointed to by buf.
 
-If filename is the name of a symbolic link, the attributes you get describe 
-the file that the link points to. If the link points to a nonexistent file 
-name, then stat fails reporting a nonexistent file. 
+If filename is the name of a symbolic link, the attributes you get describe
+the file that the link points to. If the link points to a nonexistent file
+name, then stat fails reporting a nonexistent file.
 
 Status of a file (by name). Minimal implementation is shown in the following
 example.
@@ -321,11 +321,11 @@ int write(int file, char *ptr, int len){
 	for (todo = 0; todo < len; todo++) {
 	   //writechar(*ptr++);
 	}
-	return len;     
+	return len;
 }
 #endif
 
-/*! 
+/*!
  * @defgroup CVSLOG_gnu_stubs_c gnu_stubs_c
  * @ingroup CVSLOG
  *

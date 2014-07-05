@@ -130,8 +130,8 @@ Reset                                    0
 
 */
 
-typedef union{ 
-	__uint32_t raw; 
+typedef union{
+	__uint32_t raw;
 	struct {
 		__uint32_t SMC2 		:1;
 		__uint32_t SMC2CS 		:3;

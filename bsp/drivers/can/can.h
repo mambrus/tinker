@@ -23,7 +23,7 @@
 #define CAN_RX_BUFFSZ 0x1000
 
 /*! Data structure recomended to be used for communicating with the driver
-(both in and out) 
+(both in and out)
 */
 typedef struct {
 			__uint32_t 	id;

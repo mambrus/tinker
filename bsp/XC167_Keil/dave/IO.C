@@ -97,12 +97,12 @@
 
 
 //****************************************************************************
-// @Function      void IO_vInit(void) 
+// @Function      void IO_vInit(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This is the initialization function of the IO function 
-//                library. It is assumed that the SFRs used by this library 
-//                are in its reset state. 
+// @Description   This is the initialization function of the IO function
+//                library. It is assumed that the SFRs used by this library
+//                are in its reset state.
 //
 //----------------------------------------------------------------------------
 // @Returnvalue   None
@@ -180,7 +180,7 @@ void IO_vInit(void)
   ///  - no pin of port P1H is used
 
   P1H            =  0x0000;      // load data register
-  ALTSEL0P1H     =  0x0000;      // load alternate output function select 
+  ALTSEL0P1H     =  0x0000;      // load alternate output function select
                                  // register 0
   POCON1H        =  0x0000;      // load output control register
   DP1H           =  0x0000;      // load direction register
@@ -191,7 +191,7 @@ void IO_vInit(void)
   ///  - no pin of port P1L is used
 
   P1L            =  0x0000;      // load data register
-  ALTSEL0P1L     =  0x0000;      // load alternate output function select 
+  ALTSEL0P1L     =  0x0000;      // load alternate output function select
                                  // register 0
   POCON1L        =  0x0000;      // load output control register
   DP1L           =  0x0000;      // load direction register
@@ -213,7 +213,7 @@ void IO_vInit(void)
 
   ODP2           =  0x0000;      // load open-drain register
   P2             =  0x0000;      // load data register
-  ALTSEL0P2      =  0x0000;      // load alternate output function select 
+  ALTSEL0P2      =  0x0000;      // load alternate output function select
                                  // register 0
   POCON2         =  0x0000;      // load output control register
   DP2            =  0x0100;      // load direction register
@@ -221,16 +221,16 @@ void IO_vInit(void)
   ///  -----------------------------------------------------------------------
   ///  Configuration of Port P3:
   ///  -----------------------------------------------------------------------
-  ///  P3.0 is used as alternate output for the ASC1 Transmit Data Output 
+  ///  P3.0 is used as alternate output for the ASC1 Transmit Data Output
   ///  (TxDA1)
   ///  - push/pull output is selected
   ///  P3.1 is used as alternate input for the ASC1 Receive data Input (RxDA1)
-  ///  P3.10 is used as alternate output for the ASC Transmit Data Output 
+  ///  P3.10 is used as alternate output for the ASC Transmit Data Output
   ///  (TxDA0)
   ///  - push/pull output is selected
-  ///  P3.11 is used as alternate input for the ASC0 Receive data Input 
+  ///  P3.11 is used as alternate input for the ASC0 Receive data Input
   ///  (RxDA0)
-  ///  P3.12 is used as alternate output for the Byte High Enable Output 
+  ///  P3.12 is used as alternate output for the Byte High Enable Output
   ///  (BHE_n)
 
   ///  P3.0 - P3.7 threshold type: TTL input
@@ -248,9 +248,9 @@ void IO_vInit(void)
 
   ODP3           =  0x0000;      // load open-drain register
   P3             =  0x0000;      // load data register
-  ALTSEL0P3      =  0x0000;      // load alternate output function select 
+  ALTSEL0P3      =  0x0000;      // load alternate output function select
                                  // register 0
-  ALTSEL1P3      =  0x0000;      // load alternate output function select 
+  ALTSEL1P3      =  0x0000;      // load alternate output function select
                                  // register 1
   POCON3         =  0x0000;      // load output control register
   DP3            =  0x0000;      // load direction register
@@ -273,9 +273,9 @@ void IO_vInit(void)
 
   ODP4           =  0x0000;      // load open-drain register
   P4             =  0x0000;      // load data register
-  ALTSEL0P4      =  0x0000;      // load alternate output function select 
+  ALTSEL0P4      =  0x0000;      // load alternate output function select
                                  // register 0
-  ALTSEL1P4      =  0x0000;      // load alternate output function select 
+  ALTSEL1P4      =  0x0000;      // load alternate output function select
                                  // register 1
   POCON4         =  0x0000;      // load output control register
   DP4            =  0x0000;      // load direction register
@@ -295,9 +295,9 @@ void IO_vInit(void)
   ///  P6.2 is used as alternate input for the Chip select (CS2_n)
   ///  P6.3 is used as alternate input for the Chip select (CS3_n)
   ///  P6.4 is used as alternate input for the Chip select (CS4_n)
-  ///  P6.5 is used as alternate input for the External hold request input 
+  ///  P6.5 is used as alternate input for the External hold request input
   ///  (HOLD_n)
-  ///  P6.6 is used as alternate output for the Hold acknowledge output 
+  ///  P6.6 is used as alternate output for the Hold acknowledge output
   ///  (HLDA_n)
   ///  - push/pull output is selected
   ///  P6.7 is used as alternate output for the Bus request output (BREQ_n)
@@ -313,7 +313,7 @@ void IO_vInit(void)
 
   ODP6           =  0x0000;      // load open-drain register
   P6             =  0x0000;      // load data register
-  ALTSEL0P6      =  0x0000;      // load alternate output function select 
+  ALTSEL0P6      =  0x0000;      // load alternate output function select
                                  // register 0
   POCON6         =  0x0000;      // load output control register
   DP6            =  0x0000;      // load direction register
@@ -325,9 +325,9 @@ void IO_vInit(void)
 
   ODP7           =  0x0000;      // load open-drain register
   P7             =  0x0000;      // load data register
-  ALTSEL0P7      =  0x0000;      // load alternate output function select 
+  ALTSEL0P7      =  0x0000;      // load alternate output function select
                                  // register 0
-  ALTSEL1P7      =  0x0000;      // load alternate output function select 
+  ALTSEL1P7      =  0x0000;      // load alternate output function select
                                  // register 1
   POCON7         =  0x0000;      // load output control register
   DP7            =  0x0000;      // load direction register
@@ -339,9 +339,9 @@ void IO_vInit(void)
 
   ODP9           =  0x0000;      // load open-drain register
   P9             =  0x0000;      // load data register
-  ALTSEL0P9      =  0x0000;      // load alternate output function select 
+  ALTSEL0P9      =  0x0000;      // load alternate output function select
                                  // register 0
-  ALTSEL1P9      =  0x0000;      // load alternate output function select 
+  ALTSEL1P9      =  0x0000;      // load alternate output function select
                                  // register 1
   POCON9         =  0x0000;      // load output control register
   DP9            =  0x0000;      // load direction register
@@ -349,7 +349,7 @@ void IO_vInit(void)
   ///  -----------------------------------------------------------------------
   ///  Configuration of Port P20:
   ///  -----------------------------------------------------------------------
-  ///  P20.4 is used as alternate output for the address latch enable signal 
+  ///  P20.4 is used as alternate output for the address latch enable signal
   ///  (ALE)
 
   ///  P20.0 - P20.7 threshold type: TTL input

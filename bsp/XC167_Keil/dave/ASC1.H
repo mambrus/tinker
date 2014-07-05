@@ -9,7 +9,7 @@
 //
 // @Codegenerator 2.4
 //
-// @Description   This file contains all function prototypes and macros for 
+// @Description   This file contains all function prototypes and macros for
 //                the ASC1 module.
 //
 //----------------------------------------------------------------------------
@@ -96,13 +96,13 @@ void ASC1_vReceiverOn(void);
 
 
 //****************************************************************************
-// @Macro         ASC1_ubTxBufFree() 
+// @Macro         ASC1_ubTxBufFree()
 //
 //----------------------------------------------------------------------------
-// @Description   This macro can be used for checking the status of the 
-//                transmit buffer register. The transmit buffer may only be 
-//                written to if it is empty, this implies that the previous 
-//                content of the transmit buffer have been loaded into the 
+// @Description   This macro can be used for checking the status of the
+//                transmit buffer register. The transmit buffer may only be
+//                written to if it is empty, this implies that the previous
+//                content of the transmit buffer have been loaded into the
 //                transmit shift register.
 //
 //----------------------------------------------------------------------------
@@ -120,12 +120,12 @@ void ASC1_vReceiverOn(void);
 
 
 //****************************************************************************
-// @Macro         ASC1_vReceiverOff() 
+// @Macro         ASC1_vReceiverOff()
 //
 //----------------------------------------------------------------------------
-// @Description   This macro disables the receive function of the ASC1. A 
-//                data that is currently being received is received to 
-//                completion, including generation of the receive interrupt 
+// @Description   This macro disables the receive function of the ASC1. A
+//                data that is currently being received is received to
+//                completion, including generation of the receive interrupt
 //                request.
 //
 //----------------------------------------------------------------------------

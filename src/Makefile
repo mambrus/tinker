@@ -10,10 +10,10 @@ endif
 SUB_MODS_CONFIGURE := $(patsubst %, make configure -C %;, $(SUB_MODS))
 .PHONY: all info configure configure_this configure_subs clean cleanhard
 
-all: 
+all:
 	make -f Makefile-gnu all
 
-clean: 
+clean:
 	make -f Makefile-gnu clean
 
 cleanhard:
@@ -36,7 +36,7 @@ configure_this:
 	cp $(TINKER_SRC_DIR)/Makefile-gnu.in .
 	autoconf -I $(TINKER_SRC_DIR)
 	if test -n "$(SUB_MODS)"; then for SUBDIR in $(SUB_MODS); do cp $(TINKER_SRC_DIR)/src/Makefile $$SUBDIR/; done; fi
-	
+
 
 configure_subs:
 	$(SUB_MODS_CONFIGURE)

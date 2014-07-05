@@ -17,11 +17,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 /*!
 @file
 
-This file is a Blackfin elf 
+This file is a Blackfin elf
 
 
 */
@@ -50,7 +50,7 @@ This file is a Blackfin elf
 #define TK_STI()  /*TBD FIXME*/
 
 #define REAL_STACK_SIZE( TCB )            \
-   ( TCB.stack_size ) 
+   ( TCB.stack_size )
 
 #define PUSHALL()	/*No need to PUSHALL on this target- Allready done by setjmp*/
 #define POPALL()	/*No need to POPALL on this target- Allready done by longjmp*/
@@ -62,7 +62,7 @@ This file is a Blackfin elf
       : /**/									\
       : "memory"								\
    );
-		   
+
 #define SET_SP( IN_SP )							\
    asm __volatile__ (							\
 		"SP = %[mystack];"						\
@@ -94,7 +94,7 @@ This file is a Blackfin elf
 #define STACK_PTR( ADDR ) \
    (ADDR.tstack)
 
-//Not needed to do anything really. But just in case, follow the new convention 
+//Not needed to do anything really. But just in case, follow the new convention
 #define REINIT_STACKADDR( ADDR, size ) \
    (ADDR.stack_size = size)
 

@@ -19,8 +19,8 @@
  ***************************************************************************/
 
 /*
-This file contains declarations of the expected board and CPU specific 
-__init_x __fini_x functions (so we don't need duplicate this file 
+This file contains declarations of the expected board and CPU specific
+__init_x __fini_x functions (so we don't need duplicate this file
 everywhere).
 */
 

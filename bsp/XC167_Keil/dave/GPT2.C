@@ -97,12 +97,12 @@
 
 
 //****************************************************************************
-// @Function      void GPT2_vInit(void) 
+// @Function      void GPT2_vInit(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This is the initialization function of the GPT2 function 
-//                library. It is assumed that the SFRs used by this library 
-//                are in its reset state. 
+// @Description   This is the initialization function of the GPT2 function
+//                library. It is assumed that the SFRs used by this library
+//                are in its reset state.
 //
 //----------------------------------------------------------------------------
 // @Returnvalue   None
@@ -180,10 +180,10 @@ void GPT2_vInit(void)
   ///  Configuration of the used GPT2 Interrupts:
   ///  -----------------------------------------------------------------------
   ///  timer 6 service request node configuration:
-  //// - timer 6 interrupt is enabled but NO INTERRUPT WILL BE GENERATED 
+  //// - timer 6 interrupt is enabled but NO INTERRUPT WILL BE GENERATED
   ////   because priority level is 0
 
-  GPT12E_T6IC    =  0x0040;     
+  GPT12E_T6IC    =  0x0040;
 
 
   // USER CODE BEGIN (GPT2_Function,3)

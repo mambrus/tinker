@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 /*!
 @file
 
@@ -38,7 +38,7 @@ compared to traditional TinKer context switching:
 * Some extra overhead while creating a thread, which will also actually run for a
   very short time (needed so it can create it's own scope)
 
-* We're forced to rely on an external implementation in a very critical part of 
+* We're forced to rely on an external implementation in a very critical part of
   the kernel.
 
 TinKers original PUSH/POP based technique share a lot of similarities with
@@ -50,7 +50,7 @@ drawbacks:
   for a certain architecture (In this implementation there are actually only
   2 lines of assembly code).
 
-+ We need not to bother with certain special handling due to different 
++ We need not to bother with certain special handling due to different
   GCC -m options or certain CPU variants limitations or issues. We'll let
   the tool-chains libc implementation handle those instead (great!)
 
@@ -80,7 +80,7 @@ techniques.
 
 @attention Consider this implementation highly EXPERIMENTAL
 
-@note In-line assembly syntax: 
+@note In-line assembly syntax:
 asm ( "statements" : output_registers : input_registers : clobbered_registers);
 
 */
@@ -109,7 +109,7 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #define TK_STI()  /*TBD FIXME*/
 
 #define REAL_STACK_SIZE( TCB )            \
-   ( TCB.stack_size ) 
+   ( TCB.stack_size )
 
 #define PUSHALL()	/*No need to PUSHALL on this target- Allready done by setjmp*/
 #define POPALL()	/*No need to POPALL on this target- Allready done by longjmp*/
@@ -121,7 +121,7 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
       : /**/							\
       : "memory"						\
    );
-   
+
 #define SET_SP( IN_SP )						\
    asm __volatile__ (						\
       "lwz %%sp,%[mystack]"					\
@@ -153,7 +153,7 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #define STACK_PTR( ADDR ) \
    (ADDR.tstack)
 
-//Not needed to do anything really. But just in case, follow the new convention 
+//Not needed to do anything really. But just in case, follow the new convention
 #define REINIT_STACKADDR( ADDR, size ) \
    (ADDR.stack_size = size)
 

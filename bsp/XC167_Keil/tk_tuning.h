@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
+
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 #ifndef TK_TUNING_H
@@ -39,9 +39,9 @@ Read ratio as x:y or user_size/system_size
 //#define TK_MINIMUM_STACK_SIZE ((minimum_system_stack_size + 1)*USR_SYS_RATIO) + SAFEZONE)
 
 #define TK_MINIMUM_STACK_SIZE 0x0300  //!< TBD this @todo TBD this
-#define TK_NORMAL_STACK_SIZE  0x0600  
+#define TK_NORMAL_STACK_SIZE  0x0600
 
-//SCHED 
+//SCHED
 #define TK_MAX_THREADS          50
 #define TK_MAX_PRIO_LEVELS      0x10
 #define TK_MAX_THREADS_AT_PRIO  TK_MAX_THREADS
@@ -55,8 +55,8 @@ Read ratio as x:y or user_size/system_size
 
 #endif  //TK_TUNING_H
 
-  
-/*! 
+
+/*!
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $

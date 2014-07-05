@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
+
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 #ifndef TK_TUNING_H
@@ -29,15 +29,15 @@
 
 //App & system
 #ifndef TK_MINIMUM_STACK_SIZE
-	#define TK_MINIMUM_STACK_SIZE 	0x1000  
+	#define TK_MINIMUM_STACK_SIZE 	0x1000
 #endif
 #ifndef TK_NORMAL_STACK_SIZE
 	#define TK_NORMAL_STACK_SIZE  	0x1000
 #endif
 
-//SCHED 
+//SCHED
 #ifndef TK_MAX_THREADS
-	#define TK_MAX_THREADS          10  
+	#define TK_MAX_THREADS          10
 #endif
 #ifndef TK_MAX_PRIO_LEVELS
 	#define TK_MAX_PRIO_LEVELS      4
@@ -62,14 +62,14 @@
 #define TK_HOWTO_MALLOC 		TK_FNK_ORIGINAL
 #define TK_HOWTO_CLOCK  		TK_FNK_STUBBED
 #define TK_HOWTO_PRINTK 		TK_FNK_VOIDED
-#define TK_HOWTO_ASSERT 		TK_FNK_RENAMED      
-*/  
+#define TK_HOWTO_ASSERT 		TK_FNK_RENAMED
+*/
 
 #define TK_HOWTO_MALLOC 		TK_FNK_ORIGINAL
 //#define TK_HOWTO_CLOCK  		TK_FNK_STUBBED
 #define TK_HOWTO_CLOCK  		TK_FNK_ORIGINAL
 #define TK_HOWTO_PRINTK 		TK_FNK_RENAMED
-#define TK_HOWTO_ASSERT 		TK_FNK_RENAMED      
+#define TK_HOWTO_ASSERT 		TK_FNK_RENAMED
 
 
 #define TRAP( NUM )     \
@@ -78,8 +78,8 @@
 
 #endif  //TK_TUNING_H
 
-  
-/*! 
+
+/*!
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $

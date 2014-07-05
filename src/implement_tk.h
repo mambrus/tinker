@@ -22,7 +22,7 @@
 @file
 @ingroup SCHED
 
-@brief Definitions that don't need to be public 
+@brief Definitions that don't need to be public
 
 Definitions that don't need to be public for the \ref SCHED component.
 Keeps all the internals out of th.h
@@ -47,10 +47,10 @@ Defines the threads status (bit addressable)
 	- __S_ = SLEEP = Process is blocked on timer (sleeping)
 	- _Q__ = QUEUE = Process is blocked on \b any kind of syncronisation primitive. I.e. semaphore, mutex, queue, pthread conditional variable e.t.a.
 	- Z___ = ZOMBI = Process is but waiting for cleanup operation (usually idle) to renove it
-   
+
 @note the convenient naming. This is very practical when debugging the
 dispatcher since symbolic names will easily be translated to
-corresponding bits. This is actually the only \e real reason for this enum to 
+corresponding bits. This is actually the only \e real reason for this enum to
 exist, since \ref STATEBITS does the same job.
 */
 typedef enum {
@@ -78,8 +78,8 @@ typedef enum {
 #define ZOMBI ____Z___	//!< "Zombi" state (simplyfied PROCSTATE)
 
 /*!
-@brief Defines what the threads is blocked on. 
-Defines on what the threads is blocked. 
+@brief Defines what the threads is blocked on.
+Defines on what the threads is blocked.
 
 Note that the Q means it's blocked on a entity else than internal \ref
 SCHED, which means that it's blocked on a synch entity of some kind.
@@ -89,7 +89,7 @@ I.e. anything else than another thread, cancelation or native timeout.
 //typedef enum{TERM_BIT=1,SLEEP_BIT=2,QUEUE_BIT=4,ZOMBI_BIT=8}STATEBITS;
 
 /*!
-@brief Wake-up events. 
+@brief Wake-up events.
 Wake-up events (i.e. last reason to go ready)
 */
 typedef enum{E_NONE, E_CHILDDEATH, E_TIMER, E_ITC, E_ITC2}wakeE_t;
@@ -100,16 +100,16 @@ information about any of the following synch entities:
  - TK_ITC entities
    - TK semaphore
    - TK queue
-   - TK vqueue 
+   - TK vqueue
 
  - Pthread entities
-   - Mutexes    
-   - Conditional variables 
-   - Keys 
-   
+   - Mutexes
+   - Conditional variables
+   - Keys
+
  - POSIX 1b
    - Semaphores
-   
+
  - Ptimer
 */
 typedef enum {
@@ -117,8 +117,8 @@ typedef enum {
    BON_ITC,            //!< Any of the native ITC entities
    BON_PMUTEX,         //!< Pthread mutex
    BON_SEMAPHORE,      //!< POSIX 1b semaphore
-   BON_PTIMER          //!< pTimer 
-}bon_sel_t; 
+   BON_PTIMER          //!< pTimer
+}bon_sel_t;
 
 /*!
 Information about what the thread is blocked on
@@ -133,7 +133,7 @@ typedef struct bon_t_ {
       struct tcb_t_           *tcb;
       struct itc_t_           *itc;
       struct pthread_mutex_t_ *mutex;
-   }entity;   
+   }entity;
 }bon_t;
 
 
@@ -164,7 +164,7 @@ typedef struct tcb_t_{
    clock_t        wakeuptime;          //!< When to wake up if sleeping
    wakeE_t        wakeupEvent;         //!< Helper variable mainly for ITC
    void*          retval;              //!< The return value of a thread. Either return code or value of \ref tk_threadexit()
-/*  
+/*
    //Obsolete stuff - kept for reference
    start_func_f   start_funct;         //!< Address of the threads entry function. Used ONLY for debugging purposes
    init_func_f    init_funct;          //!< Support of the pThread <em>"once"</em> concept.
@@ -324,6 +324,6 @@ extern int __tk_IntFlagCntr;
  *  Revision 1.3  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
- *  
+ *
  */
 

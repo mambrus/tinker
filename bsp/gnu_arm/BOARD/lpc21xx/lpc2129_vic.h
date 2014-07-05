@@ -4,7 +4,7 @@
 //! Vectored Interrupt Controller (VIC) Driver.
 //! Defines VIC_* constants.
 //! Defines struct vic_control
-//! \page LPC2129_VIC lpc2129_vic.h 
+//! \page LPC2129_VIC lpc2129_vic.h
 //! \ingroup BSPINC
 
 #ifndef _LPC2129_VIC_H

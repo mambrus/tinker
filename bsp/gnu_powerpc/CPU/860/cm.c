@@ -81,10 +81,10 @@ Notes on how to handle CM interrupts:
 5. Handle the events in the SCC2 Rx BD or Tx BD tables.
 6. Clear CISR[SCC2].
 
-*/ 
+*/
 
 void CM_Handler( void ){
-	civr_t *civr_p = (civr_t*)&CIVR;		
+	civr_t *civr_p = (civr_t*)&CIVR;
 	civr_p->f.IACK=1;
 	civr_t civr_temp = *civr_p;
 
@@ -92,7 +92,7 @@ void CM_Handler( void ){
 	__uint32_t cisr_raw;
 
 	cicr_t *cicr_p = (cicr_t*)&CICR;
-	
+
 	ciid_t *cipr_p = (ciid_t*)&CIPR;
 	ciid_t *cimr_p = (ciid_t*)&CIMR;
 	ciid_t *cisr_p = (ciid_t*)&CISR;
@@ -122,9 +122,9 @@ void CM_Handler( void ){
 
 }
 
-/*! 
-Attach an interrupt handler routine to a certain CM event 
-This is second level IRQ handling defined by HW. 
+/*!
+Attach an interrupt handler routine to a certain CM event
+This is second level IRQ handling defined by HW.
 @note Mimics TinKer 1'st level IRQ
 */
 int CM_isr_install(int level, isr_handler isr){
@@ -142,6 +142,6 @@ void CM_init(){
 	civr_t *civr_p = (civr_t*)&CIVR;
 	civr_p->f.IACK=1;
 
-	tk_isr_install(lvl_Intrnl_5,CM_Handler);		
+	tk_isr_install(lvl_Intrnl_5,CM_Handler);
 
 }

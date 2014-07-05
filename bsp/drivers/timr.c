@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -21,34 +21,34 @@
 /*!
 				TIMER
 
-This is quite similar to the TIME driver, but slightly more complex driver. 
+This is quite similar to the TIME driver, but slightly more complex driver.
 It's still a good starting point for self-studies and show you how to
 implement multiple threads and use queues inside a driver.
 
 Remeber that in TinKer there is no difference between driver-code and any
-other code. I.e. the same queues and threads API as anywhere else can be 
+other code. I.e. the same queues and threads API as anywhere else can be
 used.
 
-The TIMER driver provides you with with the system up-time via a block 
+The TIMER driver provides you with with the system up-time via a block
 device (/dev/timer) in the form of a clock_t data, but it does so only
 AFTER it's reference time has expired. Until then, any reading from
 the device will lead to that the reading thread blocks.
 
 You can change the behaviour of the driver by using the fcntl API. At
 initial opening, the reference time will be relative to the time of
-the next read. You can change this to absolute time (among others). Just 
+the next read. You can change this to absolute time (among others). Just
 remeber to do any changes *before* the next read.
 
-Since there is no way to awake a blocked thread thats blocked on a 
+Since there is no way to awake a blocked thread thats blocked on a
 time-out and prevent a deadlock by misstake, when you open the devive,
 the time-out reverence will be preset to "now" + 10 seconds.
 
-@NOTE 
+@NOTE
 This driver blocks. To operate, it needs a POSIX 1003.1c compliant kernel.
 
 @NOTE
 This simple driver will ignore flags that affect blocking and scheduling
-for the sake of simplicity. The drivers behavior is instead hard-coded 
+for the sake of simplicity. The drivers behavior is instead hard-coded
 (if you want, you can implement that as an exercise youself).
 
 */
@@ -97,7 +97,7 @@ void *timr_thread(void *inpar){
 			break;
 	}
 	ctime=clock();
-	ctime-=op_data->time_ref;	
+	ctime-=op_data->time_ref;
 	return (void*)ctime;
 }
 
@@ -112,24 +112,24 @@ int DRV_IO(fcntl)(int file, int command, ...){
 	errno = ENOSYS;
 	return -1;
 }
-		
+
 int DRV_IO(fstat)(int file, struct stat *st) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	st->st_mode = hndl->inode->mode;;
 	return 0;
 }
-	
+
 int DRV_IO(isatty)(int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 1;
 }
-		
+
 int DRV_IO(link)(char *old, char *new) {
-	assert(DRV_IO(assert_info) == NULL);	
+	assert(DRV_IO(assert_info) == NULL);
 	errno=EMLINK;
 	return -1;
 }
-	
+
 int DRV_IO(lseek)(int file, int ptr, int dir) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 0;
@@ -143,7 +143,7 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 		inode=va_arg(ap,tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);	
+	hndl=tk_new_handle(inode,flags);
 
 	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
 	((DRV_IO(hndl_data_t)*)(hndl->data))->time_open	= clock();
@@ -151,7 +151,7 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 
 	return (int)hndl;
 }
-	
+
 int DRV_IO(read)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	DRV_IO(hndl_data_t)	*op_data = (DRV_IO(hndl_data_t)*)(hndl->data);
@@ -160,26 +160,26 @@ int DRV_IO(read)(int file, char *ptr, int len) {
 	assure( pthread_create(
 		&(((DRV_IO(hndl_data_t)*)(hndl->data))->tmr_thread),
 		NULL,
-		timr_thread, 
+		timr_thread,
 		file) == 0);
 	pthread_join(((DRV_IO(hndl_data_t)*)(hndl->data))->tmr_thread,&ctime);
 
 	memcpy(ptr,&ctime,sizeof(clock_t));
 	return sizeof(clock_t);
 }
-		
+
 int DRV_IO(stat)(const char *file, struct stat *st) {
 	assert(DRV_IO(assert_info) == NULL);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-		
+
 int DRV_IO(unlink)(char *name) {
 	assert(DRV_IO(assert_info) == NULL);
 	errno=ENOENT;
 	return -1;
 }
-	
+
 int DRV_IO(write)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	DRV_IO(hndl_data_t)	*op_data = (DRV_IO(hndl_data_t)*)(hndl->data);

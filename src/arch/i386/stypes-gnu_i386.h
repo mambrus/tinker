@@ -3,13 +3,13 @@
  *  DESCRIPTION: TinKerOS.
  *
  *  AUTHOR: Michael Ambrus
- *                              
- *  HISTORY:    
+ *
+ *  HISTORY:
  *
  *  Current $Revision: 1.1 $
  *
  *******************************************************************/
-  
+
 
 #ifndef TK_HWTYPES_GNU_i386_H
 #define TK_HWTYPES_GNU_i386_H
@@ -19,9 +19,9 @@
 
 #include <stddef.h>
 
-/*! 
-Architecture specific representation of a stack adress. In x86 this can be a 
-simple char* even in 16bit modes, since a pointer contains both segment and 
+/*!
+Architecture specific representation of a stack adress. In x86 this can be a
+simple char* even in 16bit modes, since a pointer contains both segment and
 offset.
 */
 typedef struct{
@@ -35,7 +35,7 @@ typedef struct{
 #endif
 
 
-  
+
 /*!
  * @defgroup CVSLOGtk_hwtypes_borlandX86_h tk_hwtypes_borlandX86_h
  * @ingroup CVSLOG

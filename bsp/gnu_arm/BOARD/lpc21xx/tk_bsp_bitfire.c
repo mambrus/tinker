@@ -17,13 +17,13 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
  /*!
  @brief Syscalls implemented for the Bitfire board
-  
+
  Bitfire is a starterkit from Arrow electronics. You should be able to
  use this as a template for any LPC2129 based HW.
- 
+
  */
 
 #include <tinker/config.h>
@@ -63,7 +63,7 @@ static uart_control uc1;
 #define NAME_TELETYPE ":tt"
 
 int bsp_Open            (char *name, int mode, int len){
-   
+
    if ( strncmp(name,NAME_TELETYPE,len) == 0 ){  //Lib wants handles for std- in/out/err
       if (mode == MODE_READ)
          return DEV_STDIN;
@@ -82,7 +82,7 @@ int bsp_Write0          (/*TBD*/){}
 
 int bsp_Write           (int fh, char *ptr,int len){
    int i;
-   
+
    switch (fh){
    case DEV_STDOUT :
       for (i=0; i<len; i++)
@@ -96,9 +96,9 @@ int bsp_Write           (int fh, char *ptr,int len){
       assert("Write error: Bad filehandle" == 0);
    }
 
-   //Return #chars not written (i.e. 0)   
+   //Return #chars not written (i.e. 0)
    return 0;
-} 
+}
 
 int bsp_Read            (/*TBD*/){}
 int bsp_ReadC           (/*TBD*/){}
@@ -109,8 +109,8 @@ int bsp_TmpNam          (/*TBD*/){}
 int bsp_Remove          (/*TBD*/){}
 int bsp_Rename          (/*TBD*/){}
 
-/* 
- This function needs working. Among others we need to read mickeys/mackes 
+/*
+ This function needs working. Among others we need to read mickeys/mackes
  several times to detect is IRQ has happened betweeb while reading the first
  and second part (potential wrap-around).
 */
@@ -119,10 +119,10 @@ int bsp_Clock           (){
 	unsigned int TuS_low  = sys_mickey;           //Low  32 bit uS worth value
 	long long    TuS_high = sys_mackey;           //High 32 bit uS worth value
 	unsigned int cratio = MICKEYS_PER_SEC/CLOCKS_PER_SEC;
-	
+
 	long long Tcl = ((TuS_high << 32) + TuS_low ) / cratio;
-	
-	return Tcl; //Trunc it on purpose (best we can do anyway)	
+
+	return Tcl; //Trunc it on purpose (best we can do anyway)
 }
 
 int bsp_Time            (/*TBD*/){}
@@ -138,36 +138,36 @@ clock_t bsp_Times(struct tms *buf){
    (*buf).tms_utime  = (clock_t)bsp_Clock();
    buf->tms_stime  = 0;
    buf->tms_cutime = 0;
-   buf->tms_cstime = 0;      
+   buf->tms_cstime = 0;
 }
 
 void (*bsp_syscall)(void);
 void bsp_Syscall_mon(void *hix_syscall){
 	bsp_syscall = hix_syscall;
-};         
+};
 
 /*!
 
  @note
- ISR bindings are used at this lvls (important that other part knows of each 
+ ISR bindings are used at this lvls (important that other part knows of each
  other's ISR's)
- 
+
  */
-int tk_bsp_sysinit        (void){   
-   
+int tk_bsp_sysinit        (void){
+
    vic_global_enable_int();
-   
-   {  // Set up the terminal IO      
-      
-        
+
+   {  // Set up the terminal IO
+
+
       #if !defined(__SYS_ANGEL_SWI__)
       #error "Sanity check"
       #endif
-      
+
       //Hook up the lib (nobody else will)
       #if (TK_SYSTEM==__SYS_ANGEL_SWI__)
          extern void    initialise_monitor_handles _PARAMS ((void));
-         initialise_monitor_handles(); 
+         initialise_monitor_handles();
       #elif (TK_SYSTEM==__SYS_HIXS__)
          extern int     (*hixs_close)        (int file);
          extern void    (*hixs_exit)         (int status);
@@ -188,16 +188,16 @@ int tk_bsp_sysinit        (void){
          extern int     (*hixs_unlink)       (char *name);
          extern int     (*hixs_wait)         (int *status);
          extern int     (*hixs_write)        (int file, char *ptr, int len);
-         extern void    (*hixs_syscall_mon)  (void *);         
-         
-         hixs_close        = hixs_close;        
+         extern void    (*hixs_syscall_mon)  (void *);
+
+         hixs_close        = hixs_close;
          hixs_exit         = hixs_exit;
          hixs_execve       = hixs_execve;
          hixs_fork         = hixs_fork;
          hixs_fstat        = hixs_fstat;
          hixs_getpid       = hixs_getpid;
-         hixs_gettimeofday = hixs_gettimeofday; 
-         hixs_isatty       = hixs_isatty; 
+         hixs_gettimeofday = hixs_gettimeofday;
+         hixs_isatty       = hixs_isatty;
          hixs_kill         = hixs_kill;
          hixs_link         = hixs_link;
          hixs_lseek        = hixs_lseek;
@@ -210,36 +210,36 @@ int tk_bsp_sysinit        (void){
          hixs_wait         = hixs_wait;
          hixs_write        = bsp_Write;            // <--
          hixs_syscall_mon  = bsp_Syscall_mon;      // <--
-         
+
       #else
          #error "System either not supported or provided"
       #endif
-        
+
       //Initialize the UART:s for std- in/out/err
       uc0.port = 0;
       uc0.LCR = LCR_WLS_8BIT | LCR_SBS_1BIT | LCR_PE_0 | LCR_PS_ODD | LCR_BK_0 | LCR_DLAB_1;
       uc0.baudrate = 115200;
       uart_polled_init(&uc0);
-      
+
       uc1.port = 1;
       uc1.LCR = LCR_WLS_8BIT | LCR_SBS_1BIT | LCR_PE_0 | LCR_PS_ODD | LCR_BK_0 | LCR_DLAB_1;
       uc1.baudrate = 115200;
       uart_polled_init(&uc1);
    }
-   
+
    {  // Set up system timer
       vic_control vc;
-      
+
       //Showing our ISR intentions
       vc.func       = systimer_Handler;
-      vc.vecaddr    = VICVectAddr7;              
+      vc.vecaddr    = VICVectAddr7;
       vc.vecchannel = VIC_CH_TIMER0;
-      
+
       systimer_init(&vc);
-      
-      
+
+
    }
-   
+
 }
 
 

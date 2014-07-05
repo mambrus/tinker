@@ -31,14 +31,14 @@
 
 #define MICKEYS_PER_SEC		1000
 
-typedef union{ 
-	__uint16_t raw; 
-	
+typedef union{
+	__uint16_t raw;
+
 	struct {
-		__uint16_t PIRQ:8;	// Periodic interrupt request level. 
-			// Conﬁgures internal interrupt levels 
+		__uint16_t PIRQ:8;	// Periodic interrupt request level.
+			// Conﬁgures internal interrupt levels
 			// for periodic interrupts.
-		__uint16_t PS:1; // Periodic interrupt status. Can be cleared 
+		__uint16_t PS:1; // Periodic interrupt status. Can be cleared
 			//by writing a 1 to it (zero has no effect)
 		__uint16_t ZERO:4; // Reserverd (should be cleared)
 		__uint16_t PIE:1; // Periodic interrupt enable
@@ -50,8 +50,8 @@ typedef union{
 
 	}f;
 }piscr_t;
-typedef union{ 
-	__uint32_t raw; 	
+typedef union{
+	__uint32_t raw;
 	struct {
 		__uint16_t COUNT:16;	// Value
 		__uint16_t ZERO:16; 	// Reserved (should be cleared)

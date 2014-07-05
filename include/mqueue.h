@@ -35,7 +35,7 @@ POSIX_RT
 @see POSIX_RT
 @see PTHREAD
 */
- 
+
 #ifndef _MQUEUE_H
 #define _MQUEUE_H
 
@@ -75,7 +75,7 @@ struct mq_attr{
    size_t mq_msgsize;
    size_t mq_maxmsg;
 };
- 
+
 /*mq_close*/
 /*EBADF */
 
@@ -88,7 +88,7 @@ struct mq_attr{
 
 /*
 EXIST
-ENAMETOOLONG 
+ENAMETOOLONG
 ENOENT
 ENOSPC
 */

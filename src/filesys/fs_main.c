@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -28,7 +28,7 @@
 
 
 //FIXME make these more transparent
-#define RX_BUFFLEN	102  
+#define RX_BUFFLEN	102
 #define TX_BUFFLEN	102
 
 extern tk_id_t		__fcntr;
@@ -68,7 +68,7 @@ int fs_fcntl (int file, int command, ...){
 	rc=hndl->inode->iohandle->fcntl(file,command,ap);
 
 	va_end(ap);
-	
+
 	return rc;
 }
 
@@ -78,7 +78,7 @@ int fs_fcntl (int file, int command, ...){
 NOTE fstat is called only if buffered access needs to be determined
 (i.e. if file was openwd with fopen). For low leve access (open, read, write
 e.t.a.) it's never called exept if called explicitly by the application.
-*/	
+*/
 int fs_fstat(int file, struct stat *st) {
 	if ((file>=0) && (file<=2)){
 		st->st_mode = S_IFCHR;
@@ -89,7 +89,7 @@ int fs_fstat(int file, struct stat *st) {
 	CHECK_FH(hndl,fstat);
 	return hndl->inode->iohandle->fstat(file, st);
 }
-	
+
 /*!
 @brief http://www.opengroup.org/onlinepubs/009695399/
 */
@@ -104,7 +104,7 @@ int fs_isatty(int file) {
 
 /*!
 @brief http://www.opengroup.org/onlinepubs/009695399/
-*/		
+*/
 int fs_link(char *old, char *new) {
 	assert(assert_info == NULL);
 	errno=EMLINK;
@@ -113,7 +113,7 @@ int fs_link(char *old, char *new) {
 
 /*!
 @brief http://www.opengroup.org/onlinepubs/009695399/
-*/	
+*/
 int fs_lseek(int file, int ptr, int dir) {
 	if ((file>=0) && (file<=2)){
 		assert("lseek for sddin/out not supported" == NULL);
@@ -127,8 +127,8 @@ int fs_lseek(int file, int ptr, int dir) {
 @brief http://www.opengroup.org/onlinepubs/009695399/
 
 @note We're always passing at least a third argument to the drivers open
-Unless the oflag contains O_CREATE, this is a pointer to the inode, in other 
-case this is the access permission bit-flags (mode_t). 
+Unless the oflag contains O_CREATE, this is a pointer to the inode, in other
+case this is the access permission bit-flags (mode_t).
 This is a concequence of following the standard.
 
 @attention If O_CREATE, bit-flags (mode_t) are always set to zero. I.e. Drivers can't test on this
@@ -145,7 +145,7 @@ int fs_open(const char *filename, int oflag, ...){
 	va_start (ap, oflag);
 		/*No need, nothing to parse*/
 	va_end(ap);
-	
+
 	assert(tk_dbg_flags(&dbgflags,oflag) == 0);
 	inode=isearch(__Rnod,filename);
 /*
@@ -163,9 +163,9 @@ O_SYNC
 O_TRUNC
 */
 
-	if (inode==NULL){	
+	if (inode==NULL){
 		//If inode is trunly not found, try see if we want to create it
-		//At this point we can safly assume this intention in such case is 
+		//At this point we can safly assume this intention in such case is
 		//to create it in the __Rnod tree
 		int rc = 0;
 		if (oflag & O_CREAT) {
@@ -193,7 +193,7 @@ O_TRUNC
 				assure(inode->iohandle->open);
 				return inode->iohandle->open(filename,oflag | O_CREAT,inode);
 				*/
-				
+
 			}else{
 				//Errno is allready set appropriately
 				return -1;
@@ -203,7 +203,7 @@ O_TRUNC
 			return -1;
 		}
 
-		
+
 	}
 
 	if (inode!=NULL && strncmp(inode->name,igetname(filename),NAME_MAX)){
@@ -228,13 +228,13 @@ O_TRUNC
 
 /*!
 @brief http://www.opengroup.org/onlinepubs/009695399/
-*/	
+*/
 int fs_read(int file, char *ptr, int len) {
 	if ((file>=0) && (file<=2)){
 		return std_files[file].read(file, ptr, len);
 	}
 
-	tk_fhandle_t *hndl= (tk_fhandle_t *)file;	
+	tk_fhandle_t *hndl= (tk_fhandle_t *)file;
 	CHECK_FH(hndl,fcntl);
 
 	return hndl->inode->iohandle->read(file, ptr, len);
@@ -242,7 +242,7 @@ int fs_read(int file, char *ptr, int len) {
 
 /*!
 @brief http://www.opengroup.org/onlinepubs/009695399/
-*/		
+*/
 int fs_stat(const char *file, struct stat *st) {
 	assert(assert_info == NULL);
 	st->st_mode = S_IFCHR;
@@ -251,7 +251,7 @@ int fs_stat(const char *file, struct stat *st) {
 
 /*!
 @brief http://www.opengroup.org/onlinepubs/009695399/
-*/		
+*/
 int fs_unlink(char *name) {
 	assert(assert_info == NULL);
 	errno=ENOENT;
@@ -260,7 +260,7 @@ int fs_unlink(char *name) {
 
 /*!
 @brief http://www.opengroup.org/onlinepubs/009695399/
-*/	
+*/
 int fs_write(int file, char *ptr, int len) {
 	if ((file>=0) && (file<=2)){
 		return std_files[file].write(file, ptr, len);
@@ -278,7 +278,7 @@ Creates a new handle
 */
 tk_fhandle_t *tk_new_handle(tk_inode_t *inode, int oflag){
 	tk_fhandle_t *hndl;
-	
+
 	assure( (hndl=(tk_fhandle_t*)calloc(1,sizeof(tk_fhandle_t))));
 	__fcntr++;
 	hndl->id=__flid++;

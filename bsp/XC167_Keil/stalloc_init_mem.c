@@ -22,8 +22,8 @@ mixing licenses might affect the whole application. USE AT OWN RISK!
  *          mp.len + sizeof (struct mp)
  */
 
-struct __stmp__  {                   //!< memory pool 
-  struct __stmp__ ST_MTYP *next;        //!< single-linked list 
+struct __stmp__  {                   //!< memory pool
+  struct __stmp__ ST_MTYP *next;        //!< single-linked list
   stsize_t                 len;        //!< length of following block
 };
 
@@ -31,19 +31,19 @@ void ST_MTYP * ST_MTYP __stmp__;    /* Memory Pool Head */
 
 #define	HLEN  (sizeof (struct __stmp__))
 
-/*! 
+/*!
  *  Memory pool headers.  __stmp__ points to the first available block or is
- *  NULL if there are no free blocks. 
+ *  NULL if there are no free blocks.
  *
  *  Note that the list is maintained in address order.  __stmp__ points to the
- *  block with the lowest address.  That block points to the block with the 
+ *  block with the lowest address.  That block points to the block with the
  *  next higher address and so on.
  */
 
 void stalloc_init_mempool (
   void ST_MTYP *pool,           //!< address of the memory pool
-  stsize_t size)                 //!< size of the pool in bytes  
-{              
+  stsize_t size)                 //!< size of the pool in bytes
+{
 
    /*  Set the __stmp__ to point to the beginning of the pool and set
     *  the pool size.                                                        */

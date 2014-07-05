@@ -31,7 +31,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#if defined (XMEM)  
+#if defined (XMEM)
   #define MTYP          xhuge
   #define init_mempool  xinit_mempool
   #define calloc        xcalloc
@@ -46,7 +46,7 @@
     #define MTYP  huge   // for HCOMPACT and HLARGE
   #else
     #define MTYP  far    // for other models
-    #define memcpy      fmemcpy 
+    #define memcpy      fmemcpy
   #endif
 #endif
 
@@ -67,7 +67,7 @@ extern void MTYP * MTYP __mp__;       /* Memory Pool Header */
 #define MIN_BLOCK	(HLEN * 4)
 
 void MTYP *realloc (void MTYP *oldp, TLEN size)  {
-#define p   ((struct __mp__ MTYP *) oldp)   
+#define p   ((struct __mp__ MTYP *) oldp)
 #define p0  ((struct __mp__ MTYP *)&p[-1]) /* block to realloc */
   void MTYP *newp;
 

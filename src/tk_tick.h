@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
+
 
 #ifndef TK_TICK_H
 #define TK_TICK_H
@@ -28,9 +28,9 @@
 #include <sys/time.h>
 #endif
 
-/*! 
-One mickey is \b always 1 uS worth no matter actual resolution which gives a 
-frequency in ticks per second of 1000000 (i.e. the same as  CLOCKS_PER_SEC 
+/*!
+One mickey is \b always 1 uS worth no matter actual resolution which gives a
+frequency in ticks per second of 1000000 (i.e. the same as  CLOCKS_PER_SEC
 on true POSIX targets).
 
 */
@@ -43,10 +43,10 @@ on true POSIX targets).
 #endif
 
 /*! If HWclock operations are supported or not. */
-#define HW_CLOCKED   
+#define HW_CLOCKED
 
 /*!
-Use SPEEDUP larger than 1 to make kernel advance faster. 
+Use SPEEDUP larger than 1 to make kernel advance faster.
 
 @note <b>This is used for debugging kernel internals only</b>
 */
@@ -70,10 +70,10 @@ Use SPEEDUP larger than 1 to make kernel advance faster.
 /* 18 014 398 S*/
 /* 208,5 days*/
 
-//! This is the internal data of the timer system. Observe that accessing this 
-//  variable is not thread/interrupt safe. This needs to be revised. 
+//! This is the internal data of the timer system. Observe that accessing this
+//  variable is not thread/interrupt safe. This needs to be revised.
 //
-//  @note Also very important - always include the memory type "language 
+//  @note Also very important - always include the memory type "language
 //  extention" when declaring external cariables like this.
 
 #if defined(TICK_OWNER)
@@ -82,7 +82,7 @@ Use SPEEDUP larger than 1 to make kernel advance faster.
 #else
    extern unsigned long MEMTYPE sys_mickey;
    extern unsigned long MEMTYPE sys_mackey;
-#endif   
+#endif
 
 
 /*!
@@ -90,29 +90,29 @@ Use SPEEDUP larger than 1 to make kernel advance faster.
 
 Call this from your timer ISR.
 
-Usable for any interrupt frequency in multiples of 1mS. 
+Usable for any interrupt frequency in multiples of 1mS.
 
 <b>Notice that operations are done on a running timer</b>
 
-This implies some precautions since the "tick" are evaluated 
-while operated on: 
+This implies some precautions since the "tick" are evaluated
+while operated on:
 
 - These operations must not be used anywhere but in the tick ISR
 - They must complete before the next tick (don't choose too high frequencies)
 - Other ISR must not keep running for longer than one "tick" time
 - In preemptive configuration, the priority of the tick ISR must be higher than
-  any of the events (for the same reason as mentioned in point above). This is 
+  any of the events (for the same reason as mentioned in point above). This is
   because if that event ISR preempts this operation, it will actually dispatch
-  another thread to run, and the tick ISR will not be able to finish until that 
-  thread goes off runable state. Threads preempting ISR's is usually not a 
-  problem you follow the design rules (mentioned else where), but for the tick 
+  another thread to run, and the tick ISR will not be able to finish until that
+  thread goes off runable state. Threads preempting ISR's is usually not a
+  problem you follow the design rules (mentioned else where), but for the tick
   ISR it is.
 
-@note 
+@note
 - Be cartful to match the advance value with the true interrupt frequency
 - Use as slow frequencies as possible (large pebble values) to minimize drift
 - But not to large. Don't exceed the maximum value the HW can candle
-- <b>IMPORTANT:</b> Make sure the period time ( 1/frequency) is in even multiples 
+- <b>IMPORTANT:</b> Make sure the period time ( 1/frequency) is in even multiples
   of 1 mS.
 
 */
@@ -127,15 +127,15 @@ while operated on:
 
 
 void getnanouptime (
-   struct timespec *tp  
+   struct timespec *tp
 );
 
 #endif
 
 
 
-  
-  
+
+
 /*!
  * @defgroup CVSLOG_tk_tick_h tk_tick_h
  * @ingroup CVSLOG

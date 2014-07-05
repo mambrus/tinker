@@ -17,10 +17,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-   
+
 /*!
 @file
-@ingroup SCHED 
+@ingroup SCHED
 
 @brief Tinker inner-most \e"guts"
 
@@ -29,14 +29,14 @@ This component is not selectable as the others normally are
 For in-depth discussions about this component, see \ref
 SCHED
 
-@note (Very old note, probably ridiculous now) Allocate at least 2k stack if 
+@note (Very old note, probably ridiculous now) Allocate at least 2k stack if
 you use printf in thread else 64bytes is probably sufficient.
 
 
 @see COMPONENTS
 */
 
- 
+
 #ifndef TK_H
 #define TK_H
 #define TINKER
@@ -64,12 +64,12 @@ TK_SENTINEL
 
 #define ERR_OK TK_OK            //!< TinKer: No error
 
-/*! 
+/*!
 A simple macro to help rid of "parameters not used" warnings. Often
 tread some tread arguments are not used. Warnings will clobber your
 compiler output and make you less observant of truly dangerous warnings.
 */
-#define TK_NO_WARN_ARG(x) ((void)x)  
+#define TK_NO_WARN_ARG(x) ((void)x)
 
 #ifdef __doxygen__
 #error This section should never be enabled for a normal build
@@ -83,7 +83,7 @@ in each targets corresponding tk_tuning.h.
 - TK_MAX_THREADS_AT_PRIO should be at least as big as TK_MAX_THREADS
 - TK_MAX_THREADS is the big memory hog. It determines the pool size
 - More or less TK_MAX_PRIO_LEVELS doesn't make that much difference in
-  memory usage, but keep it low anyway. It's doubtful if it makes sense 
+  memory usage, but keep it low anyway. It's doubtful if it makes sense
   to have a lot of priority levels anyway.
 
   Modify these constants to get a kernel of desired size/speed ratio
@@ -145,7 +145,7 @@ TK_COMP_ITC=1,TK_COMP_PTIMER=1,TK_COMP_KMEM=1,TK_COMP_PTHREAD=1,TK_COMP_POSIX_RT
 
 //@}
 
-//Kernel termination codes (bit adressable) - 
+//Kernel termination codes (bit adressable) -
 
 /*!
 @name Kernel termination Trap Codes (bit addressable)
@@ -253,7 +253,7 @@ void           tk_preemplist(thid_t);
 extern "C" {
 #endif
 
-/*! Function supplied by \b YOU - constitutes the root thread function. 
+/*! Function supplied by \b YOU - constitutes the root thread function.
 Aims "upwards" in the chain
 
 @note: We can't impose of forse which compiler (C or C++) will be used by
@@ -261,7 +261,7 @@ the application. Therefor we must enforce the mangling of this function name
 to follow C regardless of which compiler type is used to build TinKer itself.
 */
 
-extern int     tk_root( void ); 
+extern int     tk_root( void );
 
 #ifdef __cplusplus
 }
@@ -283,7 +283,7 @@ extern int     tk_bsp_sysinit(void);
 
 
 //------1---------2---------3---------4---------5---------6---------7---------8
-// The following are rerouted by bacros, so they need to be public. Don't use 
+// The following are rerouted by bacros, so they need to be public. Don't use
 // in appl. code
 
 //void           _tk_assertfail( char *assertstr, char *filestr, int line ); <-- moved to assert.h
@@ -293,13 +293,13 @@ extern int     tk_bsp_sysinit(void);
 /*- private functions **/
 
 #if defined(TINKER)
-   #define main(x,y) tk_root() 
+   #define main(x,y) tk_root()
 #endif
 
 #endif
 
-  
-/*! 
+
+/*!
  * @defgroup CVSLOG_tk_h tk_h
  * @ingroup CVSLOG
  *
@@ -698,7 +698,7 @@ extern int     tk_bsp_sysinit(void);
  *  Revision 1.1  1998/01/28 20:12:41  mickey
  *  Initial revision
  *
- *  
+ *
  *******************************************************************/
 
 

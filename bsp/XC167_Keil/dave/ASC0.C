@@ -35,11 +35,11 @@
 /*
 
 #define TK_CLI() \
-   PSW_IEN = 0;   
+   PSW_IEN = 0;
 
 #define TK_STI() \
-   PSW_IEN = 1;   
-*/      
+   PSW_IEN = 1;
+*/
 // USER CODE END
 
 
@@ -107,12 +107,12 @@
 
 
 //****************************************************************************
-// @Function      void ASC0_vInit(void) 
+// @Function      void ASC0_vInit(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This is the initialization function of the ASC0 function 
-//                library. It is assumed that the SFRs used by this library 
-//                are in its reset state. 
+// @Description   This is the initialization function of the ASC0 function
+//                library. It is assumed that the SFRs used by this library
+//                are in its reset state.
 //
 //----------------------------------------------------------------------------
 // @Returnvalue   None
@@ -181,7 +181,7 @@ void ASC0_vInit(void)
   ///  - Tx interrupt group level (GLVL) = 0
   ///  - Tx group priority extension (GPX) = 0
 
-  ASC0_TIC       =  0x0078;     
+  ASC0_TIC       =  0x0078;
 
   ///  Use PEC channel 0 for ASC0 Tx INT:
   ///  - decrement counter
@@ -191,7 +191,7 @@ void ASC0_vInit(void)
 
   PECC0          =  0x0501;      // load PECC0 control register
 
-  //// - DO NOT FORGET TO SET THE SOURCE-POINTER FOR PECC CHANNEL 0 BECAUSE 
+  //// - DO NOT FORGET TO SET THE SOURCE-POINTER FOR PECC CHANNEL 0 BECAUSE
   ////   IT IS SELECTED FOR USER DEFINED
 
   DSTP0  =  _sof_(&ASC0_TBUF);  //set destination pointer
@@ -201,13 +201,13 @@ void ASC0_vInit(void)
   ///  - Rx interrupt group level (GLVL) = 0
   ///  - Rx group priority extension (GPX) = 0
 
-  ASC0_RIC       =  0x0044;     
+  ASC0_RIC       =  0x0044;
 
 
   //   -----------------------------------------------------------------------
   //   Default Settings for Service Request Flags:
   //   -----------------------------------------------------------------------
-  ASC0_TBIC_IR   =  1;           // indicates that the transmit buffer is 
+  ASC0_TBIC_IR   =  1;           // indicates that the transmit buffer is
                                  // empty
 
   // USER CODE BEGIN (ASC0_Function,3)
@@ -221,22 +221,22 @@ void ASC0_vInit(void)
 
 
 //****************************************************************************
-// @Function      void ASC0_vSendData(uword uwData) 
+// @Function      void ASC0_vSendData(uword uwData)
 //
 //----------------------------------------------------------------------------
-// @Description   This function writes a send data initialization word into 
+// @Description   This function writes a send data initialization word into
 //                the transmit buffer register.
-//                
-//                Note: 
-//                In a multiprocessor system the master with this function 
-//                has the possibility to send data to the selected slave. To 
+//
+//                Note:
+//                In a multiprocessor system the master with this function
+//                has the possibility to send data to the selected slave. To
 //                achieve this, the 9th bit must set on zero.
 //
 //----------------------------------------------------------------------------
 // @Returnvalue   None
 //
 //----------------------------------------------------------------------------
-// @Parameters    uwData: 
+// @Parameters    uwData:
 //                Data to be send
 //
 //----------------------------------------------------------------------------
@@ -262,10 +262,10 @@ void ASC0_vSendData(uword uwData)
 
 
 //****************************************************************************
-// @Function      uword ASC0_uwGetData(void) 
+// @Function      uword ASC0_uwGetData(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This function reads out the content of the receive buffer 
+// @Description   This function reads out the content of the receive buffer
 //                register which contains the received data.
 //
 //----------------------------------------------------------------------------
@@ -292,12 +292,12 @@ uword ASC0_uwGetData(void)
 
 
 //****************************************************************************
-// @Function      void ASC0_viTx(void) 
+// @Function      void ASC0_viTx(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This is the transmit interrupt service routine for the 
-//                ASC0. It is called when the sending of data is terminated. 
-//                Please note that you have to add application specific code 
+// @Description   This is the transmit interrupt service routine for the
+//                ASC0. It is called when the sending of data is terminated.
+//                Please note that you have to add application specific code
 //                to this function.
 //
 //----------------------------------------------------------------------------
@@ -326,12 +326,12 @@ void ASC0_viTx(void) interrupt ASC0_TINT
 
 
 //****************************************************************************
-// @Function      void ASC0_viRx(void) 
+// @Function      void ASC0_viRx(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This is the receive interrupt service routine for the ASC0. 
-//                It is called if the data has been received. 
-//                Please note that you have to add application specific code 
+// @Description   This is the receive interrupt service routine for the ASC0.
+//                It is called if the data has been received.
+//                Please note that you have to add application specific code
 //                to this function.
 //
 //----------------------------------------------------------------------------
@@ -357,8 +357,8 @@ void ASC0_viRx(void) interrupt ASC0_RINT
 
   // USER CODE BEGIN (Rx,2)
    cbuff[0] = ASC0_uwGetData();
-   q_send_ny(tk_sys_queues[Q_SERIAL_0_I],cbuff);         
-   tk_yield_event();  
+   q_send_ny(tk_sys_queues[Q_SERIAL_0_I],cbuff);
+   tk_yield_event();
 
   // USER CODE END
 
@@ -376,22 +376,22 @@ void ASC0_viRx(void) interrupt ASC0_RINT
 void ASC0_viRx(void) interrupt ASC0_RINT
 {
 
-  
+
   while (ASC0_RIC_IR){
      //TK_CLI();
      ASC0_RIC_IR = 0;
 
-     
+
 	  mybuff[0] = ASC0_uwGetData();
-     q_send_ny(tk_sys_queues[Q_SERIAL_0_I],mybuff); 
-     
+     q_send_ny(tk_sys_queues[Q_SERIAL_0_I],mybuff);
+
      //TK_STI();
      tk_yield_event();
   }
 
 
 
-} 
+}
 
 */
 

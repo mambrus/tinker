@@ -9,7 +9,7 @@
 //
 // @Codegenerator 2.4
 //
-// @Description   This file contains all function prototypes and macros for 
+// @Description   This file contains all function prototypes and macros for
 //                the GPT2 module.
 //
 //----------------------------------------------------------------------------
@@ -21,8 +21,8 @@
 #include <../src/tk_hwclock.h>
 
 /*
-Note TinKer has choosen (atm) to work with only one pcysical timer as it's CLK2. 
-The cosen timer is T6 (core timer, also called SYS_TIMER by DAvE) 
+Note TinKer has choosen (atm) to work with only one pcysical timer as it's CLK2.
+The cosen timer is T6 (core timer, also called SYS_TIMER by DAvE)
 */
 
 void tk_getHWclock_Quality_CLK2(HWclock_stats_t *HWclock_stats);
@@ -110,11 +110,11 @@ void GPT2_vInit(void);
 // USER CODE END
 
 //****************************************************************************
-// @Macro         GPT2_vStartTmr(TimerNr) 
+// @Macro         GPT2_vStartTmr(TimerNr)
 //
 //----------------------------------------------------------------------------
-// @Description   This macro starts the selected GPT2 timer. The timer 
-//                continues to count from where it had stopped. The following 
+// @Description   This macro starts the selected GPT2 timer. The timer
+//                continues to count from where it had stopped. The following
 //                definitions are available for TimerNr:
 //                GPT2_TIMER_5
 //                SYS_TIMER
@@ -123,7 +123,7 @@ void GPT2_vInit(void);
 // @Returnvalue   None
 //
 //----------------------------------------------------------------------------
-// @Parameters    TimerNr: 
+// @Parameters    TimerNr:
 //                The name of the timer to be started
 //
 //----------------------------------------------------------------------------
@@ -137,12 +137,12 @@ void GPT2_vInit(void);
 
 
 //****************************************************************************
-// @Macro         GPT2_vStopTmr(TimerNr) 
+// @Macro         GPT2_vStopTmr(TimerNr)
 //
 //----------------------------------------------------------------------------
-// @Description   This macro stops the selected GPT2 timer. The contents of 
-//                the timer register remain unchanged. The remote control of 
-//                the selected timer is cleared. The following definitions 
+// @Description   This macro stops the selected GPT2 timer. The contents of
+//                the timer register remain unchanged. The remote control of
+//                the selected timer is cleared. The following definitions
 //                are available for TimerNr:
 //                GPT2_TIMER_5
 //                SYS_TIMER
@@ -151,7 +151,7 @@ void GPT2_vInit(void);
 // @Returnvalue   None
 //
 //----------------------------------------------------------------------------
-// @Parameters    TimerNr: 
+// @Parameters    TimerNr:
 //                The name of the timer to be stopped
 //
 //----------------------------------------------------------------------------

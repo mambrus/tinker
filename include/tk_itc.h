@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-   
-  
+
+
 /*!
 @file
 @ingroup ITC
@@ -31,7 +31,7 @@ ITC
 @see ITC
 @see COMPONENTS
 */
-  
+
 
 #ifndef tk_ipc_h
 #define tk_ipc_h
@@ -79,7 +79,7 @@ avoid nasty truncation errors that would be the result of a very big
 value (making the timeout appear as if it had already happened when
 actual time us added)
 
-*/ 
+*/
 #define TK_FOREVER             0
 
 /*- Error codes **/
@@ -100,7 +100,7 @@ ERR_NOQCB        ,//!< @brief Exceeds max numer of queues
 ERR_FULL         ,//!< @brief The message buffer is full
 ERR_NOSCB        ,//!< @brief Exceeds max numer of semaphores
 ERR_NOSEM        ,//!< @brief Only if NOWAIT was selected
-ERR_TATSDEL      ,//!< @brief There were threads waiting 
+ERR_TATSDEL      ,//!< @brief There were threads waiting
 ERR_NOMEM        ,//!< @brief No more memory
 ERR_BLOCKLIMIT   ,//!< @brief Can't block more procs on queue or semaphore
 ERR_ITC_SENTINEL
@@ -111,7 +111,7 @@ ERR_ITC_SENTINEL
 
 
 /*!
-Bit flags (or-able), used where ever there is a flag argument. 
+Bit flags (or-able), used where ever there is a flag argument.
 
 @note not all flag combinations make sene for all function calls.
 */
@@ -122,9 +122,9 @@ typedef enum {
     LOCAL           =0x00,      /*!< Default "value" (=0). OR-ing with this renders in no difference of the flags. Name only defined to make intent of usage clearer to read. The "true" bit that \e will affect the flags is \ref GLOBAL*/
     GLOBAL          =0x01,      /*!< Adressable by other nodes. The opposite, i.e. \ref LOCAL has the value 0. @note TinKer can't handle this ATM*/
     PRIOR           =0x02,      /*!< Prioritized syncing. I.e. semaphore inherits priority by it's invoking thread. The opposite, \ref FIFO has value 0 and means "fifo"-order relesing of blocked pid:s*/
-    NOLIMIT         =0x04,      /*!< Numer of messages or tokens are unlimitted. The opposite, i.e. \ref LIMIT has the value 0. @note TinKer cant handle this ATM*/  
+    NOLIMIT         =0x04,      /*!< Numer of messages or tokens are unlimitted. The opposite, i.e. \ref LIMIT has the value 0. @note TinKer cant handle this ATM*/
     NOWAIT          =0x08       /*!< If no token or message avaiabe when calling to sm_p or
-                                     XX_receive, function will return with error (i.e. equals 
+                                     XX_receive, function will return with error (i.e. equals
                                      testing the semaphore)*/
 }ipc_flags_t;
 
@@ -143,12 +143,12 @@ typedef enum{
 }itc_set_t;
 
 /*!
-@brief Content of fixed-length queues. 
+@brief Content of fixed-length queues.
 
 Use fixed length queues to send scalars (i.e. integers, enums e.t.a.).
 
 @note that the size is limited and should be equal to the largest scalar
-your system will support. 
+your system will support.
 */
 #if 1       /*Strict pSos*/
    typedef unsigned long  q_t[4];
@@ -163,7 +163,7 @@ your system will support.
 Block to to handle messages of vaiable length
 */
 typedef struct{
-    void *mb;                   /*!< @brief The variable length message, 
+    void *mb;                   /*!< @brief The variable length message,
                                      i.e. the actual data.*/
     unsigned long s;            /*!< @brief The size of the message */
 }qv_t;
@@ -175,14 +175,14 @@ Control block for the primitive synchronization mechanism
 */
 typedef struct itc_t_{
     char            name[4];            /*!< @brief Queue name */
-    int token;                          /*!< @brief Messages os tokens. 
-                                             If = 0, no blocked, no messages   
-                                             If > 0, token messages   
+    int token;                          /*!< @brief Messages os tokens.
+                                             If = 0, no blocked, no messages
+                                             If > 0, token messages
                                              If < 0, [token] blocked */
     unsigned long   flags;              /*!< @brief Attributes */
     unsigned long   sizeof_q;           /*!< @brief Size in indexes */
-    unsigned long   maxSizeof_m;        /*!< @brief Max size of message (This is stupid ,pSos)*/ 
-    itc_set_t       b_type;             /*!< @brief Determines what kind of primitive this block handles.*/ 
+    unsigned long   maxSizeof_m;        /*!< @brief Max size of message (This is stupid ,pSos)*/
+    itc_set_t       b_type;             /*!< @brief Determines what kind of primitive this block handles.*/
     struct tcb_t_** blocked_procs;      /*!< @brief List of blocked_procs[TK_MAX_BLOCKED_ON_Q];*/
     unsigned long   in_idx;             /*!< @brief Input index for the blocked proc fifo */
     unsigned long   out_idx;            /*!< @brief Output index for the blocked proc fifo */
@@ -195,7 +195,7 @@ typedef struct itc_t_{
     union {
        q_t *q;              /*!< @brief Data with fixed-lengt messages  */
        qv_t *qv;            /*!< @brief Data with fixed-lengt with messages of variable length */
-    }m;                     
+    }m;
 }itc_t;
 /* default settings */
 
@@ -415,13 +415,13 @@ unsigned long sm_delete_ny(
    unsigned long pid        /*!< <b> id                                 </b> */
 );
 
-unsigned long sm_p_ny(         
+unsigned long sm_p_ny(
    unsigned long qid,       /*!< <b> id                                 </b> */
    unsigned long flags,     /*!< <b> attrib                             </b> */
    unsigned long timeout    /*!< <b> timeout in clock ticks !?vafan     </b> */
 );
 
-unsigned long sm_v_ny(         
+unsigned long sm_v_ny(
    unsigned long qid        /*!< <b> id                                 </b> */
 );
 //@}
@@ -433,7 +433,7 @@ unsigned long sm_v_ny(
 
 #endif
 
-  
+
 /*!
  * @defgroup CVSLOG_tk_ipc_h tk_ipc_h
  * @ingroup CVSLOG

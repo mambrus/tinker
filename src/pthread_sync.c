@@ -24,7 +24,7 @@
 
 @brief POSIX 1003.1c API - pThread low level synchronisation primitives
 
-The content of this source-file implement basic thread syncronisation. I.e. 
+The content of this source-file implement basic thread syncronisation. I.e.
 the common mechanism used by mutex, cond-vars rw-locks e.t.a,
 
 For in-depth discussions about this component, see \ref
@@ -44,7 +44,7 @@ PTHREAD_SYNC
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long tk_pthread_sync( void ){
-   return ERR_OK;       
+   return ERR_OK;
 }
 
 unsigned long tk_pthread_sync_destruct( void ){
@@ -54,12 +54,12 @@ unsigned long tk_pthread_sync_destruct( void ){
 /*!
 The mutex lock primitive.
 
-This function will change the state in the scheduler, but it will not yield. 
+This function will change the state in the scheduler, but it will not yield.
 Instead it returns a \b recommendation to yield or not.
 */
 int _mutex_lock_primitive (pthread_mutex_t *mutex){
    int rc = 0;
-   
+
    if (mutex->owner == NULL){
       mutex->owner = pthread_self();
       mutex->blocked.numb = 0;
@@ -75,7 +75,7 @@ int _mutex_lock_primitive (pthread_mutex_t *mutex){
       mutex->blocked.thread[mutex->blocked.numb] = self;
       mutex->blocked.numb++;
 
-      rc = 1;  //Schedule state has chanced, yield recommended      
+      rc = 1;  //Schedule state has chanced, yield recommended
    }
    return rc;
 }
@@ -83,7 +83,7 @@ int _mutex_lock_primitive (pthread_mutex_t *mutex){
 /*!
 The mutex unlock primitive.
 
-This function will change the state in the scheduler, but it will not yield. 
+This function will change the state in the scheduler, but it will not yield.
 Instead it returns a \b recommendation to yield or not.
 */
 int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast){
@@ -104,10 +104,10 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast){
    if (mutex->blocked.numb == 0){
       //No one to unblock
       mutex->owner = NULL;
-      return 0;   
+      return 0;
    }
-   
-   rc = 1;  //Schedule state has chanced, yield recomended      
+
+   rc = 1;  //Schedule state has chanced, yield recomended
    //One ore more blocked, yeild recomended.
 
    if (bcast){
@@ -119,11 +119,11 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast){
          mutex->blocked.thread[i]->wakeupEvent        =     E_ITC;
       }
       mutex->blocked.numb=0;
-      
+
    }else{
-      pthread_t newOwner;   
+      pthread_t newOwner;
       int j;
-      
+
       for (i=0; i<mutex->blocked.numb;i++){
          //Find the one first in order with the highest prio (PRIO then FIFO)
          if (mutex->blocked.thread[i]->Prio < prio){
@@ -156,7 +156,7 @@ int _mutex_unlock_primitive (pthread_mutex_t *mutex, bcast_t bcast){
 @ingroup PTHREAD
 @brief POSIX 1003.1c API - Thread synchronisation
 
-Syncronisation between threads, i.e. 
+Syncronisation between threads, i.e.
 
 - Mutexes and attribute handling thereof
 - Event handling
@@ -166,7 +166,7 @@ Syncronisation between threads, i.e.
 
 */
 
-  
+
 /*!
  *  @defgroup CVSLOG_pthread_sync_c pthread_sync_c
  *  @ingroup CVSLOG
@@ -210,9 +210,9 @@ Syncronisation between threads, i.e.
  *  Revision 1.1  2006/02/19 22:12:07  ambrmi09
  *  CO of missed files
  *
- *  
+ *
  *******************************************************************/
- 
+
 
 
 

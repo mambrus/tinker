@@ -32,7 +32,7 @@
 //-----------------------------------------------------------------------------
 
 
-typedef union{ 
+typedef union{
 	sja1000_basic_t basic;		//!< Registers in basic mode
 	sja1000_pelican_t pelican;	//!< Registers in pelican mode
 }sja1000_t;

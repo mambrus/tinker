@@ -87,7 +87,7 @@ isr_handler isr_table[16]={
 
 //#include <pushpop.h>	/*Do not push/pop here. let the exception code do it instead*/
 #define DONT_FECKUP_ON_PURPOSE 1
-void isr_external(){	
+void isr_external(){
 	//PUSHALL;
 	extern int __tk_IntFlagCntr;
 	__uint32_t stack_ptr;
@@ -97,7 +97,7 @@ void isr_external(){
 	idx=*(__int8_t*)(&SIVEC);
 	//idx = (idx/4)-1;
 	idx = (idx/4);
-	
+
 	GET_GPR(1,stack_ptr);
 
 	n_isr++;
@@ -122,9 +122,9 @@ void isr_external(){
 	__tk_IntFlagCntr--;
 	//POPALL;
 }
-/*! 
+/*!
 Attach an interrupt handler routine to a certain IRQ (IRQ=level)
-@note This function is mandatory by TinKer API 
+@note This function is mandatory by TinKer API
 */
 int tk_isr_install(int level, isr_handler isr){
 	isr_table[level]=isr;

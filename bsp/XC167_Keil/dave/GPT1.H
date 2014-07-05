@@ -9,7 +9,7 @@
 //
 // @Codegenerator 2.4
 //
-// @Description   This file contains all function prototypes and macros for 
+// @Description   This file contains all function prototypes and macros for
 //                the GPT1 module.
 //
 //----------------------------------------------------------------------------
@@ -21,8 +21,8 @@
 #include <../src/tk_hwclock.h>
 
 /*
-Note TinKer has choosen (atm) to work with only one pcysical timer as it's CLK1. 
-The cosen timer is T3 (core timer) 
+Note TinKer has choosen (atm) to work with only one pcysical timer as it's CLK1.
+The cosen timer is T3 (core timer)
 */
 
 void tk_getHWclock_Quality_CLK1( HWclock_stats_t *HWclock_stats );
@@ -125,11 +125,11 @@ void GPT1_vInit(void);
 
 
 //****************************************************************************
-// @Macro         GPT1_vStartTmr(TimerNr) 
+// @Macro         GPT1_vStartTmr(TimerNr)
 //
 //----------------------------------------------------------------------------
-// @Description   This macro starts the selected GPT1 timer. The timer 
-//                continues to count from where it had stopped. The following 
+// @Description   This macro starts the selected GPT1 timer. The timer
+//                continues to count from where it had stopped. The following
 //                definitions are available for TimerNr:
 //                GPT1_TIMER_2
 //                GPT1_TIMER_3
@@ -139,7 +139,7 @@ void GPT1_vInit(void);
 // @Returnvalue   None
 //
 //----------------------------------------------------------------------------
-// @Parameters    TimerNr: 
+// @Parameters    TimerNr:
 //                the name of the timer to be started
 //
 //----------------------------------------------------------------------------
@@ -154,12 +154,12 @@ void GPT1_vInit(void);
 
 
 //****************************************************************************
-// @Macro         GPT1_vStopTmr(TimerNr) 
+// @Macro         GPT1_vStopTmr(TimerNr)
 //
 //----------------------------------------------------------------------------
-// @Description   This macro stops the selected GPT1 timer. The contents of 
-//                the timer register remain unchanged. The remote control of 
-//                the selected timer is cleared. The following definitions 
+// @Description   This macro stops the selected GPT1 timer. The contents of
+//                the timer register remain unchanged. The remote control of
+//                the selected timer is cleared. The following definitions
 //                are available for TimerNr:
 //                GPT1_TIMER_2
 //                GPT1_TIMER_3
@@ -169,7 +169,7 @@ void GPT1_vInit(void);
 // @Returnvalue   None
 //
 //----------------------------------------------------------------------------
-// @Parameters    TimerNr: 
+// @Parameters    TimerNr:
 //                The name of the timer to be stopped
 //
 //----------------------------------------------------------------------------
@@ -184,13 +184,13 @@ void GPT1_vInit(void);
 
 
 //****************************************************************************
-// @Macro         GPT1_uwReadTmr(TimerNr) 
+// @Macro         GPT1_uwReadTmr(TimerNr)
 //
 //----------------------------------------------------------------------------
-// @Description   This macro returns the contents of the selected GPT1 timer. 
-//                The timer is not stopped. Access of the CPU to the 
-//                registers of the timer is of higher priority than a timer 
-//                increment, a reload or a capture event. The following 
+// @Description   This macro returns the contents of the selected GPT1 timer.
+//                The timer is not stopped. Access of the CPU to the
+//                registers of the timer is of higher priority than a timer
+//                increment, a reload or a capture event. The following
 //                definitions are available for TimerNr:
 //                GPT1_TIMER_2
 //                GPT1_TIMER_3
@@ -200,7 +200,7 @@ void GPT1_vInit(void);
 // @Returnvalue   Current 16-bit value of the timer
 //
 //----------------------------------------------------------------------------
-// @Parameters    TimerNr: 
+// @Parameters    TimerNr:
 //                The name of the timer to be readed
 //
 //----------------------------------------------------------------------------
@@ -215,13 +215,13 @@ void GPT1_vInit(void);
 
 
 //****************************************************************************
-// @Macro         GPT1_vLoadTmr(TimerNr, Value) 
+// @Macro         GPT1_vLoadTmr(TimerNr, Value)
 //
 //----------------------------------------------------------------------------
-// @Description   This macro loads the selected GPT1 timer with the forwarded 
-//                value. The timer is not stopped. The access of the CPU to 
-//                the registers of the timers is of higher priority than a 
-//                timer increment, a reload or a capture event. The following 
+// @Description   This macro loads the selected GPT1 timer with the forwarded
+//                value. The timer is not stopped. The access of the CPU to
+//                the registers of the timers is of higher priority than a
+//                timer increment, a reload or a capture event. The following
 //                definitions are available for TimerNr:
 //                GPT1_TIMER_2
 //                GPT1_TIMER_3
@@ -231,9 +231,9 @@ void GPT1_vInit(void);
 // @Returnvalue   None
 //
 //----------------------------------------------------------------------------
-// @Parameters    TimerNr: 
+// @Parameters    TimerNr:
 //                The name of the timer to be loaded
-// @Parameters    Value: 
+// @Parameters    Value:
 //                16-bit value to be loaded
 //
 //----------------------------------------------------------------------------
@@ -248,17 +248,17 @@ void GPT1_vInit(void);
 
 
 //****************************************************************************
-// @Macro         GPT1_vCountUp(TimerNr) 
+// @Macro         GPT1_vCountUp(TimerNr)
 //
 //----------------------------------------------------------------------------
-// @Description   This macro sets the counter direction of the selected timer 
+// @Description   This macro sets the counter direction of the selected timer
 //                to up. The timer is not stopped.
 //                Note:
-//                Concerning timer x it is possible to make the counter 
-//                direction dependent on the level at TxEUD. If this 
-//                functionality has been selected, then function 
-//                GPT1_vCountUp() set a  0 at TxEUD enabling counting up of 
-//                timer x and a 1 at TxEUD enabling counting down of timer x. 
+//                Concerning timer x it is possible to make the counter
+//                direction dependent on the level at TxEUD. If this
+//                functionality has been selected, then function
+//                GPT1_vCountUp() set a  0 at TxEUD enabling counting up of
+//                timer x and a 1 at TxEUD enabling counting down of timer x.
 //                The following definitions are available for TimerNr:
 //                GPT1_TIMER_2
 //                GPT1_TIMER_3
@@ -268,7 +268,7 @@ void GPT1_vInit(void);
 // @Returnvalue   None
 //
 //----------------------------------------------------------------------------
-// @Parameters    TimerNr: 
+// @Parameters    TimerNr:
 //                The name of the timer to be used
 //
 //----------------------------------------------------------------------------
@@ -283,17 +283,17 @@ void GPT1_vInit(void);
 
 
 //****************************************************************************
-// @Macro         GPT1_vCountDown(TimerNr) 
+// @Macro         GPT1_vCountDown(TimerNr)
 //
 //----------------------------------------------------------------------------
-// @Description   This macro sets the counter direction of the selected timer 
+// @Description   This macro sets the counter direction of the selected timer
 //                to down. The timer is not stopped.
 //                Note:
-//                Concerning timer x it is possible to make the counter 
-//                direction dependent on the level at TxEUD. If this 
-//                functionality has been selected, then function 
-//                GPT1_vCountDown() set a 0 at TxEUD enabling counting down 
-//                of timer x and a 1 at TxEUD enabling counting up of timer 
+//                Concerning timer x it is possible to make the counter
+//                direction dependent on the level at TxEUD. If this
+//                functionality has been selected, then function
+//                GPT1_vCountDown() set a 0 at TxEUD enabling counting down
+//                of timer x and a 1 at TxEUD enabling counting up of timer
 //                x. The following definitions are available for TimerNr:
 //                GPT1_TIMER_2
 //                GPT1_TIMER_3
@@ -303,7 +303,7 @@ void GPT1_vInit(void);
 // @Returnvalue   None
 //
 //----------------------------------------------------------------------------
-// @Parameters    TimerNr: 
+// @Parameters    TimerNr:
 //                The name of the timer to be used
 //
 //----------------------------------------------------------------------------

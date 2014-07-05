@@ -44,17 +44,17 @@
 	#define DP_BD_0	 (DMM1+0x2800)	/* 0x2800 - 0x2E00	DP_BD_0		Descriptors/Data */
 	#define DP_BD_1	 (DMM1+0x3800)	/* 0x3800 - 0x3A00	DP_BD_1		Descriptors/Data */
 	#define DP_PARA	 (DMM1+0x3C00)	/* 0x3C00 - 0x3E00	DP_PARA		Parameter area   */
-	
+
 	/*Same thing, but as offset counting from start of DP RAM*/
 	#define DP_BD_0_OFFS	 (0x2800-0x2000)
 	#define DP_BD_1_OFFS	 (0x3800-0x2000)
 	#define DP_PARA_OFFS	 (0x3C00-0x2000)
 #elif (DP_ERAM==0)
-	
+
 	//#ifdef NEVER
 	#define DP_BD_0	 (DMM1+0x2000)	/* 0x2800 - 0x2E00	DP_BD_0		Descriptors/Data */
 	#define DP_PARA	 (DMM1+0x3C00)	/* 0x3C00 - 0x3E00	DP_PARA		Parameter area   */
-	
+
 	/*Same thing, but as offset counting from start of DP RAM*/
 	#define DP_BD_0_OFFS	 (0x2000-0x2000)
 	#define DP_PARA_OFFS	 (0x3C00-0x2000)
@@ -217,16 +217,16 @@ U
 #define GCI_ABORT_REQUEST	0xA
 #define STOP_IDMA		0xB
 
-typedef union{ 
-	__uint16_t raw; 
-	
+typedef union{
+	__uint16_t raw;
+
 	struct {
 		__uint32_t RST:1;
 		__uint32_t PADD_0:3;
 		__uint32_t OPCODE:4;
 		__uint32_t CH_NUM:4;
 		__uint32_t PADD_1:3;
-		__uint32_t FLG:1;	
+		__uint32_t FLG:1;
 	}f;
 }cpcr_t;
 
@@ -273,8 +273,8 @@ typedef union{
 
 */
 
-typedef union{ 
-	__uint16_t raw; 
+typedef union{
+	__uint16_t raw;
 	struct {
 		__uint16_t TIME:1;
 		__uint16_t PADD_0:1;
@@ -326,7 +326,7 @@ typedef union{
 
 
 /* Buffer Descriptor (BD) stuff */
-/* 
+/*
 Note: that the status and control field (BD_Status) is differend depending on what type of
 protocol and directin the descriptor is beeing used for.
 
@@ -342,7 +342,7 @@ Note: control and status is the same for SCC and SMC, Direction differs however.
 
 
 /*Generic BD destriptor. Don't use this - use a specific instead*/
-typedef struct{ 
+typedef struct{
 	__uint16_t BD_Status;
 	__uint16_t BD_Length;
 	__uint32_t BD_Pointer;
@@ -387,8 +387,8 @@ typedef struct{
             0 Divide by 1.
             1 Divide by 16.
 */
-typedef union{ 
-	__uint32_t raw; 
+typedef union{
+	__uint32_t raw;
 	struct {
 		__uint32_t PADD_0		:14;
 		__uint32_t RST			:1;
@@ -402,7 +402,7 @@ typedef union{
 
 //=============================================================================
 // CPIC registers follow (registers for controlling interrupts btw SIU and CM)
-// Even though these registers are not strict CPM registers they relate 
+// Even though these registers are not strict CPM registers they relate
 // only to CM which is the reason why they are defined in this header file.
 //=============================================================================
 /*
@@ -482,9 +482,9 @@ described in Table 34-3.
 
 */
 
-typedef union{ 
-	__uint32_t raw; 
-	struct {		
+typedef union{
+	__uint32_t raw;
+	struct {
 		__uint32_t PADD_0:8;
 		__uint32_t SCdP:2;
 		__uint32_t SCcP:2;
@@ -509,7 +509,7 @@ typedef union{
 #define CPMIV_Timer_1 			0x19
 #define CPMIV_Parallel_I_O_PC13 	0x18
 #define CPMIV_Parallel_I_O_PC12 	0x17
-#define CPMIV_SDMA_channel_bus_error 	0x16 
+#define CPMIV_SDMA_channel_bus_error 	0x16
 #define CPMIV_IDMA1 			0x15
 #define CPMIV_IDMA2 			0x14
 //0x13       Reserved
@@ -530,7 +530,7 @@ typedef union{
 #define CPMIV_SMC1			0x04
 #define CPMIV_SMC2_PIP			0x03
 #define CPMIV_Parallel_I_O_PC5		0x02
-#define CPMIV_Parallel_I_O_PC4		0x01 
+#define CPMIV_Parallel_I_O_PC4		0x01
 #define CPMIV_Error			0x00
 
 typedef enum{
@@ -591,8 +591,8 @@ is affected by HRESET and SRESET.
 */
 
 
-typedef union{ 
-	__uint16_t raw; 
+typedef union{
+	__uint16_t raw;
 	struct {
 		__uint16_t VN:5;
 		__uint16_t PADD_0:10;
@@ -617,9 +617,9 @@ Figure 34-4. CPM Interrupt Pending/Mask/In-Service Registers (CIPR/CIMR/CISR)
 */
 
 
-typedef union{ 
-	__uint32_t raw; 
-	struct {		
+typedef union{
+	__uint32_t raw;
+	struct {
 		__uint32_t PC15:1;
 		__uint32_t SCC1:1;
 		__uint32_t SCC2:1;

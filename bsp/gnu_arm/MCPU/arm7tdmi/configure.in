@@ -13,13 +13,13 @@ sources_c=""
 extern_includes="../.."
 
 # By putting the start module in the library we don't have to use crt0.o
-# Our start module will output to a special section that we can let the linker 
+# Our start module will output to a special section that we can let the linker
 # relocate automagically instead
 #sources_asm="exceptions.AO"
 sources_asm="startup_gnu.AO"
 
 ## Provide it as a crt0.o anyway (just to have something to provide)
-## Note that using it with libtinker will break the link in our case 
+## Note that using it with libtinker will break the link in our case
 extras="../../../../lib/crt0.o"
 #CRT0_OBJECT=exceptions.AO
 CRT0_OBJECT="startup_gnu.AO"

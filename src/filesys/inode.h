@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -29,11 +29,11 @@
 typedef int tk_id_t;
 
 /*!
-Pure mode names (to aid debugging - note that any mode variable 
-*theoretically* can be OR'ed among these which means any stabs info 
+Pure mode names (to aid debugging - note that any mode variable
+*theoretically* can be OR'ed among these which means any stabs info
 will not be able to resolve the name.
 
-This is however very unlikely an is furthermore  of no concern for 
+This is however very unlikely an is furthermore  of no concern for
 the running code.
 */
 
@@ -45,7 +45,7 @@ typedef enum {
 	ISA_IFREG	= S_IFREG,	//!< regular file
 	ISA_IFLNK	= S_IFLNK,	//!< symbolic link
 	ISA_IFSOCK	= S_IFSOCK,	//!< socket
-	ISA_IFIFO	= S_IFIFO	//!< FIFO or pipe	
+	ISA_IFIFO	= S_IFIFO	//!< FIFO or pipe
 }tk_mode_t;
 
 typedef struct tk_mount_s{
@@ -64,7 +64,7 @@ typedef struct tk_inode_s{
 	struct tk_inode_s 	*belong;	//!<  Whom this node belongs to
 	struct tk_inode_s	*next;		//!<  Next node on the same level
 	struct tk_inode_s	*down;		//!<  Points to first inode that belongs to this one
-	void			*idata;		/*!<  Certain IO can instanciate driver multiple times. 
+	void			*idata;		/*!<  Certain IO can instanciate driver multiple times.
 						      This field is for instance specific driver data.*/
 	tk_iohandle_t	*iohandle;		//!<  Operations that can be made on this i-node
 }tk_inode_t;

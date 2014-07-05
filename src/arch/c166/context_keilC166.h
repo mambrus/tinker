@@ -17,10 +17,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
+
 
 #ifndef TK_HWSYS_KEILC166_H
-#define TK_HWSYS_KEILC166_H      
+#define TK_HWSYS_KEILC166_H
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*
 The following pragmas are important compilor directives to ensure correct
@@ -42,7 +42,7 @@ class which is limited to a maximum of 64K.
 @see http://www.keil.com/support/man/docs/c166/c166_dynamicusrstk.htm
 */
 #pragma dynamicusrstk
- 
+
 
 /*!
 The SAVEUSR directive instructs the C166 Compiler to save temporary results and
@@ -81,13 +81,13 @@ http://www.keil.com/support/man/docs/c166/c166_reentrant.htm
 /**
 Note that macro name DEVICE is supposed to be set by the invoker (i.e. when you run the compilation
 proces. This is done iether with flags on the command prompt, or by definig this in the Uv2 project file
-(which will then automatically be translated to a flag upon invocation). The nameing convention of the 
-device must follow Keils predifined devices, which you can find as files in the directory 
+(which will then automatically be translated to a flag upon invocation). The nameing convention of the
+device must follow Keils predifined devices, which you can find as files in the directory
 %install_dir%\Keil\C166\INC\ .
 */
 
 #if defined( DEVICE )
-   #include REGH( DEVICE )   
+   #include REGH( DEVICE )
 #else
    #error "Error, No device specified - can't determine register definition file !!!!!!!!!!!"
 #endif
@@ -117,8 +117,8 @@ sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
 */
 
 /*!
-@note According to XC167 manual chapter 4.3.4, subchapter 
-<i>"CSFRs Affecting the Whole CPU"</i>, modifying STKOV, STKUN indirectlly 
+@note According to XC167 manual chapter 4.3.4, subchapter
+<i>"CSFRs Affecting the Whole CPU"</i>, modifying STKOV, STKUN indirectlly
 via push and pop should be OK until next "real" OP code that uses that SFR.
 */
 
@@ -150,8 +150,8 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ push  STKOV                  }                                                                      \
    __asm{ push  STKUN                  }
 
-   
-      
+
+
 #define POPALL()                                                                                              \
    __asm{ pop  STKUN                   }                                                                      \
    __asm{ pop  STKOV                   }                                                                      \
@@ -187,18 +187,18 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    __asm{ mov TEMP,SP             } /*The current SP is now the new _newSP, save it.      */                  \
    TSP1 = ((unsigned long)SPSEG<<16) + (unsigned long)TEMP; /*  This value will then be copied into the TCB    */
 
-  
+
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )                                                                    \
    TEMP = (unsigned long)TSP1 >> 16;                                                                          \
    __asm{ mov SP,TSP1                 }                                                                       \
    __asm{ mov SPSEG,TEMP              }                                                                       \
    POPALL();
-   
+
 #define CHANGE_STACK( TSP1, TEMP )                                                                            \
    TEMP = (unsigned long)TSP1 >> 16;                                                                          \
    __asm{ mov SP,TSP1                 }                                                                       \
    __asm{ mov SPSEG,TEMP              }
-   
+
 #define INIT_SP( _stack_SP, _stack_begin )                                                                  \
    _stack_SP.usr_stack_size      = _stack_begin.usr_stack_size;                                             \
    _stack_SP.userstack.linear    = _stack_begin.userstack.linear   + _stack_begin.usr_stack_size;           \
@@ -217,7 +217,7 @@ via push and pop should be OK until next "real" OP code that uses that SFR.
    _temp2 = _stack_struct.systemstack.reg._SP + _stack_struct.sys_stack_size;                               \
    __asm{ mov STKUN,_temp2          }
                                                                                                             \
-      
+
 #define GET_THREADS_RETVAL( THRETVAL, TEMP  )                                                               \
    __asm{ mov THRETVAL, R4 }                                                                                \
    __asm{ mov TEMP, R5 }                                                                                    \
@@ -232,10 +232,10 @@ void _tk_initialize_system_ques( );
 
 #define REINIT_STACKADDR( ADDR, size )                                                                      \
    _tk_reinit_stackaddr_xc167keil( &ADDR, size )
- 
+
 #define REAL_STACK_SIZE( ADDR )                                                                             \
-   ( ADDR.sys_stack_size ) 
-   
+   ( ADDR.sys_stack_size )
+
 
 #define TRY_CATCH_STACK_ERROR( STACK_T, TEMP )                                \
    __asm { mov TEMP, R0 }                                                     \
@@ -247,7 +247,7 @@ void _tk_initialize_system_ques( );
       printk(("tk: Error - user stack trashed!\n"));                          \
       tk_exit(TC_ERR_STACK);                                                  \
    }
-   
+
 
 void _do_trap (unsigned int num);
 #define TRAP( NUM )                                                           \
@@ -270,7 +270,7 @@ void _do_trap (unsigned int num);
 
 #define TK_STI()	                                                      \
    __asm{ BSET PSW_IEN }
-         
+
 
 #define STK_CRC_CALC( TEMP )                                               \
    __asm { mov TEMP, R0 }                                                  \
@@ -351,7 +351,7 @@ TBD
 
 */
 
-  
+
 /*!
  * @defgroup CVSLOG_tk_hwsys_keilC166_h tk_hwsys_keilC166_h
  * @ingroup CVSLOG

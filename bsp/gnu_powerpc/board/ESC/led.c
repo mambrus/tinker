@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -49,15 +49,15 @@ static const char DRV_IO(assert_info)[]="You're trying to access a non implement
 void led_on(led_id id, led_color color){
 	if (id==LED_2) {
 		if (color==LED_RED) {
-			bitclear_16(PADAT,8);	
+			bitclear_16(PADAT,8);
 		}else{
-			bitclear_16(PADAT,9);	
+			bitclear_16(PADAT,9);
 		}
 	}else{
 		if (color==LED_RED) {
-			bitclear_16(PADAT,10);	
+			bitclear_16(PADAT,10);
 		}else{
-			bitclear_16(PADAT,11);	
+			bitclear_16(PADAT,11);
 		}
 	}
 }
@@ -65,22 +65,22 @@ void led_on(led_id id, led_color color){
 void led_off(led_id id, led_color color){
 	if (id==LED_2) {
 		if (color==LED_RED) {
-			bitset_16(PADAT,8);	
+			bitset_16(PADAT,8);
 		}else{
 			bitset_16(PADAT,9);
-		}	
+		}
 	}else{
 		if (color==LED_RED) {
-			bitset_16(PADAT,10);	
+			bitset_16(PADAT,10);
 		}else{
-			bitset_16(PADAT,11);	
+			bitset_16(PADAT,11);
 		}
 	}
 }
 
 //=============================================================================
 // Open functions
-//=============================================================================	
+//=============================================================================
 int DRV_IO(open0)(const char *filename, int flags, ...){
 	va_list ap;
 		tk_fhandle_t *hndl;
@@ -89,7 +89,7 @@ int DRV_IO(open0)(const char *filename, int flags, ...){
 		inode=va_arg(ap,tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);	
+	hndl=tk_new_handle(inode,flags);
 
 	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
 	((DRV_IO(hndl_data_t)*)(hndl->data))->handle_data=0x00;
@@ -104,7 +104,7 @@ int DRV_IO(open1)(const char *filename, int flags, ...){
 		inode=va_arg(ap,tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);	
+	hndl=tk_new_handle(inode,flags);
 
 	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
 	((DRV_IO(hndl_data_t)*)(hndl->data))->handle_data=0x01;
@@ -119,7 +119,7 @@ int DRV_IO(open2)(const char *filename, int flags, ...){
 		inode=va_arg(ap,tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);	
+	hndl=tk_new_handle(inode,flags);
 
 	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
 	((DRV_IO(hndl_data_t)*)(hndl->data))->handle_data=0x02;
@@ -134,7 +134,7 @@ int DRV_IO(open3)(const char *filename, int flags, ...){
 		inode=va_arg(ap,tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);	
+	hndl=tk_new_handle(inode,flags);
 
 	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
 	((DRV_IO(hndl_data_t)*)(hndl->data))->handle_data=0x03;
@@ -144,7 +144,7 @@ int DRV_IO(open3)(const char *filename, int flags, ...){
 
 //=============================================================================
 // Read functions
-//=============================================================================	
+//=============================================================================
 int DRV_IO(close0)(int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return -1;
@@ -165,7 +165,7 @@ int DRV_IO(close3)(int file) {
 
 //=============================================================================
 // Read functions
-//=============================================================================	
+//=============================================================================
 int DRV_IO(read0)(int file, char *ptr, int len) {
 	switch (len){
 		case 1:
@@ -178,7 +178,7 @@ int DRV_IO(read0)(int file, char *ptr, int len) {
 			*(__uint32_t*)ptr=ledstat_0;
 			break;
 		assert("Wrong size of data requested"==NULL);
-	}		
+	}
 	return len;
 }
 int DRV_IO(read1)(int file, char *ptr, int len) {
@@ -193,7 +193,7 @@ int DRV_IO(read1)(int file, char *ptr, int len) {
 			*(__uint32_t*)ptr=ledstat_1;
 			break;
 		assert("Wrong size of data requested"==NULL);
-	}		
+	}
 	return len;
 }
 int DRV_IO(read2)(int file, char *ptr, int len) {
@@ -208,7 +208,7 @@ int DRV_IO(read2)(int file, char *ptr, int len) {
 			*(__uint32_t*)ptr=ledstat_2;
 			break;
 		assert("Wrong size of data requested"==NULL);
-	}		
+	}
 	return len;
 }
 int DRV_IO(read3)(int file, char *ptr, int len) {
@@ -223,10 +223,10 @@ int DRV_IO(read3)(int file, char *ptr, int len) {
 			*(__uint32_t*)ptr=ledstat_3;
 			break;
 		assert("Wrong size of data requested"==NULL);
-	}		
+	}
 	return len;
 }
-		
+
 //=============================================================================
 // Write functions
 //=============================================================================
@@ -250,14 +250,14 @@ int DRV_IO(write0)(int file, char *ptr, int len) {
 				ledstat_0=*(__uint32_t*)ptr;
 				break;
 			assert("Wrong size of data passed"==NULL);
-		}		
+		}
 	}
 
 	if (ledstat_0)
 		led_on(LED_1, LED_RED);
 	else
 		led_off(LED_1, LED_RED);
-		
+
 	return len;
 }
 int DRV_IO(write1)(int file, char *ptr, int len) {
@@ -274,14 +274,14 @@ int DRV_IO(write1)(int file, char *ptr, int len) {
 				ledstat_1=*(__uint32_t*)ptr;
 				break;
 			assert("Wrong size of data passed"==NULL);
-		}		
+		}
 	}
 
 	if (ledstat_1)
 		led_on(LED_1, LED_GREEN);
 	else
 		led_off(LED_1, LED_GREEN);
-		
+
 	return len;
 }
 int DRV_IO(write2)(int file, char *ptr, int len) {
@@ -298,14 +298,14 @@ int DRV_IO(write2)(int file, char *ptr, int len) {
 				ledstat_2=*(__uint32_t*)ptr;
 				break;
 			assert("Wrong size of data passed"==NULL);
-		}		
+		}
 	}
 
 	if (ledstat_2)
 		led_on(LED_2, LED_RED);
 	else
 		led_off(LED_2, LED_RED);
-		
+
 	return len;
 }
 int DRV_IO(write3)(int file, char *ptr, int len) {
@@ -322,21 +322,21 @@ int DRV_IO(write3)(int file, char *ptr, int len) {
 				ledstat_3=*(__uint32_t*)ptr;
 				break;
 			assert("Wrong size of data passed"==NULL);
-		}		
+		}
 	}
 
 	if (ledstat_3)
 		led_on(LED_2, LED_GREEN);
 	else
 		led_off(LED_2, LED_GREEN);
-		
+
 	return len;
 }
 
 //=============================================================================
 // Buffered mode access determination
 //=============================================================================
-/*This should never need to be called, but provided just in case */	
+/*This should never need to be called, but provided just in case */
 int DRV_IO(isatty)(int file) {
 	return 0;
 }
@@ -459,24 +459,24 @@ int DRV_IO(fcntl)(int file, int command, ...){
 	errno = ENOSYS;
 	return -1;
 }
-		
+
 int DRV_IO(fstat)(int file, struct stat *st) {
 	tk_fhandle_t *hndl = file;
 	st->st_mode = hndl->belong->mode;;
 	return 0;
 }
-	
+
 int DRV_IO(isatty)(int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 1;
 }
-		
+
 int DRV_IO(link)(char *old, char *new) {
-	assert(DRV_IO(assert_info) == NULL);	
+	assert(DRV_IO(assert_info) == NULL);
 	errno=EMLINK;
 	return -1;
 }
-	
+
 int DRV_IO(lseek)(int file, int ptr, int dir) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 0;
@@ -487,7 +487,7 @@ int DRV_IO(stat)(const char *file, struct stat *st) {
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-		
+
 int DRV_IO(unlink)(char *name) {
 	assert(DRV_IO(assert_info) == NULL);
 	errno=ENOENT;

@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
+
 
 /*- include files **/
 
@@ -31,8 +31,8 @@
 
 /* default settings */
 
-#define SYSQ_LENGT 10   /*!< Lengt of each Q (i.e. the number of 
-elements in each queue) Small number, but should be OK since these 
+#define SYSQ_LENGT 10   /*!< Lengt of each Q (i.e. the number of
+elements in each queue) Small number, but should be OK since these
 Q's are ment to be used by threads that run on highest prio. */
 
 /*- external functions **/
@@ -47,7 +47,7 @@ unsigned long _tk_create_system_queues( ){
    int i;
    unsigned long rc = ERR_OK;
    char name[4]; // Queue name is deep-copied -> temp is ok to have on stack
-   
+
    for (i=0; (i<TK_NUMBER_OF_SYSQ) && (rc==ERR_OK); i++){
 
       strncpy(name,"SQ",4);
@@ -62,7 +62,7 @@ unsigned long _tk_create_system_queues( ){
 
 /*- private data **/
 
-   
+
 /*!
  * @defgroup CVSLOG_tk_sysqueues_c tk_sysqueues_c
  * @ingroup CVSLOG
@@ -129,6 +129,6 @@ unsigned long _tk_create_system_queues( ){
  *    the TinKer drivers concept (yet to be invented).
  *  - Made first crude attempts with preemtion.
  *
- *  
+ *
  *******************************************************************/
 

@@ -22,7 +22,7 @@
 @file
 @ingroup SCHED
 
-@brief Definitions that don't need to be public 
+@brief Definitions that don't need to be public
 
 Definitions that don't need to be public for the \ref SCHED component.
 Keeps all the internals out of th.h
@@ -61,15 +61,15 @@ SCHED
 
 
 void _itc_removeBlocked(
-	itc_t *queue_p, 
+	itc_t *queue_p,
 	unsigned int idx);
 
-unsigned int _itc_findNextEmpySlot( 
+unsigned int _itc_findNextEmpySlot(
 	void );
 
 unsigned long _itc_uintDiff(
-	unsigned long x1, 
-	unsigned long x2, 
+	unsigned long x1,
+	unsigned long x2,
 	unsigned long max);
 
 int _itc_proveConcistency(unsigned int qid);

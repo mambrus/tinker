@@ -13,7 +13,7 @@ void hardfault_handler(void);
 int main(int argc, char** argv);
 
 // Define the vector table
-unsigned int * myvectors[4] 
+unsigned int * myvectors[4]
    __attribute__ ((section("vectors")))= {
    	(unsigned int *)	0x20000800,	// stack pointer
    	(unsigned int *) 	main,		// code entry point
@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 
 	  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
       RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOA, ENABLE);
-					
+
 
 	        // Configure PC.12 as output push-pull (LED)
 	        GPIO_WriteBit(GPIOC,GPIO_Pin_12,Bit_SET);
@@ -90,7 +90,7 @@ void hardfault_handler(void)
 }
 //Functions definitions
 void myDelay(unsigned long delay )
-{ 
+{
   while(delay) delay--;
 }
 
@@ -126,7 +126,7 @@ void Clk_Init (void)
   RCC_PCLK2Config(RCC_HCLK_Div1);
   RCC_PCLK1Config(RCC_HCLK_Div2);
   RCC_HCLKConfig(RCC_SYSCLK_Div1);
-  // Flash 1 wait state 
+  // Flash 1 wait state
   *(vu32 *)0x40022000 = 0x12;
   // 5. Clock system from PLL
   RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);

@@ -44,7 +44,7 @@ extern struct stat_t scheduleIdxs[TK_MAX_PRIO_LEVELS];
 #define REGH( DEV ) \
    <DEV.h>
 #if defined( DEVICE )
-   #include REGH( DEVICE )   
+   #include REGH( DEVICE )
 #else
    #error "Error, No device specified - can't determine register definition file !!!!!!!!!!!"
 #endif
@@ -60,7 +60,7 @@ sfr   TFR      = 0xFFAC;      // TFR contais Trap Reason
 
 /*!
 The most primitive of all prints. This will print anything even if
-there is no valid stack that works. 
+there is no valid stack that works.
 
 @note It will print the first letter alway, but we might want to
 create a busy-wait macro also.
@@ -73,7 +73,7 @@ create a busy-wait macro also.
   ASC0_vSendData( C );  busywait(10);        \
   ASC0_vSendData( D );  busywait(10);        \
   ASC0_vSendData( E );  busywait(10);        \
-  ASC0_vSendData( F );  busywait(10);        \  
+  ASC0_vSendData( F );  busywait(10);        \
   ASC0_vSendData(0x0D); busywait(10);        \
   ASC0_vSendData(0x0A); busywait(10);
 
@@ -153,7 +153,7 @@ static const char * kerneltraps[]={
 /*14*/   "ERR_HW          - Some HW driver detected a fatal error\n",
 /*15*/   "UNKNOWN         - Unknown (or undefined) termination reason\n"
 };
- 
+
 
 
 long burntime(int x, int y, int z){
@@ -179,13 +179,13 @@ unsigned int busywait( unsigned int time_ms ){
             for (z=0;z<100;z++)
                rc = burntime(x,y,z);
 
-   return 0;            
+   return 0;
 }
 
 void safeprint(char *s){
    int i;
 
-   for (i=0; s[i]; i++){ 
+   for (i=0; s[i]; i++){
 
       if ( s[i] == '\n' || s[i] == '\r' ){
          ASC0_vSendData(0x0D);
@@ -216,36 +216,36 @@ In case you wonder why this seemingly stupid function exists:
 char *i2shex(unsigned int i){
    unsigned int  mask;
    unsigned int ti;
-   
+
    i2shex_buff[0] = '0';
    i2shex_buff[1] = 'x';
-   
+
    mask = 0xF000;
    ti = i & mask;
    ti = ti >> 12;
    ti <= 9 ? ti += ASCII_0 : ti += (ASCII_A - 10);
    i2shex_buff[2]=ti;
-   
+
    mask = 0x0F00;
    ti = i & mask;
    ti = ti >> 8;
    ti <= 9 ? ti += ASCII_0 : ti += (ASCII_A - 10);
    i2shex_buff[3]=ti;
-   
+
    mask = 0x00F0;
    ti = i & mask;
    ti = ti >> 4;
    ti <= 9 ? ti += ASCII_0 : ti += (ASCII_A - 10);
    i2shex_buff[4]=ti;
-   
+
    mask = 0x000F;
    ti = i & mask;
    //ti = ti >> 0;
    ti <= 9 ? ti += ASCII_0 : ti += (ASCII_A - 10);
    i2shex_buff[5]=ti;
-   
+
    i2shex_buff[6]=0;
-   
+
    return i2shex_buff;
 }
 /*!
@@ -256,10 +256,10 @@ A common info printing function for all TRAPS
 void printtrap(
    const char *leadtext,
    char *lookuptable[],
-   unsigned int ip, 
+   unsigned int ip,
    unsigned int csp,
    unsigned int tfr
-){   
+){
    unsigned char bitloop;
    unsigned int  mask;
    unsigned int  tid;
@@ -268,10 +268,10 @@ void printtrap(
    bit oIEN;
    struct timespec uptime;
    int rc;
-   
+
    //The following row is risky - might breake if memory broken
    rc=getnanouptime(&uptime);
-  
+
    oIEN = IEN;
    if ((leadtext == 0uL) || (leadtext[0] > 'z') ){
       //In case DDPx was broken, no pointers will work properlly
@@ -279,82 +279,82 @@ void printtrap(
       PRINT_6_LETTERS('D','D','P','0','B','R');
       PRINT_6_LETTERS('N','O','T','R','U','S');
       //oputunistic aproach. Try set DDP0 to some known "valid" value.
-      DPP0 = 0x0101;      
+      DPP0 = 0x0101;
       __asm{ mov R0, #0x18AC};  //Just guessing a value
-   };      
-   IEN  = 0;  
-   safeprint ("\n"); 
+   };
+   IEN  = 0;
+   safeprint ("\n");
    safeprint ("****************************************");
    safeprint ("****************************************\n");
-   safeprint (leadtext); 
-   safeprint (" at PC="); 
+   safeprint (leadtext);
+   safeprint (" at PC=");
    safeprint (i2shex(csp));
    safeprint (":");
-   safeprint (i2shex(ip));  
-   safeprint (" TFR="); 
+   safeprint (i2shex(ip));
+   safeprint (" TFR=");
    safeprint (i2shex(tfr));
    safeprint ("\n****************************************");
    safeprint ("****************************************\n");
    IEN  = 1;
-   safeprint ("TFR meaning explained as follows:\n"); 
-  
+   safeprint ("TFR meaning explained as follows:\n");
+
    //tfr = 0xFFFF;  //set to test lookup table only
 
-   IEN  = 0;  
+   IEN  = 0;
    if (tfr){
       for (bitloop=0,mask=1; bitloop<16; bitloop++){
          if (tfr & mask){
-            safeprint (lookuptable[bitloop+1]); 
+            safeprint (lookuptable[bitloop+1]);
          }
-         mask = mask << 1;     
+         mask = mask << 1;
       }
    }else{
-      safeprint (lookuptable[0]); 
+      safeprint (lookuptable[0]);
    }
    IEN  = 1;
-   safeprint ("\nInfo about violating thread:\n"); 
-   
+   safeprint ("\nInfo about violating thread:\n");
+
    IEN  = 0;
    tid = tk_thread_id();
    tcb = _tk_current_tcb();
-   
+
    IEN  = 1;
    safeprint ("Thread ID: ");
    safeprint (i2shex(tid));
    safeprint (", name: \"");
    safeprint (tcb->name);
    safeprint ("\"\n");
-   
-   safeprint ("Detecting if errno was set...\n");   
+
+   safeprint ("Detecting if errno was set...\n");
    if (errno !=0 ){
-      safeprint ("Yes, errno [");   
+      safeprint ("Yes, errno [");
       safeprint (i2shex(errno));
       safeprint ("] was set:\n");
       perror(strerror(errno));
    }else{
-      safeprint ("No errno set\n\n");   
+      safeprint ("No errno set\n\n");
    }
-   
+
    safeprint ("\nDumping schedule...\n");
    safeprint ("----------------------------------------");
    safeprint ("----------------------------------------\n");
-   
+
    for (iprio=0; iprio < TK_MAX_PRIO_LEVELS; iprio++){
 
       if (scheduleIdxs[iprio].procs_at_prio > 0) {
-         
+
          safeprint ("Prio [");
          safeprint (i2shex(iprio));
          safeprint ("]\n");
          safeprint ("-idx-tid--gid--#cld-STAT-#err-STK_");
          safeprint ("STRT--CURR_STK--SSIZ-PRIO-IDX--[ thread name ]\n");
-      
+
 
          for (idx=0; idx < TK_MAX_THREADS_AT_PRIO; idx++){
             tid = theSchedule[iprio][idx];
             tcb = &proc_stat[tid];
-        
-            if ( 
+
+            if (
                (  (iprio || idx) && tid && (tcb->valid == TRUE) ) ||
                ( !(iprio || idx) && (tcb->valid == TRUE) )
             ){
@@ -381,12 +381,12 @@ void printtrap(
                      safeprint("Q");
                   else
                      safeprint("_");
-               
+
                   if (tcb->state & ______S_)
                      safeprint("S");
                   else
                      safeprint("_");
-               
+
                   if (tcb->state & _______T)
                      safeprint("T");
                   else
@@ -394,25 +394,25 @@ void printtrap(
                }
                //-^- PROCSTATE -^-
                safeprint(" ");
-            
-           
-               safeprint(&i2shex(tcb->_errno_)[2]);    safeprint(" ");          
-           
-               safeprint(&i2shex( ( ((unsigned long)&(tcb->stack_begin)) & 0xFFFF0000ul) >> 16 )[2]);  
-               safeprint(":"); 
-               safeprint(&i2shex( (unsigned long)&(tcb->stack_begin) )[2]);  
+
+
+               safeprint(&i2shex(tcb->_errno_)[2]);    safeprint(" ");
+
+               safeprint(&i2shex( ( ((unsigned long)&(tcb->stack_begin)) & 0xFFFF0000ul) >> 16 )[2]);
+               safeprint(":");
+               safeprint(&i2shex( (unsigned long)&(tcb->stack_begin) )[2]);
                safeprint(" ");
-            
-               safeprint(&i2shex( ( ((unsigned long)&(tcb->curr_sp)) & 0xFFFF0000ul) >> 16 )[2]);  
-               safeprint(":"); 
-               safeprint(&i2shex( (unsigned long)&(tcb->curr_sp) )[2]);  
+
+               safeprint(&i2shex( ( ((unsigned long)&(tcb->curr_sp)) & 0xFFFF0000ul) >> 16 )[2]);
+               safeprint(":");
+               safeprint(&i2shex( (unsigned long)&(tcb->curr_sp) )[2]);
                safeprint(" ");
-       
-               safeprint(&i2shex(tcb->stack_size)[2]);   safeprint(" ");  
-            
+
+               safeprint(&i2shex(tcb->stack_size)[2]);   safeprint(" ");
+
                /*
-               safeprint(&i2shex( ( ((unsigned long)(tcb->stack_crc)) & 0xFFFF0000ul) >> 16 )[2]);   
-               safeprint(&i2shex( (unsigned long)(tcb->stack_crc) )[2]);  
+               safeprint(&i2shex( ( ((unsigned long)(tcb->stack_crc)) & 0xFFFF0000ul) >> 16 )[2]);
+               safeprint(&i2shex( (unsigned long)(tcb->stack_crc) )[2]);
                safeprint("  ");
                */
                /*
@@ -422,20 +422,20 @@ void printtrap(
                tcb->init_funct;          //!< init_func_f / Support of the pThread <em>"once"</em> concept.
                tcb->*prmtRetAddr;        //!< void * / Preempted return adress - used in preempted mode.
                */
-            
-               safeprint(&i2shex(tcb->Prio)[2]);   safeprint(" ");  
-               safeprint(&i2shex(tcb->Idx)[2]);   safeprint(" ");  
-               safeprint(tcb->name); 
-               safeprint("\n"); 
+
+               safeprint(&i2shex(tcb->Prio)[2]);   safeprint(" ");
+               safeprint(&i2shex(tcb->Idx)[2]);   safeprint(" ");
+               safeprint(tcb->name);
+               safeprint("\n");
             }
          }
-         safeprint("\n"); 
+         safeprint("\n");
       }
    }
    safeprint ("----------------------------------------");
    safeprint ("----------------------------------------\n");
-   safeprint("Tinker uptime (S.nS): "); 
-   
+   safeprint("Tinker uptime (S.nS): ");
+
    //rc=getnanouptime(&uptime);
    safeprint(&i2shex((uptime.tv_sec&0xFFFF0000) >>16 )[2]);
    safeprint(&i2shex(uptime.tv_sec)[2]);
@@ -446,12 +446,12 @@ void printtrap(
    //safeprint("(\nNote: HEX notation.Subtract time for printout.\n)");
    safeprint("\n(Note: HEX notation.)\n");
 
-  
+
 
    IEN = oIEN;
 }
-  
-#endif 
+
+#endif
 
 
 /*
@@ -467,10 +467,10 @@ void NMI_trap (void) interrupt 0x02  {
   tfr = TFR;
 
   PRINT_6_LETTERS('T','R','A','P','_','N');
-  printtrap("\nNon-Maskable Trap (NMI)",trapinfo,ip,csp,tfr); 
-  safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
+  printtrap("\nNon-Maskable Trap (NMI)",trapinfo,ip,csp,tfr);
+  safeprint ("\n\nExecution halted (waiting for reset)...\n");
 
-#endif 
+#endif
 
   while (1);                 /* end-less loop */
 }
@@ -489,10 +489,10 @@ void STKOF_trap (void) interrupt 0x04  {
   tfr = TFR;
 
   PRINT_6_LETTERS('T','R','A','P','_','B');
-  printtrap("\nStack Overflow Trap (STKOF)",trapinfo,ip,csp,tfr); 
-  safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
+  printtrap("\nStack Overflow Trap (STKOF)",trapinfo,ip,csp,tfr);
+  safeprint ("\n\nExecution halted (waiting for reset)...\n");
 
-#endif 
+#endif
 
   while (1);                 /* end-less loop */
 }
@@ -511,10 +511,10 @@ void STKUF_trap (void) interrupt 0x06  {
   tfr = TFR;
 
   PRINT_6_LETTERS('T','R','A','P','_','U');
-  printtrap("\nStack Underflow Trap (STKUF)",trapinfo,ip,csp,tfr); 
-  safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
+  printtrap("\nStack Underflow Trap (STKUF)",trapinfo,ip,csp,tfr);
+  safeprint ("\n\nExecution halted (waiting for reset)...\n");
 
-#endif 
+#endif
 
   while (1);                 /* end-less loop */
 }
@@ -542,10 +542,10 @@ void Class_B_trap (void) interrupt 0x0A  {
   tfr = TFR;
 
   PRINT_6_LETTERS('T','R','A','P','_','B');
-  printtrap("\nClass B Trap",trapinfo,ip,csp,tfr); 
-  safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
+  printtrap("\nClass B Trap",trapinfo,ip,csp,tfr);
+  safeprint ("\n\nExecution halted (waiting for reset)...\n");
 
-#endif 
+#endif
   /* add your code here */
   while (1);                 /* end-less loop */
 }
@@ -559,19 +559,19 @@ void user_trap (void) interrupt 0x0D  {
 #ifdef PRINT_TRAP
   unsigned int ip, csp;
   unsigned int _tfr;
-  
+
   ip  = _pop_ ();
   csp = _pop_ ();
   __asm{ mov _tfr, R3 };
   //_tfr = TFR;
 
   PRINT_6_LETTERS('T','K','_','T','R','P');
-  printtrap("\nTinKer Error Trap",kerneltraps,ip,csp,_tfr);   
-  safeprint ("\n\nExecution halted (waiting for reset)...\n"); 
+  printtrap("\nTinKer Error Trap",kerneltraps,ip,csp,_tfr);
+  safeprint ("\n\nExecution halted (waiting for reset)...\n");
 
 
 
-#endif 
+#endif
   /* add your code here */
   while (1);                 /* end-less loop */
 }
@@ -653,6 +653,6 @@ void user_trap (void) interrupt 0x0D  {
  *  Revision 1.12  2006/02/22 13:05:45  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
- *  
+ *
  */
 

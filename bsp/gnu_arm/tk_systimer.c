@@ -17,26 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
  /*!
  @brief systimer for GNU_ARM
- 
- This is the generic systimer hendler. It's common for all ARM boards, and 
+
+ This is the generic systimer hendler. It's common for all ARM boards, and
  possibly even for all embedded GNU targets.
- 
+
  @note that initialization and setup is handled by board specific code.
-  
+
  */
 
 #if !defined(BOARD)
 #error BOARD needs to be defined
-#endif 
+#endif
 
 #if (BOARD == BITFIRE)
 #include "BOARD/lpc21xx/lpc21xx.h"
 #include "BOARD/lpc21xx/lpc21xx_bits.h"
 #endif
- 
+
 #define TICK_OWNER         //!< By defining this, tell systimer data to reside in this oject module
 #include <../src/tk_tick.h>
 
@@ -45,7 +45,7 @@
 void systimer_Handler( void )
 {
    TIMER0_IR   |=  BIT( IR_MR0 );  //Reset interrupt, command to Timer HW
-   _tk_tick_advance_mS(PERT); 
+   _tk_tick_advance_mS(PERT);
    VICVectAddr = 0x0;              //Interrupt complete (tell interrup controller)
 }
 

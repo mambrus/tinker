@@ -13,7 +13,7 @@ SECTIONS
     *(.text)        /* Program code */
     *(.rodata)      /* Read only data */
     } >rom
-        .  = 0x20000000;   /* From 0x20000000 */      
+        .  = 0x20000000;   /* From 0x20000000 */
     .data : {
     *(.data)        /* Data memory */
     } >ram AT > rom
@@ -23,5 +23,5 @@ SECTIONS
 	. = ALIGN(4);
 	_end = .;
 	PROVIDE (end = .);
- }  
+ }
 /*========== end of file ==========*/

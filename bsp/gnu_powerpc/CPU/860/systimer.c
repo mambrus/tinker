@@ -66,12 +66,12 @@ void systimer_Handler_1( void )
 {
 	piscr_t  *piscr = (piscr_t*)&PISCR;
 	pitcnt_t *pitc  = (pitcnt_t*)&PITC;
-	
+
 	piscr->f.PS=0x01;	// Reset pending PIT interrupt
 
 	__sys_mickey++;
 	(!__sys_mickey)?__sys_mackey++:__sys_mackey;
-	
+
 }
 
 //Equivalent to the above but requires no extra variable;
@@ -102,7 +102,7 @@ void systimer_init(){
 	bitclear(SCCR,RTSEL);	// Select OCM as clock source
 	bitclear(SCCR,RTDIV);	// Prescaler is 4
 #else
-	bitset(SCCR,RTSEL);	// Select EXTCLK as clock source 
+	bitset(SCCR,RTSEL);	// Select EXTCLK as clock source
 	bitclear(SCCR,RTDIV);	// Prescaler is 4
 #endif
 
@@ -114,8 +114,8 @@ void systimer_init(){
 
 	piscr->f.PIRQ=Intrnl_3;	// Set IRQ level
 	// Place the handler in our vector table
-	//isr_table[IRQ_3_handler]=systimer_Handler_3; 
-	isr_table[lvl_Intrnl_3]=systimer_Handler_3; 
+	//isr_table[IRQ_3_handler]=systimer_Handler_3;
+	isr_table[lvl_Intrnl_3]=systimer_Handler_3;
 
 	piscr->f.PS=0x01;	// Reset pending PIT interrupt
 	piscr->f.ZERO=0x0;	// Fill the padding with zeros
@@ -138,16 +138,16 @@ clock_t ppc_clock           (){
 	unsigned int TmickS_low  = __sys_mickey;           //Low  32 bit worth value (in board time-base)
 	long long    TmickS_high = __sys_mackey;           //High ditto
 
-	#ifdef CRATIO	
+	#ifdef CRATIO
 	long long Tcl = ((TmickS_high << 32) + TmickS_low ) / CRATIO;
 	#else
 	long long Tcl = ((TmickS_high << 32) + TmickS_low ) * MRATIO;
 	#endif
-	
+
 	#if defined(PRESCALED_CLOCK)
 	return (clock_t)(Tcl*512);
 	#else
-	return (clock_t)Tcl; //Possibly trunc it... (best we can do anyway)	
+	return (clock_t)Tcl; //Possibly trunc it... (best we can do anyway)
 	#endif
 }
 

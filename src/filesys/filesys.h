@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -85,7 +85,7 @@ typedef enum{
 */
 
 /*!oflags as struct - used for bebug purposes*/
-typedef struct{	
+typedef struct{
 	int _O_RDONLY;
 	int _O_WRONLY;
 	int _O_RDWR;
@@ -111,14 +111,14 @@ typedef struct {
 }tk_fhandle_t;
 
 
-/*! 
+/*!
 Helper function to create a file handle
 
 An IO device "open" function would normally use this
 */
 tk_fhandle_t *tk_new_handle(tk_inode_t *inode, int oflag);
 
-/*! 
+/*!
 Helper function to destroy a file handle
 
 An IO devive "close" function would normally use this
@@ -135,31 +135,31 @@ int tk_dbg_flags(_tk_dbgflag_t *flags, int oflag);
 
 
 
-/*! 
+/*!
 Main init function for the filesys component.
 
 This function will pick up drivers init functions which creates each driver
 */
 int fs_init(void);
 
-/*! 
+/*!
 Main fini function for the filesys component
 
 This function will pick up drivers fini functions which destroys each driver
 */
 int fs_fini(void);
 
-/*! 
-Init/fini function prototype. Any ini/fini functions must follow this 
+/*!
+Init/fini function prototype. Any ini/fini functions must follow this
 prototype.
 
-Both input argument and return value are implementation specific and depends 
+Both input argument and return value are implementation specific and depends
 on the driver. Each driver must however respect the following rules.
 
-- If function succeeds, a non NULL value must be returned. If the return 
+- If function succeeds, a non NULL value must be returned. If the return
   contains data that is not a textstring, the first element must be '\0'.
-- Even if the driver expects an input argument, it must also accept (and detect) 
-  NULL. NULL is passed by the fs_init main startup and this can't know what each 
+- Even if the driver expects an input argument, it must also accept (and detect)
+  NULL. NULL is passed by the fs_init main startup and this can't know what each
   driver expects as an input argument. If the argument is null, the driver
   should instansiate a default IO.
 
@@ -170,7 +170,7 @@ Normally the output is a informative textstring that can be passed to printf.
 */
 typedef void* __drv_finit_f(void*);
 
-/*! 
+/*!
 Init/fini function pointer (same is used for both)
 
 @see __drv_finit_f
@@ -294,8 +294,8 @@ iflnk
 ifsock
 ififo
 
-NOTE Not all of these make sense for each type of inode. 
-In case a stubbed dummy is but in its place so that we avoid 
+NOTE Not all of these make sense for each type of inode.
+In case a stubbed dummy is but in its place so that we avoid
 calling zero funtion pointes by misstake.
 
 fs_ifdir.c

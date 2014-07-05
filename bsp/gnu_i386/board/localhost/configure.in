@@ -16,7 +16,7 @@ extern_includes="../.."
 
 
 # By putting the start module in the library we don't have to use crt0.o
-# Our start module will output to a special section that we can let the linker 
+# Our start module will output to a special section that we can let the linker
 # relocate automagically instead
 sources_asm="startup.AO"
 
@@ -35,7 +35,7 @@ AC_SUBST(subdirs)
 
 dnl Tunings. Main reason they are here is to set defaults specific to this target.
 dnl This part will is an itermediate solution and takes over the rols of >>tk_tuning.h<<
-dnl Future solutions might me an ordinary text file that both GNU and non GNU build 
+dnl Future solutions might me an ordinary text file that both GNU and non GNU build
 dnl   sytems can make use of
 
 if test $SYSTEM == 'hixs'; then
@@ -86,7 +86,7 @@ AC_ARG_ENABLE(max_q,
 	AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],TK_MAX_THREADS)
 )
 
-# Set better default values than any previously set in either config.in earler in the 
+# Set better default values than any previously set in either config.in earler in the
 # chain or in any of the two levels of tk_tuning.h
 
 

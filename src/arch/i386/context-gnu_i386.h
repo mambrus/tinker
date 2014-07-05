@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 /*!
 @file
 
@@ -46,16 +46,16 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 
 #define TK_STI()                          \
    asm __volatile__ (" STI ");
-*/   
+*/
 
 #define TK_CLI()
 #define TK_STI()
 
 
-   
+
 #define REAL_STACK_SIZE( TCB )            \
-   ( TCB.stack_size ) 
-   
+   ( TCB.stack_size )
+
 
 #define PREP_TOS( _oldTOS, _newSP, _temp1, _temp2, _stack_struct )   \
    PUSHALL();                             \
@@ -148,7 +148,7 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #define STACK_PTR( ADDR ) \
    (ADDR.tstack)
 
-//Not needed to do anything really. But just in case, follow the new convention 
+//Not needed to do anything really. But just in case, follow the new convention
 #define REINIT_STACKADDR( ADDR, size ) \
    (ADDR.stack_size = size)
 

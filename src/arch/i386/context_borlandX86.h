@@ -48,13 +48,13 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 
 #define TK_STI()	                                                            \
    __asm{ STI }
-*/   
+*/
 
 #define TK_CLI()
 #define TK_STI()
 
 
-   
+
 #define REAL_STACK_SIZE( TCB )  \
    ( TCB.stack_size )
 
@@ -64,7 +64,7 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
     __asm{ pushfd                       }                                                                      \
     __asm{ pushad                       }                                                                      \
     __asm{ mov TSP1,esp                 }
-  
+
 #define CHANGE_STACK_POP_CPU( TSP1, TEMP )                                                                     \
     __asm{ mov esp,TSP1                 }                                                                      \
     __asm{ popad                        }                                                                      \
@@ -100,7 +100,7 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 #define STACK_PTR( ADDR ) \
    ((char *)ADDR.tstack)
 
-//Not needed to do anything really. But just in case, follow the new convention 
+//Not needed to do anything really. But just in case, follow the new convention
 #define REINIT_STACKADDR( ADDR, size ) \
    (ADDR.stack_size = size)
 

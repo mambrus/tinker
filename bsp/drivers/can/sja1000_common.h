@@ -50,7 +50,7 @@ re-synchronize on any relevant signal edge of the current transmission. The sync
 maximum number of clock cycles a bit period may be shortened or lengthened by one re-synchronization:
 tSJW = tscl × (2 × SJW.1 + SJW.0 + 1)
 */
-typedef struct{ 
+typedef struct{
 	__uint8_t SJW:2; 	//!< Synchronization Jump Width (SJW)
 	__uint8_t BRP:6; 	//!< Baud Rate Prescaler (BRP)
 }sja1000_btr0_t;
@@ -77,7 +77,7 @@ tTSEG1 = tscl × (8 × TSEG1.3 + 4 × TSEG1.2 + 2 × TSEG1.1 + TSEG1.0 + 1)
 tTSEG2 = tscl × (4 × TSEG2.2 + 2 × TSEG2.1 + TSEG2.0 + 1)
 
 */
-typedef struct{ 
+typedef struct{
 	__uint8_t SAM:1; 	//!< Sampling (SAM)
 	__uint8_t TSEG2:3; 	//!< Time Segment 2 (TSEG2)
 	__uint8_t TSEG1:4; 	//!< Time Segment 1 (TSEG1)
@@ -104,14 +104,14 @@ Table 47 Interpretation of OCMODE bits
 
 
 */
-typedef struct{ 
-	__uint8_t OCTP1:1; 	//!< 
-	__uint8_t OCTN1:1; 	//!< 
-	__uint8_t OCPOL1:1; 	//!< 
-	__uint8_t OCTP0:1; 	//!< 
-	__uint8_t OCTN0:1; 	//!< 
-	__uint8_t OCPOL0:1; 	//!< 
-	__uint8_t OCMODE:2; 	//!< 
+typedef struct{
+	__uint8_t OCTP1:1; 	//!<
+	__uint8_t OCTN1:1; 	//!<
+	__uint8_t OCPOL1:1; 	//!<
+	__uint8_t OCTP0:1; 	//!<
+	__uint8_t OCTN0:1; 	//!<
+	__uint8_t OCPOL0:1; 	//!<
+	__uint8_t OCMODE:2; 	//!<
 }sja1000_ocr_t;
 
 /*!
@@ -192,13 +192,13 @@ access is only possible in reset mode.
 
 
 */
-typedef struct{ 
+typedef struct{
 	__uint8_t PELICAN:1; 	//!< CAN mode (1 is peican, 0 is basic)
-	__uint8_t CBP:1; 	//!< Bypass the CAN input comparator 
+	__uint8_t CBP:1; 	//!< Bypass the CAN input comparator
 	__uint8_t RXINTEN:1; 	//!< TX1 output used as a dedicated receive interrupt output.
 	__uint8_t zero:1; 	//!< Padding. Always read as zero
 	__uint8_t CLK_OFF:1; 	//!< External CLKOUT pin of the SJA1000 is disabled.
-	__uint8_t CD:3; 	//!< CLKOUT frequency 
+	__uint8_t CD:3; 	//!< CLKOUT frequency
 }sja1000_cdr_t;
 
 

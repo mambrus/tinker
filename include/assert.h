@@ -59,9 +59,9 @@ void _tk_assertfail(char *assertstr, char *filestr, int line);
 #ifdef NDEBUG
 #  define assert(p)   ((void)0)
 #else
-#  
+#
 #  define assert(p) ((p) ? (void)0 : (void) _tk_assertfail( \
-                    #p, __FILE__, __LINE__ ) )              
+                    #p, __FILE__, __LINE__ ) )
 #endif
 */
 
@@ -71,11 +71,11 @@ void _tk_assertfail(char *assertstr, char *filestr, int line);
 
 #if (TK_HOWTO_ASSERT == TK_FNK_RENAMED)
 #undef assert
-#endif 
+#endif
 
-#if   !defined (assert) 
+#if   !defined (assert)
 /*!
-The assert macro. 
+The assert macro.
 
 @note Always assert, ignore NDEBUG setting
 */
@@ -162,5 +162,5 @@ The assert macro.
  *  Revision 1.3  2006/02/22 13:05:45  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
- *  
+ *
  */

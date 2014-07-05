@@ -12,7 +12,7 @@ sources_c="vectortable.c cortex_m3.c"
 extern_includes="../.."
 
 # By putting the start module in the library we don't have to use crt0.o
-# Our start module will output to a special section that we can let the linker 
+# Our start module will output to a special section that we can let the linker
 # relocate automagically instead
 #sources_asm="exceptions.AO"
 sources_asm=""

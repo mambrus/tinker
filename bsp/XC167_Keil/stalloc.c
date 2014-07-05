@@ -65,7 +65,7 @@ void ST_MTYP *stalloc (stsize_t size)   {
   }
 
 /*  Split P Block:  If P is larger than we need, we split P into two blocks:
- *  the leftover space and the allocated space.  That means, we need to 
+ *  the leftover space and the allocated space.  That means, we need to
  *  create a header in the allocated space.                                 */
 
   k -= HLEN;

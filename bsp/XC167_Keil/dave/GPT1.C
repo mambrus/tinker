@@ -41,17 +41,17 @@ GPT1 T2 is supposed to drive the kernel with ticks with a certain rate. Currentl
 #include <assert.h>
 #include <../bsp/XC167_Keil/tk_hwtypes_keilC166.h> //Note: This is a shaky thingy. This header must not in turn include any Keil regs.h
 
-/*! 
+/*!
 If this is defied, it means that the whole program will break if
 timer interrupt is delayed for too long. Great for debugging scheduler
 critical sections protection. This is done by turning ISR's on and off
 since no other means are available (in that particular case). Still we
 do want to know that ISR are not turned of for to long, or else our
 systimer will start loosing ticks. Being a little to late is OK, since
-readout's of the time is done by combining systimer with HW 
+readout's of the time is done by combining systimer with HW
 */
-#define MONITOR_TISR_LATENCY 
-#undef  MONITOR_TISR_LATENCY 
+#define MONITOR_TISR_LATENCY
+#undef  MONITOR_TISR_LATENCY
 
 /*!
 
@@ -63,14 +63,14 @@ carefully
 adjust a couple of constants. The constants themselves can be
 categorized as follows:
 
-- Pre-determined constants -  Physical facts (like the clock 
+- Pre-determined constants -  Physical facts (like the clock
                               frequency driving the CPU and CLK(s)).
-                               
+
 - Compensation constants   -  These you are supposed to measure and
                               adjust.
-                              
+
 - Derived constants        -  Defines based on the above. Used for compile time
-                              checking and avoidance of complex and 
+                              checking and avoidance of complex and
                               time consuming run-time calculations. The
                               really nice thing about expressimg
                               complex relations with these macros, is
@@ -84,13 +84,13 @@ categorized as follows:
                               values themselves.
 
 <h2>The constants</h2>
-- REGVAL \f$\bf R\f$           - Theoretical value supposed to go into the 
+- REGVAL \f$\bf R\f$           - Theoretical value supposed to go into the
                                  clock register
 
-- RELOADVAL \f$\bf R_L\f$      - Compensated value after ISR and flck 
+- RELOADVAL \f$\bf R_L\f$      - Compensated value after ISR and flck
                                  inaccuracy is compensated
 
-- ISRTIME \f$\bf T_{isr}\f$    - Latency time from interrupt to action 
+- ISRTIME \f$\bf T_{isr}\f$    - Latency time from interrupt to action
                                  expressed in nano seconds (i.e. offset
                                  value). The entity is not used, it's
                                  only mentioned for reference. The
@@ -104,7 +104,7 @@ categorized as follows:
                                  200nS \approx 1,7uS\f$ (based on
                                  measurements
                                  and formulas defined below).
-                                                 
+
 - ISRPEB \f$\bf T_i\f$         - Same as above, but expressed in the
                                  current pebble unit (scaled X 1000000).
                                  T_i is a constant and will depend
@@ -116,11 +116,11 @@ categorized as follows:
 
 - FCLK \f$\bf \Phi_0\f$        - Theoretical frequency driving the CPU
 
-- X_CLK \f$\bf x\f$            - Scaling factor that states the how much off 
+- X_CLK \f$\bf x\f$            - Scaling factor that states the how much off
                                  the oscillator is. (scaled X 1000000).
                                  <em>This one you measure & set</em>
 
-- CMPPEB  \f$\bf I_P\f$        - Derived compensation value expressed in pebble 
+- CMPPEB  \f$\bf I_P\f$        - Derived compensation value expressed in pebble
                                  units
 
 - PRES \f$\bf \eta \f$         - Prescalor selected <em>this one you
@@ -153,7 +153,7 @@ The <em>actual</em> reload (i.e. compensated) value:
          I_P = T_i + R_Lx \cr
       }
    \right \}
-   \Rightarrow 
+   \Rightarrow
 \f]
 
 
@@ -171,7 +171,7 @@ But since we have meassured values of \f$ I_P \f$ allready, we need only express
          I_{P_2} = T_i + R_{L_2}x \cr
       }
    \right \}
-   \Rightarrow 
+   \Rightarrow
 \f]
 
 The two unknowns that we seek are \f$ T_i \f$ and \f$ x \f$, hence we can derive the following expressions:
@@ -191,7 +191,7 @@ The two unknowns that we seek are \f$ T_i \f$ and \f$ x \f$, hence we can derive
 (2)
 
 \f[
-   T_i = I_{P_2} - R_{L_2}x 
+   T_i = I_{P_2} - R_{L_2}x
 \f]
 
 
@@ -217,7 +217,7 @@ The two unknowns that we seek are \f$ T_i \f$ and \f$ x \f$, hence we can derive
 \f[
 
    x - \frac{R_{L_2}x }
-          { R_{L_1} } 
+          { R_{L_1} }
    =
    \frac{I_{P_1} - I_{P_2}  }
             { R_{L_1} }
@@ -234,7 +234,7 @@ The two unknowns that we seek are \f$ T_i \f$ and \f$ x \f$, hence we can derive
 
 \f[
    x = \frac{ I_{P_1} - I_{P_2} }
-         { R_{L_1} - R_{L_2} }    
+         { R_{L_1} - R_{L_2} }
 \f]
 
 
@@ -288,7 +288,7 @@ and..
 #define ISRPEB          6000000   //15 sec 279s too fast
 #define ISRPEB          1000000   //5  sec on 14:14:43 (51 283s) to slow  -97.5 ppm
 
-#define ISRPEB          1011971   
+#define ISRPEB          1011971
 */
 #define ISRPEB          1510000
 
@@ -375,12 +375,12 @@ and..
 
 
 //****************************************************************************
-// @Function      void GPT1_vInit(void) 
+// @Function      void GPT1_vInit(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This is the initialization function of the GPT1 function 
-//                library. It is assumed that the SFRs used by this library 
-//                are in its reset state. 
+// @Description   This is the initialization function of the GPT1 function
+//                library. It is assumed that the SFRs used by this library
+//                are in its reset state.
 //
 //----------------------------------------------------------------------------
 // @Returnvalue   None
@@ -461,7 +461,7 @@ void GPT1_vInit(void)
   ///  - timer 2 interrupt group level (GLVL) = 1
   ///  - timer 2 group priority extension (GPX) = 0
 
-  GPT12E_T2IC    =  0x007D;     
+  GPT12E_T2IC    =  0x007D;
 
   ///  Use PEC channel 5 for GPT1 T2 INT:
   ///  - normal interrupt
@@ -479,7 +479,7 @@ void GPT1_vInit(void)
      tmp1 = ((GPT1_ControlRegCore_t*)&GPT12E_T3CON)->BPS1;
      tmp2 = tmp1;
      ((GPT1_ControlRegCore_t*)&GPT12E_T3CON)->BPS1 = tmp2;
-     
+
      tmp1 = ((GPT1_ControlRegAux_t*)&GPT12E_T2CON)->TaI;
      tmp2 = tmp1;
      ((GPT1_ControlRegAux_t*)&GPT12E_T2CON)->TaI = tmp2;
@@ -492,17 +492,17 @@ void GPT1_vInit(void)
 
 
 //****************************************************************************
-// @Function      void GPT1_viTmr2(void) 
+// @Function      void GPT1_viTmr2(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This is the interrupt service routine for the GPT1 timer 2. 
-//                It is called up in the case of over or underflow of the 
+// @Description   This is the interrupt service routine for the GPT1 timer 2.
+//                It is called up in the case of over or underflow of the
 //                timer 2 register.
-//                If the incremental interface mode is selected and the 
-//                interrupt for this mode is not disabled it is called up if 
+//                If the incremental interface mode is selected and the
+//                interrupt for this mode is not disabled it is called up if
 //                count edge or count direction was detected.
-//                
-//                Please note that you have to add application specific code 
+//
+//                Please note that you have to add application specific code
 //                to this function.
 //
 //----------------------------------------------------------------------------
@@ -536,10 +536,10 @@ void GPT1_viTmr2(void) interrupt T2INT
   assert(RELOADVAL > pebbRest );                    //<- Interrupt flag has been turned off for too long. Missed one whole event (at least).
   #endif
 
-  //The following row CAN actually occure. But the test should work at 
+  //The following row CAN actually occure. But the test should work at
   //least for several minuts. Renable to thest your config.
   //assert( 0 < pebbRest );                           //<- Timer not counting past the event, i.e. latency correction not possible. Wrong config, correct your timer setup plz...
-  
+
   GPT1_vLoadTmr(GPT1_TIMER_2,RELOADVAL+GPT1_uwReadTmr(GPT1_TIMER_2));  //<- Correct with the actual value. Notice the sign (+), this is intentional.
   _tk_tick_advance_mS(PERT);
 
@@ -560,7 +560,7 @@ void GPT1_viTmr2(void) interrupt T2INT
 #define CLKOFS ((FCLK * X_CLK)/1000000) //!< Helper constant used locally in tk_getHWclock_Quality_CLK1
 
 void tk_getHWclock_Quality_CLK1(HWclock_stats_t *HWclock_stats){
-   HWclock_stats->freq_hz      = ((FCLK - CLKOFS) / PRES); 
+   HWclock_stats->freq_hz      = ((FCLK - CLKOFS) / PRES);
    HWclock_stats->res          = 16;
    HWclock_stats->perPebbles   = RELOADVAL;  /*The actual period time in pebbles time-unit*/
    HWclock_stats->maxPebbles   = REGVAL;     /*The theoretical period time in pebbles time-unit*/

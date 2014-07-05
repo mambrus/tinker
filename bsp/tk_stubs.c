@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 /*!
 @file
 @brief stubed funtions
@@ -25,11 +25,11 @@
 This file contains stub-functions . Use these funtions iniially in your port
 until you got working equivalents.
 
-When involved with porting, the \ref clock, \ref printf and \ref malloc 
-functions are most often not implemented or wrong. 
-  
-The functions in this file are an esential part of the \ref SCHED internals, 
-you need to have atleas stub that will do something  meantingful, so that 
+When involved with porting, the \ref clock, \ref printf and \ref malloc
+functions are most often not implemented or wrong.
+
+The functions in this file are an esential part of the \ref SCHED internals,
+you need to have atleas stub that will do something  meantingful, so that
 the dispaching can work.
 
 */
@@ -42,7 +42,7 @@ long int stub_mickey = 0;
 /*!
 Simulates time by increasing a variable everytime function is called.
  */
-clock_t clock_stubbed(){   
+clock_t clock_stubbed(){
    stub_sub_mickey++;
    if (stub_sub_mickey >=100){
       stub_sub_mickey = 0;
@@ -53,7 +53,7 @@ clock_t clock_stubbed(){
 #endif
 
 
-/*! 
+/*!
  * @defgroup CVSLOG_tk_stubs_c tk_stubs_c
  * @ingroup CVSLOG
  *

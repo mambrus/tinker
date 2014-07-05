@@ -20,7 +20,7 @@
    <DEV.h>
 
 #if defined( DEVICE )
-   #include REGH( DEVICE )   
+   #include REGH( DEVICE )
 #else
    #error "Error, No device specified - can't determine register definition file !!!!!!!!!!! __FILE__"
 #endif

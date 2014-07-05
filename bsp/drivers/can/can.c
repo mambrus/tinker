@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -60,24 +60,24 @@ int DRV_IO(fcntl)(int file, int command, ...){
 	errno = ENOSYS;
 	return -1;
 }
-		
+
 int DRV_IO(fstat)(int file, struct stat *st) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	st->st_mode = hndl->inode->mode;;
 	return 0;
 }
-	
+
 int DRV_IO(isatty)(int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 1;
 }
-		
+
 int DRV_IO(link)(char *old, char *new) {
-	assert(DRV_IO(assert_info) == NULL);	
+	assert(DRV_IO(assert_info) == NULL);
 	errno=EMLINK;
 	return -1;
 }
-	
+
 int DRV_IO(lseek)(int file, int ptr, int dir) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 0;
@@ -91,35 +91,35 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 		inode=va_arg(ap,tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);	
+	hndl=tk_new_handle(inode,flags);
 
 	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
-	
+
 	return (int)hndl;
 }
-	
+
 int DRV_IO(read)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 
-	return sja1000_read(ptr,len);	
+	return sja1000_read(ptr,len);
 	return sizeof(clock_t);
 }
-		
+
 int DRV_IO(stat)(const char *file, struct stat *st) {
 	assert(DRV_IO(assert_info) == NULL);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-		
+
 int DRV_IO(unlink)(char *name) {
 	assert(DRV_IO(assert_info) == NULL);
 	errno=ENOENT;
 	return -1;
 }
-	
+
 int DRV_IO(write)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	return sja1000_write(ptr,len);	
+	return sja1000_write(ptr,len);
 }
 
 /*IO structure - pre-assigned*/
@@ -166,7 +166,7 @@ typedef enum {
 Default init (BOARD ESC) - obsolete
 */
 void *DRV_IO(init_0__)(void *inarg) {
-	assert(inarg==NULL); 	
+	assert(inarg==NULL);
 	assure(sja1000_init(0x20000000,lvl_IRQ_3,1,1,500000,0,0xffffffff) == 0);
 	assure(mknod(DEV_FILE_NAME(0),S_IFBLK, (dev_t)&DRV_IO(io))	==0);
 	return (void*)DRV_IO(info_str);
@@ -192,7 +192,7 @@ int DRV_IO(init)(
 }
 
 
-/*! 
+/*!
 Default fini function(s) - obsolete
 */
 void *DRV_IO(fini_0__)(void *inarg) {
@@ -202,7 +202,7 @@ void *DRV_IO(fini_0__)(void *inarg) {
 }
 
 /*!
-Specific fini 
+Specific fini
 */
 int DRV_IO(fini)(int file) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;

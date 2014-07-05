@@ -21,7 +21,7 @@
 #ifndef SCCR_H
 #define SCCR_H
 
-//Stuff for the 
+//Stuff for the
 
 #include <sys/types.h>
 
@@ -119,8 +119,8 @@
 */
 
 
-typedef union{ 
-	__uint32_t raw; 
+typedef union{
+	__uint32_t raw;
 	struct {
 		__uint32_t PADD_0		:1;
 		__uint32_t COM			:2;

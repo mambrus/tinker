@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -20,37 +20,37 @@
 /*!
 				TIME
 
-This is one of the simplest drivers possible but that shows some of the 
-things you can do, and also the basics for how to write device drivers. 
+This is one of the simplest drivers possible but that shows some of the
+things you can do, and also the basics for how to write device drivers.
 
   ** You're encouraged to copy this file and use it as a template **
 
-The TIME driver provides you with with the system up-time via a block 
+The TIME driver provides you with with the system up-time via a block
 device (/dev/time) in the form of a clock_t data.
 
 Optionally, you can open the device for writing and set a reference time.
 If you write the current time to the device, each time you read from the
-device again the time you get will now be the delta between you wrote to 
+device again the time you get will now be the delta between you wrote to
 the device and when you read it.
 
-This difference is stored in the file-handle (fh) itself in the optional 
+This difference is stored in the file-handle (fh) itself in the optional
 "data" field. This has has the following implications.
 
-1) You can use the same driver to measure delta-times in independent 
-   threads. As long as you use a unique fh, the operations will not 
+1) You can use the same driver to measure delta-times in independent
+   threads. As long as you use a unique fh, the operations will not
    interfere with each other.
 
-2) To use the driver to measure delta-times, the same fh for reading 
+2) To use the driver to measure delta-times, the same fh for reading
    has to be used that was once used for writing the reference time. I.e.
    you have to open the file O_RDWR.
 
-@NOTE 
+@NOTE
 Since this driver does not block or use any other syncronisation, it
 can be used without a kernel.
 
 @NOTE
 This simple driver will ignore flags that affect blocking and scheduling
-for the sake of simplicity. The drivers behavior is instead hard-coded 
+for the sake of simplicity. The drivers behavior is instead hard-coded
 (if you want, you can implement that as an exercise youself).
 
 */
@@ -90,24 +90,24 @@ int DRV_IO(fcntl)(int file, int command, ...){
 	errno = ENOSYS;
 	return -1;
 }
-		
+
 int DRV_IO(fstat)(int file, struct stat *st) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	st->st_mode = hndl->inode->mode;;
 	return 0;
 }
-	
+
 int DRV_IO(isatty)(int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 1;
 }
-		
+
 int DRV_IO(link)(char *old, char *new) {
-	assert(DRV_IO(assert_info) == NULL);	
+	assert(DRV_IO(assert_info) == NULL);
 	errno=EMLINK;
 	return -1;
 }
-	
+
 int DRV_IO(lseek)(int file, int ptr, int dir) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 0;
@@ -121,14 +121,14 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 		inode=va_arg(ap,tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);	
+	hndl=tk_new_handle(inode,flags);
 
 	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
 	((DRV_IO(hndl_data_t)*)(hndl->data))->time_open=clock();
 
 	return (int)hndl;
 }
-	
+
 int DRV_IO(read)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	clock_t ctime=clock();
@@ -136,19 +136,19 @@ int DRV_IO(read)(int file, char *ptr, int len) {
 	memcpy(ptr,&ctime,sizeof(clock_t));
 	return sizeof(clock_t);
 }
-		
+
 int DRV_IO(stat)(const char *file, struct stat *st) {
 	assert(DRV_IO(assert_info) == NULL);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-		
+
 int DRV_IO(unlink)(char *name) {
 	assert(DRV_IO(assert_info) == NULL);
 	errno=ENOENT;
 	return -1;
 }
-	
+
 int DRV_IO(write)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	((DRV_IO(hndl_data_t)*)(hndl->data))->time_offset=clock();

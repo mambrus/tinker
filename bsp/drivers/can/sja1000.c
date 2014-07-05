@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,10 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 /*!
-@file This module consists of low level routines for the SJA1000 
+@file This module consists of low level routines for the SJA1000
 CAN-controller.
 
-Notes for connecting to physical bus (note taken for Kvases LapCAN which 
+Notes for connecting to physical bus (note taken for Kvases LapCAN which
 follows ISO 11898-2):
 
 @verbatim
@@ -56,7 +56,7 @@ Pins 2, 3, 4, and 7 are protected by 250 mA fuses.
 //#define SEF_TEST_MODE 1
 
 //Local variables
-static int			_pmode;			//!< Mode of operation (Peliacn =1, Normal=0) 
+static int			_pmode;			//!< Mode of operation (Peliacn =1, Normal=0)
 static int			_IRQ;			//!< IRQ number for the driver
 static int			_xmode;			//!< Extended or basic frames
 static sja1000_t		*_sja1000;		//!< Address of SJA1000 (chip mapped on struct)
@@ -88,7 +88,7 @@ static struct {
 }icntr;
 
 #if defined(TK_USE_EMRGCY_CONSOLE)
-	#define con_write(x) TK_USE_EMRGCY_CONSOLE(x,strlen(x));	
+	#define con_write(x) TK_USE_EMRGCY_CONSOLE(x,strlen(x));
 #else
 	#define con_write(x) console_write( x, strlen(x));
 #endif
@@ -97,7 +97,7 @@ static struct {
 /*!
 Initializes the circuit and puts it into operting mode
 
-@note 32bit acceptance masking is used no matter if normal 
+@note 32bit acceptance masking is used no matter if normal
 or extended frames are used.
 */
 int sja1000_init(
@@ -109,7 +109,7 @@ int sja1000_init(
 	__uint32_t ac, 		//!< Acceptance code @note MSB is the same either EFF or SFF
 	__uint32_t am		//!< Acceptance mask @note MSB is the same either EFF or SFF
 ){
-	
+
 	_pmode=pmode;
 	_xmode=xmode;
 	_sja1000 		= (sja1000_t*)baddr;
@@ -146,9 +146,9 @@ int sja1000_init(
 
 
 	_sja1000->pelican.btr1.SAM=0;	// No triple sampling
-	_sja1000->pelican.btr1.TSEG2=2;	// 
-	_sja1000->pelican.btr1.TSEG1=5;	// 
-	_sja1000->pelican.btr1.TSEG1=3;	// 
+	_sja1000->pelican.btr1.TSEG2=2;	//
+	_sja1000->pelican.btr1.TSEG1=5;	//
+	_sja1000->pelican.btr1.TSEG1=3;	//
 
 	_sja1000->pelican.ocr.OCMODE	=2;	// Normal output mode
 	//Drivers for TX0 and TX1 - both in push-pull
@@ -168,10 +168,10 @@ int sja1000_init(
 
 	/*According to SJA1000 manual, mask out bits that should not be cared for*/
 	if (xmode){
-		_sja1000->pelican.fracc.acceptance.mask = 
+		_sja1000->pelican.fracc.acceptance.mask =
 			_sja1000->pelican.fracc.acceptance.mask | 0x00000003;
 	}else{
-		_sja1000->pelican.fracc.acceptance.mask = 
+		_sja1000->pelican.fracc.acceptance.mask =
 			_sja1000->pelican.fracc.acceptance.mask | 0x000F0000;
 	}
 
@@ -224,12 +224,12 @@ int sja1000_read(const char* buffer, int buff_len){
 
 	_sja1000->pelican.ier.RIE = 0;
 	nRx = _can_nrx;
-	_sja1000->pelican.ier.RIE = 1;	
+	_sja1000->pelican.ier.RIE = 1;
 	assert(nRx<CAN_RX_BUFFSZ);
 
-	
+
 	sem_wait(&_can_rx_sem);
-	
+
 	dlc = _can_RxBuff[_can_rxidx_out].frinfo.DLC;
 	psz = dlc + sizeof(__uint32_t);
 
@@ -269,7 +269,7 @@ Returns 0 if it was possible to write, else the whole package size is returned.
 
 @note Indata is the whole package including header
 */
-int sja1000_write(char* buffer, int max_len){ 
+int sja1000_write(char* buffer, int max_len){
 	int i,dlc;
 	//sja1000_pelican_frinfo_t frinfo;
 	sja1000_pelican_frame_t	frame;
@@ -280,7 +280,7 @@ int sja1000_write(char* buffer, int max_len){
 	if (_xmode){
 		assure(max_len>=4);
 		dlc=max_len-4;
-		
+
 		frame.frinfo.FF=1;
 		frame.frinfo.RTR=0;
 		frame.frinfo.DLC=dlc;
@@ -289,7 +289,7 @@ int sja1000_write(char* buffer, int max_len){
 		frame.format.EFF.padd2=0;
 		for (i=0;i<dlc;i++)
 			frame.format.EFF.data[i] = buffer[i+4];
-		
+
 	}else{
 		assure(max_len>=2);
 		dlc=max_len-2;
@@ -320,7 +320,7 @@ int sja1000_write(char* buffer, int max_len){
 }
 
 
-/* ISR - Interrupt handlers */ 
+/* ISR - Interrupt handlers */
 /*! Bus Error Interrupt*/
 void isr_BEI(){
 	con_write("SJA1000: Bus Error Interrupt\r\n");
@@ -354,14 +354,14 @@ void isr_DOI(){
 
 /*! Error Warning Interrupt */
 void isr_EI(){
-	con_write("SJA1000: Error Warning Interrupt\r\n");	
+	con_write("SJA1000: Error Warning Interrupt\r\n");
 	icntr.EI++;
 };
 
 /*! Transmit Interrupt */
 void isr_TI(){
 	icntr.TI++;
-	//_sja1000->pelican.ier.TIE=0;	
+	//_sja1000->pelican.ier.TIE=0;
 };
 
 /*! Receive Interrupt */

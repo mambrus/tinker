@@ -3,7 +3,7 @@
 // $WCREV$
 //! Functions for sending commands and data to the Bitfire FPGA. This is controlled by GPIO P0.12 and P0.13.
 //! Defines FGPACMD_* constants.
-//! \page AEB01_FPGA aeb01_fpga.h 
+//! \page AEB01_FPGA aeb01_fpga.h
 //! \ingroup BSPINC
 
 #ifndef _AEB01_FPGA_H

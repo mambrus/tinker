@@ -15,7 +15,7 @@
 #ifndef hwboard_h
 #define hwboard_h
 /*
-Some stuff to define the fundamentals of the board that neighter the build- 
+Some stuff to define the fundamentals of the board that neighter the build-
 nor the run-time system can figure out by themselves.
 */
 
@@ -28,7 +28,7 @@ of circuit that frives the chip, only the frequency. Hence OSCCLK...
 #define F_OSCCLK	4000000
 
 /*
-Where internal memory mapping for SPR and DP-RAM is located. 
+Where internal memory mapping for SPR and DP-RAM is located.
 Omitted for now since it's derived from the bdi2000 setting and extracted
 into mmap_regs.h. Will change this later....
 */

@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
-  
+
+
 /*!
 @file
 @ingroup PTIMER
@@ -33,9 +33,9 @@ PTIMER
 @see PTIMER
 
 */
-   
 
- 
+
+
 #ifndef TK_PTIMER_H
 #define TK_PTIMER_H
 
@@ -54,13 +54,13 @@ PTIMER
 
 /*- public definitions **/
 
-/*COMPONENT PTIMER*/                   
+/*COMPONENT PTIMER*/
 
 enum PTIMER_ERROR_CODES{
 
-ERR_UNDEF_PTIMER=ERR_ITC_SENTINEL   ,//!< @brief No such or invalid ptimer 
-ERR_TIME_NEG               ,//!< @brief Trying to set event for time that's passed 
-ERR_TIMER_DELETED          ,//!< @brief The timer (i.e. the requested event) has been deleted 
+ERR_UNDEF_PTIMER=ERR_ITC_SENTINEL   ,//!< @brief No such or invalid ptimer
+ERR_TIME_NEG               ,//!< @brief Trying to set event for time that's passed
+ERR_TIMER_DELETED          ,//!< @brief The timer (i.e. the requested event) has been deleted
 ERR_NO_MORE_TIMERS         ,//!< @brief You try to exeed the maximum number of pending timers
 
 ERR_PTIMER_SENTINEL
@@ -80,34 +80,34 @@ Macros involved with the protocol between HW clock and service thread
 #define ET_TIMEOUT_P     1   /*!< Timeout event part - timer partly completed.
                                   HWclock_ needs reloading */
 #define ET_RELOAD_NEW    2   /*!< Current timer was disrupted by a new timer that
-                                  expires earlier than the pending one. 
+                                  expires earlier than the pending one.
                                   THWP_RTIME will contain the remaining bullets */
-#define ET_CANCELLED     3   /*!< Current timer was cancelled.                                  
+#define ET_CANCELLED     3   /*!< Current timer was cancelled.
                                   THWP_RTIME will contain the remaining bullets */
 
 //@}
 
 
 
-/*! This index enumeration determines that each index in the array passed from 
+/*! This index enumeration determines that each index in the array passed from
     the HW ISR to the driver means. */
 typedef enum{
    THWP_EVENT_ID, /*!< Reason why the service thread is awaken (see the ET_XXX
                        macros*/
-   THWP_TIMER_ID, /*!< The event relates to this timer number (used for sanity 
-                       checks for cases where interrupts happen during charging 
+   THWP_TIMER_ID, /*!< The event relates to this timer number (used for sanity
+                       checks for cases where interrupts happen during charging
                        of the HWclock_) */
-   THWP_RTIME,    /*!< Time that remains. Bullets remaing in HWclock_ - This field 
-                       is very important and will always contain a valid value 
-                       (remaining in shift register) no matter the event 
-                       reason. The value is used by the service thread to use 
-                       to update it's own internal record of time. The value 
-                       tells the service how much time was left until the next 
-                       <b>expected</b> event. 0 is a special case meaning that 
+   THWP_RTIME,    /*!< Time that remains. Bullets remaing in HWclock_ - This field
+                       is very important and will always contain a valid value
+                       (remaining in shift register) no matter the event
+                       reason. The value is used by the service thread to use
+                       to update it's own internal record of time. The value
+                       tells the service how much time was left until the next
+                       <b>expected</b> event. 0 is a special case meaning that
                        the event has arrived as expected in time. */
-   THWP_LATCY,    /*!< Extra field that can be used for compensating latency 
+   THWP_LATCY,    /*!< Extra field that can be used for compensating latency
                        (for targets where ISR can measure it) */
-   THWP_PROT_SZ   /*!< Internal - Use to determine needed sizes for array using 
+   THWP_PROT_SZ   /*!< Internal - Use to determine needed sizes for array using
                        these indexes can be determined by name */
 }e_timerHW_protIdx;
 
@@ -171,7 +171,7 @@ unsigned long  tk_ptime_destruct ( void );
 //@}
 
 /*!
-@name API for createing and destoy timers 
+@name API for createing and destoy timers
 
 These functions are involved with creating and destroying timers
 */
@@ -203,8 +203,8 @@ unsigned long  tk_ptimer_sleep  ( thid_t  tid, time_t *relTime );
 
 #endif
 
-  
-/*! 
+
+/*!
  * @defgroup CVSLOG_tk_ptime_h tk_ptime_h
  * @ingroup CVSLOG
  *
@@ -314,7 +314,7 @@ unsigned long  tk_ptimer_sleep  ( thid_t  tid, time_t *relTime );
  *  very close to the high-res timers that POSIX 1003.1c define and is a
  *  good pointer whether pthreads is a good next step or not for TinKer.
  *
- *  
+ *
  *******************************************************************/
 
 

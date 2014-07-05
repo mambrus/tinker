@@ -40,13 +40,13 @@ PTHREAD_SCHED
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 int pthread_attr_init (pthread_attr_t *attr){
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(attr);
    return 0;
 }
 
 int pthread_attr_destroy (pthread_attr_t *attr){
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(attr);
    return 0;
 }
@@ -61,7 +61,7 @@ int pthread_attr_getinheritsched (const pthread_attr_t attr *, int *){
 
 */
 int pthread_attr_getschedparam (const pthread_attr_t *attr, struct sched_param *param){
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(attr);
    _PTHREAD_NO_WARN_VAR(param);
    return 0;
@@ -84,7 +84,7 @@ int pthread_attr_setinheritsched (pthread_attr_t attr *, int){
 }
 */
 int pthread_attr_setschedparam (pthread_attr_t *attr, const struct sched_param *param){
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(param);
    _PTHREAD_NO_WARN_VAR(attr);
    return 0;
@@ -107,14 +107,14 @@ int pthread_attr_setstackaddr (pthread_attr_t attr *, void *){
 }
 */
 int pthread_attr_getstacksize (const pthread_attr_t *attr, size_t *size){
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(size);
    _PTHREAD_NO_WARN_VAR(attr);
    return 0;
 }
 
 int pthread_attr_setstacksize (pthread_attr_t *attr, size_t size){
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(size);
    _PTHREAD_NO_WARN_VAR(attr);
    return 0;
@@ -124,7 +124,7 @@ int pthread_attr_setstacksize (pthread_attr_t *attr, size_t size){
 //------1---------2---------3---------4---------5---------6---------7---------8
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-  
+
 /*!
  *  @defgroup CVSLOG_pthread_attr_sched_c pthread_attr_sched_c
  *  @ingroup CVSLOG
@@ -142,10 +142,10 @@ int pthread_attr_setstacksize (pthread_attr_t *attr, size_t size){
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *
- *  
+ *
  *******************************************************************/
 
- 
+
 
 
 

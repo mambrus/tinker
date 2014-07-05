@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 #ifndef CONTEXT_GNU_POWERP_ELF_H
 #define CONTEXT_GNU_POWERP_ELF_H
 
@@ -30,18 +30,18 @@
 
 
 #if ( TK_DCPU == __tk_860__ )
-	
+
 	//Interrupt enabling/disabling is done via
 	//Machine State Register (MSR)
-	
+
 	// bit	Description
 	// --------------------------------------------------------------------
 	// EE
 	// -------
 	// 16	External interrupt enable
-	//	0 The processor delays recognition of external and decrementer 
+	//	0 The processor delays recognition of external and decrementer
 	//	  interrupt conditions.
-	//	1 The processor is enabled to take an external or decrementer 
+	//	1 The processor is enabled to take an external or decrementer
 	//	  interrupt.
 /*
 	#define BIT_MSR_EE (8>>16)
@@ -55,8 +55,8 @@
 	** Read-modify-write operations are not an option in this case **
 
 	SPR's EIE and EID will do almost the same thing, but will not mask NMI
-	I.e. NMI might still corrupt contexts swiching, but we'll live with 
-	that since those are ment never to really happen.	
+	I.e. NMI might still corrupt contexts swiching, but we'll live with
+	that since those are ment never to really happen.
 	*/
 
 	#define _EIE 80

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -39,25 +39,25 @@ int DRV_IO(fcntl)(int file, int command, ...){
 	errno = ENOSYS;
 	return -1;
 }
-	
-	
+
+
 int DRV_IO(fstat)(int file, struct stat *st) {
 	assert(DRV_IO(assert_info) == NULL);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-	
+
 int DRV_IO(isatty)(int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 1;
 }
-		
+
 int DRV_IO(link)(char *old, char *new) {
 	assert(DRV_IO(assert_info) == NULL);
 	errno=EMLINK;
 	return -1;
 }
-	
+
 int DRV_IO(lseek)(int file, int ptr, int dir) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 0;
@@ -68,24 +68,24 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 	errno = ENOSYS;
 	return -1;
 }
-	
+
 int DRV_IO(read)(int file, char *ptr, int len) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 0;
 }
-		
+
 int DRV_IO(stat)(const char *file, struct stat *st) {
 	assert(DRV_IO(assert_info) == NULL);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-		
+
 int DRV_IO(unlink)(char *name) {
 	assert(DRV_IO(assert_info) == NULL);
 	errno=ENOENT;
 	return -1;
 }
-	
+
 int DRV_IO(write)(int file, char *ptr, int len) {
 	assert(DRV_IO(assert_info) == NULL);
 	return len;
@@ -111,7 +111,7 @@ const tk_iohandle_t DRV_IO(io) = {
 
 //#include <sys/stat.h>
 extern drv_finit_t fifo_init;
-/*! Creates a new fifo. Use unlink to destroy it.*/ 
+/*! Creates a new fifo. Use unlink to destroy it.*/
 int mkfifo(const char *path, mode_t mode){
 	//start up a new instance of the fifo driver
 	assure(fifo_init((void*)path) != NULL);

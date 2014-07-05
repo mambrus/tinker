@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
+
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 #ifndef TK_TUNING_H
@@ -44,7 +44,7 @@ Called by handler to notify inerrupt controller that ISR is finished (or interru
 
 @note Assuming all external IRQ[0..7] are edge trigged
 
-@note This function/macro is mandatory by TinKer API 
+@note This function/macro is mandatory by TinKer API
 
 @attention Bit is <b>cleared</b> by writing <b>ONE</b> to it (@!# Motorola ;( )
 
@@ -53,13 +53,13 @@ Called by handler to notify inerrupt controller that ISR is finished (or interru
 		bitset(SIPEND,level);
 
 
-/* No need to set any more tunings here. This port exists only for GNU and configure.in 
+/* No need to set any more tunings here. This port exists only for GNU and configure.in
 at this level contains all the defaults we need. */
 
 #endif  //TK_TUNING_H
 
-  
-/*! 
+
+/*!
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $

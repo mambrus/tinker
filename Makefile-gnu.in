@@ -51,34 +51,34 @@ LIBOBJS_LIST   = $(patsubst %,-l%,$(LIBOBJS))
 
 # Stuff below would be better to somehow convert to build-in's
 
-CFLAGS := $(CFLAGS) -D__tinker__ -D_SYS_FEATURES_H 
+CFLAGS := $(CFLAGS) -D__tinker__ -D_SYS_FEATURES_H
 CFLAGS := $(CFLAGS) -D__FDSCR_T=int -D__FDFLG_T=int
 
 ifeq ($(XCOMPILE),1)
    CFLAGS := $(CFLAGS)  -DDEBUG -DBOARD=$(BOARD) -DABI=$(ABI) -DARCH=$(ARCH)
    CFLAGS := $(CFLAGS) $(CPU_OPT) $(DCPU) -g -gstabs+ -D RUN_FROM_ROM
-   CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(ALIAS_HOST)/include 
+   CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(ALIAS_HOST)/include
    CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include -I $(TINKER_PATH)/src $(EXTERN_INCL)
-   
+
    LDFLAGS   := $(LDFLAGS) -Xlinker --relocatable
-   
+
    LDFLAGS   := $(LDFLAGS) -nodefaultlibs
    LDFLAGS   := $(LDFLAGS) -nostdlib -nostartfiles
 
 else
-   CFLAGS   := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=$(ARCH) -DDEBUG 
-   CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/include 
-   CFLAGS   := $(CFLAGS) -Wall -I . -I $(TINKER_PATH)/include 
+   CFLAGS   := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=$(ARCH) -DDEBUG
+   CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/include
+   CFLAGS   := $(CFLAGS) -Wall -I . -I $(TINKER_PATH)/include
    LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
-   
-   #On GCC 3.3.4 (SuSe 9.2) not having this flag will produce a link error to 
+
+   #On GCC 3.3.4 (SuSe 9.2) not having this flag will produce a link error to
    #libgcc_s.a
    LDFLAGS := $(LDFLAGS) -nodefaultlibs
-   
-   #On GCC 3.3.4 (SuSe 9.2) not having this flag will produce a link error  
+
+   #On GCC 3.3.4 (SuSe 9.2) not having this flag will produce a link error
    #when linking final application saying multiple symbols (stdlib) are defined
    LDFLAGS := $(LDFLAGS) -nostdlib
-endif   
+endif
 
 #-------1---------2---------3---------4---------5---------6---------7---------8
 ALL_C_r   := @ALL_C@
@@ -155,7 +155,7 @@ cleanhard:
 
 
 cleanall: clean
-	rm -rf @TINKER_PATH@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/	
+	rm -rf @TINKER_PATH@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
 	rm -rf @TINKER_PATH@/lib/crt*.o $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
 	rm $(TOOLDIR)/$(ALIAS_HOST)/lib/lib@PACKAGE_NAME@.a
 	rm -rf $(TOOLDIR)/$(ALIAS_HOST)/include/tinker

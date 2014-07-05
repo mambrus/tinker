@@ -48,7 +48,7 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_cond_init.html
 @todo Stubbed. Impl TBD
 */
 int pthread_cond_init (pthread_cond_t * __cond, const pthread_condattr_t *attr){
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(__cond);
    _PTHREAD_NO_WARN_VAR(attr);
    return 0;
@@ -62,7 +62,7 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_cond_destroy.htm
 int pthread_cond_destroy (pthread_cond_t *__cond){
    assert (__cond->valid);
    assert("Not implemented yet" == 0);
-   _PTHREAD_NO_WARN_VAR(__cond); 
+   _PTHREAD_NO_WARN_VAR(__cond);
    return 0;
 }
 
@@ -76,24 +76,24 @@ int pthread_cond_signal (pthread_cond_t *__cond){
 
    assert (__cond->valid);
    if (__cond->coop_mux == NULL) //No one is using the CV yet. No need to do anything
-      return 0; 
+      return 0;
 
    // BIG FAT NOTE. 1) If not taken yet = recursive. 2) Several listeners = release all => logic handled by phread_condval_attribute (TBD)
-   y = _mutex_unlock_primitive( &(__cond->cv_mux), BSINGLE );  //"Signal" to listener(s). 
+   y = _mutex_unlock_primitive( &(__cond->cv_mux), BSINGLE );  //"Signal" to listener(s).
    if (__cond->cv_mux.owner == NULL){
       //No ownership has been passed either
       assert(__cond->cv_mux.blocked.numb == 0);
       //Make shure that next thread that grabs this CV will block
       __cond->cv_mux.owner = (pthread_t)1;
    }
-   if (y) 
+   if (y)
       pthread_yield();
 
-   
+
    //But the coop mutex is still taken. Release that too (note: order is important)
    pthread_mutex_unlock(__cond->coop_mux);  //have faith in that the impl of cond_wait will take the lock again *first thing* when it wakes up
 
-   
+
    return 0;
 }
 
@@ -105,17 +105,17 @@ int pthread_cond_broadcast (pthread_cond_t *__cond){
 
    assert (__cond->valid);
    if (__cond->coop_mux == NULL) //No one is using the CV yet. No need to do anything
-      return 0; 
+      return 0;
 
-   y1 = _mutex_unlock_primitive( &(__cond->cv_mux), BCAST );  //"Signal" to listener(s). 
+   y1 = _mutex_unlock_primitive( &(__cond->cv_mux), BCAST );  //"Signal" to listener(s).
    if (__cond->cv_mux.blocked.numb == 0){
-      //No ownership has been passed either      
+      //No ownership has been passed either
       //Make shure that next thread that grabs this CV will block
       __cond->cv_mux.owner = (pthread_t)1;
    }
-   
+
    //But the coop mutex is still taken. Release that too (note: order is important)
-   //Also, dont BCAST this one. Let RDY threads compete for the lock. Those who fail will get 
+   //Also, dont BCAST this one. Let RDY threads compete for the lock. Those who fail will get
    //a chance when the thread released just before each, executes it's mutex_unlock
    y2 = _mutex_unlock_primitive(__cond->coop_mux, BSINGLE);  //have faith in that the impl of cond_wait will take the lock again *first thing* when it wakes up
 
@@ -130,9 +130,9 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_cond_wait.html
 */
 int pthread_cond_wait (pthread_cond_t * __cond, pthread_mutex_t *mutex){
    int y;
-   
+
    assert (__cond->valid);
-   
+
    __cond->coop_mux = mutex;
 
    _mutex_unlock_primitive(__cond->coop_mux, BSINGLE);       //Make sure no thread is blocked, preventing the chance to release the CV
@@ -142,7 +142,7 @@ int pthread_cond_wait (pthread_cond_t * __cond, pthread_mutex_t *mutex){
    __cond->cv_mux.linkOf    = _PBON_CONDVAR;
    __cond->cv_mux.link.cond = __cond;
    pthread_yield();
-   
+
    pthread_mutex_lock(__cond->coop_mux);
    return 0;
 }
@@ -156,14 +156,14 @@ int pthread_cond_timedwait (pthread_cond_t * __cond, pthread_mutex_t *mutex, con
    assert (__cond->valid);
    assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(__cond);
-   _PTHREAD_NO_WARN_VAR(mutex); 
-   _PTHREAD_NO_WARN_VAR(abstime); 
+   _PTHREAD_NO_WARN_VAR(mutex);
+   _PTHREAD_NO_WARN_VAR(abstime);
    return 0;
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-  
+
 /*!
  *  @defgroup CVSLOG_pthread_cond_c pthread_cond_c
  *  @ingroup CVSLOG
@@ -184,9 +184,9 @@ int pthread_cond_timedwait (pthread_cond_t * __cond, pthread_mutex_t *mutex, con
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *
- *  
+ *
  *******************************************************************/
- 
+
 
 
 

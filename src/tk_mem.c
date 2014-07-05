@@ -24,22 +24,22 @@
 
 @brief A better malloc
 
-KMEM can be used both by TinKer internals and by drivers or even in 
+KMEM can be used both by TinKer internals and by drivers or even in
 certain cases applications. It fullfills the following needs:
 
 * Provides TinKer internal dynamic allocation where a working malloc/free is
 not available.
 
-* Makes dynamic memory handling deterministic in cases where that is 
+* Makes dynamic memory handling deterministic in cases where that is
 desireable.
 
 * Provides a locking mechanism for heap accessing in cases this is needed.
 
-* Makes is possible to point out specific memory areas for each heap, which 
-is usefull in cases where the C-library is delibreratly held unknowing of 
+* Makes is possible to point out specific memory areas for each heap, which
+is usefull in cases where the C-library is delibreratly held unknowing of
 certain memory, for example storage disks (battery backupes RAM area) e.t.a.
- 
-The basic idea of KMEM to have several heaps in memory, each of fixed size 
+
+The basic idea of KMEM to have several heaps in memory, each of fixed size
 elements. This makes managing each heap very fast but also determinisic
 (both functionally and in temporal space).
 
@@ -49,14 +49,14 @@ accessing. I.e. the size argument for malloc must be a even multiple of
 the particular heaps element size.
 
 TinKer heaps can be located both on the global heap, but also in any memory
-pointed out by the creation of each heap. The latter permits heap to be 
+pointed out by the creation of each heap. The latter permits heap to be
 allocated and managed that the C-library is not aware of but that the linker
 script knows of (or it can in certain cases be the address of an global array).
 
-Each heap has a heap header. This header is located in a fixed size header 
-pool. This is to accommodate systems where no functional malloc/free are 
+Each heap has a heap header. This header is located in a fixed size header
+pool. This is to accommodate systems where no functional malloc/free are
 available and provides the TinKer scheduler component with a working solution
-to create elements for internal usages without 
+to create elements for internal usages without
 
 For an further in-depth discussions about this component, see \ref
 KMEM
@@ -76,7 +76,7 @@ KMEM
 #endif
 
 #ifndef TK_KMEM_NHEAPS
-/*! 
+/*!
 Number of heaps managed by KMEM
 */
 #define TK_KMEM_NHEAPS 0x8
@@ -89,12 +89,12 @@ int nheaps = 0; 			//!<Number of heaps in use
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*! @brief Constructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM
 
-Constructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM 
+Constructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM
 
 @note that we don't pass any size for the memory to handle. This is
 because only various constructors are supposed to create new heaps.
 
-@see COMPONENTS 
+@see COMPONENTS
 @see KMEM
 */
 
@@ -103,14 +103,14 @@ unsigned long  tk_mem         ( void ){
 	for (i=0;i<TK_KMEM_NHEAPS;i++){
 		memset(&header_pool[i],0,sizeof(heap_t));
 	}
-	return ERR_OK; 
+	return ERR_OK;
 }
 
 /*! @brief Destructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM
 
 Destructor of TinKer's \ref COMPONENTS "component" - KMEM: \ref KMEM
 
-@see COMPONENTS 
+@see COMPONENTS
 @see KMEM
 */
 unsigned long  tk_mem_destruct( void ){
@@ -119,7 +119,7 @@ unsigned long  tk_mem_destruct( void ){
 		if (header_pool[i].heap && header_pool[i].is_malloced)
 			free(header_pool[i].heap);
 	}
-   return ERR_OK; 
+   return ERR_OK;
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -131,25 +131,25 @@ Creates a new heap, returns a heap handler (heapid).
 
 @see KMEM
 */
-unsigned long  tk_create_heap ( 
+unsigned long  tk_create_heap (
 	heapid_t	*heapid,	//!< Returned heap ID
 	int		hsize,		//!< Raw memory regions size allowed for this heap (in bytes)
-	int		dsize,		//!< Size each element will have	
+	int		dsize,		//!< Size each element will have
 	int 		opt,		//!< Options bit-mask
 	lock_f		lock,		//!< Function for un-locking acces when operation on the heap. NULL if no locking is needed.
-	unlock_f	unlock,		//!< Function for locking acces when operation on the heap. NULL if no locking is needed.	
-	char		*heap_ptr	//!< Memory address to use as heap, or NULL for global heap usage	
+	unlock_f	unlock,		//!< Function for locking acces when operation on the heap. NULL if no locking is needed.
+	char		*heap_ptr	//!< Memory address to use as heap, or NULL for global heap usage
 ){
 	int 		i,found_ID;
 	int 		esz;		//!< True element size
 	void 		*ptr;
 	int         	mxnum;		//!< Calculated maximum number of elements that will fit untruncated
-	
+
 	esz = sizeof(int) + dsize;
 	mxnum = hsize / esz;
 	*heapid = NULL;
-	
-	if (nheaps>=TK_KMEM_NHEAPS){	
+
+	if (nheaps>=TK_KMEM_NHEAPS){
 		*heapid=NULL;
 		return ENOMEM;
 	}
@@ -167,7 +167,7 @@ unsigned long  tk_create_heap (
 		cheap_idx%=TK_KMEM_NHEAPS;
 	}
 	assert(*heapid != NULL);
-	
+
 	/* Allocate the actual heap. Note that one extra sizeof(in) per element is also alocated */
 	if (heap_ptr==NULL){
 		(*heapid)->heap = malloc( hsize );
@@ -176,7 +176,7 @@ unsigned long  tk_create_heap (
 		(*heapid)->heap = heap_ptr;
 		(*heapid)->is_malloced=0;
 	}
-	
+
 	if ((*heapid)->heap == NULL){
 		//Failiure to allocate memory for heap
 		//Release the handler again
@@ -185,20 +185,20 @@ unsigned long  tk_create_heap (
 		*heapid = NULL;
 		return ENOMEM;
 	}
-	
+
 	/*Fill in initial stuff in header*/
 	(*heapid)->lock   =  lock;
 	(*heapid)->unlock =  unlock;
-	
+
 	(*heapid)->self		= *heapid;
 	(*heapid)->dsize	=  dsize;
-	(*heapid)->maxnum 	=  mxnum;  
+	(*heapid)->maxnum 	=  mxnum;
 	(*heapid)->blocks	=  0;
 	(*heapid)->indx		=  0;
-		
+
 	/*Blank the heap (or at least each first byte telling wheter each block is free or not)*/
 	//*(int*)((char*)ptr + i*esz) = 0;
-	
+
 	ptr = (*heapid)->heap;
 
 	if (opt & KMEM_KEEP_UNINITIALIZED){
@@ -228,7 +228,7 @@ unsigned long  tk_create_heap (
 
 	(*heapid)->last   =  ptr;
 	nheaps++;
-	
+
 	return ERR_OK;
 }
 
@@ -240,10 +240,10 @@ This function is typically invoced on system shutdown only.
 
 @note Lacks locking
 
-@todo This function has not meen tested. Please test it. 
+@todo This function has not meen tested. Please test it.
 
 */
-unsigned long  tk_destroy_heap( 
+unsigned long  tk_destroy_heap(
    heapid_t  heapid
 ){
 	if (heapid->self == NULL)
@@ -252,14 +252,14 @@ unsigned long  tk_destroy_heap(
 		return ERR_UNDEF_HEAPID;
 	if (heapid->blocks != 0)
 		return EBUSY;
-	
+
 	if (heapid->is_malloced)
 		free (heapid->heap);
-	
+
 	//Free the header too (clean it and mark free)
 	memset(heapid,0,sizeof(heap_t));
 	nheaps--;
-	
+
 	return ERR_OK;
 }
 
@@ -271,14 +271,14 @@ XXX
 
 @see KMEM
 */
-void *tk_mem_malloct ( 
-	heapid_t heapid, 
-	size_t size 
+void *tk_mem_malloct (
+	heapid_t heapid,
+	size_t size
 ){
 	int i;
 	int esz;
 	void *ptr;
-	
+
 	if (heapid->self == NULL){
 		//errno = ERR_UNDEF_HEAPID;
 		return NULL;
@@ -291,14 +291,14 @@ void *tk_mem_malloct (
 		//errno = ENOMEM;
 		return NULL;
 	}
-	
+
 	if (heapid->lock)
 		heapid->lock();
-	
+
 	/* Find next free block */
 	esz = sizeof(int) + heapid->dsize;
 	ptr = (char*)(heapid->heap) + esz*heapid->indx;
-	
+
 	for (i=heapid->indx; *(int*)ptr; ){
 		i++;
 		i%=heapid->maxnum;
@@ -308,15 +308,15 @@ void *tk_mem_malloct (
 	i%=heapid->maxnum;
 	heapid->indx=i;
 	heapid->blocks++;
-	
+
 	/* Mark it as occupied */
 	*(int*)ptr = 1;
-	
-	ptr = (char*)ptr + sizeof(int);      
-	
+
+	ptr = (char*)ptr + sizeof(int);
+
 	if (heapid->unlock)
 		heapid->unlock();
-	
+
 	return ptr;
 }
 
@@ -326,8 +326,8 @@ XXX
 
 @see KMEM
 */
-void tk_mem_free( 
-   heapid_t heapid, 
+void tk_mem_free(
+   heapid_t heapid,
    void* ptr
 ){
 	if (heapid->self == NULL){
@@ -335,7 +335,7 @@ void tk_mem_free(
 		return;
 	}
 	if (heapid->self != (void*)heapid){
-	//errno = ERR_UNDEF_HEAPID;	  
+	//errno = ERR_UNDEF_HEAPID;
 		return;
 	}
 	if (heapid->blocks >= heapid->maxnum){
@@ -344,11 +344,11 @@ void tk_mem_free(
 	}
 	if (heapid->lock)
 		heapid->lock();
-	
-	ptr = (char*)ptr - sizeof(int);      
+
+	ptr = (char*)ptr - sizeof(int);
 	heapid->blocks--;
 	*(int*)ptr = 0;
-	
+
 	if (heapid->unlock)
 		heapid->unlock();
 }
@@ -369,18 +369,18 @@ Not to mention the most important one:
 
 The price you have to pay for this is:
 
-- Allocating a new heap before you can allocate on it 
+- Allocating a new heap before you can allocate on it
 - Decide on a fixed size that will be allocatable for each element
 
 What you gain is:
 
 - Much faster allocation
-- Predictable allocation both regarding   
-   - Memory   
-   - Time   
+- Predictable allocation both regarding
+   - Memory
+   - Time
    - A certain level of memory protection between heaps
    - Thread-safety (if lock/unlock functions are supplied upon creation)
-   
+
 That said, it's appenant that the component doesn't solve every imaginable
 memory allocation need. But for those it does, it's a huge improvement
 
@@ -389,38 +389,38 @@ as much as possible. This way migrating between KMEM and old-fashioned
 heap-usage back and forth should be quite pain-less. You could even make
 it completely transparent by using macros to make the application code
 totally transparent.
-   
-  
+
+
 
 \ref memid_t
 
-@see COMPONENTS 
+@see COMPONENTS
 
 @dot
 digraph mem_main {
    node [
-      shape=record, 
-      style=filled, 
-      fillcolor=yellow, 
-      fontname=Courier, 
-      nojustify="true", 
-      fontsize=10.0 
+      shape=record,
+      style=filled,
+      fillcolor=yellow,
+      fontname=Courier,
+      nojustify="true",
+      fontsize=10.0
    ];
-   
-   edge [      
-      color="red", 
-      fontname=Courier,  
-      nojustify="true", 
-      fontsize=10.0 
+
+   edge [
+      color="red",
+      fontname=Courier,
+      nojustify="true",
+      fontsize=10.0
    ];
-   
+
    graph [
-      rankdir = "TB", 
-      fontname=Courier,  
-      nojustify="true", 
-      fontsize=10.0    
-   ]; 
-    
+      rankdir = "TB",
+      fontname=Courier,
+      nojustify="true",
+      fontsize=10.0
+   ];
+
    Elements_1 [ orientation=73.0, label="{\
       <a0> #0  ----| \
       <a1> #1  BUSY| \
@@ -429,17 +429,17 @@ digraph mem_main {
       <a..> .. ....| \
       <aN> #N  ---- }"];
 
-   Heap_1 [ orientation=73.0, label="{\   
+   Heap_1 [ orientation=73.0, label="{\
       num            | \
       size           | \
       blocks         | \
       indx           | \
       <heap> heap    | \
       <self> self     }"];
-      
-   Heap_1:self:w -> Heap_1 ;  
-   Heap_1:heap:w -> Elements_1 ;  
-   Heap_1:indx:w -> Elements_1:<a2>:e ;  
+
+   Heap_1:self:w -> Heap_1 ;
+   Heap_1:heap:w -> Elements_1 ;
+   Heap_1:indx:w -> Elements_1:<a2>:e ;
 }
 
 @enddot
@@ -476,7 +476,7 @@ need the \ref lock_f and \ref unlock_f functions:
 - At least one of them are involved in distructing and creating new
 elements.
    - And this happens concurrently to other threads.
-   
+
 In cases where this all of this is not satisfied then you dont need
 locking and you simply pass NULL as arguments to \ref tk_create_heap for
 both of these functions.
@@ -485,8 +485,8 @@ both of these functions.
 
 */
 
-  
-/*! 
+
+/*!
  * @defgroup CVSLOG_tk_mem_c tk_mem_c
  * @ingroup CVSLOG
  *  $Log: tk_mem.c,v $
@@ -530,9 +530,9 @@ both of these functions.
  *  a way to omit the ANSI defines when a tool-chain that has errno.h is
  *  used.
  *
- *  
+ *
  *******************************************************************/
- 
+
 
 
 

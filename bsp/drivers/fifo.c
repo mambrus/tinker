@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -20,24 +20,24 @@
 /*!
 				FIFO
 
-This driver is used as the base for handling all FIFO's and is hence a 
+This driver is used as the base for handling all FIFO's and is hence a
 sub-unit for files of type S_IFIFO.
 
 On this level FIFO's are created and removed using the init/fini mechanism.
-On user API lvl, the general FS_FIFO layer is used and the user creates 
+On user API lvl, the general FS_FIFO layer is used and the user creates
 a FIFO by with mknod and destroys it with unlink.
 
-A new FIFO is created by starting a new instance of the driver. Therefore 
+A new FIFO is created by starting a new instance of the driver. Therefore
 each new  instance has it's own unique data.
 
 The driver expects an argument when it's created thats either a string
-with the name of the new FIFO or NULL for creating an instance called 
+with the name of the new FIFO or NULL for creating an instance called
 /dev/fifo.
 
-@NOTE 
+@NOTE
 This driver is needed for generic FS fifos
 
-@NOTE 
+@NOTE
 This is a character device
 
 */
@@ -80,15 +80,15 @@ typedef struct{
 }DRV_IO(msg_t);
 
 
-/*! 
+/*!
 fifo close
-*/	
+*/
 int DRV_IO(close)(int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return -1;
 }
 
-/*! 
+/*!
 fifo open
 */
 int DRV_IO(open)(const char *filename, int flags, ...){
@@ -102,18 +102,18 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 	hndl=tk_new_handle(inode,flags);
 
 	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
-	((DRV_IO(hndl_data_t)*)(hndl->data))->q = 
+	((DRV_IO(hndl_data_t)*)(hndl->data))->q =
 		mq_open( filename,flags,0666,NULL);
 
 	return (int)hndl;
 }
 
-/*! 
+/*!
 fifo read
-*/		
+*/
 int DRV_IO(read)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
-	DRV_IO(msg_t) msg;	
+	DRV_IO(msg_t) msg;
 	int rlen;
 
 	rlen=mq_receive(
@@ -130,12 +130,12 @@ int DRV_IO(read)(int file, char *ptr, int len) {
 
 	return msg.len;
 }
-		
-/*! 
+
+/*!
 fifo write will use mq_send for transfering it's data. mq is designed for fixed
-length data, but fifos can be of variable size. Therefor we'll send a pointer to 
+length data, but fifos can be of variable size. Therefor we'll send a pointer to
 a copy of the message in the heap instead.
-*/	
+*/
 int DRV_IO(write)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	DRV_IO(msg_t) msg;
@@ -158,31 +158,31 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 	return sizeof(len);
 }
 
-/*! 
-*/	
+/*!
+*/
 int DRV_IO(fcntl)(int file, int command, ...){
 	assert(DRV_IO(assert_info) == NULL);
 	errno = ENOSYS;
 	return -1;
 }
-		
+
 int DRV_IO(fstat)(int file, struct stat *st) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	st->st_mode = hndl->inode->mode;;
 	return 0;
 }
-	
+
 int DRV_IO(isatty)(int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 1;
 }
-		
+
 int DRV_IO(link)(char *old, char *new) {
-	assert(DRV_IO(assert_info) == NULL);	
+	assert(DRV_IO(assert_info) == NULL);
 	errno=EMLINK;
 	return -1;
 }
-	
+
 int DRV_IO(lseek)(int file, int ptr, int dir) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 0;
@@ -193,7 +193,7 @@ int DRV_IO(stat)(const char *file, struct stat *st) {
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-		
+
 int DRV_IO(unlink)(char *name) {
 	assert(DRV_IO(assert_info) == NULL);
 	errno=ENOENT;
@@ -239,9 +239,9 @@ void *DRV_IO(init__)(void *inarg) {
 	inod->idata=(DRV_IO(drv_data_t)*)(calloc( 1, sizeof(DRV_IO(drv_data_t)) ));
 
 	Q=(DRV_IO(drv_data_t)*)(inod->idata);
-	
+
 	mq_unlink(path);  //Don't assert - "failiure" is normal here
-	
+
 	Q->qattr.mq_maxmsg	= DEF_MAX_MSG;
 	Q->prio			= DEF_PRIO;
 	Q->qattr.mq_msgsize 	= sizeof(DRV_IO(msg_t));

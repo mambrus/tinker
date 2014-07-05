@@ -7,9 +7,9 @@ This is a replacement file for Keils version of putchar.c
 
 //#include <tk.h>  //!< will create lots of redef warnings
 
-/*! Stupid dave requires MAIN.H to be included before any of the other 
+/*! Stupid dave requires MAIN.H to be included before any of the other
 dave files instead of including it in the .H files itself */
-#include <../bsp/XC167_Keil/dave/MAIN.H>    
+#include <../bsp/XC167_Keil/dave/MAIN.H>
 #include <../bsp/XC167_Keil/dave/ASC0.H>
 
 #define XON  0x11
@@ -24,23 +24,23 @@ void ASC0_vSendData(uword uwData)
 */
 
 
-/*! 
+/*!
 Set this device if you want this driver to work on another device.
 This should be the only place you need to modify.
 
 */
 #define dev()              ASC0
 
-/*! 
+/*!
 The interrupt control register us used to determine if tx has been sent.
 
-@note Remeber to clear it when done (no ISR will do it for us). 
+@note Remeber to clear it when done (no ISR will do it for us).
 */
 #define LAST_TX_SENT           dev()##_TBIC_IR
 
 #define FIFO_ENABLED           dev()##_TXFCON_TXFEN
-#define FIFO_TRANSPARENT_MODE  dev()##_TXFCON_TXTMEN  
-#define SEND_BYTE              dev()##_vSendData  
+#define FIFO_TRANSPARENT_MODE  dev()##_TXFCON_TXTMEN
+#define SEND_BYTE              dev()##_vSendData
 
 long putchar_burntime(int x, int y, int z){
    long rc;
@@ -65,7 +65,7 @@ unsigned int putchar_busywait( unsigned int time_ms ){
             for (z=0;z<100;z++)
                rc = putchar_burntime(x,y,z);
 
-   return 0;            
+   return 0;
 }
 
 
@@ -111,6 +111,6 @@ signed char putchar (signed char c)  {
    }
 
    return (1);
-   
+
 
 }

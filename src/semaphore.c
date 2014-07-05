@@ -55,18 +55,18 @@ int sem_init (
 	unsigned int   value
 ){
 	unsigned int rc;
-	
+
 	if (pshared != 0)
 		return EINVAL;
-	
-	rc = sm_create("PS", value, FIFO, sem);    
+
+	rc = sm_create("PS", value, FIFO, sem);
 	errno = rc;
-	
+
 	if (rc==ERR_OK)
 		return 0;
 	else
 		return EINVAL;
-	
+
 	return 0;
 }
 
@@ -77,7 +77,7 @@ int sem_init (
 */
 int sem_destroy (sem_t * sem){
 	assert("sem_destroy - Not implemented" == NULL);
-	
+
 	return 0;
 }
 
@@ -88,7 +88,7 @@ int sem_destroy (sem_t * sem){
 */
 int sem_trywait (sem_t * sem){
 	assert("sem_trywait - Not implemented" == NULL);
-	
+
 	return 0;
 }
 
@@ -100,20 +100,20 @@ int sem_trywait (sem_t * sem){
 int sem_wait (sem_t * sem){
 	unsigned int rc;
 	extern int __tk_IntFlagCntr;
-	
-	
+
+
 	if (__tk_IntFlagCntr)
 		rc = sm_p_ny(*sem,WAIT,TK_FOREVER);
 	else
 		rc = sm_p(*sem,WAIT,TK_FOREVER);
-	
+
 	errno = rc;
-	
+
 	if (rc==ERR_OK)
 		return 0;
 	else
 		return EINVAL;
-	
+
 	return 0;
 }
 
@@ -125,19 +125,19 @@ int sem_wait (sem_t * sem){
 int sem_post (sem_t * sem){
 	unsigned int rc;
 	extern int __tk_IntFlagCntr;
-	
+
 	if (__tk_IntFlagCntr)
 		rc = sm_v_ny(*sem);
 	else
 		rc = sm_v(*sem);
-	
+
 	errno = rc;
-	
+
 	if (rc==ERR_OK)
 		return 0;
 	else
 		return EINVAL;
-	
+
 	return 0;
 }
 
@@ -184,5 +184,5 @@ int sem_post (sem_t * sem){
  *  Revision 1.6  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
- *  
+ *
  */

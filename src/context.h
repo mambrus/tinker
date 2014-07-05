@@ -17,10 +17,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
+
 
 #ifndef TK_HWSYS_H
-#define TK_HWSYS_H    
+#define TK_HWSYS_H
 
 #if defined(DOXYGEN_ONLY)
 
@@ -33,8 +33,8 @@
 
 
 This value is used when kernel is crashing due to stack-stavation
-Value should be set as low as possible, but just enough to allow a few extra 
-invocations of printk to output some diagnostic text abou the reason of the 
+Value should be set as low as possible, but just enough to allow a few extra
+invocations of printk to output some diagnostic text abou the reason of the
 crash.
 */
 
@@ -45,11 +45,11 @@ crash.
 
 @brief Defines the least amount of stack you can use
 
-Never go below this. In fact, don't even come close. Remeber ISR might put return 
+Never go below this. In fact, don't even come close. Remeber ISR might put return
 adresses at your threads stack whithout your explicit control.
 
-@note The idle thread uses this stacksize. Remebber that this thread will be the 
-most likely to be in use when interrupts happen. You don't want to make the size 
+@note The idle thread uses this stacksize. Remebber that this thread will be the
+most likely to be in use when interrupts happen. You don't want to make the size
 too small.
 
 */
@@ -62,7 +62,7 @@ too small.
 
 Thread with this stack size should be able to handle printf
 
-@note What's normal or reasonable differs between farchitectures. 
+@note What's normal or reasonable differs between farchitectures.
 
 */
 #define TK_NORMAL_STACK_SIZE 0
@@ -70,31 +70,31 @@ Thread with this stack size should be able to handle printf
 
 /**
 @ingroup kernel_internals
-        
+
 @brief Prevents <b>all</b> interruppts on the target
 
 Will increse a counter after the actual CLI.
 The counter aids nesting (nesting however be avoided),
-   
+
 */
 #define TK_CLI()
 
 /**
 @ingroup kernel_internals
-        
+
 @brief Restores <b>all</b> interruppts on the target
 
 Actual STI will not be invoced untill counter set by TK_CLI is zero.
 This aids nesting (should however be avoided),
-   
+
 */
 #define TK_STI()
 
 
 /**
 @ingroup kernel_internals
-        
-@brief Call for error handler 
+
+@brief Call for error handler
 
 Dieing kernel will call this macro as part of it's error-handling. This
 is typically implemented as a software interrupt on targets that support
@@ -105,8 +105,8 @@ that. On others, this is just a call to a function.
 
 
 /**
-@ingroup kernel_internals   
-        
+@ingroup kernel_internals
+
 @brief Pushes all CPU on current stack
 
 Pushes all CPU on stack in a way that corresponts to what happens when an
@@ -117,13 +117,13 @@ of the kernel, but a very good rule to follow just in case you deside to add
 preemptivity later.
 
 @todo Verify for XC167
-   
+
 */
 #define PUSHALL()
 
 /**
 @ingroup kernel_internals
-        
+
 @brief Pops all CPU from current stack
 
 Pops all CPU from current stack the same way an interrupt does when it's ISR is
@@ -132,13 +132,13 @@ finished.
 @note You have to change the SP to the new stack before using this macro
 
 @todo Verify for XC167
-   
+
 */
 #define POPALL()
 
 /**
 @ingroup kernel_internals
-        
+
 @brief Prepares Top Of Stack
 @obsolete
 
@@ -160,31 +160,31 @@ is to have these variables in the code segment (i.e. globally declared).
    _oldTOS, /*< in:  The newly created stacks start adress */                 \
    _newSP,  /*!< out: The resulting SP. I.e. (char*)(TSP1+lengt-tos_data)*/   \
    _temp1,  /*!< Temporary stackpointer for internal manipulations*/          \
-   _temp2,  /*!< Extra variable for internal stuff (not needed by all targets)*/\ 
+   _temp2,  /*!< Extra variable for internal stuff (not needed by all targets)*/\
    _stack_struct /*!< Some targets need to manipulate the TCB stack struct*/  \
 )
 
 
 /**
 @ingroup kernel_internals
-        
+
 @brief Pushes all CPU on current stack and return SP.
 
 Pushes all CPU on current stack and returnes the stack pointer after that push
 
-Typically used in the first stage of a context switch. The resulting SP is 
+Typically used in the first stage of a context switch. The resulting SP is
 saved in the threads TCB to be used when it's time to revive it.
 
 */
-   
+
 #define PUSH_CPU_GETCUR_STACK(                                                \
    TSP1,    /*!< The resultin SP                                              */\
-   TEMP     /*!< Extra variable for internal stuff (not needed by all targets)*/\ 
-)  
+   TEMP     /*!< Extra variable for internal stuff (not needed by all targets)*/\
+)
 
 /**
 @ingroup kernel_internals
-        
+
 @brief Change to new SP and pop all CPU
 
 Change SP to the one supplied and push all CPU from it.
@@ -200,7 +200,7 @@ from the corresponding threads TCB.
 
 /**
 @ingroup kernel_internals
-        
+
 @brief Dunno what this is ;/
 
 @todo If this macro is really needed, document it also!
@@ -211,8 +211,8 @@ from the corresponding threads TCB.
 
 /**
 @ingroup kernel_internals
-        
-@brief Refer to a stack address as a pointer. 
+
+@brief Refer to a stack address as a pointer.
 
 Refer to a stack address as a pointer. Only the stacks actual adress
 will be handled (assuming the whole of a stack can be referred to with
@@ -269,13 +269,13 @@ Gets the real stack size to be used to get top of stack for return adresses.
 processors make a difference between those stacks.)
 
 */
-#define REAL_STACK_SIZE( ADDR ) 
+#define REAL_STACK_SIZE( ADDR )
 
 
 /*
 @brief Inspects the stack for overflow errors.
 
-Inspects the stack and tries to find stack overflows. On some targets this can 
+Inspects the stack and tries to find stack overflows. On some targets this can
 be implemented in hardware. On others who have more than one stack per
 thread, one stack might be HW guarded and the other not. Implementation
 of this macro varies a lot between targets.
@@ -325,7 +325,7 @@ cases might want to replace this with a NOP.
 
 
 #endif  //DOXYGEN_ONLY
-   
+
 //------1---------2---------3---------4---------5---------6---------7---------8
 #if defined(_WIN32) &&  defined(_MSC_VER)
 #include <../bsp/X86_msvc/tk_hwsys_msvcX86.h>
@@ -338,35 +338,35 @@ cases might want to replace this with a NOP.
 #include <../bsp/XC167_Keil/tk_hwsys_keilC166.h>
 
 
-#elif defined(__GNUC__)   
-   
+#elif defined(__GNUC__)
+
    #ifndef ARCH
    #  error For GNU targets, ARCH has to be defined
    #endif
-   
+
    #define INCLNAME( farch ) \
       <../src/arch/farch/context-gnu_ farch.h>
-   
+
    #define INCLABI( farch, abi ) \
       <../src/arch/farch/context-gnu_ farch-abi.h>
 
 
 
-   
+
    #ifdef ABI
    #   include INCLABI( ARCH, ABI )
    #else
    #   include INCLNAME( ARCH )
    #endif
 
-   
+
    #undef str
    #undef INCLNAME
    #undef INCLABI
 
 
 #else
-#error "Can\'t determine the target for the TINKER kernel"   
+#error "Can\'t determine the target for the TINKER kernel"
 
 #endif
 
@@ -374,8 +374,8 @@ cases might want to replace this with a NOP.
 
 #endif  //TK_HWSYS_H
 
-  
-/*! 
+
+/*!
  * @defgroup CVSLOG_tk_hwsys_h tk_hwsys_h
  * @ingroup CVSLOG
  *  $Log: context.h,v $

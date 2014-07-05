@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!   
+/*!
 @file
 @ingroup kernel_reimpl_ansi
 
@@ -44,7 +44,7 @@ kernel_reimpl_ansi
 #endif
 
 void perror (const char *message); //Should go int stdio.h
-char * strerror (int errnum);      //Should go int string.h 
+char * strerror (int errnum);      //Should go int string.h
 
 #define MAX_STR_LEN 64
 //#define EC_LIGHT 1  //FIXME make this configurable. perhaps the whole error handling (i.e. use GNU optionally)
@@ -227,7 +227,7 @@ static const char *errno_srings[] = {
 	EC_STRING( EREMOTEIO ),
 	EC_STRING( ENOMEDIUM ),
 	EC_STRING( EMEDIUMTYPE )
-}; 
+};
 
 /*!
 Trap-code strings
@@ -258,7 +258,7 @@ static const char *trapcode_srings[] = {                          // Bit number
 Helper function
 A simple conversion from a number to string
 */
-void _ntos(char *outst, int number, int maxlen){ 
+void _ntos(char *outst, int number, int maxlen){
 	int i,div,d,j,a=0;
 
 	for (i=0;i<maxlen;i++)
@@ -299,9 +299,9 @@ char * strerror (int errnum){
 }
 
 /*!
-Generic trap handler - please note that certain targets that have support for 
-HW trapping might not have a working stack when reaching this far, in which 
-case this function has to be replaced. In either case, no calling other 
+Generic trap handler - please note that certain targets that have support for
+HW trapping might not have a working stack when reaching this far, in which
+case this function has to be replaced. In either case, no calling other
 functions, stack or heap operations are allowed from here on.
 */
 void tk_trap(int ec){
@@ -338,7 +338,7 @@ void tk_trap(int ec){
 		}
 	#else
 		char astr[MAX_LEN];
-		TK_USE_EMRGCY_CONSOLE( trp_txt, sizeof(trp_txt));	
+		TK_USE_EMRGCY_CONSOLE( trp_txt, sizeof(trp_txt));
 		TK_USE_EMRGCY_CONSOLE("\n\r",2);
 		if (ec == 0){
 			TK_USE_EMRGCY_CONSOLE( trapcode_srings[0], strlen(trapcode_srings[0]));
@@ -378,7 +378,7 @@ void tk_trap(int ec){
 
 #endif
 
-#if defined(TK_COMP_FILESYS) && TK_COMP_FILESYS	
+#if defined(TK_COMP_FILESYS) && TK_COMP_FILESYS
 	printk(("Trying to shut system down...\n"));
 	fs_fini();
 	fprintf(stderr,"System terminated!\n");
@@ -413,7 +413,7 @@ error of some sort happened (either kernel internal or user program specific).
 In case of en error, this function also acts as a critical error-handler
 entr point (critical = execution is deemed to stop).
 */
-void tk_exit( int ec ) { 
+void tk_exit( int ec ) {
 	static int lc = 0;
 	if (lc++ > 0)
 		_tk_dead(ec);
@@ -432,13 +432,13 @@ void tk_exit( int ec ) {
 @ingroup kernel_glue
 
 Works as the assert macro exept that you have to use the __file_ and __line_
-explicitlly. Typically the assert macro will be defined to call this function 
+explicitlly. Typically the assert macro will be defined to call this function
 on targets that do not have assert implemented by TinKer.
 
 */
-void _tk_assertfail(  
-	char *assertstr, 
-	char *filestr, 
+void _tk_assertfail(
+	char *assertstr,
+	char *filestr,
 	int line
 ) {
 #if defined(TK_USE_EMRGCY_CONSOLE)
@@ -449,14 +449,14 @@ void _tk_assertfail(
 	#if (TK_USE_EMRGCY_CONSOLE == __tk_yes)
 		char astr[MAX_LEN];
 		console_write( asrt_txt, strnlen(asrt_txt, MAX_LEN));
-		
+
 		console_write(assertstr,strlen(assertstr));
 		console_write("\n\r",2);
-		
+
 		console_write(file_txt,strlen(file_txt));
 		console_write(filestr,strlen(filestr));
 		console_write("\n\r",2);
-		
+
 		console_write(line_txt,strlen(line_txt));
 		_ntos(astr,line,MAX_LEN);
 		console_write(astr,strlen(astr));
@@ -464,14 +464,14 @@ void _tk_assertfail(
 	#else
 		char astr[MAX_LEN];
 		TK_USE_EMRGCY_CONSOLE( asrt_txt, strnlen(asrt_txt, MAX_LEN));
-		
+
 		TK_USE_EMRGCY_CONSOLE(assertstr,strlen(assertstr));
 		TK_USE_EMRGCY_CONSOLE("\n\r",2);
-		
+
 		TK_USE_EMRGCY_CONSOLE(file_txt,strlen(file_txt));
 		TK_USE_EMRGCY_CONSOLE(filestr,strlen(filestr));
 		TK_USE_EMRGCY_CONSOLE("\n\r",2);
-		
+
 		TK_USE_EMRGCY_CONSOLE(line_txt,strlen(line_txt));
 		_ntos(astr,line,MAX_LEN);
 		TK_USE_EMRGCY_CONSOLE(astr,strlen(astr));
@@ -486,8 +486,8 @@ void _tk_assertfail(
 
 
 
-  
-/*! 
+
+/*!
  *  @defgroup CVSLOG_tk_error_c tk_error_c
  *  @ingroup CVSLOG
  *  $Log: tk_error.c,v $
@@ -508,9 +508,9 @@ void _tk_assertfail(
  *  3) Preparing to partition even further into tk_switch.c (saving this
  *     until next ci though).
  *
- *  
+ *
  *******************************************************************/
- 
+
 
 
 

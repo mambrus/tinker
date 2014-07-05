@@ -17,17 +17,17 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
+
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 #ifndef TK_TUNING_H
 #define TK_TUNING_H
 
 //App & system
-#define TK_NORMAL_STACK_SIZE     0x1200 //!< @note Whats normal or reasonable differs between architectures. 
+#define TK_NORMAL_STACK_SIZE     0x1200 //!< @note Whats normal or reasonable differs between architectures.
 #define TK_MINIMUM_STACK_SIZE    0x0600  //!< TBD this @todo TBD this
 
-//SCHED 
+//SCHED
 #define TK_MAX_THREADS          0x100
 #define TK_MAX_PRIO_LEVELS      0x10
 #define TK_MAX_THREADS_AT_PRIO  TK_MAX_THREADS
@@ -41,8 +41,8 @@
 
 #endif  //TK_TUNING_H
 
-  
-/*! 
+
+/*!
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $

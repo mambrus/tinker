@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 /*
-This module serves as a replacement for hixs crt0.o so that you might omitt 
+This module serves as a replacement for hixs crt0.o so that you might omitt
 it - or replace it with your own with potentially different context.
 */
 
@@ -78,7 +78,7 @@ extern "C" {
 					va_list ap;
 					/*any local vars here...*/
 					va_start (ap, command);
-					MON(hixs.fcntl); 
+					MON(hixs.fcntl);
 					return hixs.fcntl(filedes, command, va_arg (ap, int));
 				}
 	int     _fork         ()						{ MON(hixs.fork); return hixs.fork();}
@@ -89,11 +89,11 @@ extern "C" {
 	int     _kill         (int pid, int sig)				{ MON(hixs.kill); return hixs.kill(pid, sig);}
 	int     _link         (char *old, char *new)				{ MON(hixs.link); return hixs.link(old, new);}
 	int     _lseek        (int file, int ptr, int dir)			{ MON(hixs.lseek); return hixs.lseek(file, ptr, dir);}
-	int     _open         (const char *filename, int flags, ...){ 
+	int     _open         (const char *filename, int flags, ...){
 					va_list ap;
 					/*any local vars here...*/
 					va_start (ap, flags);
-					MON(hixs.open); 
+					MON(hixs.open);
 					return hixs.open(filename, flags, va_arg (ap, int));
 				}
 	int     _read         (int file, char *ptr, int len)			{ MON(hixs.read); return hixs.read(file, ptr, len);}
@@ -104,7 +104,7 @@ extern "C" {
 	int     _unlink       (char *name)					{ MON(hixs.unlink); return hixs.unlink(name);}
 	int     _wait         (int *status)					{ MON(hixs.wait); return hixs.wait(status);}
 	int     _write        (int file, char *ptr, int len)			{ MON(hixs.write); return hixs.write(file, ptr, len);}
-	
+
 	#if !defined( _NO_HIXS_SYSCALLMON_ )
 	void    _syscall_mon  (void *sys_func_ptr){ hixs.syscall_mon(sys_func_ptr);}
 	#endif

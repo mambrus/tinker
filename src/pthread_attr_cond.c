@@ -48,7 +48,7 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_condattr_init.ht
 @todo Stubbed. Impl TBD
 */
 int pthread_condattr_init (pthread_condattr_t *__attr){
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(__attr);
    return 0;
 }
@@ -59,7 +59,7 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_condattr_destroy
 @todo Stubbed. Impl TBD
 */
 int pthread_condattr_destroy (pthread_condattr_t *__attr){
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(__attr);
    return 0;
 }
@@ -69,7 +69,7 @@ int pthread_condattr_destroy (pthread_condattr_t *__attr){
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-  
+
 /*!
  *  @defgroup CVSLOG_pthread_attr_cond_c pthread_attr_cond_c
  *  @ingroup CVSLOG
@@ -90,9 +90,9 @@ int pthread_condattr_destroy (pthread_condattr_t *__attr){
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *
- *  
+ *
  *******************************************************************/
- 
+
 
 
 

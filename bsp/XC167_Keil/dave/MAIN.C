@@ -43,7 +43,7 @@ unsigned char huge stalloc_padding [0x6];      //Important! don't remove this ha
 @Note
 
 Notes of EBC Module:
-External RAM def added by Michael Ambrus to fit PhyCoreXC167. 
+External RAM def added by Michael Ambrus to fit PhyCoreXC167.
 
 PhyCore module has 128k external RAN starting at adress 0x200000
 
@@ -66,9 +66,9 @@ Bus arbitration enabled
 #include <string.h>
 #include <stdlib.h>  //init_mempool is defined here. Something is fishy though...
 #include <tk.h>
-#include <../src/implement_tk.h>            
+#include <../src/implement_tk.h>
 #include <errno.h>
-#include <time.h> 
+#include <time.h>
 #include <assert.h>
 #include "../stalloc.h"
 
@@ -144,7 +144,7 @@ Bus arbitration enabled
 
 
 //****************************************************************************
-// @Function      void MAIN_vInit(void) 
+// @Function      void MAIN_vInit(void)
 //
 //----------------------------------------------------------------------------
 // @Description   This function initializes the microcontroller.
@@ -185,8 +185,8 @@ void MAIN_vInit(void)
   //// -----------------------------------------------------------------------
   //// Begin of Important Settings for the Start-Up File
   //// -----------------------------------------------------------------------
-  ///  All following settings must be set in the start-up file. You can use 
-  ///  DAvE's project file (*.dpt) to include this register values into your 
+  ///  All following settings must be set in the start-up file. You can use
+  ///  DAvE's project file (*.dpt) to include this register values into your
   ///  compiler EDE.
 
     ///  ---------------------------------------------------------------------
@@ -246,7 +246,7 @@ void MAIN_vInit(void)
     ///  as segment address are 4 pins enabled ( A[19] .. A[16] )
     ///  #CS4 .. #CS0 are enabled
     ///  pin #READY is disabled
-    ///  bus arbitration is enabled, P6.7 .. P6.5 serve as #BREQ, #HLDA and 
+    ///  bus arbitration is enabled, P6.7 .. P6.5 serve as #BREQ, #HLDA and
     ///  #HOLD
     ///  bus arbiter acts in master mode
 
@@ -348,18 +348,18 @@ void MAIN_vInit(void)
   // USER CODE END
 
   //   globally enable interrupts
-  PSW_IEN        =  1;          
+  PSW_IEN        =  1;
 
 } //  End of function MAIN_vInit
 
 
 //****************************************************************************
-// @Function      void MAIN_vUnlockProtecReg(void) 
+// @Function      void MAIN_vUnlockProtecReg(void)
 //
 //----------------------------------------------------------------------------
-// @Description   This function makes it possible to write one protected 
-//                register. After calling of this function and write on the 
-//                protected register is the security level set to low 
+// @Description   This function makes it possible to write one protected
+//                register. After calling of this function and write on the
+//                protected register is the security level set to low
 //                protected mode.
 //
 //----------------------------------------------------------------------------
@@ -411,7 +411,7 @@ void MAIN_vUnlockProtecReg(void)
 
 
 //****************************************************************************
-// @Function      void main(void) 
+// @Function      void main(void)
 //
 //----------------------------------------------------------------------------
 // @Description   This is the main function.
@@ -429,7 +429,7 @@ void MAIN_vUnlockProtecReg(void)
 
 // USER CODE BEGIN (Main,1)
 
-void SetWdt() 
+void SetWdt()
 {
    WDI = 1;
    WDI = 0;
@@ -444,8 +444,8 @@ void SetWdt1()
 
 void main(void)
 {
-  // USER CODE BEGIN (Main,2)  
-  
+  // USER CODE BEGIN (Main,2)
+
    init_mempool (&malloc_mempool, sizeof(malloc_mempool));
    stalloc_init_mempool (&stalloc_mempool, sizeof(stalloc_mempool));
 
@@ -463,15 +463,15 @@ void main(void)
       GPT1_vCountDown(GPT1_TIMER_2);
       GPT1_vStartTmr(GPT1_TIMER_2);
 
-      //Wraparound testing that occures once every 71.6 minuts 
-      
+      //Wraparound testing that occures once every 71.6 minuts
+
       /* Note that systimer (sys_mickey) wraps once every 49.7 days but
       kernel native time-keeping wraps 1000 times more often (71.6
       minutes). This is due to that current precision on sys_time is in
       mS, but kernel precision is in uS as a preparation to that the
       \ref clock will be replaced by a higher precision time function
       (\uptime or something similar). */
-	   
+
       //sys_mickey = 0xFFFFE666;
 
       _tk_main();

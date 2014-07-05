@@ -17,10 +17,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
+
 
 #ifndef TK_HWTYPES_KEILC166_H
-#define TK_HWTYPES_KEILC166_H      
+#define TK_HWTYPES_KEILC166_H
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -36,7 +36,7 @@
 //Leave it here as a reference so that I remeber. Also, will tinket work?
 //Structures might change, does it matter?
 //#pragma bytealign   /* ptrs to byte-aligned objects */
- 
+
 /*!
 
 @brief TBD
@@ -46,7 +46,7 @@ DDP to use. It's your respponsibility to trunc these off before storing in the
 off variable, and to add them back when you assign your user-stack pointer
 (typically R0)
 
-@note Orientation of bitfiels are compilor specific. Use commandline or pragma 
+@note Orientation of bitfiels are compilor specific. Use commandline or pragma
 to ensure correct layout.
 
 @note Keil C166 seem to lack directives for byte order within a struct.
@@ -54,31 +54,31 @@ This struct is empirically defined. Be observant about changes of
 behaviour when changing compiler and/or version.
 
 */
-typedef union{ 
-   unsigned long linear; 
+typedef union{
+   unsigned long linear;
    union {
       struct {
-         unsigned char padding8;     // These two togeather must be 
+         unsigned char padding8;     // These two togeather must be
          unsigned int  padding6  :6; // ... exacylly 14 bits long.
-         unsigned int _seg       :10;                     
+         unsigned int _seg       :10;
       }seg24;
       struct {
-         unsigned int _offs      :14; 
+         unsigned int _offs      :14;
          unsigned int padding2   :2;
          unsigned char padding8;
-      }offs24;  
+      }offs24;
    }u;
 }userstackaddr_t;
 
 
 /*!
-@brief GTT1 core (T3) - Control register bit fields 
+@brief GTT1 core (T3) - Control register bit fields
 
 @ingroup XC167_SFR_bitfields
 */
-typedef struct{ 
+typedef struct{
    unsigned int TcI       :3;  //<! Timer x Input Parameter Selection
-   unsigned int TcM       :3;  //<! Timer x Mode Control 
+   unsigned int TcM       :3;  //<! Timer x Mode Control
    unsigned int TcR       :1;  //<! Timer x Run Bit         (1 = runs)
    unsigned int TcUD      :1;  //<! Timer x Up/Down Control (1 = counting down)
    unsigned int TcUDE     :1;  //<! Timer x External Up/Down Enable ( 1 = counting direction is externally controlled by line TaEUD)
@@ -93,11 +93,11 @@ typedef struct{
 }GPT1_ControlRegCore_t;
 
 /*!
-@brief GTT1 Aux (T2, T4) - Control register bit fields 
+@brief GTT1 Aux (T2, T4) - Control register bit fields
 
 @ingroup XC167_SFR_bitfields
 */
-typedef struct{ 
+typedef struct{
    unsigned int TaI       :3;  //<! Timer x Input Parameter Selection
    unsigned int TaM       :3;  //<! Timer x Mode Control (Basic Operating Mode)
    unsigned int TaR       :1;  //<! Timer x Run Bit          (1 = runs)
@@ -118,43 +118,43 @@ typedef struct{
 
 @ingroup XC167_SFR_bitfields
 */
-typedef struct{ 
+typedef struct{
    unsigned int TcI       :3;  //<! Timer x Input Parameter Selection
-   unsigned int TcM       :3;  //<! Timer x Mode Control 
+   unsigned int TcM       :3;  //<! Timer x Mode Control
    unsigned int TcR       :1;  //<! Timer x Run Bit           (1 = runs)
    unsigned int TcUD      :1;  //<! Timer x Up/Down Control   (1 = counting down)
 
-   unsigned int _paddingC1:1;  //<! 
+   unsigned int _paddingC1:1;  //<!
 
    unsigned int TcOE      :1;  //<! Overflow/Underflow Output Enable
    unsigned int TcOTL     :1;  //<! Timer 3 Overflow Toggle Latch
    unsigned int BPS2      :2;  //<! Timer Block Prescaler 2 (Prescales T5,T6)
 
-   unsigned int _paddingC2:1;  //<! 
-   unsigned int TcCLR     :1;  //<! 
-   unsigned int TcSR      :1;  //<! 
+   unsigned int _paddingC2:1;  //<!
+   unsigned int TcCLR     :1;  //<!
+   unsigned int TcSR      :1;  //<!
 }GPT2_ControlRegCore_t;
 
 /*!
-@brief GTT2 Aux (T5) - Control register bit fields 
+@brief GTT2 Aux (T5) - Control register bit fields
 
 @ingroup XC167_SFR_bitfields
 */
-typedef struct{ 
+typedef struct{
    unsigned int TaI       :3;  //<! Timer x Input Parameter Selection
    unsigned int TaM       :3;  //<! Timer x Mode Control (Basic Operating Mode)
    unsigned int TaR       :1;  //<! Timer x Run Bit           (1 = runs)
    unsigned int TaUD      :1;  //<! Timer x Up/Down Control   (1 = counting down)
 
-   unsigned int _paddingA1:1;  //<! 
+   unsigned int _paddingA1:1;  //<!
 
    unsigned int TaRC      :1;  //<! Timer x Remote Control
-   unsigned int TaCTc     :1;  //<! 
-   unsigned int TaCC      :1;  //<! 
+   unsigned int TaCTc     :1;  //<!
+   unsigned int TaCC      :1;  //<!
 
-   unsigned int TaCI      :2;  //<! 
-   unsigned int TaCLR     :1;  //<! 
-   unsigned int TaSC      :1;  //<! 
+   unsigned int TaCI      :2;  //<!
+   unsigned int TaCLR     :1;  //<!
+   unsigned int TaSC      :1;  //<!
 }GPT2_ControlRegAux_t;
 
 /*!
@@ -167,13 +167,13 @@ All prioritiy level values means higher priority for higher value.
 
 @ingroup XC167_SFR_bitfields
 */
-typedef struct{ 
-   unsigned int GLVL      :2;  //<! Group Priority Level 
+typedef struct{
+   unsigned int GLVL      :2;  //<! Group Priority Level
    unsigned int ILVL      :4;  //<! Interrupt Priority Level
    unsigned int IE        :1;  //<! Interrupt Enable Control Bit (1= enabled)
    unsigned int IR        :1;  //<! (rhw) Interrupt Request Flag @note protected bit
    unsigned int GPX       :1;  //<! Group Priority Extension (extends GLVL)
-   unsigned int _padding  :7;  //<! padding reads zero 
+   unsigned int _padding  :7;  //<! padding reads zero
 }IC_t;
 
 
@@ -185,7 +185,7 @@ typedef struct{
 
 @brief TBD
 
-@note Orientation of bitfiels are compilor specific. Use commandline or pragma 
+@note Orientation of bitfiels are compilor specific. Use commandline or pragma
 to ensure correct layout.
 
 @note Keil C166 seem to lack directives for byte order within a struct.
@@ -194,19 +194,19 @@ behaviour when changing compiler and/or version.
 
 */
 
-typedef union{ 
-   unsigned long linear; 
-   struct { 
-      unsigned int _offs; 
-      unsigned int _seg;         
-   }segmented; 
-   struct { 
-      unsigned int _SP; 
-      unsigned int _SPSEG;          
-   }reg; 
+typedef union{
+   unsigned long linear;
+   struct {
+      unsigned int _offs;
+      unsigned int _seg;
+   }segmented;
+   struct {
+      unsigned int _SP;
+      unsigned int _SPSEG;
+   }reg;
 }systemstackaddr_t;
 
-/*! 
+/*!
 Architecture specific representation of a stack adress. In this obscure
 MPU/Compiler combo, this need to be devided in two stacks for each
 thread, that each is best represented in a different way. Both these
@@ -214,11 +214,11 @@ ways however also have a linear adrees for conveniant lookup in
 physical memory.
 */
 
-typedef struct { 
-   systemstackaddr_t systemstack;      
-   userstackaddr_t   userstack;   
-   
-   size_t            sys_stack_size;    //These two added togeather constitutes 
+typedef struct {
+   systemstackaddr_t systemstack;
+   userstackaddr_t   userstack;
+
+   size_t            sys_stack_size;    //These two added togeather constitutes
    size_t            usr_stack_size;    //the actual memory allocated
 }stack_t;
 
@@ -228,7 +228,7 @@ extern void _tk_reinit_stackaddr_xc167keil( stack_t *addr, size_t size );
 #endif
 
 
-  
+
 /*!
  * @defgroup CVSLOG_tk_hwtypes_keilC166_h tk_hwtypes_keilC166_h
  * @ingroup CVSLOG

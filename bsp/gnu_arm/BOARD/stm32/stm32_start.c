@@ -1,5 +1,5 @@
 //Can't have DEBUG defined due to maro fuck-ups
-#undef DEBUG 
+#undef DEBUG
 #include "stm32f10x_type.h"
 #include "stm32f10x_lib.h"
 #include "stm32f10x_map.h"

@@ -17,33 +17,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
  /*!
  @brief systimer for GNU_ARM
- 
+
  This is the generic systimer header file..
- 
- PERT stands for PERIod Time and is the time between two timer tick 
+
+ PERT stands for PERIod Time and is the time between two timer tick
  interrupts.
- 
- Choosing a value for PERT is not critical for embedded ARM. The HW is 
+
+ Choosing a value for PERT is not critical for embedded ARM. The HW is
  really marvelous and values from 1uS to 10mS are tested without disturbing
  the kernel much.
- 
- It's recomended to use a value of PERT as high as possible up to 
- 1/CLOCKS_PER_SEC which is normaly 10000 on a UN*X tool-chain. Using higher 
- values might affect the presition on the clock() function but not nesesarily 
+
+ It's recomended to use a value of PERT as high as possible up to
+ 1/CLOCKS_PER_SEC which is normaly 10000 on a UN*X tool-chain. Using higher
+ values might affect the presition on the clock() function but not nesesarily
  even thats is not always true).
- 
+
  Choosing lower values will not add presition (wich one might tink), since TinKer uses the HW to
- read fractions of time in HW on each readout. That way  we can get high 
+ read fractions of time in HW on each readout. That way  we can get high
  accurancy without stressing the system with a high interrupt SYSTIMER frequency.
- 
+
  For high accurancy timer events another unrelated mechanism is used, so
  that is not a reason for using low PERT either.
- 
+
  Conclusion: On this target, use a value of PERT equal to 1/CLOCKS_PER_SEC.
- 
+
  */
 
 #ifndef TK_SYSTIMER_H

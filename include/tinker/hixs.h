@@ -69,8 +69,8 @@ DEF_FUN_HIXS(int,     write,        (int file, char *ptr, int len));
 
 //Special function to monitor syscalls. Even this can be set in userspace to
 //provide abilities to set breakpoint without having the full newlib sources.
-//Function will be called by all stubbed syscalls and input argument is the 
-//stubbed functions adress. 
+//Function will be called by all stubbed syscalls and input argument is the
+//stubbed functions adress.
 #if !defined( _NO_HIXS_SYSCALLMON_ )
 DEF_FUN_HIXS(void,    syscall_mon,  (void *));
 #endif

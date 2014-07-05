@@ -17,7 +17,7 @@
 #define SMC_BD_RX_BUFFLEN	160
 #define SMC_BD_TX_BUFFLEN	160
 
-/*Example 9600 8N1 
+/*Example 9600 8N1
 console_init(9600, 8,'N',1);
 */
 int console_init(int bpr, int nr_bits, int par, int nr_stop);

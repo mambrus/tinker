@@ -42,8 +42,8 @@ static __inline__ __uint8_t revbits_8(__uint8_t in){
 		lv = lv << d;
 		out = out | hv;
 		out = out | lv;
-		d = d - 2;		
-		hm = (hm >> 1);	
+		d = d - 2;
+		hm = (hm >> 1);
 		lm = (lm << 1);
 	}
 	return out;
@@ -66,8 +66,8 @@ static __inline__ __uint16_t revbits_16(__uint16_t in){
 		lv = lv << d;
 		out = out | hv;
 		out = out | lv;
-		d = d - 2;		
-		hm = (hm >> 1);	
+		d = d - 2;
+		hm = (hm >> 1);
 		lm = (lm << 1);
 	}
 	return out;
@@ -91,14 +91,14 @@ static __inline__ __uint32_t revbits_32(__uint32_t in){
 		lv = lv << d;
 		out = out | hv;
 		out = out | lv;
-		d = d - 2;		
-		hm = (hm >> 1);	
+		d = d - 2;
+		hm = (hm >> 1);
 		lm = (lm << 1);
 	}
 	return out;
 }
 
-/* Reverse the bit order in an integer type valiable (1,2,4 byte 
+/* Reverse the bit order in an integer type valiable (1,2,4 byte
    integers supported) 							     */
 /* ------------------------------------------------------------------------- */
 #define revbits( in ) 				\
@@ -126,9 +126,9 @@ static __inline__ __uint32_t revbits_32(__uint32_t in){
 
 #define bitclear_32( d, n ) \
 	d = d & ~(0x80000000 >> n)
-	
 
-/* Set and Clear specific bits in an integer type valiable (1,2,4 byte 
+
+/* Set and Clear specific bits in an integer type valiable (1,2,4 byte
    integers supported) 							     */
 /* Note: bit number order is from left to right 			     */
 /* ------------------------------------------------------------------------- */

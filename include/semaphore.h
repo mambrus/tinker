@@ -98,6 +98,6 @@ int sem_post (sem_t * sem);
  *  Revision 1.4  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
- *  
+ *
  */
 

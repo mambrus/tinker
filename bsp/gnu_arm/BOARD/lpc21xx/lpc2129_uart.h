@@ -5,7 +5,7 @@
 //! Common include file for UART drivers.
 //! Defines LCR_*, UART_* constants.
 //! Defines struct uart_control
-//! \page LPC2129_UART lpc2129_uart.h 
+//! \page LPC2129_UART lpc2129_uart.h
 //! \ingroup BSPINC
 
 #ifndef _LPC2129_UART_H
@@ -27,9 +27,9 @@
 #define LCR_PS_EVEN     (0x1 << 4)
 #define LCR_PS_F1       (0x2 << 4)
 #define LCR_PS_F0       (0x3 << 4)
-#define LCR_BK_0        (0x0 << 6)    
+#define LCR_BK_0        (0x0 << 6)
 #define LCR_BK_1        (0x1 << 6)
-#define LCR_DLAB_0      (0x0 << 7)   
+#define LCR_DLAB_0      (0x0 << 7)
 #define LCR_DLAB_1      (0x1 << 7)
 
 #define UART_STATUS_NOT_STARTED 0x00

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -41,21 +41,21 @@ int DRV_IO(fcntl)(int file, int command, ...){
 	errno = ENOSYS;
 	return -1;
 }
-		
+
 int DRV_IO(fstat)(int file, struct stat *st) {
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-	
+
 int DRV_IO(isatty)(int file) {
 	return 1;
 }
-		
+
 int DRV_IO(link)(char *old, char *new) {
 	errno=EMLINK;
 	return -1;
 }
-	
+
 int DRV_IO(lseek)(int file, int ptr, int dir) {
 	return 0;
 }
@@ -64,21 +64,21 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 	errno = ENOSYS;
 	return -1;
 }
-	
+
 int DRV_IO(read)(int file, char *ptr, int len) {
 	return 0;
 }
-		
+
 int DRV_IO(stat)(const char *file, struct stat *st) {
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-		
+
 int DRV_IO(unlink)(char *name) {
 	errno=ENOENT;
 	return -1;
 }
-	
+
 int DRV_IO(write)(int file, char *ptr, int len) {
 	return len;
 }

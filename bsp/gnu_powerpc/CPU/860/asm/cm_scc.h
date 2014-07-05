@@ -34,7 +34,7 @@ This code has not been thouroughly tested nor is complete.
 #include <sys/types.h>
 
 /* Buffer Descriptor (BD) stuff */
-/* 
+/*
 Note: that the status and control field (BD_Status) is differend depending on what type of
 protocol and directin the descriptor is beeing used for.
 
@@ -137,8 +137,8 @@ scc_TX_control_descriptor
 */
 
 
-typedef union{ 
-	__uint16_t raw; 
+typedef union{
+	__uint16_t raw;
 	struct {
 		__uint16_t E_Empty					:1;
 		__uint16_t Padd_0					:1;
@@ -159,7 +159,7 @@ typedef union{
 	}f;
 }bd_ctrl_scc_rx_t;
 
-typedef union{ 
+typedef union{
 	__uint16_t raw;
 	struct {
 		__uint16_t R_Ready					:1;
@@ -178,7 +178,7 @@ typedef union{
 
 
 
-typedef struct{ 
+typedef struct{
 	union {
 		__uint16_t raw;
 		bd_ctrl_scc_rx_t SCC_RX;	/*Note: same as for SMC*/
@@ -201,8 +201,8 @@ typedef struct{
             Note AT[0] is driven high to identify this SDMA channel access as a DMA type.
 */
 
-typedef union{ 
-	__uint8_t raw; 
+typedef union{
+	__uint8_t raw;
 	struct {
 		__uint8_t PADD_0:3;
 		__uint8_t BO:2;
@@ -276,7 +276,7 @@ SCC_UART_STUFF
                       break length down to a bit resolution: (BRKLN + number of zeros in RLBC).
 */
 
-typedef struct{ 
+typedef struct{
 /*0x30 PADD_0*/		__uint32_t	PADD_0;
 /*0x34 PADD_1*/		__uint32_t	PADD_1;
 /*0x38 MAX_IDL*/	__uint16_t	MAX_IDL;
@@ -305,7 +305,7 @@ typedef struct{
 }proto_scc_uart_t;
 
 
-typedef struct{ 
+typedef struct{
 /*0x00 RBASE*/		__uint16_t	RBASE;
 /*0x02 TBASE*/		__uint16_t	TBASE;
 /*0x04 RFCR*/		scc_fcr_t	RFCR;	/*__uint8_t*/
@@ -326,7 +326,7 @@ typedef struct{
 
 /*0x30*/union{
  			proto_scc_uart_t	SCC_UART;
-	}PROTO; 
+	}PROTO;
 }scc_param_t;
 
 #endif //CM_SCC_H

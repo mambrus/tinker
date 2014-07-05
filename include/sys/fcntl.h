@@ -34,7 +34,7 @@ kernel_reimpl_ansi.
 
 @see kernel_reimpl_ansi
 @note that for Newlib
-#define	O_RDONLY	0		// +1 == FREAD 
+#define	O_RDONLY	0		// +1 == FREAD
 #define	O_WRONLY	1		// +1 == FWRITE
 #define	O_RDWR		2		// +1 == FREAD|FWRITE
 #define	O_APPEND	_FAPPEND
@@ -64,7 +64,7 @@ I.e. we can safely redefine the first three (mqueu needs to test for O_RDONLY so
 	#define O_RDONLY_NL	(FREAD-1)
 	#define O_WRONLY_NL	(FWRITE-1)
 	#define O_RDWR_NL	((FREAD|FWRITE) -1)
-	
+
 #else
 	#define O_CREAT      0x10
 	#define O_EXCL       0x20

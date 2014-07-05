@@ -53,28 +53,28 @@ used for hi-res calendar time-structs.
 
 
 
-   /*! 
+   /*!
    An internal scaling factor that needs to be matched against the
    timer resolution so that the POSIX requirements for CLOCKS_PER_SEC is
    fullfilled. The current resolution is 1000 tics per second (1kHZ
    interrupts). The POSIX CLOCKS_PER_SEC is preset to 1*10e6. How many
    clock_ticks is there (or would there be) in a sys_mickey.
    */
-   #define TICK_PER_CLK 1000ul  //<! How much a tick is advanced on 
+   #define TICK_PER_CLK 1000ul  //<! How much a tick is advanced on
    //each interrupt
 
 
    #include "tk_tick.h"
-   #if defined (HW_CLOCKED) 
+   #if defined (HW_CLOCKED)
       #define USE_HW_CLOCK      //!< Undef this to see the "error" in tk_msleep that happens each 17.2 minutes (see \Blog060227 for in-deapth discussion). Should be undefined if monitoring of ISR latency is turned off in the HW clock, since it will generate worse accuracy then reading only the sys_mikey_mickey alone.
    #endif
 
-   /*! 
+   /*!
    Optionally this can be defined instead, but leave /ref
    USE_HW_CLOCK defined (same reasoning remains though, accuracy will
-   be totally spoiled). 
+   be totally spoiled).
    */
-   #define NO_SYSTIMER_WRAP_MONITOR 
+   #define NO_SYSTIMER_WRAP_MONITOR
 
    //return (clock_t)(-1);
 #endif //defined (__GNUC__)
@@ -87,7 +87,7 @@ used for hi-res calendar time-structs.
 //---------------------------------------------------------------------------------------
 /*!
 @ingroup @ingroup kernel_internal_POSIX
-        
+
 @brief returns time since startup in 1 millionth of a second (uS)
 CPU time
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#CPU%20Time
@@ -111,7 +111,7 @@ same result approximately every 72 minutes.
 
 References:<br>
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#CPU%20Time
-   
+
 @return time since start in uS
 
 @note Not all targets need this module. If supported by your compiler
@@ -120,11 +120,11 @@ use that module instead.
 Implementation in principle the same as \ref getnanouptime
 
 @todo check the "(TICK_PER_CLK * sys_mickey);  // This *HAS* to ne wrong" thingy
-   
+
 */
 
 #ifndef HAVE_CLOCK
-clock_t clock(){   
+clock_t clock(){
    #if !defined (USE_HW_CLOCK)
    return (TICK_PER_CLK * sys_mickey);  // This *HAS* to ne wrong
    #else
@@ -134,35 +134,35 @@ clock_t clock(){
    HWclock_stats_t      HWclock_stats;
    //int                  ecnt = 0;
    int                  zerocrossed = 0;
-      
 
-   pebbles = 0;   
+
+   pebbles = 0;
    tk_getHWclock_Quality( CLK1, &HWclock_stats );
-   
+
    TK_CLI();
-   tk_getHWclock(         CLK1, &pebbles);   
-   uS = sys_mickey; 
+   tk_getHWclock(         CLK1, &pebbles);
+   uS = sys_mickey;
    TK_STI();
-      
+
 
    uS *= 1000uL;
 
    if ((HWclock_stats.res > 16) && (HWclock_stats.freq_hz < 1000000)) {
       assert("tk: to high resolution HW clock. TinKer can't handle this ATM" == NULL);
    }
-   
+
    if (pebbles <0){
       pebbles *= -1;
       uS++;
       zerocrossed=1;
-   }   
+   }
 
    /*
    for ( ecnt =0; (unsigned long)pebbles >= HWclock_stats.perPebbles; ecnt++ ){
       if (!zerocrossed)
          assert("How the fuck...!"==NULL);
       pebbles -= HWclock_stats.perPebbles;
-      uS++;      
+      uS++;
    }
    */
 
@@ -178,7 +178,7 @@ clock_t clock(){
    // Calculate the nuber of uS since last update of tick
    TuS = HWclock_stats.maxPebbles - pebbles;
    TuS = (TuS * (1000000L / (HWclock_stats.freq_hz/100)))/100;
-      
+
    return (uS + TuS);
 
    #endif
@@ -188,11 +188,11 @@ clock_t clock(){
 /*!
 
 @ingroup @ingroup kernel_internal_POSIX
-        
+
 @brief Simple calendar time
 
 (time(s) - 's' as in system)
-Returns calendar time (i.e. absolute time) since epoch. To be able to do that we need 
+Returns calendar time (i.e. absolute time) since epoch. To be able to do that we need
 the time from RTC on startup, which in many cases are missing.
 
 time() and clock() are indentical ecept for this startup offset (RTC).
@@ -201,7 +201,7 @@ I.e. this function emulates the case where RCT returns zero, which for relative 
 cases is just as good.
 */
 #ifndef HAVE_TIME
-time_t time (time_t *result){ 
+time_t time (time_t *result){
    time_t tresult;
    tresult = (time_t)clock();
 
@@ -214,7 +214,7 @@ time_t time (time_t *result){
 
 /*!
 @ingroup @ingroup kernel_internal_POSIX
-        
+
 @brief Processor (i.e. process or system) time inquiry
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#Processor%20Time
 
@@ -222,14 +222,14 @@ http://www.gnu.org/software/libc/manual/html_mono/libc.html#Processor%20Time
 #ifndef HAVE_TIMES
 clock_t times (struct tms *buffer){
    assert("Not implemented");
-   
+
    return clock();
 }
 #endif
 
 /*!
 @ingroup @ingroup kernel_internal_POSIX
-        
+
 @brief Get (calendare) time of day
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#High-Resolution%20Calendar
 
@@ -243,7 +243,7 @@ int gettimeofday (struct timeval *tp, struct timezone *tzp){
 
 /*!
 @ingroup @ingroup kernel_internal_POSIX
-        
+
 @brief Set (calendare) time of day
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#High-Resolution%20Calendar
 
@@ -264,7 +264,7 @@ http://lists.freebsd.org/pipermail/freebsd-threads/2005-June/003123.html
 */
 #if !defined (__GNUC__)
 int clock_gettime (
-   clockid_t clock_id, 
+   clockid_t clock_id,
    struct timespec *tp
 ){
     switch (clock_id) {
@@ -272,11 +272,11 @@ int clock_gettime (
          assert("CLOCK_REALTIME is not implemented yet" == 0);
          //nanotime(tp);
          break;
-   
+
       case CLOCK_MONOTONIC:
          getnanouptime(tp);
          break;
-   
+
       default:
          return EINVAL;
    }
@@ -299,7 +299,7 @@ interpretation back and forth to the user (or as debugging info).
 it's not a POSIX standard function. Hence the _np suffix.
 
 */
-void timespec2fmttime_np( 
+void timespec2fmttime_np(
    struct fmttime *totime,         //!< Converted time returned
    const struct timespec *fromtime //!< Original representation
 ){
@@ -319,7 +319,7 @@ peculiar operating systems where the tv_sec member has an unsigned type.
 Subtract the `struct timeval' values X and Y,
 storing the result in RESULT.
 
-@returns 1 if the difference is negative, otherwise 0.  
+@returns 1 if the difference is negative, otherwise 0.
 */
 #if !defined (__GNUC__)
 int timeval_subtract (result, x, y)
@@ -461,10 +461,10 @@ int timeval_subtract (result, x, y)
  *  Revision 1.7  2006/02/09 23:05:25  ambrmi09
  *  Doxygen related fixes
  *
- *  
+ *
  *******************************************************************/
-   
-     
+
+
 
 
 

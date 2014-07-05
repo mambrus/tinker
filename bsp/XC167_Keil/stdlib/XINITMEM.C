@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 
-#if defined (XMEM)  
+#if defined (XMEM)
   #define MTYP          xhuge
   #define init_mempool  xinit_mempool
   #define calloc        xcalloc
@@ -59,10 +59,10 @@ void MTYP * MTYP __mp__;    /* Memory Pool Head */
 
 /*
  *  Memory pool headers.  __mp__ points to the first available block or is
- *  NULL if there are no free blocks. 
+ *  NULL if there are no free blocks.
  *
  *  Note that the list is maintained in address order.  __mp__ points to the
- *  block with the lowest address.  That block points to the block with the 
+ *  block with the lowest address.  That block points to the block with the
  *  next higher address and so on.
  */
 

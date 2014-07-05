@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -25,15 +25,15 @@
 
 This code handles regular files in memory. It can be used either as to allow
 I/O to files stored on global heap (default), or as a RAM-disk driver
-where the memory is pointed out explicitly depending on how the file is 
+where the memory is pointed out explicitly depending on how the file is
 opened.
 
 In the latter case the drive has to be previously initialized with an
 mounting point name, and it has to have been mounted (initially on __Rnod
 or a submounted system).
 
-The open function will determine if the adjacent inode is a mount-point 
-or not. If it is, open will re-seek the inode in the RAM-disk inode list. 
+The open function will determine if the adjacent inode is a mount-point
+or not. If it is, open will re-seek the inode in the RAM-disk inode list.
 If not the file is assumed to reside in global heap.
 
 As driver we can't provide default init/fini since we don't know
@@ -72,7 +72,7 @@ typedef struct{
 	char		*start;		//!< Start address of memory region to use
 	int		size;		//!< Size of the memory region in bytes
 	int		sectorsize;	//!< Size of each sector
-	int		isratio;	//!< inode vs. sector ratio (normal is 10 sectors or more)	
+	int		isratio;	//!< inode vs. sector ratio (normal is 10 sectors or more)
 	int		opt;		//!< Driver specific options
 
 	heapid_t	inode_heap;	//!< KMEM heap of inodes
@@ -97,7 +97,7 @@ int DRV_IO(close)(int file) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	DRV_IO(hndl_data_t) *hdata;
 	int oflag = ((tk_fhandle_t *)file)->oflag;
-	
+
 	hdata=((DRV_IO(hndl_data_t)*)(hndl->data));
 	#if DEBUG
 	memset(hdata,0,sizeof(DRV_IO(hndl_data_t)));
@@ -113,9 +113,9 @@ int DRV_IO(close)(int file) {
 }
 
 int DRV_IO(open)(const char *filename, int flags, ...){
-	va_list ap;		
+	va_list ap;
 		tk_fhandle_t 	*hndl;
-		tk_inode_t 	*inode;		
+		tk_inode_t 	*inode;
 		mode_t		accessflg;  //Always ignored, should be zero
 	va_start (ap, flags);
 		if (flags & O_CREAT){
@@ -130,7 +130,7 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 	hndl=tk_new_handle(inode,flags);
 
 	hndl->data=calloc(1,sizeof(DRV_IO(hndl_data_t)));
-	
+
 	if (flags & O_CREAT){
 		if (inode->idata == NULL){
 			//The file doesn't physically exist. Create it and let the i-node know where to find it
@@ -149,16 +149,16 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 				errno = EINVAL;
 				return -1;
 			}
-			
+
 		}
 	}
-	
+
 	((DRV_IO(hndl_data_t)*)(hndl->data))->csector = ((DRV_IO(inode_data_t)*)(inode->idata))->sectors;
 	((DRV_IO(hndl_data_t)*)(hndl->data))->ptr = ((DRV_IO(hndl_data_t)*)(hndl->data))->csector->data;
 
 	((DRV_IO(hndl_data_t)*)(hndl->data))->sidx=0;
 	((DRV_IO(hndl_data_t)*)(hndl->data))->didx=0;
-	
+
 
 	return (int)hndl;
 
@@ -172,13 +172,13 @@ int DRV_IO(fstat)(int file, struct stat *st) {
 
 	return 0;
 }
-	
+
 /*!
-Upon successful completion, the resulting offset, as measured in bytes from 
-the beginning of the file, shall be returned. Otherwise, (off_t)-1 shall be 
-returned, errno shall be set to indicate the error, and the file offset shall 
+Upon successful completion, the resulting offset, as measured in bytes from
+the beginning of the file, shall be returned. Otherwise, (off_t)-1 shall be
+returned, errno shall be set to indicate the error, and the file offset shall
 remain unchanged.
-*/	
+*/
 int DRV_IO(lseek)(int file, int ptr, int dir) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	DRV_IO(hndl_data_t) *hdata;
@@ -189,7 +189,7 @@ int DRV_IO(lseek)(int file, int ptr, int dir) {
 	#endif
 
 	assert(tk_dbg_flags(&flags,oflag) == 0);
-	
+
 	hdata=((DRV_IO(hndl_data_t)*)(hndl->data));
 	idata=((DRV_IO(inode_data_t)*)(hndl->inode->idata));
 
@@ -228,10 +228,10 @@ int DRV_IO(lseek)(int file, int ptr, int dir) {
 
 			hdata->didx += ptr;
 			idata->dsize=hdata->didx;
-			
+
 			hdata->sidx=hdata->didx - nsect * DATA_IN_SECTOR_SIZE;
 			hdata->ptr = &hdata->csector->data[hdata->sidx];
-		}	
+		}
 		break;
 		default:
 			assert("Unknown direction for lseek" == 0);
@@ -240,7 +240,7 @@ int DRV_IO(lseek)(int file, int ptr, int dir) {
 	}
 	return 0;
 }
-	
+
 int DRV_IO(read)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	DRV_IO(hndl_data_t) *hdata;
@@ -252,7 +252,7 @@ int DRV_IO(read)(int file, char *ptr, int len) {
 	#endif
 
 	assert(tk_dbg_flags(&flags,oflag) == 0);
-	
+
 	hdata=((DRV_IO(hndl_data_t)*)(hndl->data));
 	idata=((DRV_IO(inode_data_t)*)(hndl->inode->idata));
 
@@ -278,7 +278,7 @@ int DRV_IO(read)(int file, char *ptr, int len) {
 		for (
 			n=0,nleft=len,slen=DATA_IN_SECTOR_SIZE-hdata->sidx;
 			nleft && !_eof;
-			
+
 		){
 			if (nleft>slen){
 				memcpy(ptr,&hdata->csector->data[hdata->sidx],slen);
@@ -286,14 +286,14 @@ int DRV_IO(read)(int file, char *ptr, int len) {
 				n+=slen;
 				nleft-=slen;
 				hdata->sidx+=slen;
-				hdata->didx+=slen;				
+				hdata->didx+=slen;
 			}else{
 				memcpy(ptr,&hdata->csector->data[hdata->sidx],nleft);
 				ptr+=nleft;
 				n+=nleft;
-				nleft=0;				
+				nleft=0;
 				hdata->sidx+=nleft;
-				hdata->didx+=nleft;				
+				hdata->didx+=nleft;
 			}
 			if (nleft){
 				if (hdata->csector->next != NULL){
@@ -320,7 +320,7 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 	#endif
 
 	assert(tk_dbg_flags(&flags,oflag) == 0);
-	
+
 	hdata=((DRV_IO(hndl_data_t)*)(hndl->data));
 	idata=((DRV_IO(inode_data_t)*)(hndl->inode->idata));
 
@@ -352,10 +352,10 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 					}
 					tsect=tsect->next;
 				}
-				
+
 			}
-			if (DATA_IN_SECTOR_SIZE-hdata->sidx >= len){ 
-				// Room left in current sector for the whole string or 
+			if (DATA_IN_SECTOR_SIZE-hdata->sidx >= len){
+				// Room left in current sector for the whole string or
 				// do we need to split the write over several sectors?
 				memcpy(hdata->ptr,ptr,len);
 				hdata->ptr+=len;
@@ -371,7 +371,7 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 				for (
 					n=0,nleft=len,slen=DATA_IN_SECTOR_SIZE-hdata->sidx;
 					nleft && !_eof;
-					
+
 				){
 					if (nleft>slen){
 						memcpy(&hdata->csector->data[hdata->sidx],ptr,slen);
@@ -380,14 +380,14 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 						nleft-=slen;
 						hdata->sidx+=slen;
 						hdata->didx+=slen;
-						
+
 					}else{
 						memcpy(&hdata->csector->data[hdata->sidx],ptr,nleft);
 						ptr+=nleft;
 						n+=nleft;
-						nleft=0;				
+						nleft=0;
 						hdata->sidx+=nleft;
-						hdata->didx+=nleft;						
+						hdata->didx+=nleft;
 					}
 					if (nleft){
 						if (hdata->csector->next != NULL){
@@ -404,7 +404,7 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 				//Sanity check to make sure we calculated things right
 				assert(hdata->csector->next == NULL);
 			}
-			//Since we know we're appending, the following is also true			
+			//Since we know we're appending, the following is also true
 			idata->dsize = hdata->didx;
 		}else{
 			errno = ENOSPC;  //No space left and we're not allowd to grow the file
@@ -419,7 +419,7 @@ int DRV_IO(write)(int file, char *ptr, int len) {
 			assert("TBD"==NULL);
 		}
 	}
-	
+
 	//This implementation always write the whole (lengt if it succeeds at all)
 	assert(n==len);
 	return n;
@@ -435,7 +435,7 @@ int DRV_IO(isatty)(int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 1;
 }
-		
+
 int DRV_IO(link)(char *old, char *new) {
 	assert(DRV_IO(assert_info) == NULL);
 	errno=EMLINK;
@@ -447,7 +447,7 @@ int DRV_IO(stat)(const char *file, struct stat *st) {
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-		
+
 int DRV_IO(unlink)(char *name) {
 	assert(DRV_IO(assert_info) == NULL);
 	errno=ENOENT;
@@ -471,11 +471,11 @@ const tk_iohandle_t DRV_IO(io) = {
 };
 
 /*!
-Create an instance of this driver as a RAM-disk. Returned value is a valid file 
-handle. 
+Create an instance of this driver as a RAM-disk. Returned value is a valid file
+handle.
 
-@Note that initialization can be done multiple times. A new driver instance 
-will be created each time and each instances private data will be connected 
+@Note that initialization can be done multiple times. A new driver instance
+will be created each time and each instances private data will be connected
 to the associated inode of each driver.
 */
 int DRV_IO(init)(
@@ -483,7 +483,7 @@ int DRV_IO(init)(
 	char		*start,		//!< Start address of memory region to use
 	int		size,		//!< Size of the memory region in bytes
 	int		sectorsize,	//!< Size of each sector
-	int		isratio,	//!< inode vs. sector ratio (normal is 10 sectors or more)	
+	int		isratio,	//!< inode vs. sector ratio (normal is 10 sectors or more)
 	int		opt		//!< Driver specific options
 ) {
 	int 			file;
@@ -505,7 +505,7 @@ int DRV_IO(init)(
 		return ENOMEM;
 
 /*
-unsigned long  tk_create_heap ( 
+unsigned long  tk_create_heap (
 	heapid_t   *heapid,  //!< Returned heap ID
 	int         size,    //!< Size each element will have
 	int         num,     //!< Requested maximum number of elements
@@ -515,7 +515,7 @@ unsigned long  tk_create_heap (
 )*/
 	//nsect = isratio * ninodes
 	//ninodes = nsect/isratio
-	
+
 	//Non exact (but simple) alorythm to calculate space follows:
 	nsectors = size / sectorsize;
 	ninodes = nsectors / isratio;

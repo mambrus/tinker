@@ -52,7 +52,7 @@ int pthread_mutex_init (
    const pthread_mutexattr_t *attr
 ){
    assert (mutex->valid);
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(mutex);
    _PTHREAD_NO_WARN_VAR(attr);
    return 0;
@@ -64,7 +64,7 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_destroy.ht
 */
 int pthread_mutex_destroy(pthread_mutex_t *mutex){
    assert (mutex->valid);
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(mutex);
    return 0;
 }
@@ -77,7 +77,7 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_trylock.ht
 int pthread_mutex_trylock (pthread_mutex_t *mutex){
    assert (mutex->valid);
    assert("Not implemented yet" == 0);
-   _PTHREAD_NO_WARN_VAR(mutex); 
+   _PTHREAD_NO_WARN_VAR(mutex);
    return 0;
 }
 
@@ -89,7 +89,7 @@ int pthread_mutex_lock (pthread_mutex_t *mutex){
    assert (mutex->valid);
    if ( _mutex_lock_primitive(mutex) ) //State in schedule has changed. Let dispatcher determine who should really run
       pthread_yield();
-   
+
    return 0;
 }
 
@@ -118,13 +118,13 @@ int pthread_mutex_timedlock(
    assert (mutex->valid);
    assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(mutex);
-   _PTHREAD_NO_WARN_VAR(abs_timeout); 
+   _PTHREAD_NO_WARN_VAR(abs_timeout);
    return 0;
 }
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-  
+
 /*!
  *  @defgroup CVSLOG_pthread_mutex_c pthread_mutex_c
  *  @ingroup CVSLOG
@@ -145,9 +145,9 @@ int pthread_mutex_timedlock(
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *
- *  
+ *
  *******************************************************************/
- 
+
 
 
 

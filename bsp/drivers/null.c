@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -22,7 +22,7 @@
 
 A /dev/null driver character device
 
-@NOTE 
+@NOTE
 Since this driver does not block or use any other syncronisation, it
 can be used without a kernel.
 
@@ -61,24 +61,24 @@ int DRV_IO(fcntl)(int file, int command, ...){
 	errno = ENOSYS;
 	return -1;
 }
-		
+
 int DRV_IO(fstat)(int file, struct stat *st) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	st->st_mode = hndl->inode->mode;;
 	return 0;
 }
-	
+
 int DRV_IO(isatty)(int file) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 1;
 }
-		
+
 int DRV_IO(link)(char *old, char *new) {
-	assert(DRV_IO(assert_info) == NULL);	
+	assert(DRV_IO(assert_info) == NULL);
 	errno=EMLINK;
 	return -1;
 }
-	
+
 int DRV_IO(lseek)(int file, int ptr, int dir) {
 	assert(DRV_IO(assert_info) == NULL);
 	return 0;
@@ -92,29 +92,29 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 		inode=va_arg(ap,tk_inode_t *);
 	va_end(ap);
 
-	hndl=tk_new_handle(inode,flags);	
+	hndl=tk_new_handle(inode,flags);
 
 	return (int)hndl;
 }
-	
+
 int DRV_IO(read)(int file, char *ptr, int len) {
 	tk_fhandle_t *hndl = (tk_fhandle_t *)file;
 	memset(ptr,0,len);
 	return len;
 }
-		
+
 int DRV_IO(stat)(const char *file, struct stat *st) {
 	assert(DRV_IO(assert_info) == NULL);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-		
+
 int DRV_IO(unlink)(char *name) {
 	assert(DRV_IO(assert_info) == NULL);
 	errno=ENOENT;
 	return -1;
 }
-	
+
 int DRV_IO(write)(int file, char *ptr, int len) {
 	//Just swallow - in effect we send to oblivion
 	return len;

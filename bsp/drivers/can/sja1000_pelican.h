@@ -181,7 +181,7 @@ Table 12 Bit interpretation of the mode register (MOD); CAN address ‘0’
 */
 
 
-typedef struct{ 
+typedef struct{
 	__uint8_t padd:3; 	//!< Padding
 	__uint8_t SM:1; 	//!< Sleep mode
 	__uint8_t AFM:1; 	//!< Acceptance Filter Mode
@@ -300,7 +300,7 @@ SR.0 RBS Receive Buffer Status; 1 full; one or more complete messages are availa
 
 @endverbatim.
 */
-typedef struct{ 
+typedef struct{
 	__uint8_t BS:1; 	//!< Bus Status
 	__uint8_t ES:1; 	//!< Error Status
 	__uint8_t TS:1; 	//!< Transmit Status
@@ -352,7 +352,7 @@ IR.0 RI  Receive Interrupt; note 2  1 set; this bit is set while the receive FIF
                                       RXFIFO
 @endverbatim.
 */
-typedef struct{ 
+typedef struct{
 	__uint8_t BEI:1; 	//!< Bus Error Interrupt
 	__uint8_t ALI:1; 	//!< Arbitration Lost Interrupt
 	__uint8_t EPI:1; 	//!< Error Passive Interrupt
@@ -400,7 +400,7 @@ Table 16 Bit interpretation of the interrupt enable register (IER); CAN address 
                                                              0        disabled
 @endverbatim.
 */
-typedef struct{ 
+typedef struct{
 	__uint8_t BEIE:1; 	//!< Bus Error Interrupt Enable
 	__uint8_t ALIE:1; 	//!< Arbitration Lost Interrupt Enable
 	__uint8_t EPIE:1; 	//!< Error Passive Interrupt Enable
@@ -425,7 +425,7 @@ Table 17 Bit interpretation of the arbitration lost capture register (ALC); CAN 
  ALC.0        BITNO0       bit number 0
 @endverbatim.
 */
-typedef struct{ 
+typedef struct{
 	__uint8_t padd:3; 	//!< Padding
 	__uint8_t BITNO:5; 	//!< Bit number indicating where arbitration is lost. @note gap in value 11-12 (SRTR-IDE bits)
 }sja1000_pelican_alc_t;
@@ -500,10 +500,10 @@ Table 21 Bit interpretation of bits ECC.4 to ECC.0; note 1
 1C     11100 	overload ﬂag
 @endverbatim.
 */
-typedef struct{ 
-	__uint8_t ERRC:2; 	//!< 
-	__uint8_t DIR:1; 	//!< 
-	__uint8_t SEG:5; 	//!< 
+typedef struct{
+	__uint8_t ERRC:2; 	//!<
+	__uint8_t DIR:1; 	//!<
+	__uint8_t SEG:5; 	//!<
 }sja1000_pelican_ecc_t;
 
 /*!

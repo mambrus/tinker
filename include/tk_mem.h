@@ -32,7 +32,7 @@ KMEM
 @see KMEM
 @see COMPONENTS
 */
-  
+
 #ifndef TK_MEM_H
 #define TK_MEM_H
 
@@ -70,7 +70,7 @@ extern "C" {
 #endif
 
 
-/*! 
+/*!
 @name Function specification for locking "malloc" and "free" operations on a particular heap.
 
 This is for parameters relating to a mechanism that either contains a
@@ -78,21 +78,21 @@ This is for parameters relating to a mechanism that either contains a
 - Clearing of interrupt abiliyt, where this is the only means of
 locking/un-locking
 - Null, where locking is not necessary
-*/ 
-//@{ 
+*/
+//@{
 typedef void l_func(void);
-typedef l_func * lock_f; 
+typedef l_func * lock_f;
 //@}
 
-/*! 
+/*!
 @name Function specification for un-locking "malloc" and "free" operations on a particular heap.
 
 This is for parameters relating to a mechanism that either contains a
-- Giving back a semaphore or mutex, where such as available and needed 
+- Giving back a semaphore or mutex, where such as available and needed
 - Setting of interrupt abiliyt, where this is the only means of
 locking/un-locking
 - Null, where locking is not necessary
-*/ 
+*/
 //@{typedef unsigned int u_func(void *);
 typedef void u_func(void);
 typedef u_func * unlock_f;
@@ -105,7 +105,7 @@ typedef u_func * unlock_f;
 There should not be any reason for a normal user to address this
 structure explicitly. Use \ref heapid_t for normal operations instead.
 */
-typedef struct {   
+typedef struct {
 	int      maxnum;     //!< Maximum number of elements this pool can hold.
 	int      dsize;      //!< Size of each element
 	int      blocks;     //!< Current number of blocks in use
@@ -124,7 +124,7 @@ typedef struct {
 
 Please don't rely on that this is a pointer. Use only with intended
 API's. The type might change to something else depending on
-implementation of \ref KMEM 
+implementation of \ref KMEM
 */
 typedef heap_t *heapid_t;
 
@@ -133,12 +133,12 @@ typedef heap_t *heapid_t;
 
 Use these functions only at boot, and shut-down.
 
-@see COMPONENTS 
-*/ 
+@see COMPONENTS
+*/
 
-//@{ 
-unsigned long  tk_mem         ( void ); 
-unsigned long  tk_mem_destruct( void ); 
+//@{
+unsigned long  tk_mem         ( void );
+unsigned long  tk_mem_destruct( void );
 //@}
 
 /*! @name Creation and destruction of individual heaps
@@ -146,27 +146,27 @@ unsigned long  tk_mem_destruct( void );
 Use these functions in other \ref COMPONENTS init and destruct
 functions.
 
-@see COMPONENTS 
-@see KMEM 
-*/ 
+@see COMPONENTS
+@see KMEM
+*/
 
-//@{ 
+//@{
 unsigned long  tk_create_heap ( heapid_t*, int, int, int, lock_f, unlock_f, char* );
-unsigned long  tk_destroy_heap( heapid_t  ); 
+unsigned long  tk_destroy_heap( heapid_t  );
 //@}
 
-/*! 
+/*!
 @name API for createing and destoy memory (elements)
 
 These functions are involved with creating and destroying (elements)
 
 @see KMEM
 
-*/ 
+*/
 
 //@{
-void *         tk_mem_malloct ( heapid_t, size_t); 
-void           tk_mem_free    ( heapid_t, void* ); 
+void *         tk_mem_malloct ( heapid_t, size_t);
+void           tk_mem_free    ( heapid_t, void* );
 //@}
 
 
@@ -178,8 +178,8 @@ void           tk_mem_free    ( heapid_t, void* );
 
 #endif //TK_MEM_H
 
-  
-/*! 
+
+/*!
  * @defgroup CVSLOG_tk_mem_h tk_mem_h
  * @ingroup CVSLOG
  *  $Log: tk_mem.h,v $
@@ -246,7 +246,7 @@ void           tk_mem_free    ( heapid_t, void* );
  *  a way to omit the ANSI defines when a tool-chain that has errno.h is
  *  used.
  *
- *  
+ *
  *******************************************************************/
 
 

@@ -54,7 +54,7 @@ PTHREAD
 
 /*
 #if defined(TINKER)
-   #define main(x,y) tk_root() 
+   #define main(x,y) tk_root()
 #endif
 */
 #define SCHED_OTHER 0    //!< not used by tinker
@@ -75,7 +75,7 @@ typedef enum {
    _PBON_NOLINK=0,      //!< Blocked on mutex
    _PBON_CONDVAR,       //!< Blocked on a conditional
    _PBON_RWLOCK         //!< Blocked on a RW lock
-}pbon_kind_t; 
+}pbon_kind_t;
 
 
 //------1---------2---------3---------4---------5---------6---------7---------8
@@ -116,7 +116,7 @@ typedef enum {
 
 /*!
 RW lock structure static initializer
-@Note: Needs to mach number of prios in system 
+@Note: Needs to mach number of prios in system
 */
 #if (_PTHREAD_PRIOS == 3 )
 #define PTHREAD_RWLOCK_INITIALIZER {\
@@ -199,7 +199,7 @@ typedef struct _pthread_blocked_t_{
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
 TBD
- 
+
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutexattr_t.html
 */
 
@@ -210,9 +210,9 @@ struct pthread_mutexattr_t_ {
 
 /*!
 TBD
- 
+
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_mutex_t.html
-*/                      
+*/
 struct pthread_mutex_t_ {
    pthread_t            owner;    //!< Who (i.e. which thread) has claimed ownership of this mutex
    _pthread_blocked_t   blocked;  //!< Information about blocked threads (blocklist on this mutex)
@@ -220,15 +220,15 @@ struct pthread_mutex_t_ {
    union{
       void             *dummy;
       pthread_cond_t   *cond;
-      pthread_rwlock_t *rwl;      
+      pthread_rwlock_t *rwl;
    }link;
-   pthread_mutexattr_t  attr;     //!< Attributes of this mutex   
+   pthread_mutexattr_t  attr;     //!< Attributes of this mutex
    int                  valid;    //!< equals 1 if been initialized (sanity check)
 };
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
 TBD
- 
+
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_condattr_t.html
 */
 struct pthread_condattr_t_ {
@@ -238,7 +238,7 @@ struct pthread_condattr_t_ {
 
 /*!
 TBD
- 
+
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_cond_t.html
 */
 struct pthread_cond_t_ {
@@ -250,7 +250,7 @@ struct pthread_cond_t_ {
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
 TBD
- 
+
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_condattr_t.html
 */
 struct pthread_rwlockattr_t_{
@@ -260,7 +260,7 @@ struct pthread_rwlockattr_t_{
 
 /*!
 TBD
- 
+
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_cond_t.html
 */
 struct pthread_rwlock_t_ {
@@ -269,8 +269,8 @@ struct pthread_rwlock_t_ {
    int                     blocked_writers;
    int                     blocked_readers;
    pthread_mutex_t         mx_self;
-   pthread_cond_t          readers_lock;   
-   pthread_cond_t          writers_lock;   
+   pthread_cond_t          readers_lock;
+   pthread_cond_t          writers_lock;
    pthread_rwlockattr_t    attr;
    int                     bwriters_prio[_PTHREAD_PRIOS];
    int                     valid;    //!< equals 1 if been initialized (sanity check)
@@ -287,11 +287,11 @@ struct sched_param {
 Describes the thread attributes. It should be considered an opaque
 record, the names of the fields can change anytime. Use the appropriate
 functions to set the thread attributes.
- 
+
 @see http://www.freepascal.org/docs-html/rtl/unixtype/pthread_attr_t.html
 */
 
-/*! 
+/*!
 @brief Once Key
 
 Once Key. Threads needing to run \ref pthread_once must pass a reference
@@ -302,11 +302,11 @@ control weather init function shall be run or not.
 one more than once if needed.
 
 */
-#define PTHREAD_ONCE_INIT       { TK_FALSE, -1 }  
+#define PTHREAD_ONCE_INIT       { TK_FALSE, -1 }
 
 
 struct pthread_once_t_ {
-  int done;                 //!< indicates if user function executed 
+  int done;                 //!< indicates if user function executed
   long started;             /*!< First thread to increment this value
                                  to zero executes the user function */
 };
@@ -348,7 +348,7 @@ Otherwise it behaves exactlly identical to the function standard specification.
 
 pthread_t pthread_self (void);
 
-int pthread_equal(pthread_t t1, pthread_t t2); 
+int pthread_equal(pthread_t t1, pthread_t t2);
 int pthread_once (pthread_once_t *once_control, void (*init_routine) (void));
 
 int pthread_cancel   (pthread_t);
@@ -446,10 +446,10 @@ int pthread_rwlock_init (pthread_rwlock_t *__rwlock, const pthread_rwlockattr_t 
 int pthread_rwlock_destroy (pthread_rwlock_t *__rwlock);
 int pthread_rwlock_rdlock (pthread_rwlock_t *__rwlock);
 int pthread_rwlock_tryrdlock (pthread_rwlock_t *__rwlock);
-int pthread_rwlock_timedrdlock (pthread_rwlock_t * __rwlock, const struct timespec *abs_timeout); 
+int pthread_rwlock_timedrdlock (pthread_rwlock_t * __rwlock, const struct timespec *abs_timeout);
 int pthread_rwlock_wrlock (pthread_rwlock_t *__rwlock);
 int pthread_rwlock_trywrlock (pthread_rwlock_t *__rwlock);
-int pthread_rwlock_timedwrlock (pthread_rwlock_t * __rwlock, const struct timespec *abs_timeout); 
+int pthread_rwlock_timedwrlock (pthread_rwlock_t * __rwlock, const struct timespec *abs_timeout);
 int pthread_rwlock_unlock (pthread_rwlock_t *__rwlock);
 //------1---------2---------3---------4---------5---------6---------7---------8
 int pthread_rwlockattr_init (pthread_rwlockattr_t *rwlockattr);
@@ -1247,7 +1247,7 @@ pthread_t
  *  Revision 1.7  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
- *  
+ *
  */
 
 

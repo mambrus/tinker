@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 
 #ifndef TK_HWTYPES_GNU_BFIN_H
 #define TK_HWTYPES_GNU_BFIN_H
@@ -27,9 +27,9 @@
 
 #include <stddef.h>
 
-/*! 
-Architecture specific representation of a stack adress. In x86 this can be a 
-simple char* even in 16bit modes, since a pointer contains both segment and 
+/*!
+Architecture specific representation of a stack adress. In x86 this can be a
+simple char* even in 16bit modes, since a pointer contains both segment and
 offset.
 */
 typedef struct{
@@ -43,7 +43,7 @@ typedef struct{
 #endif
 
 
-  
+
 /*!
  * @ingroup CVSLOG
  *

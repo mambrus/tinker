@@ -73,8 +73,8 @@ smc_rx_control_descriptor
 15 CD Carrier detect lost. Set when the carrier detect signal is negated during reception.
 */
 
-typedef union{ 
-	__uint16_t raw; 
+typedef union{
+	__uint16_t raw;
 	struct {
 		__uint16_t E_Empty					:1;
 		__uint16_t Padd_0					:1;
@@ -138,7 +138,7 @@ smc_TX_control_descriptor
 */
 
 
-typedef union{ 
+typedef union{
 	__uint16_t raw;
 	struct {
 		__uint16_t R_Ready					:1;
@@ -156,7 +156,7 @@ typedef union{
 }bd_ctrl_smc_tx_t;
 
 /* Buffer Descriptor (BD) stuff */
-/* 
+/*
 Note: that the status and control field (BD_Status) is differend depending on what type of
 protocol and directin the descriptor is beeing used for.
 
@@ -170,7 +170,7 @@ Note: control and status is the same for SCC and SMC, Direction differs however.
                      0x06       Low-order of buffer pointer
 */
 
-typedef struct{ 
+typedef struct{
 	union {
 		__uint16_t raw;
 		bd_ctrl_smc_rx_t SMC_RX;	/*Note: same as for SCC*/
@@ -194,11 +194,11 @@ typedef struct{
 */
 
 
-/*Note: This happens to be the same as for SCC, but we differ between them anyway because 
-not all fcr are the same (CM has more then SCC and SMC) and we want to follow some 
+/*Note: This happens to be the same as for SCC, but we differ between them anyway because
+not all fcr are the same (CM has more then SCC and SMC) and we want to follow some
 convention*/
-typedef union{ 
-	__uint8_t raw; 
+typedef union{
+	__uint8_t raw;
 	struct {
 		__uint8_t PADD_0:3;
 		__uint8_t BO:2;
@@ -303,7 +303,7 @@ SMC_UART_STUFF
 
 */
 
-typedef struct{ 
+typedef struct{
 
 /*0x28 MAX_IDL*/ 	__uint16_t MAX_IDL;
 /*0x2A IDLC*/    	__uint16_t IDLC;
@@ -317,7 +317,7 @@ typedef struct{
 
 
 
-typedef struct{ 
+typedef struct{
 	__uint16_t	RBASE;			/*0x00*/
 	__uint16_t	TBASE;			/*0x02*/
 
@@ -343,7 +343,7 @@ typedef struct{
 	struct {				/*0X28*/
 		proto_smc_uart_t	SMC_UART;
 	}PROTO;
-	
+
 }smc_param_t;
 
 
@@ -374,9 +374,9 @@ Bits Name                                               Description
 #define SMCE_BSY			(1<<2)
 #define SMCE_TX				(1<<1)
 #define SMCE_RX				(1<<0)
-typedef union{ 
-	__uint8_t raw; 
-	
+typedef union{
+	__uint8_t raw;
+
 	struct {
 		__uint8_t PAD_0		:1;
 		__uint8_t BRKE		:1;
@@ -460,9 +460,9 @@ Bits Name                                                 Description
 
 
 /*Generic for - bugged, don't use this (FIXME)*/
-typedef union{ 
-	__uint16_t raw; 
-	
+typedef union{
+	__uint16_t raw;
+
 	struct {
 		__uint16_t PAD_0			:1;
 		__uint16_t CLEN				:4;
@@ -478,7 +478,7 @@ typedef union{
 				__uint16_t REVD		:1;
 			}transp;
 			struct{
-				
+
 				__uint16_t ME		:1;
 				__uint16_t PAD_0_2	:1;
 				__uint16_t C_NR		:1;
@@ -489,13 +489,13 @@ typedef union{
 		__uint16_t DM				:2;
 		__uint16_t TEN				:1;
 		__uint16_t REN				:1;
-			
+
 	}f;
 }_smcmr_t;
 
-typedef union{ 
-	__uint16_t raw; 
-	
+typedef union{
+	__uint16_t raw;
+
 	struct {
 		__uint16_t PAD_0			:1;
 		__uint16_t CLEN				:4;
@@ -507,13 +507,13 @@ typedef union{
 		__uint16_t DM				:2;
 		__uint16_t TEN				:1;
 		__uint16_t REN				:1;
-			
+
 	}f;
 }_smcmr_uart_t;
 
-typedef union{ 
-	__uint16_t raw; 
-	
+typedef union{
+	__uint16_t raw;
+
 	struct {
 		__uint16_t PAD_0			:1;
 		__uint16_t CLEN				:4;
@@ -525,13 +525,13 @@ typedef union{
 		__uint16_t DM				:2;
 		__uint16_t TEN				:1;
 		__uint16_t REN				:1;
-			
+
 	}f;
 }_smcmr_transp_t;
 
-typedef union{ 
-	__uint16_t raw; 
-	
+typedef union{
+	__uint16_t raw;
+
 	struct {
 		__uint16_t PAD_0			:1;
 		__uint16_t CLEN				:4;
@@ -543,13 +543,13 @@ typedef union{
 		__uint16_t DM				:2;
 		__uint16_t TEN				:1;
 		__uint16_t REN				:1;
-			
+
 	}f;
 }_smcmr_gci_t;
 
-typedef union{ 
+typedef union{
 	_smcmr_uart_t 		uart;
-	_smcmr_transp_t 	transp;	
+	_smcmr_transp_t 	transp;
 	_smcmr_gci_t  		gci;
 }smcmr_t;
 

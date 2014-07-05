@@ -35,7 +35,7 @@ ifeq ($(VIM),)
 endif
 
 # TOOLS could be either 'gnu' or any othe supported tool-chain.
-# If TOOLS is not set, the build system assumes each sub-module 
+# If TOOLS is not set, the build system assumes each sub-module
 # will know which tol-chain to use
 
 TOOLS := gnu
@@ -127,12 +127,12 @@ properhard:
 	@echo "======================================================"
 	@echo "<<-           CONFIGURATION REMOVED HARD!          ->>"
 	@echo "======================================================"
-	
+
 cleanall:
 	$(CLEANALL_MODS)
 	@echo "======================================================"
 	@echo "<<-        ALL MODULES DEEP CLEANED!               ->>"
-	@echo "======================================================"	
+	@echo "======================================================"
 
 install:
 	$(INSTALL_MODS)
@@ -168,7 +168,7 @@ configure:
 	rm -f .installed-*
 	rm -rf autom4te.cache
 	autoheader
-	#rm -f aclocal.m4 
+	#rm -f aclocal.m4
 	autoconf -I kernel
 	#aclocal
 	$(CONFIGURE_MODS)

@@ -30,7 +30,7 @@
 
 #include <stdlib.h>
 
-#if defined (XMEM)  
+#if defined (XMEM)
   #define MTYP          xhuge
   #define init_mempool  xinit_mempool
   #define calloc        xcalloc

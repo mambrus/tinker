@@ -17,12 +17,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 /*!
-@brief Definitions of board sys-calls 
- 
+@brief Definitions of board sys-calls
+
 Definitions of the board sys-calls. Redefine each for a certain board+uC
-combo. 
+combo.
 
 @note use the definitions as a template for your own fnkn mappings
 */
@@ -47,27 +47,27 @@ combo.
 
 
 #if (BOARD == BITFIRE)
-#define bsp_Open            BF_Open            
-#define bsp_Close           BF_Close           
-#define bsp_WriteC          BF_WriteC          
-#define bsp_Write0          BF_Write0          
-#define bsp_Write           BF_Write           
-#define bsp_Read            BF_Read            
-#define bsp_ReadC           BF_ReadC           
-#define bsp_IsTTY           BF_IsTTY           
-#define bsp_Seek            BF_Seek            
-#define bsp_FLen            BF_FLen            
-#define bsp_TmpNam          BF_TmpNam          
-#define bsp_Remove          BF_Remove          
-#define bsp_Rename          BF_Rename          
-#define bsp_Clock           BF_Clock           
-#define bsp_Time            BF_Time            
-#define bsp_System          BF_System          
-#define bsp_Errno           BF_Errno           
-#define bsp_GetCmdLine      BF_GetCmdLine      
-#define bsp_HeapInfo        BF_HeapInfo        
-#define bsp_EnterSVC        BF_EnterSVC        
-#define bsp_ReportException BF_ReportException 
+#define bsp_Open            BF_Open
+#define bsp_Close           BF_Close
+#define bsp_WriteC          BF_WriteC
+#define bsp_Write0          BF_Write0
+#define bsp_Write           BF_Write
+#define bsp_Read            BF_Read
+#define bsp_ReadC           BF_ReadC
+#define bsp_IsTTY           BF_IsTTY
+#define bsp_Seek            BF_Seek
+#define bsp_FLen            BF_FLen
+#define bsp_TmpNam          BF_TmpNam
+#define bsp_Remove          BF_Remove
+#define bsp_Rename          BF_Rename
+#define bsp_Clock           BF_Clock
+#define bsp_Time            BF_Time
+#define bsp_System          BF_System
+#define bsp_Errno           BF_Errno
+#define bsp_GetCmdLine      BF_GetCmdLine
+#define bsp_HeapInfo        BF_HeapInfo
+#define bsp_EnterSVC        BF_EnterSVC
+#define bsp_ReportException BF_ReportException
 //#define tk_bsp_sysinit      TK_BF_sysinit
 #endif
 
@@ -135,4 +135,4 @@ int bsp_ReportException (/*TBD*/);
  *  blocking).
  *
  */
- 
+

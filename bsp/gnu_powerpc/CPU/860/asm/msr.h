@@ -105,9 +105,9 @@
 	#define UINT32 __int32_t
 #endif
 
-typedef union{ 
-	UINT32 raw; 
-	
+typedef union{
+	UINT32 raw;
+
 	struct {
 		UINT32 RSRVD_1:13;
 		UINT32 POW:1;
@@ -127,7 +127,7 @@ typedef union{
 		UINT32 RSRVD_5:2;
 		UINT32 RI:1;
 		UINT32 LE:1;
-	
+
 	}f;
 }msr_t;
 

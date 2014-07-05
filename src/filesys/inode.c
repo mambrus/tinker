@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -41,26 +41,26 @@ char *igetname(const char *s){
 	return (char *)&s[i+1];
 }
 /*! Creates a string in buff containing the path part of a file name */
-void igetpath(char *buff, const char *s){	
+void igetpath(char *buff, const char *s){
 	strncpy(buff,s,PATH_MAX);
 	igetname(buff)[0]='\0';
 }
 
-/*! 
-Find the i-node associated with a name (arg #2) from the i-node tree 
+/*!
+Find the i-node associated with a name (arg #2) from the i-node tree
 structure pointed oit by arg #1
 
 @returns Three cases can apply
-1. NULL if no valid node is found 
+1. NULL if no valid node is found
 2. The i-node seached for that matches the name exactly
 3. If a mount point is encountered on the seach-path, this one is returned instead
 
 */
 tk_inode_t *isearch(tk_inode_t 	*ci, const char*s){
-	char		fname[PATH_MAX];	
+	char		fname[PATH_MAX];
 	char		*cd,*nd;
 	//tk_inode_t 	*ci 		= __Rnod;
-	
+
 	strncpy(fname,s,PATH_MAX);
 
 	for (
@@ -79,11 +79,11 @@ tk_inode_t *isearch(tk_inode_t 	*ci, const char*s){
 			;
 			ci && strncmp(ci->name,nd,NAME_MAX);
 			ci=ci->next
-		);		
+		);
 
 	}
 
-	return ci;	
+	return ci;
 }
 //FIXME needs more work---
 int tk_rmnod(const char *filename){
@@ -91,10 +91,10 @@ int tk_rmnod(const char *filename){
 }
 
 /*!
-This function is identical to the ANSI mknod, except that you also pass along 
+This function is identical to the ANSI mknod, except that you also pass along
 the adress to which tree.
 
-This enables tinker to use several trees of inodes in memory, i.e. we can reuse 
+This enables tinker to use several trees of inodes in memory, i.e. we can reuse
 this function for various RAM-disk drivers and for the initial name-space tree.
 
 @see (also) http://www.opengroup.org/onlinepubs/009695399/
@@ -134,7 +134,7 @@ int imknod(tk_inode_t *ci, const char *filename, mode_t mode, dev_t dev){
 		errno=ENOTDIR;	/*Trying to create a node whos owner is not a directory*/
 		return -1;
 	}
-	
+
 	//Create the node
 	assure(newNode = (tk_inode_t*)calloc(1,sizeof(tk_inode_t)));
 	memset(newNode, 0, sizeof(tk_inode_t));
@@ -185,8 +185,8 @@ int imknod(tk_inode_t *ci, const char *filename, mode_t mode, dev_t dev){
 
 	//Attach the link upwards
 	newNode->belong=belong;
-	
-	//Attach the link last in the list at the level just below (i.e. in this directory).	
+
+	//Attach the link last in the list at the level just below (i.e. in this directory).
 	if (belong->down!=belong) {
 		assert(belong->down);
 		// Search the end of the list at the same level

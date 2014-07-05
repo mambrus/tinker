@@ -98,8 +98,8 @@ PLPRCR[CSR]   DER[CHSTPE] Checkstop Mode        Result
 */
 
 
-typedef union{ 
-	__uint32_t raw; 
+typedef union{
+	__uint32_t raw;
 	struct {
 		__uint32_t MF		:12;
 		__uint32_t PAD_0	:4;

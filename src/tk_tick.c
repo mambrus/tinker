@@ -19,18 +19,18 @@
  ***************************************************************************/
  /*!
  @file
- 
- High resolution clock function and internal 
+
+ High resolution clock function and internal
  system clock storage owner.
  */
-   
+
 
 #define TICK_OWNER
 #include "tk_tick.h"
 #include <tk.h>
 #include <stdio.h>
 #include <time.h>
-#include <tk_hwsys.h> //Should really be moved into tk_hwclock.h, but we cant since Keil prepocessor is buggd. 
+#include <tk_hwsys.h> //Should really be moved into tk_hwclock.h, but we cant since Keil prepocessor is buggd.
 
 
 #if defined(HW_CLOCKED)
@@ -51,7 +51,7 @@ This equals to the real value 4294967,296. Defines below are it's integer and fr
 @brief returns time since startup of the target expressed in seconds and
 fractions in nS. Precision limited only by HW (if supported).
 
-Similar implementation is found in BSD: 
+Similar implementation is found in BSD:
 http://nixdoc.net/man-pages/FreeBSD/man9/getnanouptime.9.html
 
 Internal running time is in mS and is kept in two 32-bit variables. The
@@ -60,9 +60,9 @@ MS contains the number of times the LS has wrapped around.
 
 Together they form a 64 bit variable keeping the number of mS since
 startup. This means the combined value will keep accurate time for
-584.942.417,4 years (!). It's relative accuracy though, absolute accurancy 
-would have had to take into account drift, but it's good enough for timeouts 
-and all sorsts of time calculations between two events in time for a very 
+584.942.417,4 years (!). It's relative accuracy though, absolute accurancy
+would have had to take into account drift, but it's good enough for timeouts
+and all sorsts of time calculations between two events in time for a very
 long run-time.
 
 What about precision then? Well only because the LS value contains time
@@ -101,13 +101,13 @@ TinKer we use most of these words, but with the following beaning:<p>
 
 - mackey  - mackeys are the MS part of a tick (32 bit value)
 
-- pebble  - is the register value in the HW clock. One pebbe's 
-            meaning in actual time depends on the preqiency driving 
+- pebble  - is the register value in the HW clock. One pebbe's
+            meaning in actual time depends on the preqiency driving
             the HWclock.
 
-@note The way TnS is calculated is very critical. We either loose 
-resolution (keeping determinator high) or add error (determinator 
-is pre-devided, but truncation occures). We might need to consider 
+@note The way TnS is calculated is very critical. We either loose
+resolution (keeping determinator high) or add error (determinator
+is pre-devided, but truncation occures). We might need to consider
 inventing 64-bit operations.
 
 @todo see the second note in getuptime
@@ -123,7 +123,7 @@ void getnanouptime (
    unsigned long        pebbles;  // Remainig value in HWclock register
    unsigned long        nS;       // Time passed since last update of tick expressed in nS. Lets hope we dont need a 64 bit value for this.
    unsigned long        TnS;      // Temp of the above
-   
+
    #if defined(HW_CLOCKED)
    HWclock_stats_t      HWclock_stats;
    #endif
@@ -132,23 +132,23 @@ void getnanouptime (
 
 
 // Read HW clock if supported follows:
-// Note that the following operation will not cause drift. Nither HWclock 
-// is prevented from counting nor is systimer prevented from counting ticks, 
-// only is systimer possibly delayed a little in the unlikely event that this 
-// read comes very close to a timeout - that might cause a small drift depending on the HW configuration 
+// Note that the following operation will not cause drift. Nither HWclock
+// is prevented from counting nor is systimer prevented from counting ticks,
+// only is systimer possibly delayed a little in the unlikely event that this
+// read comes very close to a timeout - that might cause a small drift depending on the HW configuration
 // (automatic reload or reload by ISR). For now we accept this small drift.
-      
+
    pebbles = 0;
-   
+
    #if defined(HW_CLOCKED)
    tk_getHWclock_Quality( CLK1, &HWclock_stats );
    tk_disarmHWclock(      CLK1 );
    tk_getHWclock(         CLK1, &pebbles);
    #endif
-   
-   MSmS = sys_mackey; 
-   LSmS = sys_mickey; 
-      
+
+   MSmS = sys_mackey;
+   LSmS = sys_mickey;
+
    #if defined(HW_CLOCKED)
    tk_armHWclock(         CLK1 );
 
@@ -164,38 +164,38 @@ void getnanouptime (
    // Calculate the nuber of nS since last update of tick
    TnS = HWclock_stats.maxPebbles - pebbles;
    TnS = (TnS * (1000000000L / (HWclock_stats.freq_hz/100)))/100;
-   
+
    //convert tick to <i>struct timespec</i>
    MSfrac = (MSmS % 1000L)*FACTOR +((MSmS % 1000L)*FFRACT)/1000L;
    MSrest = ((MSmS % 1000L)*FFRACT)%1000L;
    LSS    = (LSmS / 1000L) + MSfrac;
-   
+
    //MSS = MSmS / 1000L;  //<-not used
-   
+
    nS  = ( ( LSmS % 1000L )      +               MSrest                    )    * 1000000L;
    //            ^^^                              ^^^
    //    fraction of milli sec from LS       fraction of millisec from MS        in namosecs
-   
+
    //Add the fraction originally expressed in pebbles and compensate seconds if needed
    nS  = nS + TnS;
-   LSS = LSS + nS/1000000000L;  // All the "rests" added togeather might result in more than one second. 
+   LSS = LSS + nS/1000000000L;  // All the "rests" added togeather might result in more than one second.
    nS  = nS%1000000000L;        // take away the amount that got into seconds
 
-   //MSS is not compensated - bug will not be seen unless running system for 60 years, and only if nS 
-   //frac causes overflow that ripples though both nS and S. Compensating for this will cause 
-   //extra code to run on every invocation and that will most certanlly never do anything (waste 
+   //MSS is not compensated - bug will not be seen unless running system for 60 years, and only if nS
+   //frac causes overflow that ripples though both nS and S. Compensating for this will cause
+   //extra code to run on every invocation and that will most certanlly never do anything (waste
    //of time). Besides MSS is never used outside this function (double waste). This note kept for
    //future reference.
-   
+
 //Finally we should have the information requested. Copy to caller
    tp->tv_sec  = LSS;
    tp->tv_nsec = nS;
 
 }
 
-  
+
 /*!
- * @defgroup CVSLOG_tk_tick_c tk_tick_c 
+ * @defgroup CVSLOG_tk_tick_c tk_tick_c
  * @ingroup CVSLOG
  *
  *  $Log: tk_tick.c,v $

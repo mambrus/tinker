@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-   
-  
+
+
 /*!
 @file
 @ingroup ITC
@@ -37,13 +37,13 @@ ITC
 #include <implement_itc.h>
 #ifdef TK_COMP_ITC
 static unsigned long lock_stage(
-	unsigned long qid, 
+	unsigned long qid,
 	unsigned long timeout);
 static unsigned long unlock_stage(
-	unsigned long qid);	
-	
-extern itc_t *__itc_array[TK_MAX_NUM_Q];	
-extern int __itc_idx;						
+	unsigned long qid);
+
+extern itc_t *__itc_array[TK_MAX_NUM_Q];
+extern int __itc_idx;
 
 /*!
 Will block the current thread if detected necessary
@@ -51,18 +51,18 @@ Will block the current thread if detected necessary
 @todo documet this
 */
 static unsigned long lock_stage(
-	unsigned long qid, 
-	unsigned long timeout) 
+	unsigned long qid,
+	unsigned long timeout)
 {
 	tk_tcb_t *MySelf;			/* A pointer to my own process PCB */
 	clock_t act_time;
 	clock_t timeout_time;	/* When to timeout if timeoutable */
 	unsigned int mark_idx;
 	TK_CLI();
-	
+
 	act_time = clock()/CLK_TCK*1000;
 	MySelf = _tk_current_tcb();
-	
+
 	if ( __itc_array[qid]->token > 0 ) {	/*  */
 		/* Wow, gone thru */
 		__itc_array[qid]->token --;
@@ -71,10 +71,10 @@ static unsigned long lock_stage(
 		/* Hrrm, someone else was here before me */
 		/* Can I block? */
 		if (abs(__itc_array[qid]->token) < (TK_MAX_BLOCKED_ON_Q - 1) ) {
-			__itc_array[qid]->token--;	
+			__itc_array[qid]->token--;
 		}else
 			STI_return(ERR_BLOCKLIMIT);
-			
+
 		/* Put myself on the fifo list */
 		__itc_array[qid]->blocked_procs[__itc_array[qid]->in_idx] = MySelf;
 		__itc_array[qid]->in_idx++;
@@ -85,7 +85,7 @@ static unsigned long lock_stage(
 			MySelf->state = (PROCSTATE)( (MySelf->state) | _____Q__);
 			MySelf->wakeupEvent = E_NONE;
 			tk_yield_CLI();
-			/* OK, I've been blocked and now I'm free*/		
+			/* OK, I've been blocked and now I'm free*/
 			STI_return(ERR_OK);
 		}else {
 			MySelf->state = (PROCSTATE)( (MySelf->state) | _____QS_);
@@ -94,25 +94,25 @@ static unsigned long lock_stage(
 			/*In case need to remove from list (timerelease)*/
 			mark_idx = __itc_array[qid]->in_idx; /*One to far, correct later*/
 			tk_yield_CLI();
-			
+
 			/* who waked me?*/
 			if (MySelf->wakeupEvent == E_TIMER) {
 				/* Take process away from "que blocked" list*/
 				mark_idx--;
 				if (mark_idx > TK_MAX_BLOCKED_ON_Q) {
-					mark_idx = TK_MAX_BLOCKED_ON_Q - 1;	
+					mark_idx = TK_MAX_BLOCKED_ON_Q - 1;
 				}
-				
+
 				/*Scan block list for any more procs that has been released by timer*/
-				
+
 				if (__itc_array[qid]->token >= 0)
 					STI_return(ERR_TIMEOUT); /*DUNNO WHY*/
-				
+
 				_itc_removeBlocked(__itc_array[qid],mark_idx);
-				
+
 				if (__itc_array[qid]->token >= 0)
-					STI_return(ERR_TIMEOUT); /* Last one */	
-					
+					STI_return(ERR_TIMEOUT); /* Last one */
+
 				mark_idx = __itc_array[qid]->out_idx;
 				do {
 					/*What happens if last one?? Good question!! solved above?*/
@@ -123,7 +123,7 @@ static unsigned long lock_stage(
 						/*Tag it, preventing succesiv removal*/
 						__itc_array[qid]->blocked_procs[mark_idx]->wakeupEvent = E_ITC2;
 						/*Remove it from blocked list */
-						_itc_removeBlocked(__itc_array[qid],mark_idx);	
+						_itc_removeBlocked(__itc_array[qid],mark_idx);
 					}
 					if (mark_idx == __itc_array[qid]->in_idx)
 						break;
@@ -131,13 +131,13 @@ static unsigned long lock_stage(
 				}
 				while(__itc_array[qid]->token < 0 && mark_idx != __itc_array[qid]->in_idx);
 				STI_return(ERR_TIMEOUT);
-				
+
 			}else if (MySelf->wakeupEvent == E_ITC2)
 				STI_return(ERR_TIMEOUT);
 			STI_return(ERR_OK);
 		}
 	}
-	TK_STI();	
+	TK_STI();
 }
 
 /******************************************************************************
@@ -150,41 +150,41 @@ static unsigned long lock_stage(
  *		If processes is waiting, release the one chosen by certain criteria
  *		to READY.
  *
- *	Note: 
- *		Freeing a different process means this function can block if the 
+ *	Note:
+ *		Freeing a different process means this function can block if the
  *		process it releases has better priority.
  *
  *  RETURNS:
- *		ERR_OK 
+ *		ERR_OK
  *
  *****************************************************************************/
-//------1---------2---------3---------4---------5---------6---------7---------8 
+//------1---------2---------3---------4---------5---------6---------7---------8
 /*!
 Doc TBD
 
 @todo documet this
 */
 static unsigned long unlock_stage(
-	unsigned long qid) 
-{	
+	unsigned long qid)
+{
 	tk_tcb_t *Him;			/* A pointer to the process to release  */
 	unsigned int i;
 	unsigned int t_idx,t_prio = TK_MAX_PRIO_LEVELS + 2;
 	TK_CLI();
-	
+
 	if (__itc_array[qid]->token < 0)  { /* Oops someone is perhaps waiting for me */
 		if (__itc_array[qid]->flags & PRIOR) {
-			
-			/*Tidying away timerreleased processes*/ 
+
+			/*Tidying away timerreleased processes*/
 			for (
 				i=__itc_array[qid]->out_idx;
 				i!=__itc_array[qid]->in_idx; /*This is important, the last index can expire*/
 				i++,i %= TK_MAX_BLOCKED_ON_Q)
 			{
-				if (!(__itc_array[qid]->blocked_procs[i]->state & _____Q__))  { 
+				if (!(__itc_array[qid]->blocked_procs[i]->state & _____Q__))  {
 					/*Oops, found one!*/
 
-					//_itc_removeBlocked(__itc_array[qid],i);	
+					//_itc_removeBlocked(__itc_array[qid],i);
 				}
 				if (__itc_array[qid]->in_idx == i)
 				  	break;
@@ -194,10 +194,10 @@ static unsigned long unlock_stage(
 				/*printk(("Hubba i �at\n"));
 				while(1);*/
 				STI_return(ERR_OK);
-				
+
 			}
-							
-			/*Find the highest waiting process*/ 
+
+			/*Find the highest waiting process*/
 			for (
 				i=__itc_array[qid]->out_idx;
 				i!=__itc_array[qid]->in_idx;
@@ -208,15 +208,15 @@ static unsigned long unlock_stage(
 					t_idx = i;
 				}
 			}
-			
+
 			/*Now the highest waiting process should be found*/
 			assert(t_prio != (TK_MAX_PRIO_LEVELS + 2)); /*Could not find anyone to release*/
-			__itc_array[qid]->blocked_procs[t_idx]->state = (PROCSTATE)(__itc_array[qid]->blocked_procs[t_idx]->state & ~_____QST); 
+			__itc_array[qid]->blocked_procs[t_idx]->state = (PROCSTATE)(__itc_array[qid]->blocked_procs[t_idx]->state & ~_____QST);
 			__itc_array[qid]->blocked_procs[t_idx]->wakeupEvent = E_ITC;
 			//__itc_array[qid]->token++;
-			_itc_removeBlocked(__itc_array[qid],t_idx);	
-			tk_yield_CLI(); 
-			
+			_itc_removeBlocked(__itc_array[qid],t_idx);
+			tk_yield_CLI();
+
 		}else {
 			do {
 				Him = __itc_array[qid]->blocked_procs[__itc_array[qid]->out_idx];
@@ -224,17 +224,17 @@ static unsigned long unlock_stage(
 				__itc_array[qid]->out_idx %= TK_MAX_BLOCKED_ON_Q;
 				__itc_array[qid]->token++;
 			}while(!(Him->state & _____Q__) && __itc_array[qid]->token < 0);
-			 /*Above can happen if made ready by timer */								   
-			 /*but has not runned (had the oppotunity */								   
-			 /*to remove from this list)*/								   
+			 /*Above can happen if made ready by timer */
+			 /*but has not runned (had the oppotunity */
+			 /*to remove from this list)*/
 			 /*Should be obsolite now, but is not*/
 			Him->state = (PROCSTATE)( (Him->state) & ~_____QST); /* In case of timeout active release that to */
 			Him->wakeupEvent = E_ITC;
-			tk_yield_CLI(); /*In case the one you've just released has higher prio, run it*/	
+			tk_yield_CLI(); /*In case the one you've just released has higher prio, run it*/
 		}
-	}else 				  
-		__itc_array[qid]->token++;	/* Increase number of tokens anyway */	   
-	STI_return(ERR_OK);	
+	}else
+		__itc_array[qid]->token++;	/* Increase number of tokens anyway */
+	STI_return(ERR_OK);
 }
 
 
@@ -252,7 +252,7 @@ unsigned long q_vcreate(
 	unsigned long *qid
 ){
 	unsigned long rc;
-	
+
     if ((rc =sm_create(name,0,flags,qid)) != ERR_OK)
 		return(rc);
 	/* Allocate memory for the message queue */
@@ -280,7 +280,7 @@ unsigned long q_vdelete(
 ) {
 	unsigned long rc;
 	unsigned int i;
-	
+
 	for ( i=0; i<__itc_array[qid]->sizeof_q ; i++) {
 		free(__itc_array[qid]->m.qv[i].mb);			/*Delete evry messsage*/
 	}
@@ -295,15 +295,15 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_vreceive(
-	unsigned long qid,      
-	unsigned long flags,    
-	unsigned long timeout,  
+	unsigned long qid,
+	unsigned long flags,
+	unsigned long timeout,
 	void *msg_buf,
 	unsigned long buf_len,	/* The size of your allocated buffer */
     unsigned long *msg_len
 ){
 	unsigned long rc;
-	
+
 	/* Test if the id is valid */
 	if (__itc_array[qid] == NULL )
 		return(ERR_OBJDEL);
@@ -313,7 +313,7 @@ unsigned long q_vreceive(
 		return(ERR_NOSEM);
 	if (__itc_array[qid]->maxSizeof_m < buf_len )
 		return(ERR_BUFSIZ);
-			
+
 	/* OK Semaphore is valid, back to buisiness */
 	rc = lock_stage(qid, timeout);
 	if (!(_itc_proveConcistency(qid)))
@@ -326,14 +326,14 @@ unsigned long q_vreceive(
 	printk(("%s \n",msg_buf));
 	printk(("%s \n",__itc_array[qid]->m.qv[__itc_array[__itc_array[qid]->mout_idx]->mout_idx].mb));*/
 	memcpy(
-		msg_buf, 
+		msg_buf,
 		__itc_array[qid]->m.qv[__itc_array[qid]->mout_idx].mb,
 		__itc_array[qid]->m.qv[__itc_array[qid]->mout_idx].s + 1
-	);	
+	);
 	*msg_len = __itc_array[qid]->m.qv[__itc_array[qid]->mout_idx].s;
-	/*The message is delivered, free the slot*/	
+	/*The message is delivered, free the slot*/
 	free(__itc_array[qid]->m.qv[__itc_array[qid]->mout_idx].mb);
-	
+
 	__itc_array[qid]->mout_idx++;
 	__itc_array[qid]->mout_idx %= __itc_array[qid]->sizeof_q;
 	return(ERR_OK);
@@ -345,12 +345,12 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_vsend(
-	unsigned long qid,      
+	unsigned long qid,
 	void *msg_buf,
 	unsigned long msg_len
 ){
 	unsigned long rc;
-	
+
 	/* Test if the id is valid */
 	if (__itc_array[qid] == NULL )
 		return(ERR_OBJDEL);
@@ -359,24 +359,24 @@ unsigned long q_vsend(
 	if (__itc_array[qid]->token > 0)
 		if (!(__itc_array[qid]->token < (int)__itc_array[qid]->sizeof_q))  //Cast on the right side is important
 			return(ERR_FULL);
-		
-	
+
+
 	/* Allocate memory to store message */
-	if ((__itc_array[__itc_idx]->m.qv[__itc_array[qid]->min_idx].mb = 
-		malloc(msg_len + 1)) == NULL) 
+	if ((__itc_array[__itc_idx]->m.qv[__itc_array[qid]->min_idx].mb =
+		malloc(msg_len + 1)) == NULL)
 	{
 		return(ERR_NOMEM);
 	}
 	/* put the message in the message queue */
 	memcpy(__itc_array[qid]->m.qv[__itc_array[qid]->min_idx].mb, msg_buf, msg_len + 1);
 	__itc_array[qid]->m.qv[__itc_array[qid]->min_idx].s = msg_len;
-	
+
 	__itc_array[qid]->min_idx++;
-	__itc_array[qid]->min_idx %= __itc_array[qid]->sizeof_q; 
+	__itc_array[qid]->min_idx %= __itc_array[qid]->sizeof_q;
 	//gotoxy(1,19);
 	printk(("%s \n",__itc_array[qid]->m.qv[__itc_array[__itc_array[qid]->mout_idx]->mout_idx].mb));
 
-	
+
 	rc = unlock_stage(qid);
 	if (!(_itc_proveConcistency(qid)))
 		assert(0);
@@ -397,7 +397,7 @@ unsigned long q_create(
 	unsigned long *qid
 ){
 	unsigned long rc;
-	
+
 	if ((rc =sm_create(name,0,flags,qid)) != ERR_OK)
 		return(rc);
 	/* Allocate memory for the message queue */
@@ -423,7 +423,7 @@ unsigned long q_delete(
 	unsigned long qid       /* id */
 ) {
 	unsigned long rc;
-	
+
 	free(__itc_array[qid]->m.q);
 	rc = sm_delete(qid);
 	return (rc);
@@ -435,13 +435,13 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_receive(
-	unsigned long qid,      
-	unsigned long flags,    
-	unsigned long timeout,  
+	unsigned long qid,
+	unsigned long flags,
+	unsigned long timeout,
 	unsigned long msg_buf[4]
 ){
 	unsigned long rc;
-	
+
 	/* Test if the id is valid */
 	if (__itc_array[qid] == NULL )
 		return(ERR_OBJDEL);
@@ -449,7 +449,7 @@ unsigned long q_receive(
 		return(ERR_OBJTYPE);
 	if (__itc_array[qid]->token <= 0 && flags & NOWAIT )
 		return(ERR_NOSEM);
-			
+
 	/* OK Semaphore is valid, back to buisiness */
 	rc = lock_stage(qid, timeout);
 	if (!(_itc_proveConcistency(qid)))
@@ -470,11 +470,11 @@ Doc TBD
 @todo documet this
 */
 unsigned long q_send(
-	unsigned long qid,      
+	unsigned long qid,
 	unsigned long msg_buf[4]
 ){
 	unsigned long rc;
-	
+
 	/* Test if the id is valid */
 	if (__itc_array[qid] == NULL )
 		return(ERR_OBJDEL);
@@ -483,13 +483,13 @@ unsigned long q_send(
 	if (__itc_array[qid]->token > 0)
 		if (!(__itc_array[qid]->token < (int)__itc_array[qid]->sizeof_q)) //Cast on the right side is important
 			return(ERR_FULL);
-		
-	
+
+
 	/* put the message in the message queue */
 	memcpy(__itc_array[qid]->m.q[__itc_array[qid]->min_idx], msg_buf, sizeof(q_t));
 	__itc_array[qid]->min_idx++;
-	__itc_array[qid]->min_idx %= __itc_array[qid]->sizeof_q; 
-	
+	__itc_array[qid]->min_idx %= __itc_array[qid]->sizeof_q;
+
 	rc = unlock_stage(qid);
 	if (!(_itc_proveConcistency(qid)))
 		assert(0);
@@ -504,24 +504,24 @@ Doc TBD
 @todo documet this
 */
 unsigned long sm_create(
-	char name[4],           
-	unsigned long count,    
-	unsigned long flags,    
-	unsigned long *qid      
+	char name[4],
+	unsigned long count,
+	unsigned long flags,
+	unsigned long *qid
 ) {
 	unsigned int rc,i;
 
 	if ((rc = _itc_findNextEmpySlot()) != ERR_OK) {
 		if (rc==ERR_OBJFULL) {
-		   return(rc);	
-		}						
+		   return(rc);
+		}
 	}else if ((__itc_array[__itc_idx] = (itc_t*)malloc(sizeof(itc_t)) ) == NULL) {
 		return(ERR_NOMEM);
 	/* Allocate memory for pointertable of tk_tcb_t pointers */
 	}else if ((__itc_array[__itc_idx]->blocked_procs = (tk_tcb_t**)malloc(TK_MAX_BLOCKED_ON_Q * sizeof(tk_tcb_t*)) ) == NULL) {
 			return(ERR_NOMEM);
 	}
-	
+
 	/* Clean pointertable of blocked procs*/
 	for (i=0; i<TK_MAX_BLOCKED_ON_Q; i++) {
 		__itc_array[__itc_idx]->blocked_procs[i] = NULL;
@@ -534,7 +534,7 @@ unsigned long sm_create(
 	__itc_array[__itc_idx]->b_type = SEM;
 	__itc_array[__itc_idx]->in_idx  = 0;
 	__itc_array[__itc_idx]->out_idx = 0;
-	
+
 	*qid = __itc_idx;
 	return (ERR_OK);
 }
@@ -558,7 +558,7 @@ unsigned long sm_delete(
 /*!
 @brief Acquires a semaphore token (take the semaphore)
 
-Corresponds to POSIX 1003.1b sm_receive or sm_get              
+Corresponds to POSIX 1003.1b sm_receive or sm_get
 */
 unsigned long sm_p(				/* sm_receive or sm_get */
 	unsigned long qid,      	/* id */
@@ -566,7 +566,7 @@ unsigned long sm_p(				/* sm_receive or sm_get */
 	unsigned long timeout   	/* timeout in clock ticks !?vafan */
 ) {
 	unsigned long rc;
-	
+
 	/* Test if the id is valid */
 	if (__itc_array[qid] == NULL )
 		return(ERR_OBJDEL);
@@ -574,7 +574,7 @@ unsigned long sm_p(				/* sm_receive or sm_get */
 		return(ERR_OBJTYPE);
 	if (__itc_array[qid]->token <= 0 && flags & NOWAIT )
 		return(ERR_NOSEM);
-			
+
 	/* OK Semaphore is valid, back to buisiness */
 	rc = lock_stage(qid, timeout);
 	return(rc);
@@ -583,23 +583,23 @@ unsigned long sm_p(				/* sm_receive or sm_get */
 /*!
 @brief Releases a semaphore token
 
-Corresponds to POSIX 1003.1b sm_send or sm_put                  
+Corresponds to POSIX 1003.1b sm_send or sm_put
 */
 unsigned long sm_v(			   /* sm_send or sm_put */
    unsigned long qid		      /* id */
 ) {
 	unsigned long rc;
-		
+
 	/* Test if the id is valid */ /*#$-NOTE:C001-$#*/
 	if (__itc_array[qid] == NULL )
 		return(ERR_OBJDEL);
 	if (__itc_array[qid]->b_type != SEM )
 		return(ERR_OBJTYPE);
-		
+
 	rc = unlock_stage(qid);
 	return(rc);
-	  
-	
+
+
 }
 
 
@@ -608,7 +608,7 @@ unsigned long sm_v(			   /* sm_send or sm_put */
 
 
 
-   
+
 /*!
  * @defgroup CVSLOG_tk_ipc_c tk_ipc_c
  * @ingroup CVSLOG
@@ -848,7 +848,7 @@ unsigned long sm_v(			   /* sm_send or sm_put */
  *  more than one semaphores. Gives slow performance.
  *
  *  Revision 1.6  1998/02/04 20:49:18  mickey
- *  FIrst atteptt to solve priority semaphores (has errors)					 
+ *  FIrst atteptt to solve priority semaphores (has errors)
  *
  *  Revision 1.5  1998/02/01 20:03:27  mickey
  *  Jiihaa, first version of a working semaphore
@@ -861,6 +861,6 @@ unsigned long sm_v(			   /* sm_send or sm_put */
  *
  *  Revision 1.2  1998/01/28 20:32:18  mickey
  *  First Revision
- *  
+ *
  *******************************************************************/
 

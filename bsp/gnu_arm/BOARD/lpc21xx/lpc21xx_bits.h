@@ -17,18 +17,18 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
  /*!
- @brief Bit definitions for LPC21xx 
- 
+ @brief Bit definitions for LPC21xx
+
  Bits for the various control registers.
- 
- The contents is based on the Philips documentation: 
+
+ The contents is based on the Philips documentation:
  LPC2119/2129/2194/2292/2294 Users Manual, 2004 May 03
- 
+
  @note The content is believed to be correct, but you should really double
  check.
- 
+
  */
 
 #ifndef LPC21XX_BITS_H
@@ -41,7 +41,7 @@
 //Timer stuff
 
 /*
-The following remarked rection is defined in the main header. Only kept here 
+The following remarked rection is defined in the main header. Only kept here
 for reference.
 
 #define TIMER0_IR       0xE0004000  //<! Intrerrupt Register
@@ -59,8 +59,8 @@ for reference.
 #define TIMER0_CR1      0xE0004030  //<!                    1
 #define TIMER0_CR2      0xE0004034  //<!                    2
 #define TIMER0_CR3      0xE0004038  //<!                    3
-#define TIMER0_EMR      0xE000403C  //<! 
-*/                                  
+#define TIMER0_EMR      0xE000403C  //<!
+*/
 
 //Bits for the TCR
 #define TCR_ENABLE 0

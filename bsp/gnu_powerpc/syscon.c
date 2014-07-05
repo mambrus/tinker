@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 /*
-This module serves as an initial system connector for PowerPC derivates. 
+This module serves as an initial system connector for PowerPC derivates.
 Other submodules can optionally seconfigure the syscall map in their
 initial startup routines respectivly
 */
@@ -89,8 +89,8 @@ caddr_t ppc_sbrk(int incr) {
 
    prev_heap_end = heap_end;
 
-   heap_end += incr;   
-   return (caddr_t) prev_heap_end;   
+   heap_end += incr;
+   return (caddr_t) prev_heap_end;
 }
 
 
@@ -122,7 +122,7 @@ void ppc_syscall_mon(void *hix_syscall){
 }
 
 int tk_bsp_sysinit (void){
-	//Hook up the lib (nobody else will) 
+	//Hook up the lib (nobody else will)
 	//They allready have pre-set values by the linker so we need
 	//to activly re-assign them
 
@@ -133,8 +133,8 @@ int tk_bsp_sysinit (void){
 	hixs.fork         = hixs.fork;
 	hixs.fstat        = hixs.fstat;
 	hixs.getpid       = hixs.getpid;
-	hixs.gettimeofday = hixs.gettimeofday; 
-	hixs.isatty       = hixs.isatty; 
+	hixs.gettimeofday = hixs.gettimeofday;
+	hixs.isatty       = hixs.isatty;
 	hixs.kill         = hixs.kill;
 	hixs.link         = hixs.link;
 	hixs.lseek        = hixs.lseek;

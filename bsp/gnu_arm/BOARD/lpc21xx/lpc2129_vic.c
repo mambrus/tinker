@@ -23,7 +23,7 @@ static void get_addr_n_cntl(UNS_8 vecaddr, UNS_32 *addr, UNS_32 *cntl)
 void vic_install_isr(vic_control *vc)
 {
   UNS_32 addr, cntl;
-  
+
   get_addr_n_cntl(vc->vecaddr,&addr,&cntl);
   if (addr==0 || cntl==0)
     return;
@@ -47,7 +47,7 @@ void vic_disable_int(vic_control *vc)
 void vic_remove_isr(vic_control *vc)
 {
   UNS_32 addr, cntl;
-  
+
   get_addr_n_cntl(vc->vecaddr,&addr,&cntl);
   if (addr==0 || cntl==0)
     return;

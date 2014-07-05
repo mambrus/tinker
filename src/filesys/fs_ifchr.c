@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -39,25 +39,25 @@ int DRV_IO(fcntl)(int file, int command, ...){
 	errno = ENOSYS;
 	return -1;
 }
-	
-	
+
+
 int DRV_IO(fstat)(int file, struct stat *st) {
 	assure(DRV_IO(assert_info) == NULL);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-	
+
 int DRV_IO(isatty)(int file) {
 	assure(DRV_IO(assert_info) == NULL);
 	return 1;
 }
-		
+
 int DRV_IO(link)(char *old, char *new) {
 	assure(DRV_IO(assert_info) == NULL);
 	errno=EMLINK;
 	return -1;
 }
-	
+
 int DRV_IO(lseek)(int file, int ptr, int dir) {
 	assure(DRV_IO(assert_info) == NULL);
 	return 0;
@@ -68,24 +68,24 @@ int DRV_IO(open)(const char *filename, int flags, ...){
 	errno = ENOSYS;
 	return -1;
 }
-	
+
 int DRV_IO(read)(int file, char *ptr, int len) {
 	assure(DRV_IO(assert_info) == NULL);
 	return 0;
 }
-		
+
 int DRV_IO(stat)(const char *file, struct stat *st) {
 	assure(DRV_IO(assert_info) == NULL);
 	st->st_mode = S_IFCHR;
 	return 0;
 }
-		
+
 int DRV_IO(unlink)(char *name) {
 	assure(DRV_IO(assert_info) == NULL);
 	errno=ENOENT;
 	return -1;
 }
-	
+
 int DRV_IO(write)(int file, char *ptr, int len) {
 	assure(DRV_IO(assert_info) == NULL);
 	return len;

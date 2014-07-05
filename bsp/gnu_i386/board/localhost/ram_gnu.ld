@@ -122,7 +122,7 @@ SECTIONS
 	{
 		_bstart = .;
 		*(.bss)
-		_bend = .;		
+		_bend = .;
 		FILL(0x2E627373);
 		_xbss = .;
 		/*__CTOR_LIST__	= .;*/
@@ -133,7 +133,7 @@ SECTIONS
 		/*__FIXUP_END__	= .;*/
 		/*__SDATA2_START__	= .;*/
 		/*__SBSS2_END__	= .;*/
-		
+
 	} >PRAM
 
 	_sizeof_t = 0x00200000;
@@ -143,7 +143,7 @@ SECTIONS
 
 /*
   int __SDATA_START__;  int __SDATA2_START__;	OK / eh?
-  int __SBSS_END__;     int __SBSS2_END__;	SBSS2 eh?  
+  int __SBSS_END__;     int __SBSS2_END__;	SBSS2 eh?
 
   int __GOT_START__;    int __GOT_END__;	OK
   int __GOT2_START__;   int __GOT2_END__;	OK
@@ -155,7 +155,7 @@ SECTIONS
   int __DTOR_LIST__;    int __DTOR_END__;	TBD
 */
 
-/*	
+/*
 	.comment : {		*(.comment) 		} >PRAM
 	.data : {		*(.data)		} >PRAM
 	.debug_abbrev : {	*(.debug_abbrev)	} >PRAM
@@ -163,23 +163,23 @@ SECTIONS
 	.debug_frame : {	*(.debug_frame)		} >PRAM
 	.debug_info : {		*(.debug_info)		} >PRAM
 	.debug_line : {		*(.debug_line)		} >PRAM
-	.debug_loc : {		*(.debug_loc)		} >PRAM 
-	.debug_pubnames : {	*(.debug_pubnames)	} >PRAM 
-	.debug_ranges : {	*(.debug_ranges)	} >PRAM 
-	.debug_str : {		*(.debug_str)		} >PRAM 
-	.eh_frame : {		*(.eh_frame)		} >PRAM 
-	.got : {		*(.got)			} >PRAM 
-	.got2 : {		*(.got2)		} >PRAM 
-	.rela.dyn : {		*(.rela.dyn)		} >PRAM 
-	.rodata : {		*(.rodata)		} >PRAM 
-	.rodata.str1.4 : {	*(.rodata.str1.4)	} >PRAM 
-	.sbss : {		*(.sbss)		} >PRAM 
-	.sbss.1 : {		*(.sbss.1)		} >PRAM 
-	.sbss.2 : {		*(.sbss.2)		} >PRAM 
-	.sbss.3 : {		*(.sbss.3)		} >PRAM 
-	.sbss.4 : {		*(.sbss.4)		} >PRAM 
-	.sdata : {		*(.sdata)		} >PRAM 
-	.stab : {		*(.stab)		} >PRAM 
-	.stabstr : {		*(.stabstr)		} >PRAM 
-	
+	.debug_loc : {		*(.debug_loc)		} >PRAM
+	.debug_pubnames : {	*(.debug_pubnames)	} >PRAM
+	.debug_ranges : {	*(.debug_ranges)	} >PRAM
+	.debug_str : {		*(.debug_str)		} >PRAM
+	.eh_frame : {		*(.eh_frame)		} >PRAM
+	.got : {		*(.got)			} >PRAM
+	.got2 : {		*(.got2)		} >PRAM
+	.rela.dyn : {		*(.rela.dyn)		} >PRAM
+	.rodata : {		*(.rodata)		} >PRAM
+	.rodata.str1.4 : {	*(.rodata.str1.4)	} >PRAM
+	.sbss : {		*(.sbss)		} >PRAM
+	.sbss.1 : {		*(.sbss.1)		} >PRAM
+	.sbss.2 : {		*(.sbss.2)		} >PRAM
+	.sbss.3 : {		*(.sbss.3)		} >PRAM
+	.sbss.4 : {		*(.sbss.4)		} >PRAM
+	.sdata : {		*(.sdata)		} >PRAM
+	.stab : {		*(.stab)		} >PRAM
+	.stabstr : {		*(.stabstr)		} >PRAM
+
 */

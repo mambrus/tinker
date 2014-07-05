@@ -284,7 +284,7 @@ static inline void __raw_writel(__u32 b, volatile void __iomem *addr)
 #define outsl(port, buf, nl)	_outsl_ns((port)+___IO_BASE, (buf), (nl))
 
 /*
- * On powermacs and 8xx we will get a machine check exception 
+ * On powermacs and 8xx we will get a machine check exception
  * if we try to read data from a non-existent I/O port. Because
  * the machine check is an asynchronous exception, it isn't
  * well-defined which instruction SRR0 will point to when the
@@ -518,7 +518,7 @@ out:
 }
 
 /*
- * Here comes the ppc implementation of the IOMAP 
+ * Here comes the ppc implementation of the IOMAP
  * interfaces.
  */
 static inline unsigned int ioread8(void __iomem *addr)

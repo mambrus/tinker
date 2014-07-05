@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
+
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 #ifndef TK_TUNING_H
@@ -28,7 +28,7 @@
 #endif
 
 //App & system
-#if      defined(__CYGWIN32__)  || defined(__CYGWIN__)	
+#if      defined(__CYGWIN32__)  || defined(__CYGWIN__)
 	#ifndef TK_NORMAL_STACK_SIZE
 		#define TK_NORMAL_STACK_SIZE     0xD000 //!< @note Cygwin needs a humongus stack
 	#endif
@@ -38,7 +38,7 @@
 
 #else
 	#ifndef TK_NORMAL_STACK_SIZE
-		#define TK_NORMAL_STACK_SIZE     0x1200 //!< @note Whats normal or reasonable differs between architectures. 
+		#define TK_NORMAL_STACK_SIZE     0x1200 //!< @note Whats normal or reasonable differs between architectures.
 	#endif
 	#ifndef TK_MINIMUM_STACK_SIZE
 		#define TK_MINIMUM_STACK_SIZE    0x0600  //!< TBD this @todo TBD this
@@ -46,7 +46,7 @@
 
 #endif
 
-//SCHED 
+//SCHED
 #ifndef TK_MAX_THREADS
 	#define TK_MAX_THREADS          0x100
 #endif
@@ -73,8 +73,8 @@
 
 #endif  //TK_TUNING_H
 
-  
-/*! 
+
+/*!
  * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
  * @ingroup CVSLOG
  *  $Log: tk_tuning.h,v $

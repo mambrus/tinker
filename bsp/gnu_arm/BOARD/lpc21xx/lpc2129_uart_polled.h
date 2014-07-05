@@ -2,7 +2,7 @@
 // mtrojer@arrownordic.com
 // $WCREV$
 //! Polled UART driver
-//! \page LPC2129_UART_POLLED lpc2129_uart_polled.h 
+//! \page LPC2129_UART_POLLED lpc2129_uart_polled.h
 //! \ingroup BSPINC
 
 #ifndef _LPC2129_UART_POLLED_H
@@ -37,7 +37,7 @@ UNS_8 uart_polled_putchar(uart_control *uc, UNS_8 ch);
 
 //! Reads 8 bits from the UART periferal. Blocks until data is ready.
 //! @param *uc Pointer to initialized uart_control struct.
-//! @return Read character 
+//! @return Read character
 //! \ingroup lpc2129_uart_polled
 UNS_8 uart_polled_getchar(uart_control *uc);
 

@@ -8,7 +8,7 @@ This is the common header file for \ref STALLOC
 
 
 /*
-#if defined (XMEM)  
+#if defined (XMEM)
   #define MTYP          xhuge
   #define init_mempool  xinit_mempool
   #define calloc        xcalloc
@@ -53,28 +53,28 @@ they should. In normal case
 - It becomes easier to debug ISR and scheduler related issues since
 other blocks don't (like like the malloced messaged blocks for queues)
 clobber the memory layout.
- 
+
 - Rouge pointer operations on heap becomes less probable to corrupt
 stacks threads (with normal malloc any block can come in between any
 stack block). Common +1/-1 errors might corrupt nearby stack and in turn
 hang the whole system.
- 
+
 - In XC167 case, we're limited to a memory address range of 16K for
 <b>all stacks</b>. However we have plenty more memory on the eval card
 (256KB + 512KB !)
- 
+
 - In other processors as in XC167 there might be memory areas with
 faster (or non cashable) memory. Those are perfect for stacks (the
 plainer the better).
- 
+
 - It might be possible to implement some kind of stack starvation trap.
 This would be very nice indeed since that is the single most common
 error in multi-threaded applications (i.e. this has nothing to do with
 the kernel itself, but is a service to aid system development).
- 
+
 At the moment only XC167 has this package implemented. Other targets are
 likely to use simple macro's to map \e stalloc to \e malloc and
-\e stalloc_free to \e free. 
+\e stalloc_free to \e free.
 
 <p><b>Go back to</b> \ref PACKAGES</p>
 

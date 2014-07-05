@@ -26,7 +26,7 @@
 
 @note <b>Make sure NEVER to use this</b> file in a build-chain where an
 "official" sys/types.h exist. Libraries might be using a completely
-different set of structs ! Except for GNU tool-chain, where #if logic takes 
+different set of structs ! Except for GNU tool-chain, where #if logic takes
 care of the issue.
 
 For in-depth discussions about re-implementing ANSI functions, see \ref
@@ -56,7 +56,7 @@ kernel_reimpl_ansi.
 
 
 /*!
-@name 
+@name
 
 These defines makes sure we're using our own types no matter what
 tool-chain you're using building TinKer and (any app using TinKer).
@@ -105,7 +105,7 @@ normal pthread names (very nifty!).
 
    //typedef struct pthread_t_ *pthread_t; //No way I'm going to return a pointer to anything for this!
    //typedef unsigned int pthread_t;
-   typedef struct tcb_t_               *pthread_t; 
+   typedef struct tcb_t_               *pthread_t;
    typedef struct pthread_attr_t_      *pthread_attr_t;
    typedef struct pthread_once_t_       pthread_once_t;
    typedef struct pthread_key_t_       *pthread_key_t;
@@ -168,6 +168,6 @@ normal pthread names (very nifty!).
  *  Revision 1.3  2006/02/22 13:05:46  ambrmi09
  *  Major doxygen structure modification. No chancge in actual sourcecode.
  *
- *  
+ *
  */
 

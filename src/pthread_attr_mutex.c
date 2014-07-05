@@ -49,7 +49,7 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutexattr_init.h
 @todo Stubbed. Impl TBD
 */
 int pthread_mutexattr_init (pthread_mutexattr_t *__attr){
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(__attr);
    return 0;
 }
@@ -60,7 +60,7 @@ http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutexattr_destro
 @todo Stubbed. Impl TBD
 */
 int pthread_mutexattr_destroy (pthread_mutexattr_t *__attr){
-   assert("Not implemented yet" == 0); 
+   assert("Not implemented yet" == 0);
    _PTHREAD_NO_WARN_VAR(__attr);
    return 0;
 }
@@ -73,7 +73,7 @@ int pthread_mutexattr_gettype (__const pthread_mutexattr_t *__restrict
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 
-  
+
 /*!
  *  @defgroup CVSLOG_pthread_attr_mutex_c pthread_attr_mutex_c
  *  @ingroup CVSLOG
@@ -94,9 +94,9 @@ int pthread_mutexattr_gettype (__const pthread_mutexattr_t *__restrict
  *  - pThreads RW locks implemented (rough aproach - no usage error detection)
  *  - restructuring of the pThread src-files
  *
- *  
+ *
  *******************************************************************/
- 
+
 
 
 

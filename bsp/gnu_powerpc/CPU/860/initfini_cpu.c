@@ -38,14 +38,14 @@ Initialice CPU specific internals
 struct _reent *myPtr;
 
 /*Consider putting this somewhere else FIXME */
-typedef union{ 
-	__uint32_t raw; 
-	
+typedef union{
+	__uint32_t raw;
+
 	struct {
 		__uint32_t ISB:16;
 		__uint32_t PARTNUM:8;
 		__uint32_t MASKNUM:8;
-	
+
 	}f;
 }immr_t;
 
@@ -68,13 +68,13 @@ void __init_cpu(){
 		while (ictrl.f.ISCT_SER!=ISCT_SER_VAUE) {
 			GET_SPR(_ICTRL,ictrl);
 		}
-	
+
 		plprcr_p->f.MF=0x0FF;
 	*/
 		plprcr_t plprcr_test;
 		plprcr_test.raw=0x00000000;
-		plprcr_test.f.MF=0xFFF; 
-	
+		plprcr_test.f.MF=0xFFF;
+
 		plprcr_test.raw=0x0000D000;
 
 		//Set the output buffer strength of the CLKOUT pin.
@@ -108,14 +108,14 @@ void __init_cpu(){
 		int machine_check;
 		int litte_endian;
 		int ext_excpt;
-	
+
 		has_fp = msr.f.FP;
 		isr_highmem = msr.f.IP;
 		recoverable_ex = msr.f.RI;
 		machine_check = msr.f.ME;
 		litte_endian = msr.f.LE;
 		ext_excpt = msr.f.EE;
-	
+
 		#if defined (__BIG_ENDIAN__)
 		if (litte_endian)
 			return;                 //This is an endian error but we can't handle it yet
@@ -123,28 +123,28 @@ void __init_cpu(){
 		if (!litte_endian)
 			return;                 //This is an endian error but we can't handle it yet
 		#endif
-	
-	
+
+
 		if (isr_highmem){               //Always assume exceptions to be 0x0000-0x10000
 			msr.f.IP = 0;
 			SET_MSR(msr);
 		}
-	}	
+	}
 	{
 		//Initialize memory /*cleaning .sbss*/
 
 		// FIXME It seems wrong with a stack size defined here...
-		#define STACK_SIZE 0x0600	
+		#define STACK_SIZE 0x0600
 
 		char *btext= 	&_btext;
-		char *etext= 	&_etext; 
-		char *bdata= 	&_bdata; 
-		char *edata= 	&_edata; 
+		char *etext= 	&_etext;
+		char *bdata= 	&_bdata;
+		char *edata= 	&_edata;
 		char *bstart= 	&_bstart;
 		char *bend= 	&_bend;
-	
+
 		char *sizeof_t=	&_sizeof_t;
-		char *sizeof_d=	&_sizeof_d; 
+		char *sizeof_d=	&_sizeof_d;
 		char *sizeof_b=	&_sizeof_b;
 
 		//Some initializers depend on that variables start with value zero
@@ -164,13 +164,13 @@ void __init_cpu(){
 
 	}
 
-	// IMMR Internal Memory Map Register 
+	// IMMR Internal Memory Map Register
 	{
 		#ifndef DMM1
 		#error  Don't know where to map Internal Memory
 		#endif
 		immr_t immr;
-		
+
 		GET_SPR(_IMMR,immr);
 		/*Assume adress has allreaby been set, either by HW, debugger or previous code*/
 		/*This test might be omitted later*/
@@ -199,15 +199,15 @@ void __exeptions_enable_cpu(){
 		}
 		msr.f.EE = 1;
 		SET_MSR(msr);
-	
+
 		SET_SPR(_EIE,0xFF);	//External interrupt enable (command to the SIU, normally in prologe code)
-	
-		
-//		SIMASK=0xFFFF0000;	//Allow all kinds of IRQ	
+
+
+//		SIMASK=0xFFFF0000;	//Allow all kinds of IRQ
 		bitset(SIMASK,LVL3);	//Set LVL3 interrupts
 		bitset(SIMASK,IRQ3);	//Set IRQ3 interrupts (CAN)
 
-		bitset(SIMASK,LVL5);	//Set LVL5 interrupts (CPM)		
+		bitset(SIMASK,LVL5);	//Set LVL5 interrupts (CPM)
 
 
 		//SIEL=0x00000000;	//IRQ on level, no wakeup from low-pow

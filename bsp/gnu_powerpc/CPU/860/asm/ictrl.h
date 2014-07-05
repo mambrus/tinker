@@ -88,20 +88,20 @@ conﬁgure instruction breakpoint operations.
 
 */
 
-typedef union{ 
-	__uint32_t raw; 
+typedef union{
+	__uint32_t raw;
 	struct {
 
 		__uint32_t CTA		:3;
 		__uint32_t CTB		:3;
 		__uint32_t CTC		:3;
 		__uint32_t CTD		:3;
-		
+
 		__uint32_t IW0		:2;
 		__uint32_t IW1		:2;
 		__uint32_t IW2		:2;
 		__uint32_t IW3		:2;
-		
+
 		__uint32_t SIW0EN	:1;
 		__uint32_t SIW1EN	:1;
 		__uint32_t SIW2EN	:1;
@@ -111,7 +111,7 @@ typedef union{
 		__uint32_t DIW2EN	:1;
 		__uint32_t DIW3EN	:1;
 		__uint32_t IFM		:1;
-		
+
 		__uint32_t ISCT_SER	:3;
 	}f;
 }ictrl_t;

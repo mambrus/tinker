@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
- 
+
 
 #include <tinker/config.h>
 
@@ -73,7 +73,7 @@
 #endif
 
 int bsp_Open            (char *name, int mode, int len){
-  /* 
+  /*
    if ( strncmp(name,NAME_TELETYPE,len) == 0 ){  //Lib wants handles for std- in/out/err
       if (mode == MODE_READ)
          return DEV_STDIN;
@@ -107,9 +107,9 @@ int bsp_Write           (int fh, char *ptr,int len){
       assert("Write error: Bad filehandle" == 0);
    }
 */
-   //Return #chars not written (i.e. 0)   
+   //Return #chars not written (i.e. 0)
    return 0;
-} 
+}
 
 int bsp_Read            (/*TBD*/){}
 int bsp_ReadC           (/*TBD*/){}
@@ -120,8 +120,8 @@ int bsp_TmpNam          (/*TBD*/){}
 int bsp_Remove          (/*TBD*/){}
 int bsp_Rename          (/*TBD*/){}
 
-/* 
- This function needs working. Among others we need to read mickeys/mackes 
+/*
+ This function needs working. Among others we need to read mickeys/mackes
  several times to detect is IRQ has happened betweeb while reading the first
  and second part (potential wrap-around).
 */
@@ -131,9 +131,9 @@ int bsp_Clock           (){
 	unsigned int TuS_low  = sys_mickey;           //Low  32 bit uS worth value
 	long long    TuS_high = sys_mackey;           //High 32 bit uS worth value
 	unsigned int cratio = MICKEYS_PER_SEC/CLOCKS_PER_SEC;
-	
+
 	long long Tcl = ((TuS_high << 32) + TuS_low ) / cratio;
-	
+
 	return Tcl; //Trunc it on purpose (best we can do anyway)
 	*/
 	static i = 0;
@@ -153,7 +153,7 @@ clock_t bsp_Times(struct tms *buf){
    (*buf).tms_utime  = (clock_t)bsp_Clock();
    buf->tms_stime  = 0;
    buf->tms_cutime = 0;
-   buf->tms_cstime = 0;      
+   buf->tms_cstime = 0;
 }
 
 extern void abort(void);
@@ -188,17 +188,17 @@ caddr_t bsp_Sbrk(int incr) {
 void (*bsp_syscall)(void);
 void bsp_Syscall_mon(void *hix_syscall){
 	bsp_syscall = hix_syscall;
-};         
+};
 
 /*!
 
  @note
- ISR bindings are used at this lvls (important that other part knows of each 
+ ISR bindings are used at this lvls (important that other part knows of each
  other's ISR's)
- 
+
  */
 int tk_bsp_sysinit (void){
-	//Hook up the lib (nobody else will) 
+	//Hook up the lib (nobody else will)
 	//They allready have pre-set values by the linker so we need
 	//to activly re-assign them
 
@@ -209,8 +209,8 @@ int tk_bsp_sysinit (void){
 	hixs.fork         = hixs.fork;
 	hixs.fstat        = hixs.fstat;
 	hixs.getpid       = hixs.getpid;
-	hixs.gettimeofday = hixs.gettimeofday; 
-	hixs.isatty       = hixs.isatty; 
+	hixs.gettimeofday = hixs.gettimeofday;
+	hixs.isatty       = hixs.isatty;
 	hixs.kill         = hixs.kill;
 	hixs.link         = hixs.link;
 	hixs.lseek        = hixs.lseek;

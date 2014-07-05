@@ -17,18 +17,18 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-/*! 
-@file 
+/*!
+@file
 @ingroup SCHED
 
 @brief Tinker inner-most \e"guts"
 
 The contents in this file concerns context switching. This is a kernels most
-critical area where it's extremely vounerable. 
+critical area where it's extremely vounerable.
 
 Two types of threats exist:
 
-- Interrupts - Certain context switching techniques are sensitive for 
+- Interrupts - Certain context switching techniques are sensitive for
   interrupts (but not, not all).
 
 - Preemptiveness - the functions in this file do not like to be preempted
@@ -50,7 +50,7 @@ SCHED
 #include <assert.h>
 
 
-extern struct tcb_t_ 	__tk_threadPool[TK_MAX_THREADS];  
+extern struct tcb_t_ 	__tk_threadPool[TK_MAX_THREADS];
 extern thid_t 		__tk_schedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
 extern struct stat_t 	__tk_roundrobin_prio_idxs[TK_MAX_PRIO_LEVELS];
 extern thid_t 		__tk_thread_to_run;
@@ -61,21 +61,21 @@ static int inpreempt	= 0;
 static int outpreempt	= 0;
 thid_t preemptlist[TK_MAX_THREADS];
 
-/*! 
+/*!
 Called by _ny versions of itc. A special ready-list for preemptable threads
 */
 void	tk_preemplist(thid_t thid){
 	npreempt++;
 	preemptlist[inpreempt]=thid;
 	inpreempt++;
-	inpreempt = inpreempt % TK_MAX_THREADS; 
+	inpreempt = inpreempt % TK_MAX_THREADS;
 }
 
 /*!
 @brief create a "virtual" timeout event (whenever possible).
 
 Iterates though the whole schedule, trying to find sleeping threads
-who's timeout time has expired and flag them as \ref READY. 
+who's timeout time has expired and flag them as \ref READY.
 
 @see PROCSTATE
 
@@ -163,7 +163,7 @@ void _tk_wakeup_timedout_threads( void ){
 Dispatch or yield to another thread that has more "right" to run.
 
 I.e. <b>search</b> for another potential thread that is now in \e "runable"
-state and that has higher priority. 
+state and that has higher priority.
 
 Also: In non-preemptive mode (and as a secondary duty), it creates simulated
 timeout-events on all threads currently sleeping, but who's timeout has
@@ -195,17 +195,17 @@ before the first PUSHALL nor after the last POPALL.
 */
 void tk_yield( void ){
 	assert(__tk_IntFlagCntr==0);
-	
+
 	TK_CLI();
 	PUSHALL();
 	TK_STI();
-	
+
 	_tk_wakeup_timedout_threads();
 
-	
+
 	TK_CLI();
-		
-	//Do not premit interrupts between the following two. Proc statuses 
+
+	//Do not premit interrupts between the following two. Proc statuses
 	//(i.e. thread statuses) frozen in time.
 	if (npreempt > 0){
 		assert(npreempt<2);
@@ -219,7 +219,7 @@ void tk_yield( void ){
 	_tk_context_switch_to_thread(
 		__tk_thread_to_run,
 		__tk_active_thread);
-	
+
 	POPALL();
 	TK_STI();
 

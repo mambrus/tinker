@@ -9,7 +9,7 @@
 
 
 /*
-//*** <<< Use Configuration Wizard in Context Menu >>> *** 
+//*** <<< Use Configuration Wizard in Context Menu >>> ***
 */
 
 

@@ -32,7 +32,7 @@
 #pragma browse
 
 
-#if defined (XMEM)  
+#if defined (XMEM)
   #define MTYP          xhuge
   #define init_mempool  xinit_mempool
   #define calloc        xcalloc
@@ -102,7 +102,7 @@ void MTYP *malloc (TLEN size)   {
   }
 
 /*  Split P Block:  If P is larger than we need, we split P into two blocks:
- *  the leftover space and the allocated space.  That means, we need to 
+ *  the leftover space and the allocated space.  That means, we need to
  *  create a header in the allocated space.                                 */
 
   k -= HLEN;

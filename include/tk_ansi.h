@@ -27,8 +27,8 @@
 This is the common headerfile for all ANSI re-implementations
 
 Most of this file is obsolete now. It was thought to be a common wrapper
-for all the ANSI wrapping needs (functions and types). It was soon discovered 
-that this would be a mess beyond sanity. All the wrapping is now maintained 
+for all the ANSI wrapping needs (functions and types). It was soon discovered
+that this would be a mess beyond sanity. All the wrapping is now maintained
 in the each TinKer corresponding header-file.
 
 The file is kept never the less for the time being.
@@ -49,8 +49,8 @@ kernel_reimpl_ansi
 //------1---------2---------3---------4---------5---------6---------7---------8
 
 
-/** @defgroup kernel_reimpl_ansi ANSI functions reimplemented 
-@ingroup PACKAGES 
+/** @defgroup kernel_reimpl_ansi ANSI functions reimplemented
+@ingroup PACKAGES
 @brief Files containing re-emplemented ANSI functions
 
 The files in this package are involved one way or the other
@@ -64,7 +64,7 @@ find in this package is what what is normally defined in stdlib.h,
 sys/types.h time.h e.t.a. AND that is needed (note, not every single
 header file is wrapped - only those really needed).
 
-@section Intro 
+@section Intro
 In case you do have a corresponding function in your tool-chain, you
 don't want to have both. Because of that each function is conditionally
 compiled and you have to explicitly set each definition. This way when
@@ -72,11 +72,11 @@ you port for a new target (assuming no conditionals have been set by you
 yet), you will know if a function is supported or not since the linker
 will produce link errors for functions not found.
 
-   
+
 @section missing_functions Simply missing functions
 Typically a tool-chain comes with only partial of the stdlib. Here
 comes an example of functions <b>NOT</b> included in such a typical
-tool-chain (Keil). 
+tool-chain (Keil).
 
 @see http://www.keil.com/support/man/docs/c166/c166_xa_librarydif.htm
 
@@ -84,7 +84,7 @@ tool-chain (Keil).
 the specific function is both implemented AND included in this certain
 build of TinKer. Use this as a fast way to determine which version
 of a certain function you're useing (in case of uncertainty).
-   
+
 The following ANSI Standard library routines are not included in the C166 library:
 
 abort
@@ -103,7 +103,7 @@ ferror
 fflush
 fgetc
 fgetpos
-fgets  
+fgets
 fmod
 fopen
 fprintf
@@ -120,7 +120,7 @@ fwrite
 getc
 getenv
 gmtime
-ldexp  
+ldexp
 ldiv
 localeconv
 localtime
@@ -137,7 +137,7 @@ rename
 rewind
 setbuf
 setlocale
-setvbuf  
+setvbuf
 signal
 strcoll
 strerror
@@ -151,7 +151,7 @@ tmpnam
 ungetc
 vfprintf
 wcstombs
-wctomb  
+wctomb
 
 The following ANSI Standard library routines is probably part of you
 tool-chain, but <em>you most likely</em> need replace with TinKer
@@ -176,7 +176,7 @@ the function must never be preempted (or interrupted), but you supplier
 never considered that case. File operations are such a case (including
 terminal I/O such as the common printf).
 
-- Memory issues, your tool suppliers version is hogging memory or 
+- Memory issues, your tool suppliers version is hogging memory or
 allocating from regions that you can't allow (or don't support) e.t.a.
 
 - Optimizations, you might need a different behaviour (speed, temporal
@@ -197,7 +197,7 @@ cartful!
 
 
 
-/*! 
+/*!
  * @defgroup CVSLOG_tk_ansi_h tk_ansi_h
  * @ingroup CVSLOG
  *  $Log: tk_ansi.h,v $
@@ -286,5 +286,5 @@ cartful!
  *  Revision 1.1  2006/02/09 22:40:39  ambrmi09
  *  Initial creation of ANSI re-implementation module
  *
- *  
+ *
  *******************************************************************/

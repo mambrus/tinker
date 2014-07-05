@@ -47,18 +47,18 @@ unsigned long sem_once;
 
 unsigned long tk_pthread_sched( void ){
    unsigned long rc = ERR_OK;
-   
+
    rc = sm_create("SOnc",1,FIFO,&sem_once);
-   
-   return rc;    	
+
+   return rc;
 }
 //------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long tk_pthread_sched_destruct( void ){
    unsigned long rc = ERR_OK;
-   
+
    rc = sm_delete(sem_once);
-   
-   return rc;    	
+
+   return rc;
 
 }
 
@@ -83,8 +83,8 @@ int pthread_create_named_np (
 ){
    thid_t thid;
    struct tcb_t_ *tk_tcb;
-   
-   if (attr != NULL){           
+
+   if (attr != NULL){
       thid = tk_create_thread(
          threadName,
          (*attr)->priority,
@@ -95,7 +95,7 @@ int pthread_create_named_np (
 	  tk_tcb = _tk_specific_tcb(thid);
 	  //NOTICE! Uncertain about this line.
       (*attr)->stackaddr = tk_tcb->stack_begin;
-      
+
    }else{
       thid = tk_create_thread(
          threadName,
@@ -107,7 +107,7 @@ int pthread_create_named_np (
    };
    //Types are the same, but avoid warnings
    *thread=(pthread_t)_tk_specific_tcb(thid);
-      
+
    return 0;
 }
 
@@ -150,7 +150,7 @@ pthread_t pthread_self (void){
 
 Compare thread id's with each other.
 
-- API should do this 
+- API should do this
 - You shouldn't
 
 @see pthread_self
@@ -166,14 +166,14 @@ int pthread_equal(pthread_t t1, pthread_t t2){
 int pthread_once (
    pthread_once_t          *once_control,
    void (*init_routine) (void)
-){   
+){
    int            need2run = 0;
    unsigned long  rc = ERR_OK;
-   
+
    if (once_control==NULL){
       return EINVAL;
    }else{
-      //Proper way      
+      //Proper way
       //--- Detect ---
       rc = sm_p(sem_once,WAIT,/*TK_FOREVER*/1000);
       assert(rc==ERR_OK);
@@ -183,22 +183,22 @@ int pthread_once (
       }
       rc = sm_v(sem_once);
       assert(rc==ERR_OK);
-      
-      //--- Run if requred ---            
+
+      //--- Run if requred ---
       if (need2run){
-            
+
          init_routine();
 
-         //--- Mark as finished ---            
+         //--- Mark as finished ---
          rc = sm_p(sem_once,WAIT,/*TK_FOREVER*/1000);
          assert(rc==ERR_OK);
 
-         once_control->done = 1;         
+         once_control->done = 1;
          rc = sm_v(sem_once);
          assert(rc==ERR_OK);
       }
    }
-   
+
    return 0;
 }
 /*!
@@ -227,11 +227,11 @@ int pthread_setschedparam (
 ){
    int y = 0;
    y = tk_change_prio(thread->Thid, param->sched_priority);
-   _PTHREAD_NO_WARN_VAR(policy); 
+   _PTHREAD_NO_WARN_VAR(policy);
 
    if (y)
       tk_yield();
-   
+
    return 0;
 }
 
@@ -241,7 +241,7 @@ int pthread_getschedparam (
    struct sched_param *param)
 {
    param->sched_priority = thread->Prio;
-   _PTHREAD_NO_WARN_VAR(policy); 
+   _PTHREAD_NO_WARN_VAR(policy);
    return 0;
 }
 
@@ -249,7 +249,7 @@ int pthread_getschedparam (
 
 /** @defgroup PTHREAD_SCHED PTHREAD_SCHED: POSIX 1003.1c API - scheduling
 @ingroup PTHREAD
-@brief POSIX 1003.1c API - Scheduling and thread management 
+@brief POSIX 1003.1c API - Scheduling and thread management
 
 <em>*Documentation and implementation in progress*</em>
 
@@ -258,10 +258,10 @@ int pthread_getschedparam (
 <p><b>Go gack to</b> \ref COMPONENTS</p>
 */
 
-  
+
 /*!
  *  @defgroup CVSLOG_pthread_sched_c pthread_sched_c
- *  @ingroup CVSLOG 
+ *  @ingroup CVSLOG
  *  $Log: pthread_sched.c,v $
  *  Revision 1.15  2006-11-27 22:29:24  ambrmi09
  *  Minor djustments completeing the move of some header files to public and due
@@ -368,9 +368,9 @@ int pthread_getschedparam (
  *  Revision 1.1  2006/02/19 22:12:07  ambrmi09
  *  CO of missed files
  *
- *  
+ *
  *******************************************************************/
- 
+
 
 
 

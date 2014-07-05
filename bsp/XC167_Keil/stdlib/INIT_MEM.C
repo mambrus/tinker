@@ -59,8 +59,8 @@
  *          mp.len + sizeof (struct mp)
  */
 
-struct __mp__  {                   //!< memory pool 
-  struct __mp__ MTYP *next;        //!< single-linked list 
+struct __mp__  {                   //!< memory pool
+  struct __mp__ MTYP *next;        //!< single-linked list
   TLEN                 len;        //!< length of following block
 };
 
@@ -68,19 +68,19 @@ void MTYP * MTYP __mp__;    /* Memory Pool Head */
 
 #define	HLEN  (sizeof (struct __mp__))
 
-/*! 
+/*!
  *  Memory pool headers.  __mp__ points to the first available block or is
- *  NULL if there are no free blocks. 
+ *  NULL if there are no free blocks.
  *
  *  Note that the list is maintained in address order.  __mp__ points to the
- *  block with the lowest address.  That block points to the block with the 
+ *  block with the lowest address.  That block points to the block with the
  *  next higher address and so on.
  */
 
 void init_mempool (
   void MTYP *pool,           //!< address of the memory pool
-  TLEN size)                 //!< size of the pool in bytes  
-{              
+  TLEN size)                 //!< size of the pool in bytes
+{
 
    /*  Set the __mp__ to point to the beginning of the pool and set
     *  the pool size.                                                        */

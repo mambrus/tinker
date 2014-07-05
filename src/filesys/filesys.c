@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Michael Ambrus                                  * 
+ *   Copyright (C) 2007 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -31,7 +31,7 @@ struct hixs_t old_syscalls;	//!< Storage for any old HIXS syscalls (previous ini
 extern struct hixs_t hixs;	//!< The call-stucture we know exist.
 tk_id_t		__fcntr=0;	//!< Number of open handles
 tk_id_t		__flid=0;	//!< Last allocated unique file handle ID (global counter)
-int		__fs_alive=0;	//!< Trap will run fs_fini after normal termination. 
+int		__fs_alive=0;	//!< Trap will run fs_fini after normal termination.
 tk_inode_t 	*__Rnod;	//!< The root node
 
 
@@ -40,8 +40,8 @@ int fs_init(){
 	int i = sizeof(int);
 	int d = sizeof(dev_t);
 
-	assert(sizeof(void*) <= sizeof(int));	
-	assert(sizeof(void*) <= sizeof(dev_t));	
+	assert(sizeof(void*) <= sizeof(int));
+	assert(sizeof(void*) <= sizeof(dev_t));
 	extern __drv_finit_f 	__DRVINIT_START__;
 	extern __drv_finit_f 	__DRVINIT_END__;
 	drv_finit_t 		drv_init_first 	= &__DRVINIT_START__;
@@ -58,12 +58,12 @@ int fs_init(){
 	//Set new main-enty values for those we care about
 	hixs.close        = fs_close;
 	hixs.fcntl        = fs_fcntl;
-	hixs.fstat        = fs_fstat; //HIXS_fstat; 
-	hixs.isatty       = fs_isatty; 
+	hixs.fstat        = fs_fstat; //HIXS_fstat;
+	hixs.isatty       = fs_isatty;
 	hixs.link         = fs_link;
 	hixs.lseek        = fs_lseek;
 	hixs.open         = fs_open;
-	hixs.read         = fs_read; 
+	hixs.read         = fs_read;
 	hixs.stat         = fs_stat;
 	hixs.unlink       = fs_unlink;
 	hixs.write        = fs_write;
@@ -74,7 +74,7 @@ int fs_init(){
 
 
 	//Create the '/' node (directory) - this is a special case and can't be created with mknode
-	assure(__Rnod = (tk_inode_t*)calloc(1,sizeof(tk_inode_t)));	
+	assure(__Rnod = (tk_inode_t*)calloc(1,sizeof(tk_inode_t)));
 	__Rnod->id=__ilid++;
 	__icntr++;
 	namelen = sizeof("");
@@ -88,7 +88,7 @@ int fs_init(){
 	assure(mknod("/dev",S_IFDIR,0)			== 0);
 	assure(mknod("/tmp",S_IFDIR,0)			== 0);
 
-	//Some test nodes	
+	//Some test nodes
 	assert(mknod("/tmp/.ambrmi09",S_IFDIR,0) 	== 0);
 	assert(mknod("/tmp/afile",S_IFREG,0) 		== 0);
 	assert(mknod("/tmp/bfile",S_IFREG,0) 		== 0);
@@ -116,12 +116,12 @@ int fs_fini(){
 		printf("FS allready shut-down...\n");
 	}else{
 		extern __drv_finit_f __DRVFINI_START__;
-		extern __drv_finit_f __DRVFINI_END__;	
+		extern __drv_finit_f __DRVFINI_END__;
 		drv_finit_t drv_fini_first = &__DRVFINI_START__;
 		drv_finit_t drv_fini_last = &__DRVFINI_END__;
 		drv_finit_t *drv_fini_curr;
 		//extern tk_inode_t *__Rnod;
-	
+
 		//Close down the drivers
 		const char* dinfo;
 		for (
@@ -133,10 +133,10 @@ int fs_fini(){
 			assure(dinfo);
 			printf("Driver %-60s [stopped]\n",dinfo);
 		}
-	
+
 		free(__Rnod);
 		memcpy(&hixs,&old_syscalls,sizeof(struct hixs_t));
-	
+
 		__fs_alive=0;
 	}
 	return 0;
@@ -160,7 +160,7 @@ int wronly = O_WRONLY_NL;
 int rder = O_RDWR_NL;
 */
 	memset(flags,0,sizeof(_tk_dbgflag_t));
-	
+
 	#ifdef O_RDONLY_NL
 	assert( (oflag & (O_RDWR_NL|O_WRONLY_NL)) !=  (O_RDWR_NL|O_WRONLY_NL) ); //We're counting on that this logic appiles (I.e. both can't be set)
 	if (tmp_oflag & O_RDWR_NL){
@@ -230,13 +230,13 @@ int rder = O_RDWR_NL;
 		tmp_oflag &= ~O_TRUNC;
 	};
 
-	//If all known flags are tested, return value should be 0	
+	//If all known flags are tested, return value should be 0
 	return tmp_oflag;
 
 }
 
 
-typedef struct{	
+typedef struct{
 	int _O_RDONLY;
 	int _O_WRONLY;
 	int _O_RDWR;
@@ -269,20 +269,20 @@ EBUSY
 
         * The device is already mounted.
         * The mount point is busy. (E.g. it is some process' working directory or has a filesystem mounted on it already).
-        * The request is to remount read-only, but there are files open for write. 
+        * The request is to remount read-only, but there are files open for write.
 
 
 EINVAL
 
         * A remount was attempted, but there is no filesystem mounted over the specified mount point.
-        * The supposed filesystem has an invalid superblock. 
+        * The supposed filesystem has an invalid superblock.
 
 
 EACCES
 
         * The filesystem is inherently read-only (possibly due to a switch on the device) and the process attempted to mount it read/write (by setting the MS_RDONLY bit off).
         * special_file or dir is not accessible due to file permissions.
-        * special_file is not accessible because it is in a filesystem that is mounted with the MS_NODEV option. 
+        * special_file is not accessible because it is in a filesystem that is mounted with the MS_NODEV option.
 
 
 EM_FILE
@@ -293,16 +293,16 @@ EM_FILE
 /*!
 @brief http://www.gnu.org/software/libc/manual/html_mono/libc.html#Mount-Unmount-Remount
 
-@Note that TinKer permits the same device to be mounted on different places in 
-the current name-space at the same time. Therefore - to unmount you have to do 
-this on the directory. If you try unmounting on the device, TinKer will not 
+@Note that TinKer permits the same device to be mounted on different places in
+the current name-space at the same time. Therefore - to unmount you have to do
+this on the directory. If you try unmounting on the device, TinKer will not
 know which one of the (potential) several mountpoints you mean.
 */
 int mount (
-	const char *special_file, 
-	const char *dir, 
-	const char *fstype, 
-	unsigned long int options, 
+	const char *special_file,
+	const char *dir,
+	const char *fstype,
+	unsigned long int options,
 	const void *data
 ){
 	extern tk_inode_t 	*__Rnod;
@@ -345,9 +345,9 @@ int mount (
 /*!
 @brief http://www.gnu.org/software/libc/manual/html_mono/libc.html#Mount-Unmount-Remount
 
-@Note that TinKer permits the same device to be mounted on different places in 
-the current name-space at the same time. Therefore - to unmount you have to do 
-this on the directory. If you try unmounting on the device, TinKer will not 
+@Note that TinKer permits the same device to be mounted on different places in
+the current name-space at the same time. Therefore - to unmount you have to do
+this on the directory. If you try unmounting on the device, TinKer will not
 know which one of the (potential) several mountpoints you mean.
 */
 int umount2 (const char *file, int flags){

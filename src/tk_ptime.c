@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-  
- 
+
+
 /*!
 @file
 @ingroup PTIMER
@@ -33,7 +33,7 @@ PTIMER
 @see PTIMER
 
 */
- 
+
 
 /*- include files **/
 #include <tk.h>
@@ -81,21 +81,21 @@ ptimer_t timer_pool[TK_MAX_PTIMERS]; //!< Memory pool to avoid usage of malloc
 unsigned int currentIdx;             //!< Index to next empty slot
 */
 
-ptimer_t *pendingTimers;             /*!< Sorted linked list to pending times. 
-                                          The first one is also pending 
-                                          awaitinng triggering from 
+ptimer_t *pendingTimers;             /*!< Sorted linked list to pending times.
+                                          The first one is also pending
+                                          awaitinng triggering from
                                           timerEvent */
 
-HWclock_stats_t HWclock_stats;        /*!< The quality statistics of the fireing 
-                                          mechanism the lower level provides. 
+HWclock_stats_t HWclock_stats;        /*!< The quality statistics of the fireing
+                                          mechanism the lower level provides.
                                           This value must be asked for and
-                                          will not containg valid values 
+                                          will not containg valid values
                                           until then.*/
-                                          
+
 //Pubplic API
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
-Creates and initializes the ptime component 
+Creates and initializes the ptime component
 */
 //#define tk_setHWclock_pCLK1(ticks) ( GPT1_vLoadTmr(GPT1_TIMER_3, ticks) )
 
@@ -103,8 +103,8 @@ unsigned long tk_ptime( void ){
    int i;
    HWtick_t hw_ticks;
 
-   pendingTimers = NULL;   
-   
+   pendingTimers = NULL;
+
    /*
    for (i=0;i<TK_MAX_PTIMERS; i++){
       strncpy(&timer_pool[i].name,"ZOMB",4);
@@ -143,7 +143,7 @@ unsigned long  tk_ptime_destruct( void ){
    /*
    todo's here
    */
-   
+
    /*
    for (i=0;i<TK_MAX_PTIMERS; i++){
       strncpy(&timer_pool[i].name,"ZOMB",4);
@@ -161,19 +161,19 @@ unsigned long  tk_ptime_destruct( void ){
 }
 
 /*!
-Creates (and starts) a timer that will expire <b>at</b> the absolute time 
+Creates (and starts) a timer that will expire <b>at</b> the absolute time
 you set.
 
 */
-unsigned long tk_ptimeevent_at( 
-   unsigned int     *tid,     /*!< out: The identity of the timer. Use this id for 
-                                   any related operations (for example to 
+unsigned long tk_ptimeevent_at(
+   unsigned int     *tid,     /*!< out: The identity of the timer. Use this id for
+                                   any related operations (for example to
                                    block on). */
-   time_t           *absTime  /*!< in: A absolute time_t defining the event. 
-                                   This can be of any lengt or resolution 
-                                   supported by you system and the time_t 
-                                   struture. @note This is also be the sorting 
-                                   criteria/key for the list of pending timers 
+   time_t           *absTime  /*!< in: A absolute time_t defining the event.
+                                   This can be of any lengt or resolution
+                                   supported by you system and the time_t
+                                   struture. @note This is also be the sorting
+                                   criteria/key for the list of pending timers
                                    */
 ){
    /*!  Reurns ptime return code */
@@ -183,9 +183,9 @@ unsigned long tk_ptimeevent_at(
       TK_STI();
       return (ERR_NO_MORE_TIMERS);
    }
-   
+
   //Continue with stuff
-  
+
   //Stuff finished - safe to reactivate event sources
   TK_STI();
   */
@@ -196,13 +196,13 @@ Creates (and starts) a timer that will expire <b>in</b> the relative time counti
 
 
 */
-unsigned long tk_ptimeevent_in( 
-   unsigned int     *tid,     /*!< out: The identity of the timer. Use this id for 
-                                   any related operations (for example to 
+unsigned long tk_ptimeevent_in(
+   unsigned int     *tid,     /*!< out: The identity of the timer. Use this id for
+                                   any related operations (for example to
                                    block on). */
-   time_t           *absTime  /*!< in: A relative time_t defining the event. 
-                                   This can be of any lengt or resolution 
-                                   supported by you system and the time_t 
+   time_t           *absTime  /*!< in: A relative time_t defining the event.
+                                   This can be of any lengt or resolution
+                                   supported by you system and the time_t
                                    struture. */
 ){                            /*!  Reurns ptime return code */
 }
@@ -212,17 +212,17 @@ Destroys a pending timer including cancelling the event. In case any threads are
 pending on the timer, those will be released but also given an reason different
 from the "normal" case.
 
-This must be a valid timer created by any of the set functions and in must 
+This must be a valid timer created by any of the set functions and in must
 not have expired yet. If any these pre-requisits are not met the function
 will return an error.
 
-@note To prevent logic missmatch in case a timer is fireing an even while 
-removing it's data. The trigger will be attempted to be disarmed first, then if 
-that is succesfull interrupts will be disabled during the rest of the operation 
+@note To prevent logic missmatch in case a timer is fireing an even while
+removing it's data. The trigger will be attempted to be disarmed first, then if
+that is succesfull interrupts will be disabled during the rest of the operation
 completes.
 */
 
-unsigned long tk_ptimer_destroy( 
+unsigned long tk_ptimer_destroy(
    unsigned int  tid          /*!< The identity of the timer.*/
 ){
   /*
@@ -231,7 +231,7 @@ unsigned long tk_ptimer_destroy(
      TK_STI();
      return(ERR_UNDEF_PTIMER);
   }
-  
+
   //Continue with stuff
   //Stuff finished - safe to reactivate event sources
   TK_STI();
@@ -267,9 +267,9 @@ ptimer_t *_tk_ptimer( unsigned int tid ){
 @brief Internal thread that handles pending timer even requests
 
 On a very low leve (or HW level) the system can only provide <b>one</b>
-real time-out event. And even worse: it's limited in either lengt or 
-resolution (i.e. a compromize between the two) AND it can wake up 
-only one pending thread. 
+real time-out event. And even worse: it's limited in either lengt or
+resolution (i.e. a compromize between the two) AND it can wake up
+only one pending thread.
 
 This manager thread on the other hand, makes it possibe to handle all the
 mentioed drawbacks. A time-out event can be of very high resolution AND
@@ -277,35 +277,35 @@ destined to happen very far in the future, and when it expieres it can
 wake up any number of threads pending on it. Also, you can have several
 pending timers pending at the same ptimer event.
 
-Notice that we dont want to be to dependant of any other clocks, which 
+Notice that we dont want to be to dependant of any other clocks, which
 is an <b> architectural design issue </b>. I used to think two HW clocks were
-nesessarey, but I've desided that that aproach would be to resky since it's 
+nesessarey, but I've desided that that aproach would be to resky since it's
 more complex. Using only the the same clock HW as for all the pending timers
-might introduce a higher in accurancy, but I estimate that those errors will 
-be handleble. In general this is due to a combination of latency within this 
-componens critical parts, tinteger truncation and the frequency of both 
-pending timer timeouts and on the fClock used (i.e. the interrupt frecuency). 
-In general one can say that the more often the deamon is awaken, the bigger 
+might introduce a higher in accurancy, but I estimate that those errors will
+be handleble. In general this is due to a combination of latency within this
+componens critical parts, tinteger truncation and the frequency of both
+pending timer timeouts and on the fClock used (i.e. the interrupt frecuency).
+In general one can say that the more often the deamon is awaken, the bigger
 will the dirift (and inheritly the inaccurency) be.
 
-Design wise one can argue which parts of the service should be handled in 
-this thread. For the time being I tend to let it do as little as possible 
+Design wise one can argue which parts of the service should be handled in
+this thread. For the time being I tend to let it do as little as possible
 since it will be running on highest priority. The issue is whether it should
-organize the pending timer list or not (sort list on each newly started timer 
-e.t.a.) as opposed to "share" the timer list with any thread whishing to start 
-or cancel a new timer. In the latter case some sort of synchronization must 
+organize the pending timer list or not (sort list on each newly started timer
+e.t.a.) as opposed to "share" the timer list with any thread whishing to start
+or cancel a new timer. In the latter case some sort of synchronization must
 be used. However I have a feeling that normal semaphores might not be the right
 technique for that.
 
-@note <b>For TinKer internal use only</b> This function is not declared 
+@note <b>For TinKer internal use only</b> This function is not declared
 public in a headerfile and should never be accessed from outside this module.
 
-@todo Introduce a component area for each component. Where both the adressed 
+@todo Introduce a component area for each component. Where both the adressed
 issue, the solution and the quirks and considerations are described.
 
 */
 void *timerdeamon(void *inpar ){
-   unsigned long msg_buf[4];   
+   unsigned long msg_buf[4];
 
    printk(("Timer deamon started. Preemtive hi-res timer events now possible\n"));
    while (1){
@@ -313,23 +313,23 @@ void *timerdeamon(void *inpar ){
       printk(("Timer deamon: %d\n",msg_buf[THWP_EVENT_ID]));
       /*
       THWP_EVENT_ID
-      THWP_TIMER_ID                                      
-      THWP_RTIME                
+      THWP_TIMER_ID
+      THWP_RTIME
       THWP_LATCY
-      
-      ET_TIMEOUT     
-      ET_TIMEOUT_P   
-      ET_RELOAD_NEW  
+
+      ET_TIMEOUT
+      ET_TIMEOUT_P
+      ET_RELOAD_NEW
       ET_CANCELLED
       */
       switch (msg_buf[THWP_EVENT_ID]){
-      case ET_TIMEOUT: 
+      case ET_TIMEOUT:
          break;
-      case ET_TIMEOUT_P: 
+      case ET_TIMEOUT_P:
          break;
-      case ET_RELOAD_NEW: 
+      case ET_RELOAD_NEW:
          break;
-      case ET_CANCELLED: 
+      case ET_CANCELLED:
          break;
       default:
          printk(("tk_ptime: Error - we really need to polish the error handling...\n"));
@@ -342,7 +342,7 @@ void *timerdeamon(void *inpar ){
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 /** @defgroup PTIMER PTIMER: Pre-emptive timers for TinKer.
-@ingroup COMPONENTS 
+@ingroup COMPONENTS
 @brief This package support pre-emptive timer events for TinKer
 
 The main idea behind this component is... APA
@@ -350,29 +350,29 @@ The main idea behind this component is... APA
 @dot
 digraph ptime_main {
    node [
-      shape=record, 
-      style=filled, 
-      fillcolor=yellow, 
-      fontname=Helvetica, 
-      nojustify="true", 
-      fontsize=10.0 
+      shape=record,
+      style=filled,
+      fillcolor=yellow,
+      fontname=Helvetica,
+      nojustify="true",
+      fontsize=10.0
    ];
-   
+
    edge [
-      dir=both, 
-      color="blue:red", 
-      fontname=Helvetica,  
-      nojustify="true", 
-      fontsize=10.0 
+      dir=both,
+      color="blue:red",
+      fontname=Helvetica,
+      nojustify="true",
+      fontsize=10.0
    ];
-   
+
    graph [
-      rankdir = "TB", 
-      fontname=Helvetica,  
-      nojustify="true", 
-      fontsize=10.0    
-   ]; 
-    
+      rankdir = "TB",
+      fontname=Helvetica,
+      nojustify="true",
+      fontsize=10.0
+   ];
+
    tmr_array [ orientation=73.0, label="{\
       <a0> T#0 st | \
       <a1> T#1 st | \
@@ -383,11 +383,11 @@ digraph ptime_main {
 
    tmr_ele0 [label="{<L> L |<tmr_ref> T#0 |<R> R}"]
    tmr_ele1 [label="{<L> L |<tmr_ref> T#1 |<R> R}"]
-   tmr_ele2 [label="{<L> L |<tmr_ref> T#2 |<R> R}"]   
+   tmr_ele2 [label="{<L> L |<tmr_ref> T#2 |<R> R}"]
    tmr_ele3 [label="{<L> L |<tmr_ref> T#3 |<R> R}"]
 
 
-   tmr_ele0:tmr_ref:w -> tmr_array:a0:w ;  
+   tmr_ele0:tmr_ref:w -> tmr_array:a0:w ;
    tmr_ele1:tmr_ref:w -> tmr_array:a1:w ;
    tmr_ele2:tmr_ref:w -> tmr_array:a2:w ;
    tmr_ele3:tmr_ref:w -> tmr_array:a3:w ;
@@ -395,7 +395,7 @@ digraph ptime_main {
 
 
    head -> tmr_ele2:L:w;
-   tmr_ele2:R:e -> tmr_ele1:L:w;     
+   tmr_ele2:R:e -> tmr_ele1:L:w;
    tmr_ele1:R:e -> tmr_ele3:L:w;
    tmr_ele3:R:e -> tmr_ele0:L:w;
    tmr_ele0:R:e -> tail;
@@ -405,25 +405,25 @@ digraph ptime_main {
    tail [hape=box];
 
    HWtimer [
-      shape=circle, 
-      fillcolor=lightcoral, 
+      shape=circle,
+      fillcolor=lightcoral,
       fontcolor=blue
    ];
-   
+
    head -> HWtimer [
-      label="Arm with\n pebbles", 
-      arrowtail=none, 
-      color=red, 
-      fontcolor=red, 
+      label="Arm with\n pebbles",
+      arrowtail=none,
+      color=red,
+      fontcolor=red,
       style="bold"
    ]
-   
+
    HWtimer -> head [
-      label="Timeout\n event", 
-      arrowtail=none, 
-      color=blue, 
-      fontcolor=blue, 
-      shape=vee, 
+      label="Timeout\n event",
+      arrowtail=none,
+      color=blue,
+      fontcolor=blue,
+      shape=vee,
       style=dashed
    ]
 }
@@ -434,8 +434,8 @@ digraph ptime_main {
 */
 
 
-  
-/*! 
+
+/*!
  * @defgroup CVSLOG_tk_ptime_c tk_ptime_c
  * @ingroup CVSLOG
  *  $Log: tk_ptime.c,v $
@@ -577,5 +577,5 @@ digraph ptime_main {
  *  very close to the high-res timers that POSIX 1003.1c define and is a
  *  good pointer whether pthreads is a good next step or not for TinKer.
  *
- *  
+ *
  *******************************************************************/

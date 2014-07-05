@@ -35,7 +35,7 @@ UNS_8 uart_polled_putchar(uart_control *uc, UNS_8 ch)
 {
   if (uc->status!=UART_STATUS_OK)
     return 0;
-  
+
   if (uc->port==0) {
     if (ch == '\n')  {
       while (!(UART0_LSR & 0x20));

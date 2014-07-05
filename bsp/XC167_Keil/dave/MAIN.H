@@ -9,7 +9,7 @@
 //
 // @Codegenerator 2.4
 //
-// @Description   This file contains all function prototypes and macros for 
+// @Description   This file contains all function prototypes and macros for
 //                the MAIN module.
 //
 //----------------------------------------------------------------------------
@@ -28,7 +28,7 @@
 @Note
 
 Notes of EBC Module:
-External RAM def added by Michael Ambrus to fit PhyCoreXC167. 
+External RAM def added by Michael Ambrus to fit PhyCoreXC167.
 
 PhyCore module has 128k external RAN starting at adress 0x200000
 
@@ -4024,12 +4024,12 @@ Bus arbitration enabled
 // @Typedefs
 //****************************************************************************
 
-typedef unsigned char  ubyte;    // 1 byte unsigned; prefix: ub 
-typedef signed char    sbyte;    // 1 byte signed;   prefix: sb 
-typedef unsigned int   uword;    // 2 byte unsigned; prefix: uw 
-typedef signed int     sword;    // 2 byte signed;   prefix: sw 
-typedef unsigned long  ulong;    // 4 byte unsigned; prefix: ul 
-typedef signed long    slong;    // 4 byte signed;   prefix: sl 
+typedef unsigned char  ubyte;    // 1 byte unsigned; prefix: ub
+typedef signed char    sbyte;    // 1 byte signed;   prefix: sb
+typedef unsigned int   uword;    // 2 byte unsigned; prefix: uw
+typedef signed int     sword;    // 2 byte signed;   prefix: sw
+typedef unsigned long  ulong;    // 4 byte unsigned; prefix: ul
+typedef signed long    slong;    // 4 byte signed;   prefix: sl
 
 typedef volatile struct
 {

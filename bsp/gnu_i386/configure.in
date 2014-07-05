@@ -10,7 +10,7 @@ AC_CONFIG_AUX_DIR(../..)
 
 AC_CONFIG_SUBDIRS([board])
 
-# Note: The system identification and configure.h update has to be done by the last 
+# Note: The system identification and configure.h update has to be done by the last
 # test in the cain
 
 sources_asm=""

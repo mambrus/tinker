@@ -24,7 +24,7 @@
 
 #define CHAN_SMC1 	0x09
 
-static char RX_BD_BUFFER[SMC_BD_RX_BUFFLEN]; 
+static char RX_BD_BUFFER[SMC_BD_RX_BUFFLEN];
 static char TX_BD_BUFFER[SMC_BD_TX_BUFFLEN];
 
 #define SMC_CHAR_BUFFLEN	1024	//!< Lengt of intermediate buffert (between ISR and FS)
@@ -151,7 +151,7 @@ void console_Handler( void ){
 	}
 	if (smce1 & SMCE_BRKE) {
 		nn_brke++;
-		smce_smcm_p->f.BRKE=1;	
+		smce_smcm_p->f.BRKE=1;
 		_console_brke_handler();
 		//SMCE1 |= SMCE_BRKE;
 	}
@@ -208,7 +208,7 @@ int console_init(int bpr, int nr_bits, int par, int nr_stop){
 //and the divider is 162 (decimal). The resulting BRG1 clock is 16× the preferred bit
 //rate.
 
-	{	
+	{
 		brgc1_p->f.RST=1;
 		__uint32_t oscclk = F_OSCCLK;
 		__uint32_t brgclk = (oscclk * (plprcr_p->f.MF+1)) / (1 << sccr_p->f.DFBRG);
@@ -219,21 +219,21 @@ int console_init(int bpr, int nr_bits, int par, int nr_stop){
 			/*Frequency to high -> We need to activate extra divisor*/
 			brgc1_p->f.DIV16=1;
 			cd=cd >> 4;
-			
+
 		}
 		brgc1_p->f.CD = cd;
-	
+
 		brgc1_p->f.EN=1;
 	}
 
 // 3)
 // SI mode (page 20.2.4.2)
-//Connect BRG1 to SMC1 using the SI. Clear SIMODE[SMC1, SMC1CS]. 
+//Connect BRG1 to SMC1 using the SI. Clear SIMODE[SMC1, SMC1CS].
 /*
-	bitclear(SIMODE,16);  //NMSI - I.e. dedicated pin, no multiplex 
-	bitclear(SIMODE,17); //Clock source is BRG1 FIXME: this is 3 bits long 
+	bitclear(SIMODE,16);  //NMSI - I.e. dedicated pin, no multiplex
+	bitclear(SIMODE,17); //Clock source is BRG1 FIXME: this is 3 bits long
 */
-	simode_p->f.SMC1	=0x0; //NMSI - I.e. dedicated pin, no multiplex 
+	simode_p->f.SMC1	=0x0; //NMSI - I.e. dedicated pin, no multiplex
 	simode_p->f.SMC1CS	=0x0; //Clock source is BRG1 (=0)
 //Optional
 	simode_p->f.SDMa 	= 0; //Diagnositc mode. =1 should be Automatic echo - doesn't work ;(
@@ -296,7 +296,7 @@ int console_init(int bpr, int nr_bits, int par, int nr_stop){
 
 //9. Write MAX_IDL with 0x0000 in the SMC UART-speciﬁc parameter RAM to
 //    disable the MAX_IDL functionality for this example.
-	
+
 	smc_param->PROTO.SMC_UART.MAX_IDL=0x0000;
 	//smc_param->PROTO.SMC_UART.MAX_IDL=0x0005;
 	smc_param->PROTO.SMC_UART.R_MASK=0x0000;
@@ -339,7 +339,7 @@ int console_init(int bpr, int nr_bits, int par, int nr_stop){
 	CM_isr_install(cmid_SMC1,console_Handler);
 
 
-//14. Write 0xFF to the SMCE register to clear any previous events.	
+//14. Write 0xFF to the SMCE register to clear any previous events.
 	SMCE1 = 0xFF;
 
 //15. DONT! Write 0x17 to the SMCM register to enable all possible SMC interrupts.
@@ -352,7 +352,7 @@ int console_init(int bpr, int nr_bits, int par, int nr_stop){
 	smcm1->f.TX=0;
 	smcm1->f.BSY=1;
 	smcm1->f.BRK=1;
-	smcm1->f.BRKE=1;	
+	smcm1->f.BRKE=1;
 
 
 //16. Write 0x00000010 to the CIMR so the SMC1 can generate a system interrupt.
@@ -360,7 +360,7 @@ int console_init(int bpr, int nr_bits, int par, int nr_stop){
 
 //16.b    Initialize the CICR.
 /*
-Now done as part of CM_Init():	
+Now done as part of CM_Init():
 	cicr_p->f.IRL=5;
 	cicr_p->f.IEN=1;
 
@@ -371,7 +371,7 @@ Now done as part of CM_Init():
 	CIVR = civr_temp.raw;
 */
 /*
-NOTE 
+NOTE
 34.5.1 CPM Interrupt Conﬁguration Register (CICR)
 The CPM interrupt conﬁguration register (CICR) deﬁnes CPM interrupt request levels, the
 priority between the SCCs, and the highest priority interrupt.
@@ -384,13 +384,13 @@ ehh??
 	{
 		int clen = 1;
 		clen += nr_bits;
-	
+
 		smcmr1_p->uart.raw=0x0;
-		
+
 		smcmr1_p->uart.f.SM=2; /*UART mode*/
 		smcmr1_p->uart.f.SL=nr_stop-1;
 		clen += nr_stop;
-		switch (par){		
+		switch (par){
 			case 'E':
 				smcmr1_p->uart.f.PEN=0x1; /*parity enabled*/
 				smcmr1_p->uart.f.PM=0x1; /*parity even*/
@@ -400,7 +400,7 @@ ehh??
 				smcmr1_p->uart.f.PEN=0x1; /*parity enabled*/
 				smcmr1_p->uart.f.PM=0x0; /*parity odd*/
 				clen += 1;
-	
+
 			break;
 			case 'N':	//None
 			case 'M':	//Mark - ignored, results in default (i.e. none)
@@ -417,8 +417,8 @@ ehh??
 //    additional write ensures that the TEN and REN bits are enabled last.
 
 
-	smcmr1_p->uart.f.TEN=0x1; 
-	smcmr1_p->uart.f.REN=0x1; 
+	smcmr1_p->uart.f.TEN=0x1;
+	smcmr1_p->uart.f.REN=0x1;
 
 
 /*
@@ -429,15 +429,15 @@ This shorter sequence reinitializes transmit parameters to the state they had af
    3. Set SMCMR[TEN].
 
 
-	
-*/	
 
-	{	
+*/
+
+	{
 		cpcr_t cpcr;
 		int i=0;
 		for (i=0;i<1;i++){
 			bsleep(10000);
-			smcmr1_p->uart.f.TEN=0; 
+			smcmr1_p->uart.f.TEN=0;
 			strcpy(TX_BD_BUFFER,test_str);
 			TxBD->BD_Length = strlen(test_str);
 			cpcr.raw=0;
@@ -450,7 +450,7 @@ This shorter sequence reinitializes transmit parameters to the state they had af
 			*((cpcr_t *)&CPCR)=cpcr;
 			//CPCR = 0x0091;
 			while (((cpcr_t*)&CPCR)->f.FLG);
-			smcmr1_p->uart.f.TEN=1; 			
+			smcmr1_p->uart.f.TEN=1;
 		}
 	}
 	return 0; // i.e. OK
@@ -478,7 +478,7 @@ int console_write(const char* buffer, int buff_len){
 		while (TxBD->BD_Status.SMC_TX.f.R_Ready) 	//Wait for pending write to finish
 			usleep(1000);
 
-		
+
 		while (!smce1->f.TX && wcount<100000)		//Wait for FIFO to finish
 			wcount++;				//Sometimes TX is never set (FIXME: BUG)
 
@@ -494,8 +494,8 @@ int console_write(const char* buffer, int buff_len){
 		//Do not do this... transmitter killed before bits in FIFO has reached the output it seems
 		//Use the command below instead
 		//smcmr1_p->uart.f.TEN=0; 	 		//inhibit further output
-		
-		
+
+
 		while (((cpcr_t*)&CPCR)->f.FLG);		//Wait for any pending CP commands to finish
 		cpcr.raw=0;
 		cpcr.f.OPCODE=INIT_TX_PARAMS;
@@ -505,7 +505,7 @@ int console_write(const char* buffer, int buff_len){
 		*((cpcr_t *)&CPCR)=cpcr;			//Actuate the command
 
 
-		//SMCE1 = 0xFF; // Write 0xFF to the SMCE register to clear any previous events.	
+		//SMCE1 = 0xFF; // Write 0xFF to the SMCE register to clear any previous events.
 		//SMCM1 = 0x17; // Write 0x17 to the SMCM register to enable all possible SMC interrupts.
 
 		SMCE1 = 0x02; //Set Tx bit - i.e. acknolage the interrupt before it happens (has no effect?)
@@ -549,8 +549,8 @@ int __tk_console_write_emergency(const char* buffer, int buff_len){
 		//Do not do this... transmitter killed before bits in FIFO has reached the output it seems
 		//Use the command below instead
 		//smcmr1_p->uart.f.TEN=0; 	 		//inhibit further output
-		
-		
+
+
 		while (((cpcr_t*)&CPCR)->f.FLG);		//Wait for any pending CP commands to finish
 		cpcr.raw=0;
 		cpcr.f.OPCODE=INIT_TX_PARAMS;
@@ -560,7 +560,7 @@ int __tk_console_write_emergency(const char* buffer, int buff_len){
 		*((cpcr_t *)&CPCR)=cpcr;			//Actuate the command
 
 
-		//SMCE1 = 0xFF; // Write 0xFF to the SMCE register to clear any previous events.	
+		//SMCE1 = 0xFF; // Write 0xFF to the SMCE register to clear any previous events.
 		//SMCM1 = 0x17; // Write 0x17 to the SMCM register to enable all possible SMC interrupts.
 
 		SMCE1 = 0x02; //Set Tx bit - i.e. acknolage the interrupt before it happens (has no effect?)
@@ -594,7 +594,7 @@ int console_read(char* buffer, int max_len){
 			rx_outIdx %= SMC_CHAR_BUFFLEN;
 			return ret_len;
 		}
-		
+
 	}
 
 	return 0;
@@ -620,18 +620,18 @@ This shorter sequence reinitializes receive parameters to their state after rese
 */
 void _console_rx_handler(){
 	bd_smc_t *RxBD=(bd_smc_t *)DP_BD_0;
-	cpcr_t *cpcr_p = (cpcr_t*)&CPCR;	
+	cpcr_t *cpcr_p = (cpcr_t*)&CPCR;
 	smcmr_t *smcmr1_p = (smcmr_t*)&SMCMR1;
 	cpcr_t cpcr;
 	int i,len,gotCR=0;
 	static ledstat = 0;
 
 	#ifndef FAST_RX
-		smcmr1_p->uart.f.REN=0; 
+		smcmr1_p->uart.f.REN=0;
 	#endif
 
 	len = RxBD->BD_Length;
-	memcpy(&RX_CHAR_BUFFER[rx_inIdx],RX_BD_BUFFER,len);	
+	memcpy(&RX_CHAR_BUFFER[rx_inIdx],RX_BD_BUFFER,len);
 	RxBD->BD_Status.SMC_RX.f.E_Empty = 1;		//This @#! wasn't documented! ;( Same as 'RxBD->BD_Status.raw = 0xB000;'
 
 	rx_inIdx+=len;
@@ -639,7 +639,7 @@ void _console_rx_handler(){
 
 	#ifndef FAST_RX
 		while (((cpcr_t*)&CPCR)->f.FLG);		//Wait for any pending CP commands to finish
-	
+
 		cpcr.raw=0;
 		cpcr.f.OPCODE=INIT_RX_PARAMS;
 		//cpcr.f.OPCODE=CLOSE_RX_BD;
@@ -647,14 +647,14 @@ void _console_rx_handler(){
 		*((cpcr_t *)&CPCR)=cpcr;			//Actuate the command
 	#endif
 
-	
+
 	for (i=0; i<len && !gotCR; i++){
 		if (RX_BD_BUFFER[i] == '\r')
 			gotCR = 1;
 	}
 
 	#ifndef FAST_RX
-		smcmr1_p->uart.f.REN=1; 
+		smcmr1_p->uart.f.REN=1;
 	#endif
 	//console_write(RX_BD_BUFFER,len); //For local echo. Bad idea - only use for debugging
 	#ifdef RX_LED_DEBUG

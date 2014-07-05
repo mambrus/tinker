@@ -133,11 +133,11 @@ CR.0 RR  Reset Request; note 4    1 present; detection of a reset request result
 
 */
 
-typedef struct{ 
-	__uint8_t padd:3;	//!< padding	
+typedef struct{
+	__uint8_t padd:3;	//!< padding
 	__uint8_t OIE:1; 	//!< Overrun Interrupt Enable
 	__uint8_t EIE:1; 	//!< Error Interrupt Enable
-	__uint8_t TIE:1; 	//!< Transmit Interrupt Enable 
+	__uint8_t TIE:1; 	//!< Transmit Interrupt Enable
 	__uint8_t RIE:1; 	//!< Receive Interrupt Enable
 	__uint8_t RR:1; 	//!< Reset Request
 }sja1000_basic_cr_t;
@@ -166,8 +166,8 @@ Table 4 Bit interpretation of the command register (CMR); CAN address 1
  CMR.0     TR            Transmission Request;         1        present; a message will be transmitted
                          note 5                        0        absent; no action
 */
-typedef struct{ 
-	__uint8_t padd:3;	//!< padding	
+typedef struct{
+	__uint8_t padd:3;	//!< padding
 	__uint8_t GTS:1; 	//!< Go To Sleep
 	__uint8_t CD0:1; 	//!< Clear Data Overrun
 	__uint8_t RRB:1; 	//!< Release Receive Buffer
@@ -206,7 +206,7 @@ Table 5 Bit interpretation of the status register (SR); CAN address 2
                                                      0              empty; no message is available
 
 */
-typedef struct{ 
+typedef struct{
 	__uint8_t BS:1; 	//!< Bus Status
 	__uint8_t ES:1; 	//!< Error Status
 	__uint8_t TS:1; 	//!< Transmit Status
@@ -253,7 +253,7 @@ Table 6 Bit interpretation of the interrupt register (IR); CAN address 3
                                                                      microcontroller
 
 */
-typedef struct{ 
+typedef struct{
 	__uint8_t padd:3; 	//!< Padding
 	__uint8_t WUI:1; 	//!< Wake Up Interrupt
 	__uint8_t DOI:1; 	//!< Data Overrun Interrupt
@@ -280,10 +280,10 @@ Table 7 Layout of transmit buffer
      19                 TX data 8        transmit data byte 8
 */
 
-typedef struct{ 
+typedef struct{
 	__uint16_t ID:11; 	//!< Identiﬁer
 	__uint16_t RTR:1; 	//!< Remote Transmission Request
-	__uint16_t DLC:4; 	//!< Data Length Code 
+	__uint16_t DLC:4; 	//!< Data Length Code
 	__uint8_t data[8]; 	//!< transmit data [8]
 }sja1000_basic_buffer_t;
 
