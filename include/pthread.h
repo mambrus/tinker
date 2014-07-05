@@ -1071,14 +1071,7 @@ extern void _pthread_cleanup_pop_restore (struct _pthread_cleanup_buffer *__buff
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 }
 #endif
-
-
-
-
-#endif   /* pthread.h */
-
-
-//------1---------2---------3---------4---------5---------6---------7---------8
+#endif				// pthread_h
 /** @defgroup PTHREAD PTHREAD: POSIX 1003.1c API
 @ingroup COMPONENTS
 @brief POSIX 1003.1c API
@@ -1108,131 +1101,131 @@ pthread_t
 \endcode
 
 <p><b>Go gack to</b> \ref COMPONENTS</p>
-
+      
 *//*!
- * @defgroup CVSLOG_pthread_h pthread_h
- * @ingroup CVSLOG
- *  $Log: pthread.h,v $
- *  Revision 1.23  2007-03-23 20:27:23  ambrmi09
- *  1) Reorganization of ITC into several smaller files
- *  2) Component pthread now supports 3,5,9 and 16 priorities
- *
- *  Revision 1.22  2007-03-08 23:28:35  ambrmi09
- *  Minor changes made in TinKer headers for TiNa code ceneration to work
- *
- *  Revision 1.21  2006-12-12 10:57:05  ambrmi09
- *  This adresses the second part of #1609064
- *
- *  Revision 1.20  2006/12/11 14:41:52  ambrmi09
- *  Solves #1609064 (part1)
- *
- *  Revision 1.19  2006/11/27 22:29:22  ambrmi09
- *  Minor djustments completeing the move of some header files to public and due
- *  to some name clashed with user space naming conventions.
- *
- *  Revision 1.18  2006/11/05 19:06:03  ambrmi09
- *  Buildsystem adjusted to permit configuration of components.
- *  Now when component is enabled it will also be included in the build
- *  (instead of just sanity-tested in the source files).
- *
- *  Also a feature for application sanity is assed. When a header-file is
- *  included in the application, a check against the component it belongs
- *  to will be performed. That way user don't need to rely on run-time
- *  checks and can get feedback much earlier.
- *
- *  Revision 1.17  2006/04/08 10:15:57  ambrmi09
- *  Merged with branch newThreadstarter (as of 060408)
- *
- *  Revision 1.16.2.1  2006/04/03 20:07:22  ambrmi09
- *  Minor cosmetic change
- *
- *  Revision 1.16  2006/03/24 18:23:43  ambrmi09
- *  Another turn of cosmetics
- *
- *  Revision 1.15  2006/03/24 17:40:18  ambrmi09
- *  Cosmetic details
- *
- *  Revision 1.14  2006/03/24 11:22:54  ambrmi09
- *  - pThreads RW locks implemented (rough aproach - no usage error detection)
- *  - restructuring of the pThread src-files
- *
- *  Revision 1.13  2006/03/19 22:57:53  ambrmi09
- *  First naive implementation of a pthread mutex
- *
- *  Revision 1.12  2006/03/19 12:44:35  ambrmi09
- *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
- *  without one single warning (yay!). Be aware that ther was a lot of
- *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
- *
- *  Revision 1.11  2006/03/17 14:18:42  ambrmi09
- *  Finalized pThreads and RT gueues for GNU build-chain
- *
- *  Revision 1.10  2006/03/17 12:20:02  ambrmi09
- *  Major uppdate (5 days hard work)
- *
- *  - Finally tied up all loose ends in the concept. Threads are now
- *  joinable
- *
- *  - Corrected one error: compacting scheduele while cancelling a
- *  threads
- *
- *  - Several new API, mainly concerned with cancelation (corrsp pThread
- *  also)
- *
- *  - Found a nasty bug while creating threads in threads for XC167. TOS is
- *  really a patchy solution ;( This one had to do with the compiler
- *  being fooled by the inline assembly and optimized something that was not
- *  optimizable (saving stack segment got wacked).
- *
- *  - Designed a concurrent qsort test-app. This is good for showing
- *  boss-worker model. Number of threads recoed on XC167 was 50 and on MSVS
- *  more than 150! Interesting to notice was that TinKer creation and
- *  cancelation for threads was much faster than Windows own (20-30 times
- *  faster).
- *
- *  - A MSVC workspace for pThreads-Win32. Good for testing apps
- *  transparency.
- *
- *  - Increased memory on XC167 (phyCore HW). now 32k for stacks and 16k for
- *  malloc. We still lack RAM that is not deployed (pHycore has
- *  128k + 256k physical RAM memory i think). Maximum for
- *  stack is 64k however (type of pointers determine this). If memory is
- *  increased further, we get a TRAP_B saying bad memory interface. Typical
- *  error for config memory issues in DaVe.
- *
- *  Revision 1.9  2006/03/11 14:37:48  ambrmi09
- *  - Replaced printf with printk in in-depth parts of the kernel. This is
- *  to make porting easier since printk can then be mapped to whatever
- *  counsole output ability there is (including none if there isn't any).
- *
- *  - Conditionals for: 1) time ISR latency and 2) clock systimer faliure
- *  introduced. This is because debugging involves stopping the program but
- *  not the clock HW, which will trigger the "trap" as soon as resuming the
- *  program after a BP stop (or step). I.e. inhibit those part's when
- *  debugging (which is probably most of the time). Remeber to re-enable for
- *  "release" version of any application.
- *
- *  - Working on getting rid of all the compilation warnings.
- *
- *  - Detected a new serious bug. If an extra malloc is not executed
- *  *before* the first thread is created that requires a steck  (i.e. the
- *  idle tread sice root allready has a stack), that thread will fail with
- *  an illegal OP-code trap. This has been traced to be due to a faulty
- *  malloc and/or possibly a memory alignement problem. The first block
- *  allocated, will be about 6 positions to high up in the memory map, which
- *  means that sthe total block will not really fit. If that block is the
- *  stack of a thread, those positions will be either the context or the
- *  return adress of that thread (which is bad). I'm concerned about not
- *  detecting this error before, which leads me to believe that this
- *  actually is an alignement issue in malloc and it's anly pure chance
- *  wheather the bug will manifest or not. This is a problem related
- *  to the Keil_XC167 target only.
- *
- *  Revision 1.8  2006/03/05 11:11:24  ambrmi09
- *  License added (GPL).
- *
- *  Revision 1.7  2006/02/22 13:05:46  ambrmi09
- *  Major doxygen structure modification. No chancge in actual sourcecode.
- *
- *
- */
+   * @defgroup CVSLOG_pthread_h pthread_h
+   * @ingroup CVSLOG
+   *  $Log: pthread.h,v $
+   *  Revision 1.23  2007-03-23 20:27:23  ambrmi09
+   *  1) Reorganization of ITC into several smaller files
+   *  2) Component pthread now supports 3,5,9 and 16 priorities
+   *
+   *  Revision 1.22  2007-03-08 23:28:35  ambrmi09
+   *  Minor changes made in TinKer headers for TiNa code ceneration to work
+   *
+   *  Revision 1.21  2006-12-12 10:57:05  ambrmi09
+   *  This adresses the second part of #1609064
+   *
+   *  Revision 1.20  2006/12/11 14:41:52  ambrmi09
+   *  Solves #1609064 (part1)
+   *
+   *  Revision 1.19  2006/11/27 22:29:22  ambrmi09
+   *  Minor djustments completeing the move of some header files to public and due
+   *  to some name clashed with user space naming conventions.
+   *
+   *  Revision 1.18  2006/11/05 19:06:03  ambrmi09
+   *  Buildsystem adjusted to permit configuration of components.
+   *  Now when component is enabled it will also be included in the build
+   *  (instead of just sanity-tested in the source files).
+   *
+   *  Also a feature for application sanity is assed. When a header-file is
+   *  included in the application, a check against the component it belongs
+   *  to will be performed. That way user don't need to rely on run-time
+   *  checks and can get feedback much earlier.
+   *
+   *  Revision 1.17  2006/04/08 10:15:57  ambrmi09
+   *  Merged with branch newThreadstarter (as of 060408)
+   *
+   *  Revision 1.16.2.1  2006/04/03 20:07:22  ambrmi09
+   *  Minor cosmetic change
+   *
+   *  Revision 1.16  2006/03/24 18:23:43  ambrmi09
+   *  Another turn of cosmetics
+   *
+   *  Revision 1.15  2006/03/24 17:40:18  ambrmi09
+   *  Cosmetic details
+   *
+   *  Revision 1.14  2006/03/24 11:22:54  ambrmi09
+   *  - pThreads RW locks implemented (rough aproach - no usage error detection)
+   *  - restructuring of the pThread src-files
+   *
+   *  Revision 1.13  2006/03/19 22:57:53  ambrmi09
+   *  First naive implementation of a pthread mutex
+   *
+   *  Revision 1.12  2006/03/19 12:44:35  ambrmi09
+   *  Got rid of many compilation warnings. MSVC amd GCC actually gompiles
+   *  without one single warning (yay!). Be aware that ther was a lot of
+   *  comparisons between signed/unsigned in ITC. Fetts a bit shaky...
+   *
+   *  Revision 1.11  2006/03/17 14:18:42  ambrmi09
+   *  Finalized pThreads and RT gueues for GNU build-chain
+   *
+   *  Revision 1.10  2006/03/17 12:20:02  ambrmi09
+   *  Major uppdate (5 days hard work)
+   *
+   *  - Finally tied up all loose ends in the concept. Threads are now
+   *  joinable
+   *
+   *  - Corrected one error: compacting scheduele while cancelling a
+   *  threads
+   *
+   *  - Several new API, mainly concerned with cancelation (corrsp pThread
+   *  also)
+   *
+   *  - Found a nasty bug while creating threads in threads for XC167. TOS is
+   *  really a patchy solution ;( This one had to do with the compiler
+   *  being fooled by the inline assembly and optimized something that was not
+   *  optimizable (saving stack segment got wacked).
+   *
+   *  - Designed a concurrent qsort test-app. This is good for showing
+   *  boss-worker model. Number of threads recoed on XC167 was 50 and on MSVS
+   *  more than 150! Interesting to notice was that TinKer creation and
+   *  cancelation for threads was much faster than Windows own (20-30 times
+   *  faster).
+   *
+   *  - A MSVC workspace for pThreads-Win32. Good for testing apps
+   *  transparency.
+   *
+   *  - Increased memory on XC167 (phyCore HW). now 32k for stacks and 16k for
+   *  malloc. We still lack RAM that is not deployed (pHycore has
+   *  128k + 256k physical RAM memory i think). Maximum for
+   *  stack is 64k however (type of pointers determine this). If memory is
+   *  increased further, we get a TRAP_B saying bad memory interface. Typical
+   *  error for config memory issues in DaVe.
+   *
+   *  Revision 1.9  2006/03/11 14:37:48  ambrmi09
+   *  - Replaced printf with printk in in-depth parts of the kernel. This is
+   *  to make porting easier since printk can then be mapped to whatever
+   *  counsole output ability there is (including none if there isn't any).
+   *
+   *  - Conditionals for: 1) time ISR latency and 2) clock systimer faliure
+   *  introduced. This is because debugging involves stopping the program but
+   *  not the clock HW, which will trigger the "trap" as soon as resuming the
+   *  program after a BP stop (or step). I.e. inhibit those part's when
+   *  debugging (which is probably most of the time). Remeber to re-enable for
+   *  "release" version of any application.
+   *
+   *  - Working on getting rid of all the compilation warnings.
+   *
+   *  - Detected a new serious bug. If an extra malloc is not executed
+   *  *before* the first thread is created that requires a steck  (i.e. the
+   *  idle tread sice root allready has a stack), that thread will fail with
+   *  an illegal OP-code trap. This has been traced to be due to a faulty
+   *  malloc and/or possibly a memory alignement problem. The first block
+   *  allocated, will be about 6 positions to high up in the memory map, which
+   *  means that sthe total block will not really fit. If that block is the
+   *  stack of a thread, those positions will be either the context or the
+   *  return adress of that thread (which is bad). I'm concerned about not
+   *  detecting this error before, which leads me to believe that this
+   *  actually is an alignement issue in malloc and it's anly pure chance
+   *  wheather the bug will manifest or not. This is a problem related
+   *  to the Keil_XC167 target only.
+   *
+   *  Revision 1.8  2006/03/05 11:11:24  ambrmi09
+   *  License added (GPL).
+   *
+   *  Revision 1.7  2006/02/22 13:05:46  ambrmi09
+   *  Major doxygen structure modification. No chancge in actual sourcecode.
+   *
+   *
+   */
