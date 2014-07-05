@@ -395,9 +395,16 @@ void tk_trap(int ec){
 /*!
 if we have no-where else to go, we'll end up here
 */
+#if TK_HOSTED
+void _tk_dead(int ec){
+   void _exit(int status);
+	_exit(ec);
+}
+#else
 void _tk_dead(int ec){
 	while(1);
 }
+#endif
 
 /*!
 Last thing that is called when a thread gives up life either freely or when an
