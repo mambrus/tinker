@@ -108,24 +108,3 @@ void Angel_Handler(void)
 	 /*EOF*/}
 }
 
-/*!
- * @defgroup CVSLOG_tk_angel_c tk_angel_c
- * @ingroup CVSLOG
- *  $Log: tk_angel.c,v $
- *  Revision 1.4  2006-11-27 22:29:22  ambrmi09
- *  Minor djustments completeing the move of some header files to public and due
- *  to some name clashed with user space naming conventions.
- *
- *  Revision 1.3  2006/09/13 18:29:30  ambrmi09
- *  Commited needed in repocitory
- *
- *  Revision 1.2  2006/04/08 10:15:55  ambrmi09
- *  Merged with branch newThreadstarter (as of 060408)
- *
- *  Revision 1.1.2.1  2006/04/07 12:10:06  ambrmi09
- *  Skeleton for handling syscalls using the ARM Angel interface in place
- *
- *  Basic terminal I/O for gnu_arm (LPC2129) - only output so far (input requires
- *  blocking).
- *
- */

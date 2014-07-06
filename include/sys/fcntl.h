@@ -75,31 +75,3 @@ I.e. we can safely redefine the first three (mqueu needs to test for O_RDONLY so
 
 #endif				//SYS_TYPES_H_TK
 
-/*!
- * @defgroup CVSLOG_fcntl_h fcntl_h
- * @ingroup CVSLOG
- *  $Log: fcntl.h,v $
- *  Revision 1.4  2007-04-20 17:15:05  ambrmi09
- *  oflags as int replaces _tk_flags. Wasn't a good ida in the first place.
- *
- *  Revision 1.3  2007-04-19 15:25:57  ambrmi09
- *  A fair bit of the internal storage fs completed (S_IFREG)
- *
- *  Revision 1.2  2007-03-04 19:07:25  ambrmi09
- *  1) Error handling refined - will handle error from different
- *     cathegories:
- *     - errno (perror)
- *     - TK errors
- *     - TK traps codes
- *     - exit handling can differ beween user exit codes and kernel
- *       trap codes.
- *  2) Extracted fluffy & un-critical code from tk.c (the error and exit
- *     stuff)
- *  3) Preparing to partition even further into tk_switch.c (saving this
- *     until next ci though).
- *
- *  Revision 1.1  2007-03-03 23:01:32  ambrmi09
- *  Added driver support for FIFO's
- *
- *
- */

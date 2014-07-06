@@ -121,12 +121,3 @@ int umount2(const char *file, int flags);
 
 #endif				//MOUNT_H_TK
 
-/*!
- * @defgroup CVSLOG_mount_h mount_h
- * @ingroup CVSLOG
- *  $Log: mount.h,v $
- *  Revision 1.1  2007-04-19 15:25:57  ambrmi09
- *  A fair bit of the internal storage fs completed (S_IFREG)
- *
- *
- */

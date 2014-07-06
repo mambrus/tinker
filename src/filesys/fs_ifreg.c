@@ -383,8 +383,9 @@ int DRV_IO(write) (int file, char *ptr, int len) {
 				     DATA_IN_SECTOR_SIZE - hdata->sidx;
 				     nleft && !_eof;) {
 					if (nleft > slen) {
-						memcpy(&hdata->csector->
-						       data[hdata->sidx], ptr,
+						memcpy(&hdata->
+						       csector->data[hdata->
+								     sidx], ptr,
 						       slen);
 						ptr += slen;
 						n += slen;
@@ -393,8 +394,9 @@ int DRV_IO(write) (int file, char *ptr, int len) {
 						hdata->didx += slen;
 
 					} else {
-						memcpy(&hdata->csector->
-						       data[hdata->sidx], ptr,
+						memcpy(&hdata->
+						       csector->data[hdata->
+								     sidx], ptr,
 						       nleft);
 						ptr += nleft;
 						n += nleft;
@@ -408,8 +410,8 @@ int DRV_IO(write) (int file, char *ptr, int len) {
 							slen =
 							    DATA_IN_SECTOR_SIZE;
 							hdata->csector =
-							    hdata->csector->
-							    next;
+							    hdata->
+							    csector->next;
 							hdata->sidx = 0;
 						} else {
 							_eof = 1;

@@ -156,8 +156,7 @@ int pthread_rwlock_unlock(pthread_rwlock_t * __rwlock)
 
 				if (blocked_writers_granted) {
 					pthread_cond_signal(&
-							    (__rwlock->
-							     writers_lock));
+							    (__rwlock->writers_lock));
 				} else {
 					//Writer(s) are of lower prio than my self, so we don't know fore sure if the should run
 					//Instead release readers
@@ -168,13 +167,11 @@ int pthread_rwlock_unlock(pthread_rwlock_t * __rwlock)
 
 					if (__rwlock->blocked_readers) {
 						pthread_cond_broadcast(&
-								       (__rwlock->
-									readers_lock));
+								       (__rwlock->readers_lock));
 					} else {
 						//No readers to release, so we need to release the blocked writer(/writes) anyway
 						pthread_cond_signal(&
-								    (__rwlock->
-								     writers_lock));
+								    (__rwlock->writers_lock));
 					}
 				}
 
@@ -182,8 +179,7 @@ int pthread_rwlock_unlock(pthread_rwlock_t * __rwlock)
 				//Only readers are blocked (might in fact be no readers at all but we don't care)
 				//Release'em all and let them compete about the lock (schedule will deside who tries first - i.e. who will in fact win).
 				pthread_cond_broadcast(&
-						       (__rwlock->
-							readers_lock));
+						       (__rwlock->readers_lock));
 			}
 		} else {
 			//Since I'm not a writer, I must be a reader
@@ -281,28 +277,3 @@ int pthread_rwlock_timedwrlock(pthread_rwlock_t * __rwlock,
 	assert(__rwlock->valid);
 	return 0;
 }
-
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-/*!
- *  @defgroup CVSLOG_pthread_rwlock_c pthread_rwlock_c
- *  @ingroup CVSLOG
- *  $Log: pthread_rwlock.c,v $
- *  Revision 1.4  2006-04-08 10:16:01  ambrmi09
- *  Merged with branch newThreadstarter (as of 060408)
- *
- *  Revision 1.3.2.1  2006/04/03 20:07:27  ambrmi09
- *  Minor cosmetic change
- *
- *  Revision 1.3  2006/03/24 18:23:44  ambrmi09
- *  Another turn of cosmetics
- *
- *  Revision 1.2  2006/03/24 17:40:19  ambrmi09
- *  Cosmetic details
- *
- *  Revision 1.1  2006/03/24 11:22:56  ambrmi09
- *  - pThreads RW locks implemented (rough aproach - no usage error detection)
- *  - restructuring of the pThread src-files
- *
- *
- *******************************************************************/

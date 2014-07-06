@@ -69,13 +69,3 @@ int _itc_no_duplicateBlock(unsigned int qid, unsigned int mark);
 
 #endif				/* _IMPLEMENT_itc_H */
 
-/*!
- * @defgroup CVSLOG_implement_itc_h implement_itc_h
- * @ingroup CVSLOG
- *  $Log: implement_itc.h,v $
- *  Revision 1.1  2007-03-23 20:27:23  ambrmi09
- *  1) Reorganization of ITC into several smaller files
- *  2) Component pthread now supports 3,5,9 and 16 priorities
- *
- *
- */

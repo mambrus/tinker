@@ -493,27 +493,3 @@ void _tk_assertfail(char *assertstr, char *filestr, int line)
 #endif
 	tk_exit(TC_ERR_ASSERT);
 }
-
-/*!
- *  @defgroup CVSLOG_tk_error_c tk_error_c
- *  @ingroup CVSLOG
- *  $Log: tk_error.c,v $
- *  Revision 1.2  2007-03-23 20:27:23  ambrmi09
- *  1) Reorganization of ITC into several smaller files
- *  2) Component pthread now supports 3,5,9 and 16 priorities
- *
- *  Revision 1.1  2007-03-04 19:07:25  ambrmi09
- *  1) Error handling refined - will handle error from different
- *     cathegories:
- *     - errno (perror)
- *     - TK errors
- *     - TK traps codes
- *     - exit handling can differ beween user exit codes and kernel
- *       trap codes.
- *  2) Extracted fluffy & un-critical code from tk.c (the error and exit
- *     stuff)
- *  3) Preparing to partition even further into tk_switch.c (saving this
- *     until next ci though).
- *
- *
- *******************************************************************/

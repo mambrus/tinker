@@ -50,22 +50,3 @@ char *strerror(int errnum);
 
 #endif				//STRING_H_TK
 
-/*!
- * @defgroup CVSLOG_string_h string_h
- * @ingroup CVSLOG
- *  $Log: string.h,v $
- *  Revision 1.1  2007-03-04 19:07:25  ambrmi09
- *  1) Error handling refined - will handle error from different
- *     cathegories:
- *     - errno (perror)
- *     - TK errors
- *     - TK traps codes
- *     - exit handling can differ beween user exit codes and kernel
- *       trap codes.
- *  2) Extracted fluffy & un-critical code from tk.c (the error and exit
- *     stuff)
- *  3) Preparing to partition even further into tk_switch.c (saving this
- *     until next ci though).
- *
- *
- */

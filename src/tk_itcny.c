@@ -124,16 +124,16 @@ static unsigned long _lock_stage_ny(unsigned long qid, unsigned long timeout)
 				mark_idx = __itc_array[qid]->out_idx;
 				do {
 					/*What happens if last one?? Good question!! solved above? */
-					if (__itc_array[qid]->
-					    blocked_procs[mark_idx]->state ==
-					    READY
-					    && __itc_array[qid]->
-					    blocked_procs[mark_idx]->
-					    wakeupEvent == E_TIMER) {
+					if (__itc_array[qid]->blocked_procs
+					    [mark_idx]->state == READY
+					    &&
+					    __itc_array[qid]->blocked_procs
+					    [mark_idx]->wakeupEvent ==
+					    E_TIMER) {
 						/*Tag it, preventing succesiv removal */
-						__itc_array[qid]->
-						    blocked_procs[mark_idx]->
-						    wakeupEvent = E_ITC2;
+						__itc_array[qid]->blocked_procs
+						    [mark_idx]->wakeupEvent =
+						    E_ITC2;
 						/*Remove it from blocked list */
 						_itc_removeBlocked(__itc_array
 								   [qid],
@@ -193,8 +193,8 @@ static unsigned long _unlock_stage_ny(unsigned long qid)
 			for (i = __itc_array[qid]->out_idx; i != __itc_array[qid]->in_idx;	/*This is important, the last index can expire */
 			     i++, i %= TK_MAX_BLOCKED_ON_Q) {
 				if (!
-				    (__itc_array[qid]->blocked_procs[i]->
-				     state & _____Q__)) {
+				    (__itc_array[qid]->
+				     blocked_procs[i]->state & _____Q__)) {
 					/*Oops, found one! */
 					//__itc_removeBlocked_ny(__itc_array[qid],i);
 				}
@@ -216,8 +216,8 @@ static unsigned long _unlock_stage_ny(unsigned long qid)
 				if (__itc_array[qid]->blocked_procs[i]->Prio <
 				    t_prio) {
 					t_prio =
-					    __itc_array[qid]->blocked_procs[i]->
-					    Prio;
+					    __itc_array[qid]->
+					    blocked_procs[i]->Prio;
 					t_idx = i;
 				}
 			}
@@ -225,9 +225,8 @@ static unsigned long _unlock_stage_ny(unsigned long qid)
 			/*Now the highest waiting process should be found */
 			assert(t_prio != (TK_MAX_PRIO_LEVELS + 2));	/*Could not find anyone to release */
 			__itc_array[qid]->blocked_procs[t_idx]->state =
-			    (PROCSTATE) (__itc_array[qid]->
-					 blocked_procs[t_idx]->
-					 state & ~_____QST);
+			    (PROCSTATE) (__itc_array[qid]->blocked_procs
+					 [t_idx]->state & ~_____QST);
 			__itc_array[qid]->blocked_procs[t_idx]->wakeupEvent =
 			    E_ITC;
 			//__itc_array[qid]->token++;
@@ -238,8 +237,9 @@ static unsigned long _unlock_stage_ny(unsigned long qid)
 
 			do {
 				Him =
-				    __itc_array[qid]->
-				    blocked_procs[__itc_array[qid]->out_idx];
+				    __itc_array[qid]->blocked_procs[__itc_array
+								    [qid]->
+								    out_idx];
 				__itc_array[qid]->out_idx++,
 				    __itc_array[qid]->out_idx %=
 				    TK_MAX_BLOCKED_ON_Q;
@@ -397,8 +397,8 @@ unsigned long q_vsend_ny(unsigned long qid,
 	__itc_array[qid]->min_idx %= __itc_array[qid]->sizeof_q;
 	//gotoxy(1,19);
 	printk(("%s \n",
-		__itc_array[qid]->m.qv[__itc_array[__itc_array[qid]->mout_idx]->
-				       mout_idx].mb));
+		__itc_array[qid]->m.
+		qv[__itc_array[__itc_array[qid]->mout_idx]->mout_idx].mb));
 
 	rc = _unlock_stage_ny(qid);
 	if (!(_itc_proveConcistency(qid)))

@@ -135,8 +135,8 @@ void _tk_wakeup_timedout_threads(void)
 				     __tk_threadPool[i].wakeuptime) >= 0) {
 					/*Release queues also (but not the TERM bit) */
 					__tk_threadPool[i].state =
-					    (PROCSTATE) (__tk_threadPool[i].
-							 state & ~_____QS_);
+					    (PROCSTATE) (__tk_threadPool
+							 [i].state & ~_____QS_);
 					__tk_threadPool[i].wakeupEvent =
 					    E_TIMER;
 				}

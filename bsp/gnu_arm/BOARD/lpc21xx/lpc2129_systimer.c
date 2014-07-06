@@ -69,18 +69,3 @@ void systimer_init(void *vc)
 	TIMER0_TCR |= BIT(TCR_ENABLE);
 }
 
-/*!
- * @defgroup CVSLOG_lpc2129_systimer_c lpc2129_systimer_c
- * @ingroup CVSLOG
- *  $Log: lpc2129_systimer.c,v $
- *  Revision 1.3  2006-09-13 18:29:31  ambrmi09
- *  Commited needed in repocitory
- *
- *  Revision 1.2  2006/04/08 10:15:56  ambrmi09
- *  Merged with branch newThreadstarter (as of 060408)
- *
- *  Revision 1.1.2.1  2006/04/08 10:06:25  ambrmi09
- *  In preparation to join with main trunk - added forgotten files
- *
- *
- */

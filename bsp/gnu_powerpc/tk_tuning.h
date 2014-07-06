@@ -54,37 +54,3 @@ at this level contains all the defaults we need. */
 
 #endif				//TK_TUNING_H
 
-/*!
- * @addgroup CVSLOG_tk_tuning_h tk_tuning_h
- * @ingroup CVSLOG
- *  $Log: tk_tuning.h,v $
- *  Revision 1.8  2007-03-19 17:07:55  ambrmi09
- *  Interrupt structure/handling reworked - Motorola is wacked, clear IRQ by
- *  setting allready bit in SIPEND (!)
- *
- *  Revision 1.7  2007-03-04 19:07:25  ambrmi09
- *  1) Error handling refined - will handle error from different
- *     cathegories:
- *     - errno (perror)
- *     - TK errors
- *     - TK traps codes
- *     - exit handling can differ beween user exit codes and kernel
- *       trap codes.
- *  2) Extracted fluffy & un-critical code from tk.c (the error and exit
- *     stuff)
- *  3) Preparing to partition even further into tk_switch.c (saving this
- *     until next ci though).
- *
- *  Revision 1.6  2007-02-21 21:18:41  ambrmi09
- *  Nasty bug fixed. Turns out setjump/jongjum is more sensitive for interrupt
- *  interference than the old techique. Will be reluctant to change back though
- *  since I really like this design. Saving context in the beginnig of each
- *  pool might be a better solution. For now the issue is solved with interrupt
- *  enable/disable protection (which should go there sooner or later anyway, I
- *  would just feel better if the mentioned fix would be implemented also as a
- *  double precaution).
- *
- *  Revision 1.5  2007-02-19 17:34:37  ambrmi09
- *  Tinker will now compile for target powerpc-hixs-rtems
- *
- *******************************************************************/

@@ -40,34 +40,3 @@ typedef struct {
 
 #endif
 
-/*!
- * @ingroup CVSLOG
- *
- *  $Log: stypes-gnu_bfin-elf.h,v $
- *  Revision 1.1  2006-11-03 11:33:29  ambrmi09
- *  Moved architecture specific files out from bsp structure and into kernel
- *  source 'arch' structure. This makes sense since I plan to refine the
- *  project into kernel specific maintenence on one hand, and BSP (and
- *  eventually other's) on the other.
- *
- *  BSP's as part of the *kernlel* project will only be in the form of crude
- *  template BSP (community will take care of the rest).
- *
- *  Revision 1.2  2006/10/13 21:47:10  ambrmi09
- *  2 new CPU ports added: PowerPC and Blackfin. Also testing a new a new concept
- *  for thread creation that potentionally has big transparency advantages (needs
- *  to be proven in preemtive cases).
- *
- *  * PowerPC tested against simulator
- *  * Blackfin only compile and link (gcc and Newlib needes adaptation/porting -
- *    GDB and sinulator still missing)
- *
- *  Revision 1.2  2006/10/09 17:08:06  ambrmi09
- *  * Sceleton for bfin and powerpc now compiles.
- *  * Refingnemen in auto-tools to build correct BSP depending on toolchain and settings
- *  * BFIN,bfin macro work-around
- *
- *  Revision 1.1  2006/10/09 00:20:40  ambrmi09
- *  Sceleton for bfin and PPC added
- *
- *******************************************************************/

@@ -65,20 +65,3 @@ int mkfifo(const char *path, mode_t mode);
 
 #endif				//SYS_TYPES_H_TK
 
-/*!
- * @defgroup CVSLOG_stat_h stat_h
- * @ingroup CVSLOG
- *  $Log: stat.h,v $
- *  Revision 1.2  2007-03-03 23:42:21  ambrmi09
- *  Tested fifo implementation. We seem to have problems with built in
- *  qsort.
- *
- *  Eiter that or same prio messages get delivered in an undetermined order
- *  due to that sort doesent take sent time into account. We might want to
- *  look into that.
- *
- *  Revision 1.1  2007-02-26 14:16:53  ambrmi09
- *  1) Drivers    - structure added
- *  2) Filesystem - in progress
- *
- */

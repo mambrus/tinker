@@ -139,12 +139,3 @@ output.*/
 
 #endif
 
-/*!
- * @defgroup CVSLOG_lpc21xx_bits_h lpc21xx_bits_h
- * @ingroup CVSLOG
- *  $Log: lpc21xx_bits.h,v $
- *  Revision 1.1  2006-09-13 18:29:31  ambrmi09
- *  Commited needed in repocitory
- *
- *
- */

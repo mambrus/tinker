@@ -49,18 +49,3 @@ void systimer_Handler(void)
 	VICVectAddr = 0x0;	//Interrupt complete (tell interrup controller)
 }
 
-/*!
- * @defgroup CVSLOG_tk_systimer_c tk_systimer_c
- * @ingroup CVSLOG
- *  $Log: tk_systimer.c,v $
- *  Revision 1.3  2006-09-13 18:29:30  ambrmi09
- *  Commited needed in repocitory
- *
- *  Revision 1.2  2006/04/08 10:15:55  ambrmi09
- *  Merged with branch newThreadstarter (as of 060408)
- *
- *  Revision 1.1.2.1  2006/04/08 10:06:25  ambrmi09
- *  In preparation to join with main trunk - added forgotten files
- *
- *
- */
