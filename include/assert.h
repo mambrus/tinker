@@ -17,11 +17,9 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
 #ifndef ASSERT_H_TK
 #define ASSERT_H_TK
 
-//#include "kernel/src/tk_ansi.h"
 #include <tk_ansi.h>
 
 #if defined (HAVE_CONFIG_H)
@@ -38,36 +36,23 @@ extern "C" {
 }
 #endif
 #if !defined(__C166__)
-#	include <tk_ansi_dirwrap.h>
-#	include BUILDCHAIN(assert.h)
+#include <tk_ansi_dirwrap.h>
+#include BUILDCHAIN(assert.h)
 #endif
-#if   !defined (assert) && ( \
-         defined(__CYGWIN32__)  || defined(__CYGWIN__)  || \
-         defined(__GNUC__)      || defined(__USE_GNU)   || \
-         defined(_WIN32)        || defined(__BORLANDC__) || defined(__BCPLUSPLUS__) \
+#if !defined (assert) && ( \
+         defined(__CYGWIN32__) || defined(__CYGWIN__) || \
+         defined(__GNUC__) || defined(__USE_GNU) || \
+         defined(_WIN32) || defined(__BORLANDC__) || defined(__BCPLUSPLUS__) \
       )
 #error "DONT USE TINKER'S ASSERT FOR THIS TOOL_CHAIN"
 #endif
-/*
-#ifdef NDEBUG
-#  define assert(p)   ((void)0)
-#else
-#
-#  define assert(p) ((p) ? (void)0 : (void) _tk_assertfail( \
-                    #p, __FILE__, __LINE__ ) )
-#endif
-*/
 #define assure(p) ((p) ? (void)0 : (void) _tk_assertfail( \
                     #p, __FILE__, __LINE__ ) )
+
 #if (TK_HOWTO_ASSERT == TK_FNK_RENAMED)
 #undef assert
 #endif
-#if   !defined (assert)
-/*!
-The assert macro.
-
-@note Always assert, ignore NDEBUG setting
-*/
+#if !defined (assert)
 #define assert(p) assure(p)
 #endif
-#endif				//ASSERT_H_TK
+#endif

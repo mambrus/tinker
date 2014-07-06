@@ -20,12 +20,11 @@
 #include "filesys.h"
 #include "inode.h"
 
-#define DRV_IO_NAME( x, y ) \
-	x ##y
+#define DRV_IO_NAME(x,y) \
+ x ##y
 
-//NOTE driver name is set here and it affects the whole module
-#define DRV_IO( x ) \
-	DRV_IO_NAME( fs_ifdir_ , x )
+#define DRV_IO(x) \
+ DRV_IO_NAME( fs_ifdir_ , x )
 
 static const char DRV_IO(assert_info)[] =
     "You're trying to access a non implemented function";
@@ -94,11 +93,9 @@ int DRV_IO(write) (int file, char *ptr, int len) {
 
 const tk_iohandle_t DRV_IO(io) = {
 	DRV_IO(close),
-	    //DRV_IO(execve),
 	    DRV_IO(fcntl),
 	    DRV_IO(fstat),
 	    DRV_IO(isatty),
 	    DRV_IO(link), DRV_IO(lseek), DRV_IO(open), DRV_IO(read),
-	    //DRV_IO(sbrk),
 	    DRV_IO(stat), DRV_IO(unlink), DRV_IO(write)
 };

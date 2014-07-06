@@ -20,85 +20,85 @@
 #include "filesys.h"
 #include "inode.h"
 
-#define DRV_IO_NAME( x, y ) \
-	x ##y
+#define DRV_IO_NAME(x,y) \
+ x ##y
 
-//NOTE driver name is set here and it affects the whole module
-#define DRV_IO( x ) \
-	DRV_IO_NAME( fs_ifblk_ , x )
+
+#define DRV_IO(x) \
+ DRV_IO_NAME( fs_ifblk_ , x )
 
 static const char DRV_IO(assert_info)[] =
     "The BLOCK device you're trying to access in not registered correctly";
 
 int DRV_IO(close) (int file)
 {
-	assure(DRV_IO(assert_info) == NULL);
-	return -1;
+ assure(DRV_IO(assert_info) == NULL);
+ return -1;
 }
 
 int DRV_IO(fcntl) (int file, int command, ...) {
-	assure(DRV_IO(assert_info) == NULL);
-	errno = ENOSYS;
-	return -1;
+ assure(DRV_IO(assert_info) == NULL);
+ errno = ENOSYS;
+ return -1;
 }
 
 int DRV_IO(fstat) (int file, struct stat * st) {
-	assure(DRV_IO(assert_info) == NULL);
-	st->st_mode = S_IFCHR;
-	return 0;
+ assure(DRV_IO(assert_info) == NULL);
+ st->st_mode = S_IFCHR;
+ return 0;
 }
 
 int DRV_IO(isatty) (int file) {
-	assure(DRV_IO(assert_info) == NULL);
-	return 1;
+ assure(DRV_IO(assert_info) == NULL);
+ return 1;
 }
 
 int DRV_IO(link) (char *old, char *new) {
-	assure(DRV_IO(assert_info) == NULL);
-	errno = EMLINK;
-	return -1;
+ assure(DRV_IO(assert_info) == NULL);
+ errno = EMLINK;
+ return -1;
 }
 
 int DRV_IO(lseek) (int file, int ptr, int dir) {
-	assure(DRV_IO(assert_info) == NULL);
-	return 0;
+ assure(DRV_IO(assert_info) == NULL);
+ return 0;
 }
 
 int DRV_IO(open) (const char *filename, int flags, ...) {
-	assure(DRV_IO(assert_info) == NULL);
-	errno = ENOSYS;
-	return -1;
+ assure(DRV_IO(assert_info) == NULL);
+ errno = ENOSYS;
+ return -1;
 }
 
 int DRV_IO(read) (int file, char *ptr, int len) {
-	assure(DRV_IO(assert_info) == NULL);
-	return 0;
+ assure(DRV_IO(assert_info) == NULL);
+ return 0;
 }
 
 int DRV_IO(stat) (const char *file, struct stat * st) {
-	assure(DRV_IO(assert_info) == NULL);
-	st->st_mode = S_IFCHR;
-	return 0;
+ assure(DRV_IO(assert_info) == NULL);
+ st->st_mode = S_IFCHR;
+ return 0;
 }
 
 int DRV_IO(unlink) (char *name) {
-	assure(DRV_IO(assert_info) == NULL);
-	errno = ENOENT;
-	return -1;
+ assure(DRV_IO(assert_info) == NULL);
+ errno = ENOENT;
+ return -1;
 }
 
 int DRV_IO(write) (int file, char *ptr, int len) {
-	assure(DRV_IO(assert_info) == NULL);
-	return len;
+ assure(DRV_IO(assert_info) == NULL);
+ return len;
 }
 
 const tk_iohandle_t DRV_IO(io) = {
-	DRV_IO(close),
-	    //DRV_IO(execve),
-	    DRV_IO(fcntl),
-	    DRV_IO(fstat),
-	    DRV_IO(isatty),
-	    DRV_IO(link), DRV_IO(lseek), DRV_IO(open), DRV_IO(read),
-	    //DRV_IO(sbrk),
-	    DRV_IO(stat), DRV_IO(unlink), DRV_IO(write)
+ DRV_IO(close),
+
+     DRV_IO(fcntl),
+     DRV_IO(fstat),
+     DRV_IO(isatty),
+     DRV_IO(link), DRV_IO(lseek), DRV_IO(open), DRV_IO(read),
+
+     DRV_IO(stat), DRV_IO(unlink), DRV_IO(write)
 };

@@ -17,21 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-/*!
-@file
-@ingroup PTHREAD_SYNC
-
-@brief This implements pThreads mutexes
-
-For in-depth discussions about this component, see \ref
-PTHREAD_SYNC
-
-@see PTHREAD_SCHED
-@see PTHREAD
-
-*/
-
 #include <pthread.h>
 #include <errno.h>
 #include <assert.h>
@@ -39,12 +24,6 @@ PTHREAD_SYNC
 #include "implement_pthread.h"
 #include "implement_tk.h"
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-/*!
-http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_init.html
-@todo Stubbed. Impl TBD
-*/
 int pthread_mutex_init(pthread_mutex_t * mutex,
 		       const pthread_mutexattr_t * attr)
 {
@@ -55,10 +34,6 @@ int pthread_mutex_init(pthread_mutex_t * mutex,
 	return 0;
 }
 
-/*!
-http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_destroy.html
-@todo Stubbed. Impl TBD
-*/
 int pthread_mutex_destroy(pthread_mutex_t * mutex)
 {
 	assert(mutex->valid);
@@ -67,11 +42,6 @@ int pthread_mutex_destroy(pthread_mutex_t * mutex)
 	return 0;
 }
 
-/*!
-http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_trylock.html
-
-@todo Stubbed. Impl TBD
-*/
 int pthread_mutex_trylock(pthread_mutex_t * mutex)
 {
 	assert(mutex->valid);
@@ -80,37 +50,26 @@ int pthread_mutex_trylock(pthread_mutex_t * mutex)
 	return 0;
 }
 
-/*!
-http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_lock.html
-*/
 int pthread_mutex_lock(pthread_mutex_t * mutex)
 {
 
 	assert(mutex->valid);
-	if (_mutex_lock_primitive(mutex))	//State in schedule has changed. Let dispatcher determine who should really run
+	if (_mutex_lock_primitive(mutex))
 		pthread_yield();
 
 	return 0;
 }
 
-/*!
-http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_unlock.html
-*/
 int pthread_mutex_unlock(pthread_mutex_t * mutex)
 {
 
 	assert(mutex->valid);
-	if (_mutex_unlock_primitive(mutex, BSINGLE))	//State in schedule has changed. Let dispatcher determine who should really run
+	if (_mutex_unlock_primitive(mutex, BSINGLE))
 		pthread_yield();
 
 	return 0;
 }
 
-/*!
-http://www.opengroup.org/onlinepubs/009695399/functions/pthread_mutex_timedlock.html
-
-@todo Stubbed. Impl TBD
-*/
 int pthread_mutex_timedlock(pthread_mutex_t * mutex,
 			    const struct timespec *abs_timeout)
 {

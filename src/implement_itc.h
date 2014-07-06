@@ -17,21 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-/*!
-@file
-@ingroup SCHED
-
-@brief Definitions that don't need to be public
-
-Definitions that don't need to be public for the \ref SCHED component.
-Keeps all the internals out of th.h
-
-For in-depth discussions about this component, see \ref
-SCHED
-
-*/
-
 #ifndef _IMPLEMENT_ITC_H
 #define _IMPLEMENT_ITC_H
 
@@ -46,11 +31,11 @@ SCHED
 #include "context.h"
 #include <tk_itc.h>
 
-#define STI_return( ec ) \
-	{ TK_STI(); return(ec);}
+#define STI_return(ec) \
+ { TK_STI(); return(ec);}
 
-#define tk_yield_CLI( ) \
-	{ tk_yield(); TK_CLI();}
+#define tk_yield_CLI() \
+ { tk_yield(); TK_CLI();}
 
 #if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
 clock_t clock_stubbed();
@@ -67,5 +52,4 @@ unsigned long _itc_uintDiff(unsigned long x1,
 int _itc_proveConcistency(unsigned int qid);
 int _itc_no_duplicateBlock(unsigned int qid, unsigned int mark);
 
-#endif				/* _IMPLEMENT_itc_H */
-
+#endif

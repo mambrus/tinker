@@ -20,23 +20,6 @@
 #ifndef STDIO_H_TK
 #define STDIO_H_TK
 
-/*!
-@file
-@ingroup kernel_reimpl_ansi
-
-@brief stdio.h file <b>IMPORTANT:</b> See the note in the detailed section!
-
-@note Wrap out incompatible definitions/functions in C library
-
-For in-depth discussions about re-implementing ANSI functions, see \ref
-kernel_reimpl_ansi.
-
-@see kernel_reimpl_ansi
-
-<HR>
-*/
-
-/*Always part of ANSI -> always wrap*/
 #include <tk_ansi.h>
 #include <tk_ansi_dirwrap.h>
 
@@ -48,5 +31,4 @@ kernel_reimpl_ansi.
 void perror(const char *message);
 #endif
 
-#endif				//SYS_TYPES_H_TK
-
+#endif

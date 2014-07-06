@@ -17,24 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-/*!
-@file
-@ingroup PTHREAD_SYNC
-
-@brief POSIX 1003.1c API - pThread low level synchronisation primitives
-
-The content of this source-file implement basic thread synchronisation. I.e.
-the common mechanism used by mutex, cond-vars rw-locks e.t.a,
-
-For in-depth discussions about this component, see \ref
-PTHREAD_SYNC
-
-@see PTHREAD_SCHED
-@see PTHREAD
-
-*/
-
 #include <pthread.h>
 #include <errno.h>
 #include <assert.h>
@@ -42,7 +24,6 @@ PTHREAD_SYNC
 #include "implement_pthread.h"
 #include "implement_tk.h"
 
-//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long tk_pthread_sync(void)
 {
 	return ERR_OK;
@@ -53,13 +34,6 @@ unsigned long tk_pthread_sync_destruct(void)
 	return ERR_OK;
 }
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-/*!
-The mutex lock primitive.
-
-This function will change the state in the scheduler, but it will not yield.
-Instead it returns a \b recommendation to yield or not.
-*/
 int _mutex_lock_primitive(pthread_mutex_t * mutex)
 {
 	int rc = 0;
@@ -79,50 +53,39 @@ int _mutex_lock_primitive(pthread_mutex_t * mutex)
 		mutex->blocked.thread[mutex->blocked.numb] = self;
 		mutex->blocked.numb++;
 
-		rc = 1;		//Schedule state has chanced, yield recommended
+		rc = 1;
 	}
 	return rc;
 }
 
-/*!
-The mutex unlock primitive.
-
-This function will change the state in the scheduler, but it will not yield.
-Instead it returns a \b recommendation to yield or not.
-*/
 int _mutex_unlock_primitive(pthread_mutex_t * mutex, bcast_t bcast)
 {
 	int rc = 0;
-	pthread_t self = pthread_self();
 	unsigned prio = TK_MAX_PRIO_LEVELS;
 	int i;
-/*
-   if ( !pthread_equal(mutex->owner,self) )
-      return 1;
-*/
+
 	if (mutex->owner == NULL) {
-		//refuse to use
+
 		assert(mutex->blocked.numb == 0);
 		return 0;
 	}
 
 	if (mutex->blocked.numb == 0) {
-		//No one to unblock
+
 		mutex->owner = NULL;
 		return 0;
 	}
 
-	rc = 1;			//Schedule state has chanced, yield recommended
-	//One ore more blocked, yield recommended.
+	rc = 1;
 
 	if (bcast) {
-		//Release all, let dispatcher select in which order to run.
+
 		for (i = 0; i < mutex->blocked.numb; i++) {
 			mutex->blocked.thread[i]->bOnId.kind = BON_SCHED;
 			mutex->blocked.thread[i]->bOnId.entity.tcb = NULL;
 			mutex->blocked.thread[i]->state =
-			    (PROCSTATE) (mutex->blocked.
-					 thread[i]->state & ~QUEUE);
+			    (PROCSTATE) (mutex->blocked.thread[i]->
+					 state & ~QUEUE);
 			mutex->blocked.thread[i]->wakeupEvent = E_ITC;
 		}
 		mutex->blocked.numb = 0;
@@ -132,16 +95,15 @@ int _mutex_unlock_primitive(pthread_mutex_t * mutex, bcast_t bcast)
 		int j;
 
 		for (i = 0; i < mutex->blocked.numb; i++) {
-			//Find the one first in order with the highest prio (PRIO then FIFO)
+
 			if (mutex->blocked.thread[i]->Prio < prio) {
 				j = i;
 				prio = mutex->blocked.thread[i]->Prio;
 			}
 		}
-		//The new owner is selected. Release him only, and adjust new mutex data.
+
 		mutex->owner = newOwner = mutex->blocked.thread[j];
 
-		//Compress the blocked list
 		for (i = j; i < mutex->blocked.numb; i++) {
 			mutex->blocked.thread[i] = mutex->blocked.thread[i + 1];
 		}
@@ -156,19 +118,3 @@ int _mutex_unlock_primitive(pthread_mutex_t * mutex, bcast_t bcast)
 
 	return rc;
 }
-
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-/** @defgroup PTHREAD_SYNC PTHREAD_SYNC: POSIX 1003.1c API - Thread synchronisation
-@ingroup PTHREAD
-@brief POSIX 1003.1c API - Thread synchronisation
-
-Syncronisation between threads, i.e.
-
-- Mutexes and attribute handling thereof
-- Event handling
-- Timout event handling - special case of the above
-
-<p><b>Go gack to</b> \ref COMPONENTS</p>
-
-*/

@@ -31,15 +31,14 @@
 #include <stdarg.h>
 
 #if defined (__tinker__)
-#	include <tinker/hixs.h>
+#include <tinker/hixs.h>
 #else
-#	include "hixs.h"
+#include "hixs.h"
 #endif
 
-/* Function call definitions, type declaration and storage */
-#define DEF_FUN_HIXS( v, x, y )    \
-typedef v _HIXS_##x y;          \
-typedef _HIXS_##x * pHIXS_##x;  \
+#define DEF_FUN_HIXS(v,x,y) \
+typedef v _HIXS_##x y; \
+typedef _HIXS_##x * pHIXS_##x; \
 v HIXS_##x y;
 
 DEF_FUN_HIXS(int, close, (int file));
@@ -67,10 +66,6 @@ DEF_FUN_HIXS(int, unlink, (char *name));
 DEF_FUN_HIXS(int, wait, (int *status));
 DEF_FUN_HIXS(int, write, (int file, char *ptr, int len));
 
-//Special function to monitor syscalls. Even this can be set in userspace to
-//provide abilities to set breakpoint without having the full newlib sources.
-//Function will be called by all stubbed syscalls and input argument is the
-//stubbed functions adress.
 #if !defined( _NO_HIXS_SYSCALLMON_ )
 DEF_FUN_HIXS(void, syscall_mon, (void *));
 #endif
@@ -102,4 +97,4 @@ struct hixs_t {
 #endif
 };
 
-#endif				// HIXS_H
+#endif

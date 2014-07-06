@@ -17,9 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-/*- include files **/
-
 #include <tk_itc.h>
 #include <tk_sysqueues.h>
 
@@ -27,25 +24,14 @@
 #include <string.h>
 #include <errno.h>
 
-/* default settings */
-
-#define SYSQ_LENGT 10		/*!< Length of each Q (i.e. the number of
-				   elements in each queue) Small number, but should be OK since these
-				   Q's are meant to be used by threads that run on highest prio. */
-
-/*- external functions **/
-
-/*- external data **/
-
-/*- public data **/
+#define SYSQ_LENGT 10
 unsigned long tk_sys_queues[TK_NUMBER_OF_SYSQ];
 
-/*- internal functions **/
 unsigned long _tk_create_system_queues()
 {
 	int i;
 	unsigned long rc = ERR_OK;
-	char name[4];		// Queue name is deep-copied -> temp is ok to have on stack
+	char name[4];
 
 	for (i = 0; (i < TK_NUMBER_OF_SYSQ) && (rc == ERR_OK); i++) {
 
@@ -58,5 +44,3 @@ unsigned long _tk_create_system_queues()
 	}
 	return rc;
 }
-
-/*- private data **/

@@ -18,35 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-/*!
-@file
-@ingroup POSIX_RT
-
-@brief RT semaphores - POSIX 1003.1b API
-
-*-* Doc in progress *-*
-
-<p>
-A very hastily done wrapper done in 1hr. Probably needs a lot of more work.
-</p>
-
-For in-depth discussions about this component, see \ref
-POSIX_RT
-
-@see POSIX_RT
-@see PTHREAD
-*/
-
 #include <semaphore.h>
 #include <errno.h>
 #include <assert.h>
 #include <tk_itc.h>
 
-/*!
-@brief Defines a semaphore. Equivalent to TinKer \ref sm_create
-
-@see http://www.opengroup.org/onlinepubs/009695399/functions/sem_init.html
-*/
 int sem_init(sem_t * sem, int pshared, unsigned int value)
 {
 	unsigned int rc;
@@ -65,11 +41,6 @@ int sem_init(sem_t * sem, int pshared, unsigned int value)
 	return 0;
 }
 
-/*!
-@brief Undefines a semaphore. Equivalent to TinKer \ref sm_delete
-
-@see http://www.opengroup.org/onlinepubs/009695399/functions/sem_destroy.html
-*/
 int sem_destroy(sem_t * sem)
 {
 	assert("sem_destroy - Not implemented" == NULL);
@@ -77,11 +48,6 @@ int sem_destroy(sem_t * sem)
 	return 0;
 }
 
-/*!
-@brief TBD
-
-@see http://www.opengroup.org/onlinepubs/009695399/functions/sem_trywait.html
-*/
 int sem_trywait(sem_t * sem)
 {
 	assert("sem_trywait - Not implemented" == NULL);
@@ -89,11 +55,6 @@ int sem_trywait(sem_t * sem)
 	return 0;
 }
 
-/*!
-@brief Locks the semaphore. Equivalent to TinKer \ref sm_p
-
-@see http://www.opengroup.org/onlinepubs/009695399/functions/sem_wait.html
-*/
 int sem_wait(sem_t * sem)
 {
 	unsigned int rc;
@@ -114,11 +75,6 @@ int sem_wait(sem_t * sem)
 	return 0;
 }
 
-/*!
-@brief Unlocks the semaphore. Equivalent to TinKer \ref sm_v
-
-@see http://www.opengroup.org/onlinepubs/009695399/functions/sem_post.html
-*/
 int sem_post(sem_t * sem)
 {
 	unsigned int rc;

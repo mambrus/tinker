@@ -17,60 +17,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-/*!
-@file
-@ingroup kernel_reimpl_ansi
-
-@brief ANSI search & sort functions reimplemented
-
-The functions in this file are all re implementations of ANSI functions
-for searching and sorting, that TinKer relies on but that are commonly
-missing from many embedded tool-chain suppliers.
-
-For in-depth discussions about re-implementing ANSI functions, see \ref
-kernel_reimpl_ansi
-
-@see kernel_reimpl_ansi
-
-*/
 #include "tk_ansi.h"
 #include <string.h>
 #include <stdlib.h>
-#define MAX_SORT_ELEMENT_SIZE 255	//!< Limitation of each sorting elements size
-
-/*
-#if !defined(APP_NEEDS_INTERNALS)
-void _tk_quicksort ( void *, int, int, int, comparison_fn_t );
-int  _tk_bsearch   ( void *, void *, int, int, int, comparison_fn_t );
-#endif
-*/
-
-/*!
-@brief Swap <em>l</em> and <em>r</em> in <em>a</em>
-
-Swapping helper function will swap the elements at positions <em>l</em>
-and <em>r</em> in array <em>a</em> with an element size of <em>sz</em>.
-
-@note To avoid time consuming mallocs, a temp-variable <em>t</em> is
-allocated on the stack. This implies that in case _swap is used in a
-recursive functions, your <b>recursion depth is limited</b> by the
-maximum size of the temporary variable variable. Furthermore,
-implementation also implies that <b>elements bigger than
-MAX_SORT_ELEMENT_SIZE will be corrupted</b>. Hence, you must make
-certain these limitation doesn't affect you're usage.
-
-@todo supply a malloc based version.
-
-@note The temp-variable <em>t</em> can't be global, or it would make
-this function non re-entrant and non thread safe.
-*/
-
-void _swap(void *a,		//!< The array to be sorted
-	   int l,		//!< left index
-	   int r,		//!< right index
-	   int sz		//!< Size of each element
-    )
+#define MAX_SORT_ELEMENT_SIZE 255
+void _swap(void *a, int l, int r, int sz)
 {
 	char t[MAX_SORT_ELEMENT_SIZE];
 	memcpy(t, &((char *)a)[l * sz], sz);
@@ -78,84 +29,9 @@ void _swap(void *a,		//!< The array to be sorted
 	memcpy(&((char *)a)[r * sz], t, sz);
 }
 
-unsigned int qsort_depth = 0;	//!< @brief Recursion debug variable @internal
-unsigned int curr_depth = 0;	//!< @brief Recursion debug variable @internal
-/*!
-@brief Quicksort algorithm (the back-end of ANSI reimpl. \ref qsort)
-
-This is a rather straight-forward implementation of the quick-sort
-algorithm. It's supposed to be used as a back-end to the
-re-implemented ANSI function \ref qsort. I.e. it has to be able to work
-on arrays with elements of any size (i.e. scalars, structs & pointers), which
-makes the implementation a little bit tricky. Notice the call to the
-compare function - note that we're <em>passing a <TT>void**</TT> to a
-function that expects a <TT>void*</TT> </em>. This means that no matter
-what's in the array, we're <b>always comparing references</b> and never
-actual elements.
-
-@note You must make sure of that you're compare function always operates
-on references as well.
-
-Here comes a couple of examples of 3 different compare functions.
-- a scalar - in our case a character
-- a structure - in our case an array with fixed number of elements
-- a pointer list - in our case pointers to strings.
-
-Please make sure you understand the difference between especially the
-last two cases.
-
-@note Any nonzero expression is considered true in C. (ref: ANSI)
-
-@code
-int my_charcmp (
-   const void *L,
-   const void *R
-){
-   int rc;
-
-   char l = *(char*)L;
-   char r = *(char*)R;
-   rc = (l==r)?0:( (l<r)?-1 : 1 );
-   return rc;
-}
-@endcode
-
-@code
-int my_strcmp ( const void *L, const void *R ){
-   return strcmp((char*)L,(char*)R);
-}
-@endcode
-
-@code
-int my_strvcmp ( const void *L, const void *R ){
-   return strcmp(*(char**)L,*(char**)R);
-}
-@endcode
-
-@note <b>This is a recursive version of quick-sort</b>
-
-@note The algorithm is said to be unstable if not a sentinel at a[0]
-is present, which is guaranteed to be less than any other a[1]..a[N].
-The front-end doesn't bother with this a.t.m. since we plan to invoke
-the <i>median-of-three</i> partitioning optimization (which as a
-side-effect takes care of this rare special case).
-
-@todo I'm not sure if the sorting function (\ref comparison_fn_t)
-behavior is how ANSI qsort expects it to work. Better check this.
-
-@todo Develop a non-recursive version of this function
-
-@todo Develop a shell-sort optimization for N<C
-
-@todo Develop a <i>median-of-three</i> partitioning optimization
-
-*/
-void _tk_quicksort(void *a,	//!< The array to be sorted
-		   int l,	//!< left index
-		   int r,	//!< right index
-		   int sz,	//!< Size of each element
-		   comparison_fn_t cmp	//!< Comparison function
-    )
+unsigned int qsort_depth = 0;
+unsigned int curr_depth = 0;
+void _tk_quicksort(void *a, int l, int r, int sz, comparison_fn_t cmp)
 {
 	int i, j;
 	void *v;
@@ -186,88 +62,11 @@ void _tk_quicksort(void *a,	//!< The array to be sorted
 	curr_depth--;
 }
 
-/*!
-@brief Bsearch algorithm (the back-end of ANSI reimpl. \ref bsearch)
-
-Very straight-forward implementation without recursion. I doubt this one
-can be optimized much further.
-
-@note To use bsearch on <b>vector tables</b> and to use the same \ref
-comparison_fn_t as when you sorted the table in the first place,
-remember you have to pass a pointer to a pointer as the first argument.
-I.e. the argument you pass has to be of the same indirection level as
-the elements in the list are.
-
-The function will return the index number of the element to search for,
-or a negative value if the element is not found. However, the "right-most"
-element is also always returned and can deducted by taking the absolute
-value that is returned and subtract 1,
-
-If negative, the absolute value minus 1 tells which index is closest to
-the elements "right". I.e. for search key \f$ k \f$, return value \f$
-f(k) \f$ the the search index \f$ i \f$ and the right-most index \f$
-i_R \f$ follows the definitions below:<p>
-1)
-
-\f[
-
-i =
-
-   \cases{
-
-      f(k) & \mbox{if f(k) is positive  } \cr
-
-      invalid & \mbox{if f(k) is negative } \cr
-
-   }
-
-\f]
-
-2)
-
-\f[   i_R = abs(f(k)) - 1 \f]
-
-@attention The "feature" with also getting the right-most index if \f$ k \f$ is
-not found, is meant to be used by a special version of insertion sort.
-For normal search use, all you have to do is test against negative
-vaules, and then use the value as an index.
-
-@returns index number <em>AND</em> "right-most" index
-
-@note The reason \f$ i_R \f$ is passed instead of \f$ i_L \f$ is to
-avoid difficulties coding the value around index zero. By using \f$
-i_R \f$, the resulting value after transformation is always positive
-(note that 0 is defined as positive).
-
-<h3>Example: Determining "in-between" indexes.</h3>
-@code
-   int left_idx;
-   int right_idx;
-
-   int idx = _tk_bsearch(&my_key,my_array,0,sz-1,sizeof(my_type),my_cmpf);
-   if (idx < 0){
-      //Key not found, but would fit between left_idx & right_idx
-      left_idx  = -1*idx-2;
-      right_idx = -1*idx-1;
-   }
-@endcode
-
-@attention See \ref bsearch for another important example (pit-fall).
-
-
-*/
-
-int _tk_bsearch(void *v,	//!< Search for this key
-		void *a,	//!< The array to be seached
-		int l,		//!< left index
-		int r,		//!< right index
-		int sz,		//!< Size of each element
-		comparison_fn_t cmp	//!< Comparison function
-    )
+int _tk_bsearch(void *v, void *a, int l, int r, int sz, comparison_fn_t cmp)
 {
-	int x;			// Current mid index
-	void *m;		// Mid element
-	int rc;			// Last compare result
+	int x;
+	void *m;
+	int rc;
 
 	while (r >= l) {
 		x = (r + l) / 2;
@@ -284,150 +83,24 @@ int _tk_bsearch(void *v,	//!< Search for this key
 			l = x + 1;
 	}
 	if (rc < 0) {
-		//Key should had been to the left of the last evaluated index.
-		/*
-		   printf("<--- [%d]\n",x);
-		   printf("[%d]..x..[%d]\n",x-1,x);
-		   printf("------------------------\n");
-		   printf("After transform, RL=%d\n\n",x);
-		 */
+
 		return (-1 * x - 1);
 	} else {
-		//Key should had been to the right of the last evaluated index.
-		/*
-		   printf("[%d] --->\n",x);
-		   printf("[%d]..x..[%d]\n",x,x+1);
-		   printf("------------------------\n");
-		   printf("After transform, RL=%d\n\n",x+1);
-		 */
+
 		return (-1 * x - 2);
 	}
 }
 
 #ifdef TINKER_SEARCH_SORT
-/*!
-@brief ANSI qsort
-
-To sort an array using an arbitrary comparison function, use the qsort
-function. The prototype for this function is in stdlib.h.
-
-Function: void qsort (void *array, size_t count, size_t size,
-comparison_fn_t compare)
-
-The qsort function sorts the array <em>array</em>. The array
-contains <em>count</em> elements, each of which is of size
-<em>size</em>.
-
-The <em>compare</em> function is used to perform the comparison on the
-array elements. This function is called with two pointer arguments and should
-return an integer less than, equal to, or greater than zero
-corresponding to whether its first argument is considered less than,
-equal to, or greater than its second argument.
-
-@note Warning: If two objects compare as equal, their order after sorting is
-unpredictable. That is to say, the sorting is not stable. This can make
-a difference when the comparison considers only part of the elements.
-Two elements with the same sort key may differ in other respects.
-
-If you want the effect of a stable sort, you can get this result by
-writing the comparison function so that, lacking other reason
-distinguish between two elements, it compares them by their addresses.
-Note that doing this may make the sorting algorithm less efficient, so
-do it only if necessary.
-
-GNU reference: @see http://www.gnu.org/software/libc/manual/html_mono/libc.html#Array%20Sort%20Function
-
-*/
-void qsort(void *array,		//!< The array to be sorted
-	   size_t count,	//!< Number of elements in the array
-	   size_t size,		//!< Size of each element
-	   comparison_fn_t compare	//!< Comparison function
-    )
+void qsort(void *array, size_t count, size_t size, comparison_fn_t compare)
 {
 	qsort_depth = 0;
 	_tk_quicksort(array, 0, count - 1, size, compare);
 }
 
-/*!
-@brief ANSI bsearch
-
-To search a sorted array for an element matching the key, use the
-bsearch function. The prototype for this function is in the header file
-stdlib.h.
-
-void * bsearch (const void *key, const void *array, size_t count, size_t
-size, comparison_fn_t compare)
-
-The bsearch function searches the sorted array <em>array</em> for an
-object that is equivalent to <em>key</em>. The array contains
-<em>count</em> elements, each of which is of size <em>size</em> bytes.
-
-The compare function is used to perform the comparison. This function is
-called with two pointer arguments and should return an integer less
-than, equal to, or greater than zero corresponding to whether its first
-argument is considered less than, equal to, or greater than its second
-argument. <i>The elements of the array must already be sorted in
-ascending order according to this comparison function.</i>
-
-@return The return value is a pointer to the matching array element, or
-a null pointer if no match is found. If the array contains more than one
-element that matches, the one that is returned is unspecified.
-
-This function derives its name from the fact that it is implemented
-using the binary search algorithm.
-
-GNU reference: @see http://www.gnu.org/software/libc/manual/html_mono/libc.html#Array%20Search%20Function
-
-<h3>Example: Pitfalls with character arrays</h3>
-(The following also applies to \ref _tk_bsearch)<p>
-This is correct:
-@code
-      char *varray[] = {"One","Two,"Three"};
-      char key[] = "Two";
-      char *p1 = key;
-
-      bsearch(&p1,varray,3,sizeof(char*),my_strvcmp);
-@endcode
-
-This doesn't do what you think, (<tt>key</tt> and <tt>&key</tt> gives the
-same value to \ref bsearch)
-
-@code
-     :
-     rv = bsearch(&key,varray,3,sizeof(char*),my_strvcmp);
-@endcode
-
-This is illegal (compile error).
-@code
-     :
-     rv = bsearch(&(char*)key,varray,3,sizeof(char*),my_strvcmp);
-@endcode
-
-This pitfall is easy to fall into while working with character arrays
-that are supposed to be interpreted as strings (you can't assign other
-data-types the same way or as easily as with strings).
-
-One way to avoid the above scenario is to let <tt>key</tt> be a pointer
-to begin with. The following is perfectly legal and works like a charm,
-though not very practical (who needs a key that's constant?).:
-
-@code
-   char *varray[] = {"One","Two,"Three"};
-   char *key2 = "Two";
-   bsearch(&key2,varray,3,sizeof(char*),my_strvcmp);
-@endcode
-
-Or you can use malloc, then assign and then use - but I find using
-char[] + one extra variable more convenient.
-
-
-*/
-void *bsearch(const void *key,	//!< Serch for this key
-	      const void *array,	//!< Sorted array to search for key
-	      size_t count,	//!< Number of elements in the array
-	      size_t size,	//!< Size of each element
-	      comparison_fn_t compare	//!< Comparison function
-    )
+void *bsearch(const void *key,
+	      const void *array,
+	      size_t count, size_t size, comparison_fn_t compare)
 {
 	int i;
 

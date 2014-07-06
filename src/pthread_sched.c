@@ -17,23 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-/*!
-@file
-@ingroup PTHREAD_SCHED
-
-@brief POSIX 1003.1c API - Scheduling and thread management
-
-The content of this source-file implement thread management. I.e.
-starting/stopping, setting attributes of the threads themselves.
-
-For in-depth discussions about this component, see \ref
-PTHREAD_SCHED
-
-@see PTHREAD_SYNC
-@see PTHREAD
-
-*/
 #include <tk_itc.h>
 #include <pthread.h>
 #include <errno.h>
@@ -53,7 +36,6 @@ unsigned long tk_pthread_sched(void)
 	return rc;
 }
 
-//------1---------2---------3---------4---------5---------6---------7---------8
 unsigned long tk_pthread_sched_destruct(void)
 {
 	unsigned long rc = ERR_OK;
@@ -64,18 +46,6 @@ unsigned long tk_pthread_sched_destruct(void)
 
 }
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-/*!
-\returns 0 or a error code
-
-Works exactlly as \ref pthread_create except that it provides TinKer with a name of the thread as well
-
-@note This is not portable. Use the \ref pthread_create instead
-
-@see http://www.opengroup.org/onlinepubs/009695399/functions/pthread_create.html
-
-@todo Check if the stack concepts fit. Uncertain...
-*/
 int pthread_create_named_np(pthread_t * thread,
 			    const pthread_attr_t * attr,
 			    void *(*start_routine) (void *),
@@ -89,7 +59,7 @@ int pthread_create_named_np(pthread_t * thread,
 					(*attr)->priority,
 					start_routine, arg, (*attr)->stacksize);
 		tk_tcb = _tk_specific_tcb(thid);
-		//NOTICE! Uncertain about this line.
+
 		(*attr)->stackaddr = tk_tcb->stack_begin;
 
 	} else {
@@ -98,7 +68,7 @@ int pthread_create_named_np(pthread_t * thread,
 					start_routine,
 					arg, TK_NORMAL_STACK_SIZE);
 	};
-	//Types are the same, but avoid warnings
+
 	*thread = (pthread_t) _tk_specific_tcb(thid);
 
 	return 0;
@@ -114,47 +84,16 @@ int pthread_detach(pthread_t thread)
 	return tk_detach(thread->Thid);
 }
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-/*!
-Returns the id of the current thread
-
-Do not compare thread id's (i.e. \ref pthread_t) directly to determine
-if they are equal. On TinKer you can do that because it's a value based
-type, but on other system pthread_t might be a reference. Use \ref
-pthread_equal for this purpose to assure code is portable.
-
-@warning Comparing without using \ref pthread_equal since it will not
-render in a compilation error, either in situations where TinKer is the
-kernel or in reference based \ref pthread_t kernel.
-
-@see http://www.opengroup.org/onlinepubs/009695399/functions/pthread_self.html
-@see http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/pthread_self.3.html#//apple_ref/doc/man/3/pthread_self
-@see http://developer.apple.com/documentation/Darwin/Reference/ManPages/man3/pthread_equal.3.html#//apple_ref/doc/man/3/pthread_equal
-*/
 pthread_t pthread_self(void)
 {
 	return _tk_current_tcb();
 }
 
-/*!
-@brief Compare thread id's with each other.
-
-Compare thread id's with each other.
-
-- API should do this
-- You shouldn't
-
-@see pthread_self
-*/
 int pthread_equal(pthread_t t1, pthread_t t2)
 {
 	return (t1->Thid == t2->Thid);
 }
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-/*!
-@see http://www.opengroup.org/onlinepubs/009695399/functions/pthread_once.html
-*/
 int pthread_once(pthread_once_t * once_control, void (*init_routine) (void)
     )
 {
@@ -164,9 +103,8 @@ int pthread_once(pthread_once_t * once_control, void (*init_routine) (void)
 	if (once_control == NULL) {
 		return EINVAL;
 	} else {
-		//Proper way
-		//--- Detect ---
-		rc = sm_p(sem_once, WAIT, /*TK_FOREVER */ 1000);
+
+		rc = sm_p(sem_once, WAIT, 1000);
 		assert(rc == ERR_OK);
 		if (once_control->started < 0) {
 			need2run = 1;
@@ -175,13 +113,11 @@ int pthread_once(pthread_once_t * once_control, void (*init_routine) (void)
 		rc = sm_v(sem_once);
 		assert(rc == ERR_OK);
 
-		//--- Run if requred ---
 		if (need2run) {
 
 			init_routine();
 
-			//--- Mark as finished ---
-			rc = sm_p(sem_once, WAIT, /*TK_FOREVER */ 1000);
+			rc = sm_p(sem_once, WAIT, 1000);
 			assert(rc == ERR_OK);
 
 			once_control->done = 1;
@@ -193,27 +129,18 @@ int pthread_once(pthread_once_t * once_control, void (*init_routine) (void)
 	return 0;
 }
 
-/*!
-@todo: Very stubbed. Make this more complient!
-*/
 int pthread_cancel(pthread_t thread)
 {
 	assert(tk_delete_thread(thread->Thid) == TK_OK);
 	return 0;
 }
 
-/*!
-@todo: Very stubbed. Make this more complient!
-*/
 int pthread_yield(void)
 {
 	tk_yield();
 	return 0;
 }
 
-/*!
-@todo: tinker tcb needs a policy field. policy not handled.
-*/
 int pthread_setschedparam(pthread_t thread,
 			  int policy, const struct sched_param *param)
 {
@@ -234,14 +161,3 @@ int pthread_getschedparam(pthread_t thread,
 	_PTHREAD_NO_WARN_VAR(policy);
 	return 0;
 }
-
-/** @defgroup PTHREAD_SCHED PTHREAD_SCHED: POSIX 1003.1c API - scheduling
-@ingroup PTHREAD
-@brief POSIX 1003.1c API - Scheduling and thread management
-
-<em>*Documentation and implementation in progress*</em>
-
-@todo The "once lock" is brutal. It will potentially lock on all accesses, even by threads involved with anuther once_control. Either replace with a rw_lock (TBD) or an array of once locks.
-
-<p><b>Go gack to</b> \ref COMPONENTS</p>
-*/

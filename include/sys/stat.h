@@ -17,23 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-/*!
-@file
-@ingroup kernel_reimpl_ansi
-
-@brief ANSI sys/stat.h file <b>IMPORTANT:</b> See the note in the detailed section!
-
-@note Needed to wrap out incompatible definitions in newlib
-
-For in-depth discussions about re-implementing ANSI functions, see \ref
-kernel_reimpl_ansi.
-
-@see kernel_reimpl_ansi
-
-<HR>
-*/
-
 #if defined (__GNUC__)
 #include <tk_ansi.h>
 #include <tk_ansi_dirwrap.h>
@@ -49,13 +32,8 @@ kernel_reimpl_ansi.
 #define __rtems__
 #endif
 
-/*!
-http://www.opengroup.org/onlinepubs/009695399/functions/mknod.html
-*/
 int mknod(const char *filename, mode_t mode, dev_t dev);
-/*!
-http://www.opengroup.org/onlinepubs/009695399/functions/mkfifo.html
-*/
+
 int mkfifo(const char *path, mode_t mode);
 
 #endif
@@ -63,5 +41,4 @@ int mkfifo(const char *path, mode_t mode);
 #ifndef SYS_TYPES_H_TK
 #define SYS_TYPES_H_TK
 
-#endif				//SYS_TYPES_H_TK
-
+#endif

@@ -17,7 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
 #ifndef tk_sysqueues_h
 #define tk_sysqueues_h
 
@@ -27,28 +26,8 @@
 #error "tk_sysqueues.h" belongs to [itc] that your configuration of TinKer did not include. Please reconfigure and rebuild TinKer.
 #endif
 #endif
-
-/*- include files **/
-
-/*- local definitions **/
-
-/*- Error codes **/
-
-/*  default settings */
-
-/*- external functions **/
-
-/*- external data **/
-
-/*- internal functions **/
-
-/*- private data **/
-
-/*- public declarations **/
 typedef enum {
-	Q_HW_TIMER_EVENT,	/*!< This special Q is to be used by HW clock to notify
-				   the ptime component that some sort of event has happened
-				   (i.e. a timeout mostly). */
+	Q_HW_TIMER_EVENT,
 	Q_SERIAL_0_I,
 	Q_SERIAL_0_O,
 	Q_SERIAL_1_I,
@@ -60,10 +39,8 @@ typedef enum {
 	TK_NUMBER_OF_SYSQ
 } sysq_name_t;
 
-/*- public data **/
 extern unsigned long tk_sys_queues[TK_NUMBER_OF_SYSQ];
 
-/*- private functions **/
 #include <tinker/config.h>
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 extern "C" {

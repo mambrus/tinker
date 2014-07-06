@@ -17,22 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-/*!
-@file
-@ingroup POSIX_RT
-
-@brief RT semaphores - POSIX 1003.1b API
-
-TBD
-
-For in-depth discussions about this component, see \ref
-POSIX_RT
-
-@see POSIX_RT
-@see PTHREAD
-*/
-
 #if !defined( SEMAPHORE_H )
 #define SEMAPHORE_H
 

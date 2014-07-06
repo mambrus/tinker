@@ -24,7 +24,7 @@
 
 typedef struct tk_iohandle_s {
 	pHIXS_close close;
-	//pHIXS_execve     execve;
+
 	pHIXS_fcntl fcntl;
 	pHIXS_fstat fstat;
 	pHIXS_isatty isatty;
@@ -32,43 +32,9 @@ typedef struct tk_iohandle_s {
 	pHIXS_lseek lseek;
 	pHIXS_open open;
 	pHIXS_read read;
-	//pHIXS_sbrk       sbrk;
+
 	pHIXS_stat stat;
 	pHIXS_unlink unlink;
 	pHIXS_write write;
 } tk_iohandle_t;
-
-/*
-typedef struct{
-}op_ifdir_t;
-
-typedef struct{
-}op_ifblk_t;
-
-typedef struct{
-}op_ifreg_t;
-
-typedef struct{
-}op_iflnk_t;
-
-typedef struct{
-}op_ifsock_t;
-
-typedef struct{
-}op_ififo_t;
-
-struct {
-	tk_iohandle_t iohandle;
-	union {
-		op_ifdir_t	op_ifdir;
-		op_ifblk_t	op_ifblk;
-		op_ifreg_t	op_ifreg;
-		op_iflnk_t	op_iflnk;
-		op_ifsock_t	op_ifsock;
-		op_ififo_t	op_ififo;
-	}operations;
-}tk_operations_t;
-
-*/
-
-#endif				//TK_IOHANDE_H
+#endif

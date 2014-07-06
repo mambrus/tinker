@@ -47,7 +47,7 @@
 
 #ifndef _JBLEN
 //#define _JBLEN (16*sizeof(uint64_t))
-#warning JBLEN is not known, just guessing...(TBD)
+//#warning JBLEN is not known, just guessing...(TBD)
 #define _JBLEN 2048
 #endif
 

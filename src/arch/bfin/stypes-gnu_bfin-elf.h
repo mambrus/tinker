@@ -17,26 +17,14 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
 #ifndef TK_HWTYPES_GNU_BFIN_H
 #define TK_HWTYPES_GNU_BFIN_H
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-//------1---------2---------3---------4---------5---------6---------7---------8
 
 #include <stddef.h>
 
-/*!
-Architecture specific representation of a stack address. In x86 this can be a
-simple char* even in 16bit modes, since a pointer contains both segment and
-offset.
-*/
 typedef struct {
 	char *tstack;
 	size_t stack_size;
 } stack_t;
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-
 #endif
-

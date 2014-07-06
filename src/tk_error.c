@@ -17,23 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-/*!
-@file
-@ingroup kernel_reimpl_ansi
-
-@brief Contains storage for error strings
-
-Exit, error and termination handling.
-
-Contains storage for errno, TinKer exit-code and TinKer error strings
-
-For in-depth discussions about re-implemented error handling, see \ref
-kernel_reimpl_ansi
-
-@see PACKAGES
-*/
-
 #include <errno.h>
 #include <assert.h>
 #include <stdio.h>
@@ -43,11 +26,10 @@ kernel_reimpl_ansi
 #include <stdlib.h>
 #endif
 
-void perror(const char *message);	//Should go int stdio.h
-char *strerror(int errnum);	//Should go int string.h
+void perror(const char *message);
+char *strerror(int errnum);
 
 #define MAX_STR_LEN 64
-//#define EC_LIGHT 1  //FIXME make this configurable. Perhaps the whole error handling (i.e. use GNU optionally)
 
 #define EC_STRING_LIGHT( ec ) \
 	#ec
@@ -56,9 +38,9 @@ char *strerror(int errnum);	//Should go int string.h
 	#ec " - " ESTR_##ec
 
 #if defined(EC_LIGHT)
-#define EC_STRING( x ) EC_STRING_LIGHT( x )
+#define EC_STRING(x) EC_STRING_LIGHT( x )
 #else
-#define EC_STRING( x ) EC_STRING_VERBOSE( x )
+#define EC_STRING(x) EC_STRING_VERBOSE( x )
 #endif
 
 #if defined(TK_USE_EMRGCY_CONSOLE)
@@ -229,35 +211,28 @@ static const char *errno_srings[] = {
 	EC_STRING(EMEDIUMTYPE)
 };
 
-/*!
-Trap-code strings
-*/
 #if (TK_HOWTO_PRINTK != TK_FNK_VOIDED)
-static const char *trapcode_srings[] = {	// Bit number
-	"No Trap Error",	// none
-	"Total amount of threads would exceed limit",	// 0
-	"Assertion failed",	// 1
-	"Chosen priority too high",	// 2
-	"Unknown",		// 3
-	"Stack out of bounds check faliure",	// 4
-	"Stack integrity faliure detected",	// 5
-	"To many threads at this prio",	// 6
-	"Kernel running amok detected",	// 7
-	"Thread-name to long",	// 8
-	"No memory left for allocation",	// 9
-	"Invalid ETKB detected",	// 10
-	"Unknown",		// 11
-	"Unknown",		// 12
-	"Unknown",		// 13
-	"HW driver detected a fatal error",	// 14
-	"Undefined termination reason (or reason not known to TinKer): "	// 15
+static const char *trapcode_srings[] = {
+	"No Trap Error",
+	"Total amount of threads would exceed limit",
+	"Assertion failed",
+	"Chosen priority too high",
+	"Unknown",
+	"Stack out of bounds check faliure",
+	"Stack integrity faliure detected",
+	"To many threads at this prio",
+	"Kernel running amok detected",
+	"Thread-name to long",
+	"No memory left for allocation",
+	"Invalid ETKB detected",
+	"Unknown",
+	"Unknown",
+	"Unknown",
+	"HW driver detected a fatal error",
+	"Undefined termination reason (or reason not known to TinKer): "
 };
-#endif				//(TK_HOWTO_PRINTK != TK_FNK_VOIDED)
+#endif
 
-/*!
-Helper function
-A simple conversion from a number to string
-*/
 void _ntos(char *outst, int number, int maxlen)
 {
 	int i, div, d, j, a = 0;
@@ -301,12 +276,6 @@ char *strerror(int errnum)
 	return ptr;
 }
 
-/*!
-Generic trap handler - please note that certain targets that have support for
-HW trapping might not have a working stack when reaching this far, in which
-case this function has to be replaced. In either case, no calling other
-functions, stack or heap operations are allowed from here on.
-*/
 void tk_trap(int ec)
 {
 	int i, m;
@@ -401,9 +370,6 @@ void tk_trap(int ec)
 #endif
 }
 
-/*!
-if we have no-where else to go, we'll end up here
-*/
 #if TK_HOSTED
 void _tk_dead(int ec)
 {
@@ -416,14 +382,6 @@ void _tk_dead(int ec)
 	while (1) ;
 }
 #endif
-
-/*!
-Last thing that is called when a thread gives up life either freely or when an
-error of some sort happened (either kernel internal or user program specific).
-
-In case of en error, this function also acts as a critical error-handler
-entr point (critical = execution is deemed to stop).
-*/
 void tk_exit(int ec)
 {
 	static int lc = 0;
@@ -440,14 +398,6 @@ void tk_exit(int ec)
 	}
 }
 
-/*!
-@ingroup kernel_glue
-
-Works as the assert macro except that you have to use the __file_ and __line_
-explicitly. Typically the assert macro will be defined to call this function
-on targets that do not have assert implemented by TinKer.
-
-*/
 void _tk_assertfail(char *assertstr, char *filestr, int line)
 {
 #if defined(TK_USE_EMRGCY_CONSOLE)

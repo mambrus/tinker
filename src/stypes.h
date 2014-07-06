@@ -17,21 +17,14 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
 #ifndef TK_HWTYPES_H
 #define TK_HWTYPES_H
 
 #if defined(DOXYGEN_ONLY)
 
-//------1---------2---------3---------4---------5---------6---------7---------8
+#endif
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-#endif				//DOXYGEN_ONLY
-
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-#if defined(_WIN32) &&  defined(_MSC_VER)
+#if defined(_WIN32) && defined(_MSC_VER)
 #include <kernel/bsp/X86_msvc/tk_hwtypes_mvcsX86.h>
 
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
@@ -46,13 +39,13 @@
 #error For GNU targets, ARCH has to be defined
 #endif
 
-#define str( x ) \
+#define str(x) \
       #x
 
-#define INCLNAME( farch ) \
+#define INCLNAME(farch) \
       <../src/arch/farch/stypes-gnu_ farch.h>
 
-#define INCLABI( farch, abi )                      \
+#define INCLABI(farch,abi) \
       <../src/arch/farch/stypes-gnu_ farch-abi.h>
 
 #ifdef ABI
@@ -70,7 +63,4 @@
 
 #endif
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-
-#endif				//TK_HWSYS_H
-
+#endif

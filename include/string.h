@@ -18,25 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #ifndef STRING_H_TK
-#define STRING_H_TK
-
-/*!
-@file
-@ingroup kernel_reimpl_ansi
-
-@brief ANSI string.h file <b>IMPORTANT:</b> See the note in the detailed section!
-
-@note Wrap out incompatible definitions/functions in C library
-
-For in-depth discussions about re-implementing ANSI functions, see \ref
-kernel_reimpl_ansi.
-
-@see kernel_reimpl_ansi
-
-<HR>
-*/
-
-/*Always part of ANSI -> always wrap*/
+#define STRING_H_TK 
 #include <tk_ansi.h>
 #include <tk_ansi_dirwrap.h>
 
@@ -48,5 +30,4 @@ kernel_reimpl_ansi.
 char *strerror(int errnum);
 #endif
 
-#endif				//STRING_H_TK
-
+#endif

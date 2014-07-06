@@ -17,13 +17,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
 #ifndef bits_h
 #define bits_h
 
 #include <sys/types.h>
 
-/* Helpers for revbits (see below) */
 static __inline__ __uint8_t revbits_8(__uint8_t in)
 {
 	__uint8_t d = (sizeof(in) * 8) - 1;
@@ -99,107 +97,91 @@ static __inline__ __uint32_t revbits_32(__uint32_t in)
 	return out;
 }
 
-/* Reverse the bit order in an integer type variable (1,2,4 byte
-   integers supported) 							     */
-/* ------------------------------------------------------------------------- */
-#define revbits( in ) 				\
-	(sizeof(in) == 1) ? revbits_8(in) : 	\
-	(sizeof(in) == 2) ? revbits_16(in) : 	\
-	(sizeof(in) == 4) ? revbits32(in) : 0x0
+#define revbits(in) \
+ (sizeof(in) == 1) ? revbits_8(in) : \
+ (sizeof(in) == 2) ? revbits_16(in) : \
+ (sizeof(in) == 4) ? revbits32(in) : 0x0
 
-/* Helpers for bit set/clear (see below) */
-#define bitset_8( d, n ) \
-	d = d | (0x80 >> n)
+#define bitset_8(d,n) \
+ d = d | (0x80 >> n)
 
-#define bitclear_8( d, n ) \
-	d = d & ~(0x80 >> n)
+#define bitclear_8(d,n) \
+ d = d & ~(0x80 >> n)
 
-#define bitset_16( d, n ) \
-	d = d | (0x8000 >> n)
+#define bitset_16(d,n) \
+ d = d | (0x8000 >> n)
 
-#define bitclear_16( d, n ) \
-	d = d & ~(0x8000 >> n)
+#define bitclear_16(d,n) \
+ d = d & ~(0x8000 >> n)
 
-#define bitset_32( d, n ) \
-	d = d | (0x80000000 >> n)
+#define bitset_32(d,n) \
+ d = d | (0x80000000 >> n)
 
-#define bitclear_32( d, n ) \
-	d = d & ~(0x80000000 >> n)
+#define bitclear_32(d,n) \
+ d = d & ~(0x80000000 >> n)
 
-/* Set and Clear specific bits in an integer type valiable (1,2,4 byte
-   integers supported) 							     */
-/* Note: bit number order is from left to right 			     */
-/* ------------------------------------------------------------------------- */
-#define bitset( d, n ) 				\
-	if (sizeof(d) == 1) 			\
-		bitset_8(d, n);			\
-	if (sizeof(d) == 2)			\
-		bitset_16(d, n);		\
-	if (sizeof(d) == 4)			\
-		bitset_32(d, n);
+#define bitset(d,n) \
+ if (sizeof(d) == 1) \
+  bitset_8(d, n); \
+ if (sizeof(d) == 2) \
+  bitset_16(d, n); \
+ if (sizeof(d) == 4) \
+  bitset_32(d, n);
 
-#define bitclear( d, n ) 			\
-	if (sizeof(d) == 1)			\
-		bitclear_8(d, n);		\
-	if (sizeof(d) == 2)			\
-		bitclear_16(d, n);		\
-	if (sizeof(d) == 4)			\
-		bitclear_32(d, n);
+#define bitclear(d,n) \
+ if (sizeof(d) == 1) \
+  bitclear_8(d, n); \
+ if (sizeof(d) == 2) \
+  bitclear_16(d, n); \
+ if (sizeof(d) == 4) \
+  bitclear_32(d, n);
 
-/* Support for reading and writing SPR  (Special Purpose Registers)	     */
-/* ------------------------------------------------------------------------- */
-#define SET_SPR( SPRc, INc ) 				\
-	__asm__ __volatile__ ("mtspr %[SPRa],%[INa]"	\
-	:						\
-	: [SPRa] "i" (SPRc), [INa] "r" (INc)		\
-	: "memory" );
+#define SET_SPR(SPRc,INc) \
+ __asm__ __volatile__ ("mtspr %[SPRa],%[INa]" \
+ : \
+ : [SPRa] "i" (SPRc), [INa] "r" (INc) \
+ : "memory" );
 
-#define GET_SPR( SPRc, OUTc ) 				\
-	__asm__ __volatile__ ("mfspr %[OUTa],%[SPRa]"	\
-	: [OUTa] "=r" (OUTc)				\
-	: [SPRa] "i" (SPRc)				\
-	: "memory" );
+#define GET_SPR(SPRc,OUTc) \
+ __asm__ __volatile__ ("mfspr %[OUTa],%[SPRa]" \
+ : [OUTa] "=r" (OUTc) \
+ : [SPRa] "i" (SPRc) \
+ : "memory" );
 
-/* Support for reading and writing GPR's  (General Purpose Registers)	     */
-/* ------------------------------------------------------------------------- */
-#define SET_GPR( GPRc, INc ) 				\
-	__asm__ __volatile__ ("lwz %[GPRa],%[INa]"	\
-	:						\
-	: [GPRa] "i" (GPRc), [INa] "m" (INc)		\
-	);			/*Note, no clobber (intentional) */
+#define SET_GPR(GPRc,INc) \
+ __asm__ __volatile__ ("lwz %[GPRa],%[INa]" \
+ : \
+ : [GPRa] "i" (GPRc), [INa] "m" (INc) \
+ );
 
-#define GET_GPR( GPRc, OUTc ) 				\
-	__asm__ __volatile__ ("stw %[GPRa],%[OUTa]"	\
-	: [OUTa] "=m" (OUTc)				\
-	: [GPRa] "i" (GPRc)				\
-	: "memory" );
+#define GET_GPR(GPRc,OUTc) \
+ __asm__ __volatile__ ("stw %[GPRa],%[OUTa]" \
+ : [OUTa] "=m" (OUTc) \
+ : [GPRa] "i" (GPRc) \
+ : "memory" );
 
-/* Support for reading and writing CR  (Condition Register)	             */
-/* ------------------------------------------------------------------------- */
-#define SET_CR( INc ) 					\
-	__asm__ __volatile__ ("mtcr %[INa]"		\
-	:						\
-	: [INa] "r" (INc)				\
-	: "memory" );
+#define SET_CR(INc) \
+ __asm__ __volatile__ ("mtcr %[INa]" \
+ : \
+ : [INa] "r" (INc) \
+ : "memory" );
 
-#define GET_CR( OUTc )					\
-	__asm__ __volatile__ ("mfcr %[OUTa]"		\
-	: [OUTa] "=r" (OUTc)				\
-	: 						\
-	: "memory" );
+#define GET_CR(OUTc) \
+ __asm__ __volatile__ ("mfcr %[OUTa]" \
+ : [OUTa] "=r" (OUTc) \
+ : \
+ : "memory" );
 
-/* Support for reading and writing MSR (Machine State Register)              */
-/* ------------------------------------------------------------------------- */
-#define SET_MSR( INc ) 					\
-	__asm__ __volatile__ ("mtmsr %[INa]"		\
-	:						\
-	: [INa] "r" (INc)				\
-	: "memory" );
+#define SET_MSR(INc) \
+ __asm__ __volatile__ ("mtmsr %[INa]" \
+ : \
+ : [INa] "r" (INc) \
+ : "memory" );
 
-#define GET_MSR(  OUTc ) 				\
-	__asm__ __volatile__ ("mfmsr %[OUTa]"		\
-	: [OUTa] "=r" (OUTc)				\
-	: 						\
-	: "memory" );
+#define GET_MSR(OUTc) \
+ __asm__ __volatile__ ("mfmsr %[OUTa]" \
+ : [OUTa] "=r" (OUTc) \
+ : \
+ : "memory" );
 
-#endif				//bits_h
+#endif

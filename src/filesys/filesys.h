@@ -37,141 +37,61 @@
 #define assure(x) assert(x)
 #endif
 
-#define CHECK_FH_NOASSURE(hndl,fnk)				\
-	if (							\
-		((int)hndl 			== -1)   ||	\
-		(hndl 				== NULL) ||	\
-		(hndl->inode 			== NULL) ||	\
-		(hndl->inode->iohandle		== NULL) ||	\
-		(hndl->inode->iohandle->fnk	== NULL)	\
-	){							\
-		errno=EBADF;					\
-		return -1;					\
-	}							\
+#define CHECK_FH_NOASSURE(hndl,fnk) \
+ if ( \
+  ((int)hndl == -1) || \
+  (hndl == NULL) || \
+  (hndl->inode == NULL) || \
+  (hndl->inode->iohandle == NULL) || \
+  (hndl->inode->iohandle->fnk == NULL) \
+ ){ \
+  errno=EBADF; \
+  return -1; \
+ } \
 
-#define CHECK_FH_ASSURE(hndl,fnk)				\
-	CHECK_FH_NOASSURE(hndl,fnk)				\
-	assure(hndl);						\
-	assure(hndl->inode);					\
-	assure(hndl->inode->iohandle);				\
-	assure(hndl->inode->iohandle->fnk);
+#define CHECK_FH_ASSURE(hndl,fnk) \
+ CHECK_FH_NOASSURE(hndl,fnk) \
+ assure(hndl); \
+ assure(hndl->inode); \
+ assure(hndl->inode->iohandle); \
+ assure(hndl->inode->iohandle->fnk);
 
 #define CHECK_FH CHECK_FH_ASSURE
-//#define CHECK_FH CHECK_FH_NOASSURE
-
-/*!
-Pure flag names (to aid debugging - note that any flag variable can be OR'ed
-among these - which means any stabs info will not be able to resolve the
-name (which however is of of concern for the running code).
-*/
-/*
-typedef enum{
-	ISA_FLG_UNKNWN 	= 0,
-	ISA_RDONLY 	= O_RDONLY,
-	ISA_WRONLY	= O_WRONLY,
-	ISA_RDWR	= O_RDWR,
-	ISA_APPEND	= O_APPEND,
-	ISA_CREAT	= O_CREAT,
-//	ISA_DSYNC	= O_DSYNC,
-	ISA_EXCL	= O_EXCL,
-	ISA_NOCTTY	= O_NOCTTY,
-	ISA_NONBLOCK	= O_NONBLOCK,
-//	ISA_RSYNC	= O_RSYNC,
-	ISA_SYNC	= O_SYNC,
-	ISA_TRUNC	= O_TRUNC
-}tk_flag_t;
-*/
-
-/*!oflags as struct - used for bebug purposes*/
 typedef struct {
 	int _O_RDONLY;
 	int _O_WRONLY;
 	int _O_RDWR;
 	int _O_APPEND;
 	int _O_CREAT;
-//      int _O_DSYNC;
+
 	int _O_EXCL;
 	int _O_NOCTTY;
 	int _O_NONBLOCK;
-//      int _O_RSYNC;
+
 	int _O_SYNC;
 	int _O_TRUNC;
 } _tk_dbgflag_t;
 
-//! File handle type - this is the top-level type used as a file handle
 typedef struct {
-	tk_id_t id;		//!< Unique ID (global counter)
-//      tk_id_t         lid;            //!< Local ID  (local counter)
-	tk_inode_t *inode;	//!< Which inode this file-handle belongs to
-	int oflag;		//!< The flags for this node
-	void *data;		//!< Optional data associated with a handle
+	tk_id_t id;
+
+	tk_inode_t *inode;
+	int oflag;
+	void *data;
 } tk_fhandle_t;
 
-/*!
-Helper function to create a file handle
-
-An IO device "open" function would normally use this
-*/
 tk_fhandle_t *tk_new_handle(tk_inode_t * inode, int oflag);
 
-/*!
-Helper function to destroy a file handle
-
-An IO device "close" function would normally use this
-*/
 int tk_free_handle(tk_fhandle_t *);
 
-/*!
-Helper function to unpack the operation flags (i.e. those set by open)
-
-If un unknown flag is set, the function will return a non-zero value
-else zero will be returned
-*/
 int tk_dbg_flags(_tk_dbgflag_t * flags, int oflag);
 
-/*!
-Main init function for the filesys component.
-
-This function will pick up drivers init functions which creates each driver
-*/
 int fs_init(void);
 
-/*!
-Main fini function for the filesys component
-
-This function will pick up drivers fini functions which destroys each driver
-*/
 int fs_fini(void);
-
-/*!
-Init/fini function prototype. Any ini/fini functions must follow this
-prototype.
-
-Both input argument and return value are implementation specific and depends
-on the driver. Each driver must however respect the following rules.
-
-- If function succeeds, a non NULL value must be returned. If the return
-  contains data that is not a text-string, the first element must be '\0'.
-- Even if the driver expects an input argument, it must also accept (and detect)
-  NULL. NULL is passed by the fs_init main startup and this can't know what each
-  driver expects as an input argument. If the argument is null, the driver
-  should instantiate a default IO.
-
-Normally the input argument is either NULL a string describing a file-name.
-
-Normally the output is a informative text-string that can be passed to printf.
-
-*/
 typedef void *__drv_finit_f(void *);
 
-/*!
-Init/fini function pointer (same is used for both)
-
-@see __drv_finit_f
-*/
 typedef __drv_finit_f *drv_finit_t;
-
-// Main system calls
 
 int fs_close(int file);
 int fs_fcntl(int files, int command, ...);
@@ -185,7 +105,6 @@ int fs_stat(const char *file, struct stat *st);
 int fs_unlink(char *name);
 int fs_write(int file, char *ptr, int len);
 
-// Sub-categorized system calls - one for each of type of inode:
 int fs_ifdir_close(int file);
 int fs_ifdir_fcntl(int file, int command, ...);
 int fs_ifdir_fstat(int file, struct stat *st);
@@ -274,28 +193,4 @@ int fs_ififo_stat(const char *file, struct stat *st);
 int fs_ififo_unlink(char *name);
 int fs_ififo_write(int file, char *ptr, int len);
 
-#endif				// FILESYS_H
-
-/*
-Subcathegorized system calls - one for each of type of inode:
-ifdir
-ifchr
-ifblk
-ifreg
-iflnk
-ifsock
-ififo
-
-NOTE Not all of these make sense for each type of inode.
-In case a stubbed dummy is but in its place so that we avoid
-calling zero funtion pointes by misstake.
-
-fs_ifdir.c
-fs_ifchr.c
-fs_ifblk.c
-fs_ifreg.c
-fs_iflnk.c
-fs_ifsock.c
-fs_ififo.c
-
-*/
+#endif

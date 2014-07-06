@@ -26,13 +26,13 @@
 
 #include <filesys/filesys.h>
 
-tk_iohandle_t std_files[3];	//!< The three standard handles (stdin,stdout & stderr)
-struct hixs_t old_syscalls;	//!< Storage for any old HIXS syscalls (previous initialization);
-extern struct hixs_t hixs;	//!< The call-structure we know exist.
-tk_id_t __fcntr = 0;		//!< Number of open handles
-tk_id_t __flid = 0;		//!< Last allocated unique file handle ID (global counter)
-int __fs_alive = 0;		//!< Trap will run fs_fini after normal termination.
-tk_inode_t *__Rnod;		//!< The root node
+tk_iohandle_t std_files[3];
+struct hixs_t old_syscalls;
+extern struct hixs_t hixs;
+tk_id_t __fcntr = 0;
+tk_id_t __flid = 0;
+int __fs_alive = 0;
+tk_inode_t *__Rnod;
 
 int fs_init()
 {
@@ -48,17 +48,15 @@ int fs_init()
 	drv_finit_t drv_init_last = &__DRVINIT_END__;
 	drv_finit_t *drv_init_curr;
 	int namelen;
-	//extern tk_inode_t     *__Rnod;
+
 	extern tk_id_t __icntr;
 	extern tk_id_t __ilid;
 
-	//Copy the current sys-calls structure
 	memcpy(&old_syscalls, &hixs, sizeof(struct hixs_t));
 
-	//Set new main-enty values for those we care about
 	hixs.close = fs_close;
 	hixs.fcntl = fs_fcntl;
-	hixs.fstat = fs_fstat;	//HIXS_fstat;
+	hixs.fstat = fs_fstat;
 	hixs.isatty = fs_isatty;
 	hixs.link = fs_link;
 	hixs.lseek = fs_lseek;
@@ -68,11 +66,10 @@ int fs_init()
 	hixs.unlink = fs_unlink;
 	hixs.write = fs_write;
 
-	std_files[0].read = old_syscalls.read;	//Assign stdin with something useful
-	std_files[1].write = old_syscalls.write;	//Assign stdout with something useful
-	std_files[2].write = old_syscalls.write;	//Assign stderr with something useful
+	std_files[0].read = old_syscalls.read;
+	std_files[1].write = old_syscalls.write;
+	std_files[2].write = old_syscalls.write;
 
-	//Create the '/' node (directory) - this is a special case and can't be created with mknode
 	assure(__Rnod = (tk_inode_t *) calloc(1, sizeof(tk_inode_t)));
 	__Rnod->id = __ilid++;
 	__icntr++;
@@ -83,17 +80,14 @@ int fs_init()
 	__Rnod->belong = __Rnod;
 	__Rnod->down = __Rnod;
 
-	//Create the '/dev' node (directory)
 	assure(mknod("/dev", S_IFDIR, 0) == 0);
 	assure(mknod("/tmp", S_IFDIR, 0) == 0);
 
-	//Some test nodes
 	assert(mknod("/tmp/.ambrmi09", S_IFDIR, 0) == 0);
 	assert(mknod("/tmp/afile", S_IFREG, 0) == 0);
 	assert(mknod("/tmp/bfile", S_IFREG, 0) == 0);
 	assert(mknod("/tmp/.ambrmi09/cfile", S_IFDIR, 0) == 0);
 
-	//Start up the drivers
 	const char *dinfo;
 	for (drv_init_curr = (drv_finit_t *) drv_init_first;
 	     drv_init_curr < (drv_finit_t *) drv_init_last; drv_init_curr++) {
@@ -116,9 +110,7 @@ int fs_fini()
 		drv_finit_t drv_fini_first = &__DRVFINI_START__;
 		drv_finit_t drv_fini_last = &__DRVFINI_END__;
 		drv_finit_t *drv_fini_curr;
-		//extern tk_inode_t *__Rnod;
 
-		//Close down the drivers
 		const char *dinfo;
 		for (drv_fini_curr = (drv_finit_t *) drv_fini_first;
 		     drv_fini_curr < (drv_finit_t *) drv_fini_last;
@@ -139,24 +131,11 @@ int fs_fini()
 int tk_dbg_flags(_tk_dbgflag_t * flags, int oflag)
 {
 	int tmp_oflag = oflag;
-
-/*
-//testing the damned macros
-int mupp = oflag & (O_RDWR_NL|O_WRONLY_NL);
-int tupp = (O_RDWR_NL|O_WRONLY_NL);
-
-int fread = FREAD;
-int fwrite = FWRITE;
-int frw = (FREAD|FWRITE);
-
-int rdonly = O_RDONLY_NL;
-int wronly = O_WRONLY_NL;
-int rder = O_RDWR_NL;
-*/
 	memset(flags, 0, sizeof(_tk_dbgflag_t));
 
 #ifdef O_RDONLY_NL
-	assert((oflag & (O_RDWR_NL | O_WRONLY_NL)) != (O_RDWR_NL | O_WRONLY_NL));	//We're counting on that this logic appiles (I.e. both can't be set)
+	assert((oflag & (O_RDWR_NL | O_WRONLY_NL)) !=
+	       (O_RDWR_NL | O_WRONLY_NL));
 	if (tmp_oflag & O_RDWR_NL) {
 		flags->_O_RDWR = 1;
 		tmp_oflag &= ~O_RDWR_NL;
@@ -191,12 +170,7 @@ int rder = O_RDWR_NL;
 		flags->_O_CREAT = 1;
 		tmp_oflag &= ~O_CREAT;
 	};
-/*
-	if (tmp_oflag & O_DSYNC){
-		flags->_O_DSYNC=1;
-		tmp_oflag &= ~O_DSYNC;
-	};
-*/
+
 	if (tmp_oflag & O_EXCL) {
 		flags->_O_EXCL = 1;
 		tmp_oflag &= ~O_EXCL;
@@ -209,12 +183,7 @@ int rder = O_RDWR_NL;
 		flags->_O_NONBLOCK = 1;
 		tmp_oflag &= ~O_NONBLOCK;
 	};
-/*
-	if (tmp_oflag & O_RSYNC){
-		flags->_O_RSYNC=1;
-		tmp_oflag &= ~O_RSYNC;
-	};
-*/
+
 	if (tmp_oflag & O_SYNC) {
 		flags->_O_SYNC = 1;
 		tmp_oflag &= ~O_SYNC;
@@ -224,7 +193,6 @@ int rder = O_RDWR_NL;
 		tmp_oflag &= ~O_TRUNC;
 	};
 
-	//If all known flags are tested, return value should be 0
 	return tmp_oflag;
 
 }
@@ -235,60 +203,21 @@ typedef struct {
 	int _O_RDWR;
 	int _O_APPEND;
 	int _O_CREAT;
-//      int _O_DSYNC;
+
 	int _O_EXCL;
 	int _O_NOCTTY;
 	int _O_NONBLOCK;
-//      int _O_RSYNC;
+
 	int _O_SYNC;
 	int _O_TRUNC;
 } _dbg_flag_t;
 
-/*!
-http://www.opengroup.org/onlinepubs/009695399/
-*/
 int mknod(const char *filename, mode_t mode, dev_t dev)
 {
 	return imknod(__Rnod, filename, mode, dev);
 }
 
-/*
-EPERM
-    The process is not superuser.
-ENODEV
-    The file system type fstype is not known to the kernel.
-ENOTBLK
-    The file dev is not a block device special file.
-EBUSY
-
-        * The device is already mounted.
-        * The mount point is busy. (E.g. it is some process' working directory or has a filesystem mounted on it already).
-        * The request is to remount read-only, but there are files open for write.
-
-EINVAL
-
-        * A remount was attempted, but there is no filesystem mounted over the specified mount point.
-        * The supposed filesystem has an invalid superblock.
-
-EACCES
-
-        * The filesystem is inherently read-only (possibly due to a switch on the device) and the process attempted to mount it read/write (by setting the MS_RDONLY bit off).
-        * special_file or dir is not accessible due to file permissions.
-        * special_file is not accessible because it is in a filesystem that is mounted with the MS_NODEV option.
-
-EM_FILE
-    The table of dummy devices is full. mount needs to create a dummy device (aka "unnamed" device) if the filesystem being mounted is not one that uses a device.
-*/
 #include <sys/mount.h>
-
-/*!
-@brief http://www.gnu.org/software/libc/manual/html_mono/libc.html#Mount-Unmount-Remount
-
-@Note that TinKer permits the same device to be mounted on different places in
-the current name-space at the same time. Therefore - to unmount you have to do
-this on the directory. If you try unmounting on the device, TinKer will not
-know which one of the (potential) several mountpoints you mean.
-*/
 int mount(const char *special_file,
 	  const char *dir,
 	  const char *fstype, unsigned long int options, const void *data)
@@ -321,7 +250,7 @@ int mount(const char *special_file,
 	}
 
 	mount_dir->mount = calloc(1, sizeof(tk_mount_t));
-	if (mount_dir->mount == NULL) {	//We lack error code for this case in the spec
+	if (mount_dir->mount == NULL) {
 		errno = ENOMEM;
 		return -1;
 	}
@@ -330,14 +259,6 @@ int mount(const char *special_file,
 	return 0;
 }
 
-/*!
-@brief http://www.gnu.org/software/libc/manual/html_mono/libc.html#Mount-Unmount-Remount
-
-@Note that TinKer permits the same device to be mounted on different places in
-the current name-space at the same time. Therefore - to unmount you have to do
-this on the directory. If you try unmounting on the device, TinKer will not
-know which one of the (potential) several mountpoints you mean.
-*/
 int umount2(const char *file, int flags)
 {
 	extern tk_inode_t *__Rnod;

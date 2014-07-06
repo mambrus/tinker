@@ -17,31 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-
-/*!
-@file
-@ingroup POSIX_RT
-
-@brief RT queues - POSIX 1003.1b API
-
-\code
-This file was donated courtesy of the Zoi project (year 2000,
-SIEMENS Elema). It was originally written as a wrapper for
-pThreads-win32, to give Windows threads the ability of POSIX RT queues.
-\endcode
-
-For in-depth discussions about this component, see \ref
-POSIX_RT
-
-@see POSIX_RT
-@see PTHREAD
-
-@todo Consider replacing qsort with insert sort (or at least a non-recursive version)
-*/
-
-/*****************************************************************************
- * include files
- *****************************************************************************/
 #include <time.h>
 #include <string.h>
 #include <stdlib.h>
@@ -51,19 +26,18 @@ POSIX_RT
 #include <mqueue.h>
 #include <semaphore.h>
 
-//#ifdef _MSVC_
-#if defined(_WIN32) &&  defined(_MSC_VER)
+#if defined(_WIN32) && defined(_MSC_VER)
 #include <errno.h>
 #include <search.h>
-#define  PATH_MAX    255
+#define PATH_MAX 255
 #elif defined(__CYGWIN32__) || defined(__CYGWIN__)
 #include <sys/errno.h>
-#else				//Embedded TinKer config
+#else
 #include <errno.h>
-#include <tk_ansi.h>		//Normally qsort is part of stdlib. But on embedded tool-chains this is often missing.
+#include <tk_ansi.h>
 #ifndef PATH_MAX
-#define  PATH_MAX    24
-#endif				//PATH_MAX
+#define PATH_MAX 24
+#endif
 #endif
 
 #if HOSTED
@@ -72,17 +46,13 @@ POSIX_RT
 #define QNAME_LEN 24
 #endif
 
-#define _MQ_NO_WARN_VAR(x) ((void)x)	//!< Used silence warnings about unused variables
+#define _MQ_NO_WARN_VAR(x) ((void)x)
 
-/*****************************************************************************
- * local definitions
- *****************************************************************************/
-#define NUMBER_OF_QUEUES   100
+#define NUMBER_OF_QUEUES 100
 #define NUMBER_OF_MESSAGES 100
-#define NUMBER_OF_FILES    100
-#define CREATE_ONLY        (NUMBER_OF_FILES + 1)
+#define NUMBER_OF_FILES 100
+#define CREATE_ONLY (NUMBER_OF_FILES + 1)
 
-/* Calculates number of messages in queue */
 #define NUMB_MESS(Q) ((Q->mBox.mIdxIn>=Q->mBox.mIdxOut)? \
    Q->mBox.mIdxIn - Q->mBox.mIdxOut: \
    Q->mq_attr.mq_maxmsg - Q->mBox.mIdxOut + Q->mBox.mIdxIn \
@@ -95,16 +65,16 @@ typedef struct {
 } OrderT;
 
 typedef struct {
-	char *buffer;		/* Buffer where message is stored */
-	int msgSz;		/* Length of message when sent */
-	OrderT order;		/* Based on timestamp and mess prio */
+	char *buffer;
+	int msgSz;
+	OrderT order;
 } MessT;
 
 typedef struct {
-	size_t mIdxIn;		/*The index for writing */
-	size_t mIdxOut;		/*The index for reading */
+	size_t mIdxIn;
+	size_t mIdxOut;
 	MessT *messArray;
-	unsigned int lastInOrder;	/*together with timestamp = unique */
+	unsigned int lastInOrder;
 } MBox;
 
 typedef struct {
@@ -113,48 +83,30 @@ typedef struct {
 	struct mq_attr mq_attr;
 	MBox mBox;
 	sem_t sem;
-	/*Todo: mode (access mode) */
+
 } QueueD;
 
-typedef struct {		/*File descriptor */
+typedef struct {
 	int taken;
-	pthread_t tId;		/* Belongs to task */
-	mode_t oflags;		/* Open for mode   */
-	int qId;		/* Attachec queue  */
+	pthread_t tId;
+	mode_t oflags;
+	int qId;
 
 } FileD;
 
-/*****************************************************************************
- * private data
- *****************************************************************************/
 static QueueD queuePool[NUMBER_OF_QUEUES];
-static int qPIdx = 0;		/* Todo: Make this roundtrip */
+static int qPIdx = 0;
 
 static FileD filePool[NUMBER_OF_FILES];
-static int fPIdx = 0;		/* Todo: Make this roundtrip */
+static int fPIdx = 0;
 
 static sem_t poolAccessSem;
 static pthread_once_t mq_once = PTHREAD_ONCE_INIT;
 
-/*****************************************************************************
- * private function declarations
- *****************************************************************************/
 static void initialize(void);
 static void sortByPrio(QueueD * Q);
-/*Comp. func for qsort */
+
 static int compMess(const void *elem1, const void *elem2);
-
-/*****************************************************************************
- * public function implementations
- *****************************************************************************/
-
-//------1---------2---------3---------4---------5---------6---------7---------8
-/*!
-@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_open.html
-*/
-/*!
-@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_close.html
-*/
 int mq_close(mqd_t mq)
 {
 	pthread_once(&mq_once, initialize);
@@ -166,87 +118,74 @@ int mq_close(mqd_t mq)
 	return 0;
 }
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-/*!
-@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_getattr.html
-*/
 int mq_getattr(mqd_t mq, struct mq_attr *attrbuf)
 {
 	pthread_once(&mq_once, initialize);
 	_MQ_NO_WARN_VAR(mq);
 	_MQ_NO_WARN_VAR(attrbuf);
 	assert(sem_wait(&poolAccessSem) == 0);
-	/*Find next empy slot in qPool */
 
 	assert(sem_post(&poolAccessSem) == 0);
 
 	return 0;
 }
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-/*!
-@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_open.html
-*/
-mqd_t mq_open(const char *mq_name, int oflags, mode_t mode,	/* Used for permissions. Is ignored ATM */
+mqd_t mq_open(const char *mq_name, int oflags, mode_t mode,
 	      struct mq_attr * mq_attr)
 {
 	int i, j;
 	size_t k;
-	int qId;		/* queue ID in message pool */
-	int dId;		/* descriptor */
+	int qId;
+	int dId;
 
 	pthread_once(&mq_once, initialize);
 	_MQ_NO_WARN_VAR(mode);
 
 	assert(sem_wait(&poolAccessSem) == 0);
 
-	/*First test some harmless common things */
-	if (strlen(mq_name) > QNAME_LEN) {	/* Name too long */
+	if (strlen(mq_name) > QNAME_LEN) {
 		errno = ENAMETOOLONG;
 		assert(sem_post(&poolAccessSem) == 0);
 		return (-1);
 	}
 
-	if (mq_name[0] != '/') {	/* Invalid name of queue */
+	if (mq_name[0] != '/') {
 		errno = EINVAL;
 		assert(sem_post(&poolAccessSem) == 0);
 		return (-1);
 	}
 
-	if (oflags & O_CREAT) {	/*Wishes to create new queue */
+	if (oflags & O_CREAT) {
 		int reuse = 0;
 
-		/* Seek for new empty slot in queue pool */
 		for (i = qPIdx, j = 0;
 		     j < NUMBER_OF_QUEUES && queuePool[i].taken != 0; j++) {
 			i++;
 			i %= NUMBER_OF_QUEUES;
 		}
 
-		if (j == NUMBER_OF_QUEUES) {	/* No empty slot found */
+		if (j == NUMBER_OF_QUEUES) {
 			errno = EMFILE;
 			assert(sem_post(&poolAccessSem) == 0);
 			return (-1);
 		}
-		qId = j;	/* slot identifier */
+		qId = j;
 		queuePool[i].taken = 1;
 
-		/* Scan the pool to se if duplicate name exists */
 		for (i = 0; i < NUMBER_OF_QUEUES; i++) {
 			if (queuePool[i].taken) {
 				if (strncmp
 				    (queuePool[i].mq_name, mq_name,
 				     QNAME_LEN) == 0) {
-					/* Duplicate name exists */
+
 					if (oflags & O_CREAT) {
-						/*Exclusive ? */
+
 						assert(sem_post(&poolAccessSem)
 						       == 0);
 						errno = EEXIST;
 						return (-1);
 					} else {
-						/* Attach to existing queue, don't create */
-						/* Silently reuse... */
+
 						qId = i;
 						reuse = 1;
 					}
@@ -254,34 +193,24 @@ mqd_t mq_open(const char *mq_name, int oflags, mode_t mode,	/* Used for permissi
 			}
 		}
 
-		/* So far so good. Create the queue */
 		if (!reuse) {
 			queuePool[qId].taken = 1;
 			strncpy(queuePool[qId].mq_name, mq_name, QNAME_LEN);
 
-			/* Create default attributes (TBD) */
-			/*
-			   Todo: ... queuePool[qId].mode->xx = xx
-
-			   Mean-while, assure it exists!
-			 */
 			if (mq_attr == NULL) {
 				errno = EINVAL;
 				return (-1);
 			}
 
-			/*Todo: doesn't work.. why? */
-			/*memcpy( &queuePool[qId].mq_attr, mq_attr, sizeof(struct mq_attr)); strange... */
 			queuePool[qId].mq_attr.mq_maxmsg = mq_attr->mq_maxmsg;
 			queuePool[qId].mq_attr.mq_msgsize = mq_attr->mq_msgsize;
 
-			/* Create the message array */
 			queuePool[qId].mBox.messArray =
 			    (MessT *) malloc((mq_attr->mq_maxmsg) *
 					     sizeof(MessT));
-			/* Create every message buffer and put it in array */
+
 			if (queuePool[qId].mBox.messArray == NULL) {
-				/*No more memory left on heap */
+
 				assert(sem_post(&poolAccessSem) == 0);
 				errno = ENFILE;
 				return (-1);
@@ -294,11 +223,9 @@ mqd_t mq_open(const char *mq_name, int oflags, mode_t mode,	/* Used for permissi
 				if (queuePool[qId].mBox.messArray[k].buffer ==
 				    NULL) {
 
-					/*No more memory left on heap */
-					/*Tidy up.. */
 					for (j = k; j >= 0; j--) {
-						free(queuePool[qId].
-						     mBox.messArray[j].buffer);
+						free(queuePool[qId].mBox.
+						     messArray[j].buffer);
 					}
 					free(queuePool[qId].mBox.messArray);
 
@@ -310,24 +237,22 @@ mqd_t mq_open(const char *mq_name, int oflags, mode_t mode,	/* Used for permissi
 				queuePool[qId].mBox.messArray[k].msgSz = 0;
 				queuePool[qId].mBox.messArray[k].order.inOrder =
 				    0;
-				queuePool[qId].mBox.messArray[k].order.prio = 0;	/*Tada...! */
+				queuePool[qId].mBox.messArray[k].order.prio = 0;
 				queuePool[qId].mBox.messArray[k].order.time = 0;
 				queuePool[qId].mBox.lastInOrder = 0;
 			}
 
-			queuePool[qId].mBox.mIdxIn = 0;	/*No pending messages */
+			queuePool[qId].mBox.mIdxIn = 0;
 			queuePool[qId].mBox.mIdxOut = 0;
 
-			/* initialize the queues semaphore */
 			if (!(oflags & O_NONBLOCK))
 				assert(sem_init(&queuePool[qId].sem, 0, 0) ==
 				       0);
 		}
 	}
 
-	/* Attach queue handle to file handle */
-	if (oflags & (O_RDONLY | O_WRONLY | O_RDWR)) {	/* Want to use queue */
-		if (!(oflags & O_CREAT)) {	/*Hasn't been created this time. Find it! */
+	if (oflags & (O_RDONLY | O_WRONLY | O_RDWR)) {
+		if (!(oflags & O_CREAT)) {
 			for (i = 0; i < NUMBER_OF_QUEUES; i++) {
 				if (queuePool[i].taken)
 					if (strncmp
@@ -335,7 +260,7 @@ mqd_t mq_open(const char *mq_name, int oflags, mode_t mode,	/* Used for permissi
 					     QNAME_LEN) == 0)
 						break;
 			}
-			if (i == NUMBER_OF_QUEUES) {	/* Not found ... */
+			if (i == NUMBER_OF_QUEUES) {
 				assert(sem_post(&poolAccessSem) == 0);
 				errno = ENOENT;
 				return (-1);
@@ -343,38 +268,31 @@ mqd_t mq_open(const char *mq_name, int oflags, mode_t mode,	/* Used for permissi
 			qId = i;
 		}
 
-		/* else: The qId is valid allready */
-		/* Attach the pool handle to the file descriptor */
-		/* Seek for new empty slot in file pool */
 		for (i = fPIdx, j = 0;
 		     j < NUMBER_OF_FILES && filePool[i].taken != 0; j++) {
 			i++;
 			i %= NUMBER_OF_FILES;
 		}
 
-		if (j == NUMBER_OF_FILES) {	/* No empty slot found */
+		if (j == NUMBER_OF_FILES) {
 			errno = EMFILE;
 			assert(sem_post(&poolAccessSem) == 0);
 			return (-1);
 		}
-		dId = j;	/* slot identifier */
+		dId = j;
 		filePool[i].taken = 1;
 		filePool[i].qId = qId;
 		filePool[i].oflags = oflags;
 		filePool[i].tId = pthread_self();
 
 	} else {
-		dId = CREATE_ONLY;	/* Not valid file handle, Created only */
+		dId = CREATE_ONLY;
 	}
 
 	assert(sem_post(&poolAccessSem) == 0);
 	return (dId);
 }
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-/*!
-@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_receive.html
-*/
 size_t mq_receive(mqd_t mq,
 		  char *msg_buffer, size_t buflen, unsigned int *msgprio)
 {
@@ -383,8 +301,6 @@ size_t mq_receive(mqd_t mq,
 
 	pthread_once(&mq_once, initialize);
 	assert(sem_wait(&poolAccessSem) == 0);
-
-	/*Is valid filehandle? */
 
 	if (!(((mq >= 0) && (mq < NUMBER_OF_FILES)) &&
 	      (filePool[mq].taken == 1) && (filePool[mq].tId == pthread_self())
@@ -408,7 +324,6 @@ size_t mq_receive(mqd_t mq,
 		return (-1);
 	}
 
-	/* Check if message fits */
 	if (!(buflen >= Q->mq_attr.mq_msgsize)) {
 		assert(sem_post(&poolAccessSem) == 0);
 		errno = EMSGSIZE;
@@ -423,16 +338,14 @@ size_t mq_receive(mqd_t mq,
 		}
 	}
 
-	/* OK so far */
-	/* Release poolaccess */
 	assert(sem_post(&poolAccessSem) == 0);
-	/* Will block if necessary */
+
 	assert(sem_wait(&Q->sem) == 0);
 
 	memcpy(msg_buffer,
 	       Q->mBox.messArray[Q->mBox.mIdxOut].buffer,
 	       Q->mBox.messArray[Q->mBox.mIdxOut].msgSz);
-	if (msgprio)		//Special case if attribute is NULL. Check what standard says about that
+	if (msgprio)
 		*msgprio = Q->mBox.messArray[Q->mBox.mIdxIn].order.prio;
 
 	msgSize = Q->mBox.messArray[Q->mBox.mIdxOut].msgSz;
@@ -443,10 +356,6 @@ size_t mq_receive(mqd_t mq,
 	return (msgSize);
 }
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-/*!
-@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_setattr.html
-*/
 int mq_setattr(mqd_t mqdes,
 	       const struct mq_attr *new_attrs, struct mq_attr *old_attrs)
 {
@@ -461,10 +370,6 @@ int mq_setattr(mqd_t mqdes,
 	return 0;
 }
 
-//------1---------2---------3---------4---------5---------6---------7---------8
-/*!
-@see http://www.opengroup.org/onlinepubs/009695399/functions/mq_send.html
-*/
 int mq_send(mqd_t mq, const char *msg, size_t msglen, unsigned int msgprio)
 {
 	QueueD *Q;
@@ -472,8 +377,6 @@ int mq_send(mqd_t mq, const char *msg, size_t msglen, unsigned int msgprio)
 
 	pthread_once(&mq_once, initialize);
 	assert(sem_wait(&poolAccessSem) == 0);
-
-	/*Is valid filehandle? */
 
 	if (!(((mq >= 0) && (mq < NUMBER_OF_FILES)) &&
 	      (filePool[mq].taken == 1) && (filePool[mq].tId == pthread_self())
@@ -497,28 +400,24 @@ int mq_send(mqd_t mq, const char *msg, size_t msglen, unsigned int msgprio)
 		return (-1);
 	}
 
-	/* Check if message fits */
 	if (!(Q->mq_attr.mq_msgsize >= msglen)) {
 		assert(sem_post(&poolAccessSem) == 0);
 		errno = EMSGSIZE;
 		return (-1);
 	}
 
-	if (!(NUMB_MESS(Q) < Q->mq_attr.mq_maxmsg - 1)) {	/* queue is full */
-		/* Save 1, else sort fucks up */
-		/* Todo: never bocks (yet) */
-		if (filePool[mq].oflags & O_NONBLOCK) {	/* to block or not to block */
+	if (!(NUMB_MESS(Q) < Q->mq_attr.mq_maxmsg - 1)) {
+
+		if (filePool[mq].oflags & O_NONBLOCK) {
 			assert(sem_post(&poolAccessSem) == 0);
 			errno = EAGAIN;
 			return (-1);
 		} else {
 			assert(sem_post(&poolAccessSem) == 0);
-			errno = EAGAIN;	/* TODO: block on send full */
+			errno = EAGAIN;
 			return (-1);
 		}
 	}
-
-	/*OK so far */
 
 	memcpy(Q->mBox.messArray[Q->mBox.mIdxIn].buffer, msg, msglen);
 
@@ -540,33 +439,17 @@ int mq_send(mqd_t mq, const char *msg, size_t msglen, unsigned int msgprio)
 	return (0);
 }
 
-/*****************************************************************************
- * private function implementations
- *****************************************************************************/
-
-/*****************************************************************************
- * FUNCTION NAME:
- *
- *
- * DESCRIPTION:
- *
- *
- * NOTES:
- *
- *****************************************************************************/
 static void initialize(void)
 {
 	int i;
 
-	/* Make atomic */
 	assert(sem_init(&poolAccessSem, 0, 1) == 0);
-	/* Make atomic */
 
 	assert(sem_wait(&poolAccessSem) == 0);
 	for (i = 0; i < NUMBER_OF_QUEUES; i++) {
 		queuePool[i].taken = 0;
-		memset(queuePool[i].mq_name, 'Q', QNAME_LEN);	//Makes a mark in memory. Easy to find the pool
-		queuePool[i].mq_name[0] = 0;	//Also invalidate it for any string comparisons just in case
+		memset(queuePool[i].mq_name, 'Q', QNAME_LEN);
+		queuePool[i].mq_name[0] = 0;
 	}
 	for (i = 0; i < NUMBER_OF_FILES; i++) {
 		filePool[i].taken = 0;
@@ -574,41 +457,28 @@ static void initialize(void)
 	assert(sem_post(&poolAccessSem) == 0);
 }
 
-/*****************************************************************************
- * FUNCTION NAME: compMess
- *
- *
- * DESCRIPTION: Compare function for quick sort. Sorts by prio, time-stamp,
- *              incoming order.
- *
- *
- * NOTES:
- *
- *****************************************************************************/
 static int compMess(const void *elem1, const void *elem2)
 {
 	MessT *e1 = (MessT *) elem1;
 	MessT *e2 = (MessT *) elem2;
 
-	/* Per prio */
 	if (e1->order.prio > e2->order.prio)
 		return (-1);
 	if (e1->order.prio < e2->order.prio)
 		return (1);
-	/* Per timestamp (resolution is 1 sek) */
+
 	if (e1->order.time < e2->order.time)
 		return (-1);
 	if (e1->order.time > e2->order.time)
 		return (1);
-	/* Per order of sending */
+
 	if (e1->order.inOrder < e2->order.inOrder)
 		return (-1);
 	if (e1->order.inOrder > e2->order.inOrder)
 		return (1);
-	return (0);		/*Should never happen */
+	return (0);
 }
 
-//------1---------2---------3---------4---------5---------6---------7---------8
 static void sortByPrio(QueueD * Q)
 {
 	int szMess = NUMB_MESS(Q);
@@ -621,10 +491,9 @@ static void sortByPrio(QueueD * Q)
 		MessT *tempT;
 
 		tempT = (MessT *) malloc(szMess * sizeof(MessT));
-		/* Copy the content from queue into temp storage */
+
 		i = Q->mBox.mIdxOut;
-		/*i --;
-		   i %= Q->mq_attr.mq_maxmsg; */
+
 		for (j = 0; j < szMess; j++) {
 			tempT[j] = Q->mBox.messArray[i];
 			i++;
@@ -633,10 +502,8 @@ static void sortByPrio(QueueD * Q)
 
 		qsort(tempT, szMess, sizeof(MessT), compMess);
 
-		/* Copy back */
 		i = Q->mBox.mIdxOut;
-		/*i --;
-		   i %= Q->mq_attr.mq_maxmsg; */
+
 		for (j = 0; j < szMess; j++) {
 			Q->mBox.messArray[i] = tempT[j];
 			i++;
@@ -648,47 +515,8 @@ static void sortByPrio(QueueD * Q)
 
 }
 
-/*!
-Just a stub to get test-code through compiler. Should be easy enoygh to implement though
-*/
 int mq_unlink(const char *mq_name)
 {
 	_MQ_NO_WARN_VAR(mq_name);
 	return 0;
 }
-
-//      /*This is a tricky bastard.. 2 parts*/
-//      k = Q->mq_attr.mq_maxmsg - Q->mBox.mIdxOut;
-//      j = szMess - k;
-//      l = Q->mBox.mIdxOut - Q->mBox.mIdxOut;
-//      for (i=0; i<j; i++){
-//         Q->mBox.messArray[k-i] = Q->mBox.messArray[k-i+j];
-//      }
-
-//      for (i=0; i<k; i++){
-//         Q->mBox.messArray[i] = Q->mBox.messArray[i+l];
-//      }
-//      /* Reindexate */
-//      Q->mBox.mIdxOut = 0;
-//      Q->mBox.mIdxIn = szMess;
-//      /* Finally sort */
-//      qsort(
-//         Q->mBox.messArray,
-//         szMess,
-//         sizeof(MessT),
-//         compMess
-//      );
-
-/** @defgroup POSIX_RT POSIX_RT: POSIX 1003.1b API
-@ingroup PTHREAD
-@brief RT queues and semaphores - POSIX 1003.1b API
-
-<em>*Documentation and implementation in progress*</em>
-
-Good references about the API:
-@see http://www.opengroup.org/onlinepubs/009695399/idx/im.html (look for functions starting with mq_)
-@see http://www.opengroup.org/onlinepubs/009695399/idx/is.html (look for functions starting with sem_)
-
-<p><b>Go gack to</b> \ref COMPONENTS</p>
-
-*/
