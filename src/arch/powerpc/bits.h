@@ -99,7 +99,7 @@ static __inline__ __uint32_t revbits_32(__uint32_t in)
 	return out;
 }
 
-/* Reverse the bit order in an integer type valiable (1,2,4 byte
+/* Reverse the bit order in an integer type variable (1,2,4 byte
    integers supported) 							     */
 /* ------------------------------------------------------------------------- */
 #define revbits( in ) 				\

@@ -24,9 +24,9 @@
 
 @brief ANSI search & sort functions reimplemented
 
-The functions in this file are all reimplementations of ANSI functions
+The functions in this file are all re implementations of ANSI functions
 for searching and sorting, that TinKer relies on but that are commonly
-missing from many embedded toolchain suppliers.
+missing from many embedded tool-chain suppliers.
 
 For in-depth discussions about re-implementing ANSI functions, see \ref
 kernel_reimpl_ansi

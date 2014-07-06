@@ -26,14 +26,14 @@
 @brief Tinker inner-most \e"guts"
 
 The contents in this file concerns context switching. This is a kernels most
-critical area where it's extremely vounerable.
+critical area where it's extremely venerable.
 
 Two types of threats exist:
 
 - Interrupts - Certain context switching techniques are sensitive for
   interrupts (but not, not all).
 
-- Preemptiveness - the functions in this file do not like to be preempted
+- Primitiveness - the functions in this file do not like to be preempted
 
 @note This is a mandatory file as part of the \ref SCHED component
 
@@ -168,7 +168,7 @@ void _tk_wakeup_timedout_threads(void)
 /*!
 Dispatch or yield to another thread that has more "right" to run.
 
-I.e. <b>search</b> for another potential thread that is now in \e "runable"
+I.e. <b>search</b> for another potential thread that is now in \e "run-able"
 state and that has higher priority.
 
 Also: In non-preemptive mode (and as a secondary duty), it creates simulated
@@ -182,7 +182,7 @@ expired (i.e. search for expired timeouts and change state to READY if needed).
 The concept of passively sleeping threads but actively awaken by the
 kernel (in idle thread or any dispatch point) is a key-concept in
 non-preemptable mode. In this mode the kernel is constantly searching
-for who's ready to run. This is normaly done in a specially
+for who's ready to run. This is normally done in a specially
 dedicated - the \ref _tk_idle "idle thread" (i.e. the lowest priority
 thread).
 

@@ -51,7 +51,7 @@ static unsigned long lock_stage(unsigned long qid, unsigned long timeout)
 {
 	tk_tcb_t *MySelf;	/* A pointer to my own process PCB */
 	clock_t act_time;
-	clock_t timeout_time;	/* When to timeout if timeoutable */
+	clock_t timeout_time;	/* When to timeout if timeout-able */
 	unsigned int mark_idx;
 	TK_CLI();
 
@@ -574,7 +574,7 @@ Corresponds to POSIX 1003.1b sm_receive or sm_get
 unsigned long sm_p(		/* sm_receive or sm_get */
 			  unsigned long qid,	/* id */
 			  unsigned long flags,	/* attrib */
-			  unsigned long timeout	/* timeout in clock ticks !?vafan */
+			  unsigned long timeout	/* timeout in clock ticks (!?)*/
     )
 {
 	unsigned long rc;
@@ -587,7 +587,7 @@ unsigned long sm_p(		/* sm_receive or sm_get */
 	if (__itc_array[qid]->token <= 0 && flags & NOWAIT)
 		return (ERR_NOSEM);
 
-	/* OK Semaphore is valid, back to buisiness */
+	/* OK Semaphore is valid, back to business */
 	rc = lock_stage(qid, timeout);
 	return (rc);
 }

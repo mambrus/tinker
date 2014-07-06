@@ -65,7 +65,7 @@ drawbacks:
   _JBLEN used in this solution is apparently not standard, just very common.
 
   An alternative could be to use curr_sp stack_t differently as. As it is
-  our type, and as buth this type and the context intricate as are paired we
+  our type, and as both this type and the context intricate as are paired we
   could use BOS for the context. Stack will meet from two ends so to speak.
   What's essential is that it is still one key opening both. Similarly
   stack_t could have a context-buffer completely separated from the threads
@@ -110,8 +110,8 @@ asm ( "statements" : output_registers : input_registers : clobbered_registers);
 #define REAL_STACK_SIZE( TCB )            \
    ( TCB.stack_size )
 
-#define PUSHALL()		/*No need to PUSHALL on this target- Allready done by setjmp */
-#define POPALL()		/*No need to POPALL on this target- Allready done by longjmp */
+#define PUSHALL()		/*No need to PUSHALL on this target- Already done by setjmp */
+#define POPALL()		/*No need to POPALL on this target- Already done by longjmp */
 
 #define GET_SP( OUT_SP )					\
    asm __volatile__ (						\

@@ -28,7 +28,7 @@
 
 tk_iohandle_t std_files[3];	//!< The three standard handles (stdin,stdout & stderr)
 struct hixs_t old_syscalls;	//!< Storage for any old HIXS syscalls (previous initialization);
-extern struct hixs_t hixs;	//!< The call-stucture we know exist.
+extern struct hixs_t hixs;	//!< The call-structure we know exist.
 tk_id_t __fcntr = 0;		//!< Number of open handles
 tk_id_t __flid = 0;		//!< Last allocated unique file handle ID (global counter)
 int __fs_alive = 0;		//!< Trap will run fs_fini after normal termination.
@@ -68,9 +68,9 @@ int fs_init()
 	hixs.unlink = fs_unlink;
 	hixs.write = fs_write;
 
-	std_files[0].read = old_syscalls.read;	//Assign stdin with something usefull
-	std_files[1].write = old_syscalls.write;	//Assign stdout with something usefull
-	std_files[2].write = old_syscalls.write;	//Assign stderr with something usefull
+	std_files[0].read = old_syscalls.read;	//Assign stdin with something useful
+	std_files[1].write = old_syscalls.write;	//Assign stdout with something useful
+	std_files[2].write = old_syscalls.write;	//Assign stderr with something useful
 
 	//Create the '/' node (directory) - this is a special case and can't be created with mknode
 	assure(__Rnod = (tk_inode_t *) calloc(1, sizeof(tk_inode_t)));

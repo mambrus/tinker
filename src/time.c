@@ -63,7 +63,7 @@ used for hi-res calendar time-structs.
 
 #include "tk_tick.h"
 #if defined (HW_CLOCKED)
-#define USE_HW_CLOCK		//!< Undef this to see the "error" in tk_msleep that happens each 17.2 minutes (see \Blog060227 for in-deapth discussion). Should be undefined if monitoring of ISR latency is turned off in the HW clock, since it will generate worse accuracy then reading only the sys_mikey_mickey alone.
+#define USE_HW_CLOCK		//!< Undef this to see the "error" in tk_msleep that happens each 17.2 minutes (see \Blog060227 for in-depth discussion). Should be undefined if monitoring of ISR latency is turned off in the HW clock, since it will generate worse accuracy then reading only the sys_mikey_mickey alone.
 #endif
 
    /*!
@@ -77,7 +77,7 @@ used for hi-res calendar time-structs.
 #endif				//defined (__GNUC__)
 
 //---------------------------------------------------------------------------------------
-// The following section is used to figure out which funtion we can use to figure out
+// The following section is used to figure out which function we can use to figure out
 // usable TinKer time information for the dispatcher and various other needs (user needs).
 // Notice that in case GNU build syste is used, a tinker.config.h exists which sets the
 // HAVE_xxx macros
@@ -90,7 +90,7 @@ CPU time
 http://www.gnu.org/software/libc/manual/html_mono/libc.html#CPU%20Time
 
 This function is used by the kernal, but can also be used by the application.
-We try to follow POSIX standard as close as possible with some minor exeptions:
+We try to follow POSIX standard as close as possible with some minor exceptions:
 
 The formal POSIX clock is somewhat different. There the time is relative
 to since the calling <b>process</b> was started. On most small embedded
@@ -116,7 +116,7 @@ use that module instead.
 
 Implementation in principle the same as \ref getnanouptime
 
-@todo check the "(TICK_PER_CLK * sys_mickey);  // This *HAS* to ne wrong" thingy
+@todo check the "(TICK_PER_CLK * sys_mickey);  // This *HAS* to be wrong" thingy
 
 */
 

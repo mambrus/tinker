@@ -56,7 +56,7 @@ extern int __itc_idx;
 /*!
 Doc TBD
 
-@todo documet this
+@todo document this
 */
 static unsigned long _lock_stage_ny(unsigned long qid, unsigned long timeout)
 {
@@ -178,7 +178,7 @@ static unsigned long _lock_stage_ny(unsigned long qid, unsigned long timeout)
 /*!
 Doc TBD
 
-@todo documet this
+@todo document this
 */
 static unsigned long _unlock_stage_ny(unsigned long qid)
 {
@@ -189,7 +189,7 @@ static unsigned long _unlock_stage_ny(unsigned long qid)
 	if (__itc_array[qid]->token < 0) {	/* Oops someone is perhaps waiting for me */
 		if (__itc_array[qid]->flags & PRIOR) {
 
-			/*Tidying away timerreleased processes */
+			/*Tidying away timer-released processes */
 			for (i = __itc_array[qid]->out_idx; i != __itc_array[qid]->in_idx;	/*This is important, the last index can expire */
 			     i++, i %= TK_MAX_BLOCKED_ON_Q) {
 				if (!
@@ -248,9 +248,9 @@ static unsigned long _unlock_stage_ny(unsigned long qid)
 				 && __itc_array[qid]->token < 0);
 
 			/*Above can happen if made ready by timer */
-			/*but has not runned (had the oppotunity */
+			/*but has not run (had the opportunity */
 			/*to remove from this list) */
-			/*Should be obsolite now, but is not */
+			/*Should be obsolete now, but is not */
 			Him->state = (PROCSTATE) ((Him->state) & ~_____QST);	/* In case of timeout active release that to */
 			Him->wakeupEvent = E_ITC;
 			tk_preemplist((tin_t) Him);
@@ -272,7 +272,7 @@ static unsigned long _unlock_stage_ny(unsigned long qid)
 /*!
 Doc TBD
 
-@todo documet this
+@todo document this
 */
 unsigned long q_vcreate_ny(char name[4],
 			   unsigned long flags,
@@ -303,7 +303,7 @@ unsigned long q_vcreate_ny(char name[4],
 /*!
 Doc TBD
 
-@todo documet this
+@todo document this
 */
 unsigned long q_vdelete_ny(unsigned long qid	/* id */
     )
@@ -312,7 +312,7 @@ unsigned long q_vdelete_ny(unsigned long qid	/* id */
 	unsigned int i;
 
 	for (i = 0; i < __itc_array[qid]->sizeof_q; i++) {
-		free(__itc_array[qid]->m.qv[i].mb);	/*Delete evry messsage */
+		free(__itc_array[qid]->m.qv[i].mb);	/*Delete every message */
 	}
 	free(__itc_array[qid]->m.qv);	/*Delete message table */
 	rc = sm_delete(qid);
@@ -340,7 +340,7 @@ unsigned long q_vreceive_ny(unsigned long qid, unsigned long flags, unsigned lon
 	if (__itc_array[qid]->maxSizeof_m < buf_len)
 		return (ERR_BUFSIZ);
 
-	/* OK Semaphore is valid, back to buisiness */
+	/* OK Semaphore is valid, back to business */
 	rc = _lock_stage_ny(qid, timeout);
 	if (!(_itc_proveConcistency(qid)))
 		assert(0);
@@ -367,7 +367,7 @@ unsigned long q_vreceive_ny(unsigned long qid, unsigned long flags, unsigned lon
 /*!
 Doc TBD
 
-@todo documet this
+@todo document this
 */
 unsigned long q_vsend_ny(unsigned long qid,
 			 void *msg_buf, unsigned long msg_len)
@@ -412,7 +412,7 @@ unsigned long q_vsend_ny(unsigned long qid,
 /*!
 Doc TBD
 
-@todo documet this
+@todo document this
 */
 unsigned long q_create_ny(char name[4],
 			  unsigned long count,
@@ -474,7 +474,7 @@ unsigned long q_receive_ny(unsigned long qid,
 	if (__itc_array[qid]->token <= 0 && flags & NOWAIT)
 		return (ERR_NOSEM);
 
-	/* OK Semaphore is valid, back to buisiness */
+	/* OK Semaphore is valid, back to business */
 	rc = _lock_stage_ny(qid, timeout);
 	if (!(_itc_proveConcistency(qid)))
 		assert(0);
@@ -538,7 +538,7 @@ unsigned long q_send_ny(unsigned long qid, unsigned long msg_buf[4]
 /*!
 Doc TBD
 
-@todo documet this
+@todo document this
 */
 unsigned long sm_create_ny(char name[4],
 			   unsigned long count,
@@ -553,7 +553,7 @@ unsigned long sm_create_ny(char name[4],
 	} else if ((__itc_array[__itc_idx] = (itc_t *) malloc(sizeof(itc_t))) ==
 		   NULL) {
 		return (ERR_NOMEM);
-		/* Allocate memory for pointertable of tk_tcb_t pointers */
+		/* Allocate memory for pointer-table of tk_tcb_t pointers */
 	} else
 	    if ((__itc_array[__itc_idx]->blocked_procs =
 		 (tk_tcb_t **) malloc(TK_MAX_BLOCKED_ON_Q *
@@ -561,7 +561,7 @@ unsigned long sm_create_ny(char name[4],
 		return (ERR_NOMEM);
 	}
 
-	/* Clean pointertable of blocked procs */
+	/* Clean pointer-table of blocked procs */
 	for (i = 0; i < TK_MAX_BLOCKED_ON_Q; i++) {
 		__itc_array[__itc_idx]->blocked_procs[i] = NULL;
 	}
@@ -582,7 +582,7 @@ unsigned long sm_create_ny(char name[4],
 /*!
 Doc TBD
 
-@todo documet this
+@todo document this
 */
 unsigned long sm_delete_ny(unsigned long qid	/* id */
     )
@@ -599,7 +599,7 @@ unsigned long sm_delete_ny(unsigned long qid	/* id */
 /*!
 Doc TBD
 
-@todo documet this
+@todo document this
 */
 unsigned long sm_p_ny(		/* sm_receive or sm_get */
 			     unsigned long qid,	/* id */
@@ -626,7 +626,7 @@ unsigned long sm_p_ny(		/* sm_receive or sm_get */
 /*!
 Doc TBD
 
-@todo documet this
+@todo document this
 */
 unsigned long sm_v_ny(		/* sm_send or sm_put */
 			     unsigned long qid	/* id */

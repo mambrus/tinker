@@ -28,10 +28,11 @@
 
 #pragma pack(1)			/* byte alignment */
 
-//BIG NOTE!! The following #pragma will crash in dave file who use pointercasts for SFR data
+//BIG NOTE!! The following #pragma will crash in dave file who use
+//pointer-casts for SFR data
 //======================================================================
 //Output will not work (in best case), in worst case C166 crashes
-//Leave it here as a reference so that I remeber. Also, will tinket work?
+//Leave it here as a reference so that I remember. Also, will tinker work?
 //Structures might change, does it matter?
 //#pragma bytealign   /* ptrs to byte-aligned objects */
 
@@ -39,12 +40,12 @@
 
 @brief TBD
 
-@note that the offset addres does not contain the 2 MSB bits that defines wich
-DDP to use. It's your respponsibility to trunc these off before storing in the
+@note that the offset address does not contain the 2 MSB bits that defines which
+DDP to use. It's your responsibility to trunc these off before storing in the
 off variable, and to add them back when you assign your user-stack pointer
 (typically R0)
 
-@note Orientation of bitfiels are compilor specific. Use commandline or pragma
+@note Orientation of bitfiels are compiler specific. Use command-line or pragma
 to ensure correct layout.
 
 @note Keil C166 seem to lack directives for byte order within a struct.
@@ -56,8 +57,8 @@ typedef union {
 	unsigned long linear;
 	union {
 		struct {
-			unsigned char padding8;	// These two togeather must be
-			unsigned int padding6:6;	// ... exacylly 14 bits long.
+			unsigned char padding8;	// These two together must be
+			unsigned int padding6:6;	// ... Exactly 14 bits long.
 			unsigned int _seg:10;
 		} seg24;
 		struct {
@@ -82,7 +83,7 @@ typedef struct {
 
 	unsigned int TcOE:1;	//<! Overflow/Underflow Output Enable
 	unsigned int TcOTL:1;	//<! Timer 3 Overflow Toggle Latch
-	unsigned int BPS1:2;	//<! Timer Block Prescaler 1 (Prescales T2,T3,T4)
+	unsigned int BPS1:2;	//<! Timer Block Pre-scaler 1 (Pre-scales T2,T3,T4)
 
 	unsigned int TcEDGE:1;	//<! Timer x Edge Detection
 	unsigned int TcCHDIR:1;	//<! Timer x Count Direction Change
@@ -179,7 +180,7 @@ typedef struct {
 
 @brief TBD
 
-@note Orientation of bitfiels are compilor specific. Use commandline or pragma
+@note Orientation of bit-files are compiler specific. Use command-line or pragma
 to ensure correct layout.
 
 @note Keil C166 seem to lack directives for byte order within a struct.
@@ -201,10 +202,10 @@ typedef union {
 } systemstackaddr_t;
 
 /*!
-Architecture specific representation of a stack adress. In this obscure
-MPU/Compiler combo, this need to be devided in two stacks for each
+Architecture specific representation of a stack address. In this obscure
+MPU/Compiler combo, this need to be divided in two stacks for each
 thread, that each is best represented in a different way. Both these
-ways however also have a linear adrees for conveniant lookup in
+ways however also have a linear address for convenient lookup in
 physical memory.
 */
 
@@ -212,7 +213,7 @@ typedef struct {
 	systemstackaddr_t systemstack;
 	userstackaddr_t userstack;
 
-	size_t sys_stack_size;	//These two added togeather constitutes
+	size_t sys_stack_size;	//These two added together constitutes
 	size_t usr_stack_size;	//the actual memory allocated
 } stack_t;
 

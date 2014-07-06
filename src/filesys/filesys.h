@@ -117,7 +117,7 @@ tk_fhandle_t *tk_new_handle(tk_inode_t * inode, int oflag);
 /*!
 Helper function to destroy a file handle
 
-An IO devive "close" function would normally use this
+An IO device "close" function would normally use this
 */
 int tk_free_handle(tk_fhandle_t *);
 
@@ -151,15 +151,15 @@ Both input argument and return value are implementation specific and depends
 on the driver. Each driver must however respect the following rules.
 
 - If function succeeds, a non NULL value must be returned. If the return
-  contains data that is not a textstring, the first element must be '\0'.
+  contains data that is not a text-string, the first element must be '\0'.
 - Even if the driver expects an input argument, it must also accept (and detect)
   NULL. NULL is passed by the fs_init main startup and this can't know what each
   driver expects as an input argument. If the argument is null, the driver
-  should instansiate a default IO.
+  should instantiate a default IO.
 
 Normally the input argument is either NULL a string describing a file-name.
 
-Normally the output is a informative textstring that can be passed to printf.
+Normally the output is a informative text-string that can be passed to printf.
 
 */
 typedef void *__drv_finit_f(void *);
@@ -185,7 +185,7 @@ int fs_stat(const char *file, struct stat *st);
 int fs_unlink(char *name);
 int fs_write(int file, char *ptr, int len);
 
-// Subcathegorized system calls - one for each of type of inode:
+// Sub-categorized system calls - one for each of type of inode:
 int fs_ifdir_close(int file);
 int fs_ifdir_fcntl(int file, int command, ...);
 int fs_ifdir_fstat(int file, struct stat *st);

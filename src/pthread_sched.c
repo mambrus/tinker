@@ -74,7 +74,7 @@ Works exactlly as \ref pthread_create except that it provides TinKer with a name
 
 @see http://www.opengroup.org/onlinepubs/009695399/functions/pthread_create.html
 
-@todo Chech if the stack concpets fit. Unscertain...
+@todo Check if the stack concepts fit. Uncertain...
 */
 int pthread_create_named_np(pthread_t * thread,
 			    const pthread_attr_t * attr,

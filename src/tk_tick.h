@@ -72,7 +72,7 @@ Use SPEEDUP larger than 1 to make kernel advance faster.
 //  variable is not thread/interrupt safe. This needs to be revised.
 //
 //  @note Also very important - always include the memory type "language
-//  extention" when declaring external cariables like this.
+//  extension" when declaring external variables like this.
 
 #if defined(TICK_OWNER)
 unsigned long MEMTYPE sys_mackey = 0;	//!< Overflow counter for sys_mickey
@@ -101,7 +101,7 @@ while operated on:
   any of the events (for the same reason as mentioned in point above). This is
   because if that event ISR preempts this operation, it will actually dispatch
   another thread to run, and the tick ISR will not be able to finish until that
-  thread goes off runable state. Threads preempting ISR's is usually not a
+  thread goes off run-able state. Threads preempting ISRs are usually not a
   problem you follow the design rules (mentioned else where), but for the tick
   ISR it is.
 

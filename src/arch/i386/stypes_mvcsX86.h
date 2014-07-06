@@ -27,7 +27,7 @@
 #include <stddef.h>
 
 /*!
-Architecture specific representation of a stack adress. In x86 this can be a
+Architecture specific representation of a stack address. In x86 this can be a
 simple char* even in 16bit modes, since a pointer contains both segment and
 offset.
 */

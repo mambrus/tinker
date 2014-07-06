@@ -83,14 +83,14 @@ int _itc_proveConcistency(unsigned int qid)
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
-Calculates the diff between 2 integers taking in account wrapparound
+Calculates the diff between 2 integers taking in account wraparound
 effect. Tested and works fine.
 
 \reurns diff
 */
-unsigned long _itc_uintDiff(unsigned long x1,	//!< x1, the integer suppused to be the lowest
+unsigned long _itc_uintDiff(unsigned long x1,	//!< x1, the integer supposed to be the lowest
 			    unsigned long x2,	//!< x2, the integer supposed to be the highest
-			    unsigned long max	//!< max value (wrapparound value)
+			    unsigned long max	//!< max value (wraparound value)
     )
 {
 	return (x1 <= x2 ? x2 - x1 : max - x1 + x2);
@@ -98,8 +98,8 @@ unsigned long _itc_uintDiff(unsigned long x1,	//!< x1, the integer suppused to b
 
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*!
-Helperfunction. In case ITC blocked function is released by
-it needs to bee removed so that the blocked list doesen't
+Helper-function. In case ITC blocked function is released by
+it needs to bee removed so that the blocked list doesn't
 get full.
 */
 void _itc_removeBlocked(itc_t * queue_p, unsigned int idx)
@@ -152,7 +152,7 @@ void _itc_removeBlocked(itc_t * queue_p, unsigned int idx)
 /*!
 Doc TBD
 
-@todo documet this
+@todo document this
 */
 unsigned int _itc_findNextEmpySlot()
 {
@@ -239,11 +239,11 @@ by the \ref PTHREAD and \ref POSIX_RTQUEUES components.
 </p>
 
 @note Avoid using this API in your application, since you will create a
-dependancy towards TinKer. This API is mainly intended for internal
+dependency towards TinKer. This API is mainly intended for internal
 purposes to be able to implement the \ref PTHREAD and \ref
 POSIX_RTQUEUES components.
 
-The public API in this package is mostly un-documented because it's
+The public API in this package is mostly undocumented because it's
 based on a well known API (pSos).
 
 @see http://dr-linux.net/newbase/reference/psosCD/data/html/5070_002/psc_ch01.htm#583402
@@ -265,7 +265,7 @@ For POSIX 1003.1b equivalent functions, the following might serve as a good star
 operation. Replace data-field with an array instead (same size as a
 pointer anyway).
 
-<p><b>Go gack to</b> \ref COMPONENTS</p>
+<p><b>Go back to</b> \ref COMPONENTS</p>
 
 */
 

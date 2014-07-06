@@ -43,8 +43,8 @@ SCHED
 Defines the threads status (bit addressable)
 	- ___T = TERM  = Process is waiting for one or more children to terminate
 	- __S_ = SLEEP = Process is blocked on timer (sleeping)
-	- _Q__ = QUEUE = Process is blocked on \b any kind of syncronisation primitive. I.e. semaphore, mutex, queue, pthread conditional variable e.t.a.
-	- Z___ = ZOMBI = Process is but waiting for cleanup operation (usually idle) to renove it
+	- _Q__ = QUEUE = Process is blocked on \b any kind of synchronisation primitive. I.e. semaphore, mutex, queue, pthread conditional variable e.t.a.
+	- Z___ = ZOMBI = Process is but waiting for cleanup operation (usually idle) to remove it
 
 @note the convenient naming. This is very practical when debugging the
 dispatcher since symbolic names will easily be translated to
@@ -70,10 +70,10 @@ typedef enum {
 	____ZQST = 0x0F
 } PROCSTATE;
 
-#define TERM  _______T		//!< "Terminated" state (simplyfied PROCSTATE)
-#define SLEEP ______S_		//!< "Sleeping" state (simplyfied PROCSTATE)
-#define QUEUE _____Q__		//!< "Blocked" state (simplyfied PROCSTATE)
-#define ZOMBI ____Z___		//!< "Zombi" state (simplyfied PROCSTATE)
+#define TERM  _______T		//!< "Terminated" state (simplified PROCSTATE)
+#define SLEEP ______S_		//!< "Sleeping" state (simplified PROCSTATE)
+#define QUEUE _____Q__		//!< "Blocked" state (simplified PROCSTATE)
+#define ZOMBI ____Z___		//!< "Zombi" state (simplified PROCSTATE)
 
 /*!
 @brief Defines what the threads is blocked on.
@@ -121,7 +121,7 @@ typedef enum {
 /*!
 Information about what the thread is blocked on
 
-@note TinKer \ref SCHED doesn't activly use this info. It is for other blocking
+@note TinKer \ref SCHED doesn't actively use this info. It is for other blocking
 packages so that they can have their own "place holder" in the TCB.
 
 */
@@ -139,11 +139,12 @@ Thread control block (TCB). This structure contains all
 information the kernel needs to know about a thread.
 
 @note the type for various stack pointers. This type is supplied by BSP
-adaptions to cover certain architectures special aspects of a "stack".
+adoptions to cover certain architectures special aspects of a "stack".
 In a 32bit "normal" CPU this is often a char*, but for some obscure MPU:s
 like the C166 family, this is a much more complex structure.
 
-@todo Insert a compile time chet that prevents number of threads to be larger than MAX_UNT/2 (i.e. negative int)
+@todo Insert a compile time check that prevents number of threads to be
+larger than MAX_UNT/2 (i.e. negative int)
 */
 
 typedef struct tcb_t_ {
@@ -152,10 +153,14 @@ typedef struct tcb_t_ {
 	char name[TK_THREAD_NAME_LEN + 1];	//!< Name of the thread (+ 1 extra for byte terminating zero)
 	TK_BOOL valid;		//!< This TCB is active and contains valid info about a thread.
 	PROCSTATE state;	//!< State of the process
-	bon_t bOnId;		//!< The ID of the \b main entity this thread is blocked on (either other threads-ID or ITC or ptimer-ID). If serveral entities are reason for blocking, ontly the main entity will be mentioned here.
-	int _errno_;		//!< Support of per thread errno
+   bon_t bOnId;		/*!< The ID of the \b main entity this thread is
+   blocked on (either other threads-ID or ITC or ptimer-ID). If several
+   entities are reason for blocking, only the main entity will be
+   mentioned here.*/
+	
+   int _errno_;		//!< Support of per thread errno
 	stack_t stack_begin;	//!< First address of stack memory       (This value will be static during execution)
-	stack_t curr_sp;	//!< Current stackpointer of this thread (This value will vary during execution)
+	stack_t curr_sp;	//!< Current stack-pointer of this thread (This value will vary during execution)
 	size_t stack_size;	//!< Size of stack
 	unsigned long stack_crc;	//!< Control value of integrity check
 	clock_t wakeuptime;	//!< When to wake up if sleeping
@@ -165,13 +170,13 @@ typedef struct tcb_t_ {
    //Obsolete stuff - kept for reference
    start_func_f   start_funct;         //!< Address of the threads entry function. Used ONLY for debugging purposes
    init_func_f    init_funct;          //!< Support of the pThread <em>"once"</em> concept.
-   void          *prmtRetAddr;         //!< Preempted return adress - used in preempted mode.
+   void          *prmtRetAddr;         //!< Preempted return address - used in preempted mode.
 */
 	unsigned int Prio, Idx;	//!< Helpers, prevent need of lookup
 } tk_tcb_t;
 
 typedef struct stat_t {
-	unsigned short procs_at_prio;	//Used for optimizing sheduler.
+	unsigned short procs_at_prio;	//Used for optimizing scheduler.
 	unsigned short curr_idx;
 } prio_stat_t;
 

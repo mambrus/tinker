@@ -24,7 +24,7 @@
 
 @brief POSIX 1003.1c API - pThread low level synchronisation primitives
 
-The content of this source-file implement basic thread syncronisation. I.e.
+The content of this source-file implement basic thread synchronisation. I.e.
 the common mechanism used by mutex, cond-vars rw-locks e.t.a,
 
 For in-depth discussions about this component, see \ref
@@ -112,11 +112,11 @@ int _mutex_unlock_primitive(pthread_mutex_t * mutex, bcast_t bcast)
 		return 0;
 	}
 
-	rc = 1;			//Schedule state has chanced, yield recomended
-	//One ore more blocked, yeild recomended.
+	rc = 1;			//Schedule state has chanced, yield recommended
+	//One ore more blocked, yield recommended.
 
 	if (bcast) {
-		//Release all, let despatcher select in which order to run.
+		//Release all, let dispatcher select in which order to run.
 		for (i = 0; i < mutex->blocked.numb; i++) {
 			mutex->blocked.thread[i]->bOnId.kind = BON_SCHED;
 			mutex->blocked.thread[i]->bOnId.entity.tcb = NULL;
@@ -138,7 +138,7 @@ int _mutex_unlock_primitive(pthread_mutex_t * mutex, bcast_t bcast)
 				prio = mutex->blocked.thread[i]->Prio;
 			}
 		}
-		//The new owner is selected. Release him only, and adjust new mutext data.
+		//The new owner is selected. Release him only, and adjust new mutex data.
 		mutex->owner = newOwner = mutex->blocked.thread[j];
 
 		//Compress the blocked list

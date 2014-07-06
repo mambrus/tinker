@@ -22,9 +22,9 @@
 #define TK_HWSYS_KEILC166_H
 //------1---------2---------3---------4---------5---------6---------7---------8
 /*
-The following pragmas are important compilor directives to ensure correct
-behavious of the kernal. They should be supplied on the command line or in the
-"misc control" of Uv2 project setting. For fonveniance (and for explanation)
+The following pragmas are important compiler directives to ensure correct
+behaviour of the kernel. They should be supplied on the command line or in the
+"misc control" of Uv2 project setting. For convenience (and for explanation)
 they are given here to. <b>Be sure not to have conflicting directives between
 command line and pragmas.</b>
 */
@@ -76,9 +76,9 @@ http://www.keil.com/support/man/docs/c166/c166_reentrant.htm
 
 /**
 Note that macro name DEVICE is supposed to be set by the invoker (i.e. when you run the compilation
-proces. This is done iether with flags on the command prompt, or by definig this in the Uv2 project file
-(which will then automatically be translated to a flag upon invocation). The nameing convention of the
-device must follow Keils predifined devices, which you can find as files in the directory
+process. This is done either with flags on the command prompt, or by defining this in the Uv2 project file
+(which will then automatically be translated to a flag upon invocation). The naming convention of the
+device must follow Keils predefined devices, which you can find as files in the directory
 %install_dir%\Keil\C166\INC\ .
 */
 
@@ -111,8 +111,8 @@ sfr  SPSEG                = 0xFF0C;       //Bug in DaVE doesnt generate this
 */
 
 /*!
-@note According to XC167 manual chapter 4.3.4, subchapter
-<i>"CSFRs Affecting the Whole CPU"</i>, modifying STKOV, STKUN indirectlly
+@note According to XC167 manual chapter 4.3.4, sub-chapter
+<i>"CSFRs Affecting the Whole CPU"</i>, modifying STKOV, STKUN indirectly
 via push and pop should be OK until next "real" OP code that uses that SFR.
 */
 

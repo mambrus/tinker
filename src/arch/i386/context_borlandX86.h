@@ -55,21 +55,21 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
    ( TCB.stack_size )
 
 //Push & pops of all regs and flags possibly not needed
-#define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                                                    \
-    __asm{ pushfd                       }                                                                      \
-    __asm{ pushad                       }                                                                      \
+#define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )                                  \
+    __asm{ pushfd                       }                                    \
+    __asm{ pushad                       }                                    \
     __asm{ mov TSP1,esp                 }
 
-#define CHANGE_STACK_POP_CPU( TSP1, TEMP )                                                                     \
-    __asm{ mov esp,TSP1                 }                                                                      \
-    __asm{ popad                        }                                                                      \
+#define CHANGE_STACK_POP_CPU( TSP1, TEMP )                                   \
+    __asm{ mov esp,TSP1                 }                                    \
+    __asm{ popad                        }                                    \
     __asm{ popfd                        }
 
-#define CHANGE_STACK( TSP1, TEMP )                                                                             \
+#define CHANGE_STACK( TSP1, TEMP )                                           \
     __asm{ mov esp,TSP1                 }
 
-#define INIT_SP( _stack_SP, _stack_begin )                                                                     \
-   _stack_SP.stack_size = _stack_begin.stack_size;                                                             \
+#define INIT_SP( _stack_SP, _stack_begin )                                   \
+   _stack_SP.stack_size = _stack_begin.stack_size;                           \
    _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size;
 
 //Does nothing on this port
@@ -78,15 +78,15 @@ How initializing the BSP is done on this target (Only needed for bare bone targe
 //function enters as a result of a ret instruction. EAX is passed
 //as the return value. Not shure if it works on every processor
 
-#define GET_THREADS_RETVAL( THRETVAL, TEMP )                                                                   \
+#define GET_THREADS_RETVAL( THRETVAL, TEMP )                                 \
    __asm{ mov THRETVAL,EAX             }
 
 #define PUSHALL()  \
-    __asm{ pushfd                       }                                                                      \
+    __asm{ pushfd                       }                                    \
     __asm{ pushad                       }
 
 #define POPALL()  \
-    __asm{ popad                        }                                                                      \
+    __asm{ popad                        }                                    \
     __asm{ popfd                        }
 
 //Allready a char', no need to do handle in any special way.

@@ -50,8 +50,8 @@ This file is a Blackfin elf
 #define REAL_STACK_SIZE( TCB )            \
    ( TCB.stack_size )
 
-#define PUSHALL()		/*No need to PUSHALL on this target- Allready done by setjmp */
-#define POPALL()		/*No need to POPALL on this target- Allready done by longjmp */
+#define PUSHALL()		/*No need to PUSHALL on this target- Already done by setjmp */
+#define POPALL()		/*No need to POPALL on this target- Already done by longjmp */
 
 #define GET_SP( OUT_SP ) 						\
 	asm __volatile__ (							\

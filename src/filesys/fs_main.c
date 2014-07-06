@@ -61,7 +61,7 @@ int fs_fcntl(int file, int command, ...)
 	int rc;
 	va_start(ap, command);
 	/*Copy to locals */
-	//va_end(ap);                   //Don't end AP here - we're piping the variable to next fubction for final parsing
+	//va_end(ap);                   //Don't end AP here - we're piping the variable to next function for final parsing
 
 	hndl = (tk_fhandle_t *) file;
 	CHECK_FH(hndl, fcntl);
@@ -77,8 +77,8 @@ int fs_fcntl(int file, int command, ...)
 @brief http://www.opengroup.org/onlinepubs/009695399/
 
 NOTE fstat is called only if buffered access needs to be determined
-(i.e. if file was openwd with fopen). For low leve access (open, read, write
-e.t.a.) it's never called exept if called explicitly by the application.
+(i.e. if file was openwd with fopen). For low leave access (open, read, write
+e.t.a.) it's never called except if called explicitly by the application.
 */
 int fs_fstat(int file, struct stat *st)
 {
@@ -134,11 +134,11 @@ int fs_lseek(int file, int ptr, int dir)
 @note We're always passing at least a third argument to the drivers open
 Unless the oflag contains O_CREATE, this is a pointer to the inode, in other
 case this is the access permission bit-flags (mode_t).
-This is a concequence of following the standard.
+This is a consequence of following the standard.
 
 @attention If O_CREATE, bit-flags (mode_t) are always set to zero. I.e. Drivers can't test on this
 
-@todo Current implementation does not care about acces permissions (mode_t)
+@todo Current implementation does not care about access permissions (mode_t)
 */
 int fs_open(const char *filename, int oflag, ...)
 {
@@ -170,8 +170,8 @@ O_TRUNC
 */
 
 	if (inode == NULL) {
-		//If inode is trunly not found, try see if we want to create it
-		//At this point we can safly assume this intention in such case is
+		//If inode is truly not found, try see if we want to create it
+		//At this point we can safely assume this intention in such case is
 		//to create it in the __Rnod tree
 		int rc = 0;
 		if (oflag & O_CREAT) {
@@ -213,7 +213,7 @@ O_TRUNC
 	}
 
 	if (inode != NULL && strncmp(inode->name, igetname(filename), NAME_MAX)) {
-		//Serach is returning a mounted directory
+		//Search is returning a mounted directory
 		//Pass further to the sfs device driver
 		assure(inode->mount != NULL);
 		assure(inode->iohandle);

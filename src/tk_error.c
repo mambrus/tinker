@@ -47,7 +47,7 @@ void perror(const char *message);	//Should go int stdio.h
 char *strerror(int errnum);	//Should go int string.h
 
 #define MAX_STR_LEN 64
-//#define EC_LIGHT 1  //FIXME make this configurable. perhaps the whole error handling (i.e. use GNU optionally)
+//#define EC_LIGHT 1  //FIXME make this configurable. Perhaps the whole error handling (i.e. use GNU optionally)
 
 #define EC_STRING_LIGHT( ec ) \
 	#ec
@@ -443,8 +443,8 @@ void tk_exit(int ec)
 /*!
 @ingroup kernel_glue
 
-Works as the assert macro exept that you have to use the __file_ and __line_
-explicitlly. Typically the assert macro will be defined to call this function
+Works as the assert macro except that you have to use the __file_ and __line_
+explicitly. Typically the assert macro will be defined to call this function
 on targets that do not have assert implemented by TinKer.
 
 */

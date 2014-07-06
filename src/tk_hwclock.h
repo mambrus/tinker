@@ -43,21 +43,21 @@ targets.
 typedef struct {
 	unsigned long freq_hz;	/*!<  The frequency driving the HWclock
 				   expressed in Hertz. I.e.
-				   frequency <b>after</b> any prescaler
-				   or chain of prescalers. This is
+				   frequency <b>after</b> any pre-scaler
+				   or chain of pre-scalers. This is
 				   the actual <b>drift compensated</b>
 				   frequency (not the theoretical
 				   one found printed on the physical
 				   oscillator circuit) */
 	unsigned char res;	/*!<  Number of bits this HWClock_ handles
 				 */
-	HWtick_t perPebbles;	/*!<  Variable holds the vaule supposed to
+	HWtick_t perPebbles;	/*!<  Variable holds the value supposed to
 				   reload the clock with in case
-				   ofperiodical operations (i.e. CLK1
+				   of periodical operations (i.e. CLK1
 				   operation) */
 	HWtick_t maxPebbles;	/*!<  Number of HW-ticks the HWclock_ can
 				   handle without fraction. Any timeout
-				   event requireing longer than
+				   event requiring longer than
 				   this time needs to have it's time
 				   chopped up in multiples of this
 				   amount of time. This value is
@@ -80,7 +80,7 @@ used for high-res timeout events (ptime)
 #define tk_getHWclock_Quality(HWclockNR, HWclock_stats) tk_getHWclock_Quality_##HWclockNR(HWclock_stats)
 
 /*!
-Set new time in HWclock. Pending timer will be prevented from fireing and current
+Set new time in HWclock. Pending timer will be prevented from firing and current
 time will be overwritten.
 
 HWtick_t ticks - i.e. a non pointer variable
@@ -94,7 +94,7 @@ used for high-res timeout events (ptime)
 
 /*!
 Gets the time value in the HWclock while running (i.e. count down will not be
-stopped). Pending timer will NOT be prevented from fireing while read is done.
+stopped). Pending timer will NOT be prevented from firing while read is done.
 To make an atomic read, first use disarmHWclock.
 
 HWtick_t *ticks - i.e. a <b>pointer return</b> variable

@@ -53,7 +53,7 @@ user_stack_size * ( 1+ ratio )            := ratio * whole_stack_size
 user_stack_size                           := ratio * whole_stack_size / ( 1+ ratio )
 
 @note According to the XC167 manual: <i>Only word accesses are supported to
-the system stack.</i> Therefor we need the word alignement as you se in the
+the system stack.</i> Therefor we need the word alignment as you see in the
 code.
 
 */
@@ -67,7 +67,7 @@ void _tk_reinit_stackaddr_xc167keil(stack_t * addr, size_t size)
 	usr_stack_size = size * USR_SYS_RATIO / (1 + USR_SYS_RATIO);
 	sys_stack_size = size - usr_stack_size;
 
-	//make sure we have 32 bit alignement (sys stack will contain return adresses)
+	//make sure we have 32 bit alignment (sys stack will contain return addresses)
 	for (; sys_stack_size % 4; sys_stack_size++) ;
 
 	usr_stack_size = size - sys_stack_size;

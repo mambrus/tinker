@@ -49,12 +49,12 @@ void igetpath(char *buff, const char *s)
 
 /*!
 Find the i-node associated with a name (arg #2) from the i-node tree
-structure pointed oit by arg #1
+structure pointed out by arg #1
 
 @returns Three cases can apply
 1. NULL if no valid node is found
-2. The i-node seached for that matches the name exactly
-3. If a mount point is encountered on the seach-path, this one is returned instead
+2. The i-node searched for that matches the name exactly
+3. If a mount point is encountered on the search-path, this one is returned instead
 
 */
 tk_inode_t *isearch(tk_inode_t * ci, const char *s)
@@ -68,7 +68,7 @@ tk_inode_t *isearch(tk_inode_t * ci, const char *s)
 	for (cd = "", nd = strtok(fname, "/");
 	     nd; cd = nd, nd = strtok(NULL, "/")
 	    ) {
-		if (ci->mount)	//Mount point foind on the way
+		if (ci->mount)	//Mount point found on the way
 			return ci;
 
 		if (ci) {
@@ -192,13 +192,13 @@ int imknod(tk_inode_t * ci, const char *filename, mode_t mode, dev_t dev)
 		// Search the end of the list at the same level
 		for (seekNode = belong->down; seekNode->next;
 		     seekNode = seekNode->next) ;
-		//Attch it last
+		//Attach it last
 		seekNode->next = newNode;
 	} else {
 		//First entry in this directory
 		belong->down = newNode;
 	}
-	//Shorthut newnode to self
+	//Shortcut newNode to self
 	newNode->down = newNode;
 	return 0;
 }

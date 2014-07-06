@@ -25,25 +25,25 @@
 @brief A better malloc
 
 KMEM can be used both by TinKer internals and by drivers or even in
-certain cases applications. It fullfills the following needs:
+certain cases applications. It fulfills the following needs:
 
 * Provides TinKer internal dynamic allocation where a working malloc/free is
 not available.
 
 * Makes dynamic memory handling deterministic in cases where that is
-desireable.
+desirable.
 
 * Provides a locking mechanism for heap accessing in cases this is needed.
 
 * Makes is possible to point out specific memory areas for each heap, which
-is usefull in cases where the C-library is delibreratly held unknowing of
-certain memory, for example storage disks (battery backupes RAM area) e.t.a.
+is useful in cases where the C-library is deliberately held unknowing of
+certain memory, for example storage disks (battery backup RAM-area) e.t.a.
 
 The basic idea of KMEM to have several heaps in memory, each of fixed size
-elements. This makes managing each heap very fast but also determinisic
+elements. This makes managing each heap very fast but also deterministic
 (both functionally and in temporal space).
 
-The API for using each heap mimics the ANSI malloc and free, exept that each
+The API for using each heap mimics the ANSI malloc and free, except that each
 function takes an identifier as first argument to identify which heap you're
 accessing. I.e. the size argument for malloc must be a even multiple of
 the particular heaps element size.
@@ -137,15 +137,15 @@ unsigned long tk_create_heap(heapid_t * heapid,	//!< Returned heap ID
 			     int hsize,	//!< Raw memory regions size allowed for this heap (in bytes)
 			     int dsize,	//!< Size each element will have
 			     int opt,	//!< Options bit-mask
-			     lock_f lock,	//!< Function for un-locking acces when operation on the heap. NULL if no locking is needed.
-			     unlock_f unlock,	//!< Function for locking acces when operation on the heap. NULL if no locking is needed.
+			     lock_f lock,	//!< Function for un-locking access when operation on the heap. NULL if no locking is needed.
+			     unlock_f unlock,	//!< Function for locking access when operation on the heap. NULL if no locking is needed.
 			     char *heap_ptr	//!< Memory address to use as heap, or NULL for global heap usage
     )
 {
 	int i, found_ID;
 	int esz;		//!< True element size
 	void *ptr;
-	int mxnum;		//!< Calculated maximum number of elements that will fit untruncated
+	int mxnum;		//!< Calculated maximum number of elements that will fit un-truncated
 
 	esz = sizeof(int) + dsize;
 	mxnum = hsize / esz;
@@ -167,7 +167,7 @@ unsigned long tk_create_heap(heapid_t * heapid,	//!< Returned heap ID
 	}
 	assert(*heapid != NULL);
 
-	/* Allocate the actual heap. Note that one extra sizeof(in) per element is also alocated */
+	/* Allocate the actual heap. Note that one extra sizeof(in) per element is also allocated */
 	if (heap_ptr == NULL) {
 		(*heapid)->heap = malloc(hsize);
 		(*heapid)->is_malloced = 1;
@@ -195,7 +195,7 @@ unsigned long tk_create_heap(heapid_t * heapid,	//!< Returned heap ID
 	(*heapid)->blocks = 0;
 	(*heapid)->indx = 0;
 
-	/*Blank the heap (or at least each first byte telling wheter each block is free or not) */
+	/*Blank the heap (or at least each first byte telling whether each block is free or not) */
 	//*(int*)((char*)ptr + i*esz) = 0;
 
 	ptr = (*heapid)->heap;
@@ -217,7 +217,7 @@ unsigned long tk_create_heap(heapid_t * heapid,	//!< Returned heap ID
 			memset((*heapid)->heap, found_ID, hsize);
 		}
 
-		if (!(opt & KMEM_BLANK_ZERO)) {	//Cos if zero, this is allready done (opimization)
+		if (!(opt & KMEM_BLANK_ZERO)) {	//Cos if zero, this is already done (optimization)
 			for (i = 0; i < mxnum; i++) {
 				*(int *)ptr = 0;
 				ptr = (char *)ptr + esz;
@@ -233,13 +233,13 @@ unsigned long tk_create_heap(heapid_t * heapid,	//!< Returned heap ID
 
 /*! @brief Destroys a heap
 
-This function is typically invoced on system shutdown only.
+This function is typically invoked on system shutdown only.
 
 @see KMEM
 
 @note Lacks locking
 
-@todo This function has not meen tested. Please test it.
+@todo This function has not been tested. Please test it.
 
 */
 unsigned long tk_destroy_heap(heapid_t heapid)
@@ -375,7 +375,7 @@ What you gain is:
    - A certain level of memory protection between heaps
    - Thread-safety (if lock/unlock functions are supplied upon creation)
 
-That said, it's appenant that the component doesn't solve every imaginable
+That said, it's apparent that the component doesn't solve every imaginable
 memory allocation need. But for those it does, it's a huge improvement
 
 The API is very simple and intentionally made to mimic malloc and free
@@ -438,38 +438,38 @@ digraph mem_main {
 
 <H2>Thread-safety using KMEM</H2>
 
-Normally a malloc is not thread-safe. You can acheve a certain level of
+Normally a malloc is not thread-safe. You can achieve a certain level of
 thread safety by passing along two functions \ref lock_f and \ref
 unlock_f upon creation of each heap. Note however that this covers only
 cases where a code entity tith several threads operating on the
 same heap needs to "malloc" and "free" structures on the fly. <b>It does
 not give</b> you a catch all mechanism to protect shared data - i.e. the
 actual element it self (if categorized as a critical section) is not
-protected agains concurrent access.
+protected against concurrent access.
 
-This is all well but...: We don't wan't to create a dependancy towards
-any syncronisation component. And since vital parts of TinKer on a low
-lever of TinKer that <em>don't have access to</em> for exanple \ref ITC,
+This is all well but...: We don't want to create a dependency towards
+any synchronisation component. And since vital parts of TinKer on a low
+lever of TinKer that <em>don't have access to</em> for example \ref ITC,
 we provide this as an generic option by the \ref lock_f and \ref
 unlock_f functions. I.e. \ref ITC itself could use this component. Also
-\ref SCHED fort that matter... In case you need syncronisatiuon
-(protection agains concurrent access) in those cases, you'd pass along a
-function with a much more promitive locking mechanism - clearing and
+\ref SCHED fort that matter... In case you need synchronisation
+(protection against concurrent access) in those cases, you'd pass along a
+function with a much more primitive locking mechanism - clearing and
 setting of interrupts for example.
 
-In mamy cases however you don't need locking. The
-functions \ref tk_mem_malloct and \ref tk_mem_free are them selfes
+In many cases however you don't need locking. The
+functions \ref tk_mem_malloct and \ref tk_mem_free are them selves
 thread-safe, only their \ref heap_t that they operate on is not.
-Different heaps are not vounerable between each other at all. So only in
+Different heaps are not venerable between each other at all. So only in
 cases that full-fill <b>both</b> the following two requirements, you
 need the \ref lock_f and \ref unlock_f functions:
 
 - More than one thread operates on the particular heap
-- At least one of them are involved in distructing and creating new
+- At least one of them are involved in destructing and creating new
 elements.
    - And this happens concurrently to other threads.
 
-In cases where this all of this is not satisfied then you dont need
+In cases where this all of this is not satisfied then you don't need
 locking and you simply pass NULL as arguments to \ref tk_create_heap for
 both of these functions.
 

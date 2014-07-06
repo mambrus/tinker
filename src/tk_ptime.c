@@ -78,13 +78,13 @@ unsigned int currentIdx;             //!< Index to next empty slot
 
 ptimer_t *pendingTimers;	/*!< Sorted linked list to pending times.
 				   The first one is also pending
-				   awaitinng triggering from
+				   awaiting triggering from
 				   timerEvent */
 
-HWclock_stats_t HWclock_stats;	/*!< The quality statistics of the fireing
+HWclock_stats_t HWclock_stats;	/*!< The quality statistics of the firing
 				   mechanism the lower level provides.
 				   This value must be asked for and
-				   will not containg valid values
+				   will not contain valid values
 				   until then. */
 
 //Pubplic API
@@ -166,7 +166,7 @@ unsigned long tk_ptimeevent_at(unsigned int *tid,	/*!< out: The identity of the 
 							   any related operations (for example to
 							   block on). */
 			       time_t * absTime	/*!< in: A absolute time_t defining the event.
-						   This can be of any lengt or resolution
+						   This can be of any length or resolution
 						   supported by you system and the time_t
 						   struture. @note This is also be the sorting
 						   criteria/key for the list of pending timers
@@ -201,7 +201,7 @@ unsigned long tk_ptimeevent_in(unsigned int *tid,	/*!< out: The identity of the 
 						   supported by you system and the time_t
 						   struture. */
     )
-{				/*!  Reurns ptime return code */
+{				/*!  Returns ptime return code */
 }
 
 /*!
@@ -210,12 +210,12 @@ pending on the timer, those will be released but also given an reason different
 from the "normal" case.
 
 This must be a valid timer created by any of the set functions and in must
-not have expired yet. If any these pre-requisits are not met the function
+not have expired yet. If any these pre-requisites are not met the function
 will return an error.
 
-@note To prevent logic missmatch in case a timer is fireing an even while
+@note To prevent logic mismatch in case a timer is firing an even while
 removing it's data. The trigger will be attempted to be disarmed first, then if
-that is succesfull interrupts will be disabled during the rest of the operation
+that is successful interrupts will be disabled during the rest of the operation
 completes.
 */
 
@@ -244,7 +244,7 @@ unsigned long tk_ptimer_destroy(unsigned int tid	/*!< The identity of the timer.
 @brief Gives a way to enter specific timers
 
 This gets the current threads internal timer structure (timer_t). Function is
-"public" but is <b>not</b> ment to be used by application developers, rather as
+"public" but is <b>not</b> meant to be used by application developers, rather as
 a way for different layers of TinKer to interact.
 
 @note <b>For TinKer internal use only</b>
@@ -264,41 +264,41 @@ ptimer_t *_tk_ptimer(unsigned int tid)
 /*!
 @brief Internal thread that handles pending timer even requests
 
-On a very low leve (or HW level) the system can only provide <b>one</b>
-real time-out event. And even worse: it's limited in either lengt or
-resolution (i.e. a compromize between the two) AND it can wake up
+On a very low level (or HW level) the system can only provide <b>one</b>
+real time-out event. And even worse: it's limited in either length or
+resolution (i.e. a compromise between the two) AND it can wake up
 only one pending thread.
 
-This manager thread on the other hand, makes it possibe to handle all the
-mentioed drawbacks. A time-out event can be of very high resolution AND
-destined to happen very far in the future, and when it expieres it can
+This manager thread on the other hand, makes it possible to handle all the
+mentioned drawbacks. A time-out event can be of very high resolution AND
+destined to happen very far in the future, and when it expires it can
 wake up any number of threads pending on it. Also, you can have several
 pending timers pending at the same ptimer event.
 
-Notice that we dont want to be to dependant of any other clocks, which
+Notice that we don't want to be to dependant of any other clocks, which
 is an <b> architectural design issue </b>. I used to think two HW clocks were
-nesessarey, but I've desided that that aproach would be to resky since it's
-more complex. Using only the the same clock HW as for all the pending timers
-might introduce a higher in accurancy, but I estimate that those errors will
-be handleble. In general this is due to a combination of latency within this
-componens critical parts, tinteger truncation and the frequency of both
-pending timer timeouts and on the fClock used (i.e. the interrupt frecuency).
-In general one can say that the more often the deamon is awaken, the bigger
-will the dirift (and inheritly the inaccurency) be.
+necessary, but I've decided that that approach would be to risky since it's
+more complex. Using only the same clock HW as for all the pending timers
+might introduce a higher in accuracy, but I estimate that those errors will
+be handleable. In general this is due to a combination of latency within this
+component critical parts, integer truncation and the frequency of both
+pending timer timeouts and on the fClock used (i.e. the interrupt frequency).
+In general one can say that the more often the daemon is awaken, the bigger
+will the drift (and inherently the inaccuracy) be.
 
 Design wise one can argue which parts of the service should be handled in
 this thread. For the time being I tend to let it do as little as possible
 since it will be running on highest priority. The issue is whether it should
 organize the pending timer list or not (sort list on each newly started timer
-e.t.a.) as opposed to "share" the timer list with any thread whishing to start
+e.t.a.) as opposed to "share" the timer list with any thread wishing to start
 or cancel a new timer. In the latter case some sort of synchronization must
 be used. However I have a feeling that normal semaphores might not be the right
 technique for that.
 
 @note <b>For TinKer internal use only</b> This function is not declared
-public in a headerfile and should never be accessed from outside this module.
+public in a header-file and should never be accessed from outside this module.
 
-@todo Introduce a component area for each component. Where both the adressed
+@todo Introduce a component area for each component. Where both the addressed
 issue, the solution and the quirks and considerations are described.
 
 */

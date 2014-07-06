@@ -36,7 +36,7 @@ POSIX_RT
 @see POSIX_RT
 @see PTHREAD
 
-@todo Consider replacing qsort with insert sort (or at least a non-reqursive version)
+@todo Consider replacing qsort with insert sort (or at least a non-recursive version)
 */
 
 /*****************************************************************************
@@ -426,13 +426,13 @@ size_t mq_receive(mqd_t mq,
 	/* OK so far */
 	/* Release poolaccess */
 	assert(sem_post(&poolAccessSem) == 0);
-	/* Will block if nescessary */
+	/* Will block if necessary */
 	assert(sem_wait(&Q->sem) == 0);
 
 	memcpy(msg_buffer,
 	       Q->mBox.messArray[Q->mBox.mIdxOut].buffer,
 	       Q->mBox.messArray[Q->mBox.mIdxOut].msgSz);
-	if (msgprio)		//Special case if atribute is NULL. Check what standard says about that
+	if (msgprio)		//Special case if attribute is NULL. Check what standard says about that
 		*msgprio = Q->mBox.messArray[Q->mBox.mIdxIn].order.prio;
 
 	msgSize = Q->mBox.messArray[Q->mBox.mIdxOut].msgSz;
@@ -566,7 +566,7 @@ static void initialize(void)
 	for (i = 0; i < NUMBER_OF_QUEUES; i++) {
 		queuePool[i].taken = 0;
 		memset(queuePool[i].mq_name, 'Q', QNAME_LEN);	//Makes a mark in memory. Easy to find the pool
-		queuePool[i].mq_name[0] = 0;	//Also invalidate it for any string comparisments just in case
+		queuePool[i].mq_name[0] = 0;	//Also invalidate it for any string comparisons just in case
 	}
 	for (i = 0; i < NUMBER_OF_FILES; i++) {
 		filePool[i].taken = 0;
@@ -578,8 +578,8 @@ static void initialize(void)
  * FUNCTION NAME: compMess
  *
  *
- * DESCRIPTION: Compare function for quick sort. Sorts by prio, timestamp,
- *              incom order.
+ * DESCRIPTION: Compare function for quick sort. Sorts by prio, time-stamp,
+ *              incoming order.
  *
  *
  * NOTES:

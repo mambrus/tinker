@@ -30,14 +30,14 @@ opened.
 
 In the latter case the drive has to be previously initialized with an
 mounting point name, and it has to have been mounted (initially on __Rnod
-or a submounted system).
+or a sub-mounted system).
 
 The open function will determine if the adjacent inode is a mount-point
 or not. If it is, open will re-seek the inode in the RAM-disk inode list.
 If not the file is assumed to reside in global heap.
 
 As driver we can't provide default init/fini since we don't know
-which memory to handle. Instead it is the resonsibility of each BSP.
+which memory to handle. Instead it is the responsibility of each BSP.
 
 @note The code does not need to be used as driver. It will provide
 the filesystem with a default initial root FS managed on global heap.
@@ -82,8 +82,8 @@ typedef struct {
 typedef struct {
 	char *ptr;		//!< your handles in-file index
 	int sidx;		//!< Current in sector index
-	int didx;		//!< Current data index (reduntant info to csector/sidx, but makes logic easier)
-	struct sector_t *csector;	//!< Points at current sector (reduntant info to didx, but makes logic easier)
+	int didx;		//!< Current data index (redundant info to csector/sidx, but makes logic easier)
+	struct sector_t *csector;	//!< Points at current sector (redundant info to didx, but makes logic easier)
 } DRV_IO(hndl_data_t);
 
 typedef struct {
@@ -416,7 +416,7 @@ int DRV_IO(write) (int file, char *ptr, int len) {
 						}
 					}
 				}
-				//Since we're appending we should allready have a file that's large enough, i.e. EOF should never been passed
+				//Since we're appending we should already have a file that's large enough, i.e. EOF should never been passed
 				assert(_eof == 0);
 				//Sanity check to make sure we calculated things right
 				assert(hdata->csector->next == NULL);
@@ -437,7 +437,7 @@ int DRV_IO(write) (int file, char *ptr, int len) {
 		}
 	}
 
-	//This implementation always write the whole (lengt if it succeeds at all)
+	//This implementation always write the whole (length if it succeeds at all)
 	assert(n == len);
 	return n;
 }
@@ -521,14 +521,14 @@ unsigned long  tk_create_heap (
 	heapid_t   *heapid,  //!< Returned heap ID
 	int         size,    //!< Size each element will have
 	int         num,     //!< Requested maximum number of elements
-	lock_f      lock,    //!< Function for un-locking acces when operation on the heap. NULL if no locking is needed.
-	unlock_f    unlock,  //!< Function for locking acces when operation on the heap. NULL if no locking is needed.
+	lock_f      lock,    //!< Function for un-locking access when operation on the heap. NULL if no locking is needed.
+	unlock_f    unlock,  //!< Function for locking access when operation on the heap. NULL if no locking is needed.
 	char       *heap_ptr //!< Memory address to use as heap, or NULL for global heap usage
 )*/
 	//nsect = isratio * ninodes
 	//ninodes = nsect/isratio
 
-	//Non exact (but simple) alorythm to calculate space follows:
+	//Non exact (but simple) algorithm to calculate space follows:
 	nsectors = size / sectorsize;
 	ninodes = nsectors / isratio;
 	//nsectors -= (ninodes / isratio);

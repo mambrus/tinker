@@ -29,9 +29,9 @@
 
 /* default settings */
 
-#define SYSQ_LENGT 10		/*!< Lengt of each Q (i.e. the number of
+#define SYSQ_LENGT 10		/*!< Length of each Q (i.e. the number of
 				   elements in each queue) Small number, but should be OK since these
-				   Q's are ment to be used by threads that run on highest prio. */
+				   Q's are meant to be used by threads that run on highest prio. */
 
 /*- external functions **/
 

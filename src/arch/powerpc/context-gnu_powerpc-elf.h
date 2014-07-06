@@ -53,8 +53,8 @@
 	   ** Read-modify-write operations are not an option in this case **
 
 	   SPR's EIE and EID will do almost the same thing, but will not mask NMI
-	   I.e. NMI might still corrupt contexts swiching, but we'll live with
-	   that since those are ment never to really happen.
+	   I.e. NMI might still corrupt contexts switching, but we'll live with
+	   that since those are meant never to really happen.
 	 */
 
 #define _EIE 80
@@ -65,8 +65,8 @@
 
 #else
 #warning Can't handle interrupts safly for this ARCH/ABI combination
-#define TK_CLI assert("Can't handle interrupts safly for this ARCH/ABI combination" == NULL)
-#define TK_STI assert("Can't handle interrupts safly for this ARCH/ABI combination" == NULL)
+#define TK_CLI assert("Can't handle interrupts safely for this ARCH/ABI combination" == NULL)
+#define TK_STI assert("Can't handle interrupts safely for this ARCH/ABI combination" == NULL)
 
 #endif
 
