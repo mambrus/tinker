@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include <tk_ansi.h>
 #include <tk_ansi_dirwrap.h>
-#include BUILDCHAIN(stdlib.h)
+#include BUILDCHAIN_INCLUDE(stdlib.h)
 #include <tinker/config.h>
 
 #ifndef STDLIB_H_TK

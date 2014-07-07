@@ -26,7 +26,7 @@
 #define __was_rtems__
 #endif
 
-#include BUILDCHAIN(sys/stat.h)
+#include BUILDCHAIN_SYS_INCLUDE(stat.h)
 
 #if defined (__was_rtems__)
 #define __rtems__

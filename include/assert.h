@@ -37,7 +37,7 @@ extern "C" {
 #endif
 #if !defined(__C166__)
 #include <tk_ansi_dirwrap.h>
-#include BUILDCHAIN(assert.h)
+#include BUILDCHAIN_INCLUDE(assert.h)
 #endif
 #if !defined (assert) && ( \
          defined(__CYGWIN32__) || defined(__CYGWIN__) || \

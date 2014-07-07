@@ -25,7 +25,7 @@
 #endif
 #if !defined(__C166__)
 #include <tk_ansi_dirwrap.h>
-#include BUILDCHAIN(time.h)
+#include BUILDCHAIN_INCLUDE(time.h)
 #endif
 
 #ifndef TIME_H_TK

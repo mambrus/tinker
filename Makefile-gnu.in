@@ -34,7 +34,11 @@ THIS_DIR       = @THIS_DIR@
 CPU_OPT        = @CPU_OPT@
 DCPU           = @DCPU@
 SUB_VERBOSE    = @SUB_VERBOSE@
-
+# Below are for informative use only. Don't use, especially not in any
+# application makefiles. Values are available though include/config.h
+# instead.
+CHAINPATH_INCLUDE			= @CHAINPATH_INCLUDE@
+CHAINPATH_SYS_INCLUDE	= @CHAINPATH_SYS_INCLUDE@
 
 .PHONY: all subdirs info depend link clean cleanall cleanhard install tryinstall rebuild flashit console
 
@@ -57,7 +61,6 @@ CFLAGS := $(CFLAGS) -D__FDSCR_T=int -D__FDFLG_T=int
 ifeq ($(XCOMPILE),1)
    CFLAGS := $(CFLAGS)  -DDEBUG -DBOARD=$(BOARD) -DABI=$(ABI) -DARCH=$(ARCH)
    CFLAGS := $(CFLAGS) $(CPU_OPT) $(DCPU) -g -gstabs+ -D RUN_FROM_ROM
-   CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/$(ALIAS_HOST)/include
    CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include -I $(TINKER_PATH)/src $(EXTERN_INCL)
 
    LDFLAGS   := $(LDFLAGS) -Xlinker --relocatable
@@ -67,7 +70,6 @@ ifeq ($(XCOMPILE),1)
 
 else
    CFLAGS   := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=$(ARCH) -DDEBUG
-   CFLAGS := $(CFLAGS) -D CHAINPATH=$(TOOLDIR)/include
    CFLAGS   := $(CFLAGS) -Wall -I . -I $(TINKER_PATH)/include
    LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
 

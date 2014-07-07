@@ -24,23 +24,24 @@
 #ifndef NO
 #define NO 0
 #endif
+
 #ifndef _SYS_FEATURES_H
 #define _SYS_FEATURES_H
 #endif
 
 #if defined(_WIN32) && defined(_MSC_VER)
-#define CHAINPATH C:\Program Files\Microsoft Visual Studio\VC98\Include
+#define CHAINPATH_INCLUDE C:\Program Files\Microsoft Visual Studio\VC98\Include
 
 #elif defined(__BORLANDC__) || defined(__BCPLUSPLUS__)
-#define CHAINPATH C:/BC5/INCLUDE
+#define CHAINPATH_INCLUDE C:/BC5/INCLUDE
 
 #elif defined( __C166__ )
 
-#define CHAINPATH C:\Keil\C166\INC
+#define CHAINPATH_INCLUDE C:\Keil\C166\INC
 
 #elif defined(__GNUC__)
-#ifndef CHAINPATH
-#define CHAINPATH /usr/include
+#ifndef CHAINPATH_INCLUDE
+#define CHAINPATH_INCLUDE /usr/include
 #endif
 
 #ifdef bfin
@@ -75,9 +76,9 @@
 #define FNAME(path,file) \
    DEFSTR( path/file )
 
-#define BUILDCHAIN(file) \
-   FNAME( CHAINPATH, file ) \
+#define BUILDCHAIN_INCLUDE(file) \
+   FNAME( CHAINPATH_INCLUDE, file ) \
 
-#define BUILDCHAIN_MUARCH(file) \
-   FNAME( TK_MULTI_ARCH_INCLUDES, file ) \
+#define BUILDCHAIN_SYS_INCLUDE(file) \
+   FNAME( CHAINPATH_SYS_INCLUDE, file ) \
 

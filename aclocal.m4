@@ -1,3 +1,180 @@
+AC_PREREQ([2.64])
+
+dnl Check if header-file exists. Exit with bug-rapport notice if it doesn't
+AC_DEFUN([TINKER_REQ_H_FILE],
+[
+	AC_REQUIRE([AC_HEADER_STDC])
+	tk_is_found_header="no"
+	AC_CHECK_HEADERS([$1],
+		[tk_is_found_header="yes"; break;])
+
+	AC_MSG_NOTICE([Requested header-file $1 exists: $tk_is_found_header])
+
+	AS_IF([test "x$tk_is_found_header" != "xyes"],
+		[AC_MSG_ERROR([Unable to find the header-file required $1.
+			Please file bug-rapport!])])
+])
+
+dnl Utility function: Find X tool-chain's default gcc include directory
+dnl Takes one input argument: A file always supposed to be found (for
+dnl example stdio.h)
+AC_DEFUN([TINKER_FIND_INCLUDE_DIR],
+[
+	TINKER_CANONICAL_TOOLS_ONCE
+	AS_IF([test "x$CC" == "x"],
+		[AC_MSG_ERROR([[\$CC] is undefined. This should not be possible here.
+			Please file bug-rapport!])])
+	TINKER_REQ_H_FILE($1)
+	tk_found_dir=$(
+		for DD in $(
+			for D in $(
+				(echo | $CC -I /opt -v -x c -E - 2>&1 ) | \
+				sed -nEe /search\ starts\ here:/,/End\ of\ search\ list\./p | \
+				grep '^ /'
+			); do
+				echo $D; done | tac
+		); do
+			echo -n "$DD:";
+			if test -f ${DD}/$1; then
+				echo ${DD}/$1;
+			else
+				echo;
+			fi;
+		done | cut -f2 -d":" | sed -ne '/^$/!p' | head -n1
+	)
+	tk_found_dir=$(dirname $tk_found_dir)
+])
+
+AC_DEFUN([TINKER_FIND_INCLUDE_DIR_ONCE],
+[
+	AS_IF([test "x$tk_find_include_dir_hasrun" == "x"],[
+		TINKER_FIND_INCLUDE_DIR($1)
+		tk_find_include_dir_hasrun=yes
+	])
+])
+
+dnl Utility function: Find X tool-chain's gcc default "sys/" include
+dnl directory.
+dnl Note: Take precaution to choose a file that's in sys/ regardless of
+dnl system (i.e. BSD, Linux, Cygwin e.t.a). This note applies to hosted-mode
+dnl builds
+dnl Takes one input argument: A file always supposed to be found (for
+dnl example errno.h)
+AC_DEFUN([TINKER_FIND_INCLUDE_SYS_DIR],
+[
+	TINKER_CANONICAL_TOOLS_ONCE
+	AS_IF([test "x$CC" == "x"],
+		[AC_MSG_ERROR([[\$CC] is undefined. This should not be possible here.
+			Please file bug-rapport!])])
+	TINKER_REQ_H_FILE(sys/$1)
+	tk_found_dir=$(
+		for DD in $(
+			for D in $(
+				(echo | $CC -I /opt -v -x c -E - 2>&1 ) | \
+				sed -nEe /search\ starts\ here:/,/End\ of\ search\ list\./p | \
+				grep '^ /'
+			); do
+				echo $D; done | tac
+		); do
+			echo -n "$DD:";
+			if test -f ${DD}/sys/$1; then
+				echo ${DD}/sys/$1;
+			else
+				echo;
+			fi;
+		done | cut -f2 -d":" | sed -ne '/^$/!p' | head -n1
+	)
+	tk_found_dir=$(dirname $tk_found_dir)
+])
+
+AC_DEFUN([TINKER_FIND_INCLUDE_SYS_DIR_ONCE],
+[
+	AS_IF([test "x$tk_find_include_sys_dir_hasrun" == "x"],[
+		TINKER_FIND_INCLUDE_SYS_DIR($1)
+		tk_find_include_sys_dir_hasrun=yes
+	])
+])
+
+dnl Detect and AC_SUBST the header directories
+AC_DEFUN([TINKER_SUSBST_HEADER_PATHS],
+[
+	TINKER_FIND_INCLUDE_SYS_DIR_ONCE(errno.h)
+	dnl Update AH files
+	AC_DEFINE_UNQUOTED([CHAINPATH_SYS_INCLUDE], $tk_found_dir)
+	dnl For AC files
+	CHAINPATH_SYS_INCLUDE=$tk_found_dir
+	AC_SUBST(CHAINPATH_SYS_INCLUDE)
+
+	TINKER_FIND_INCLUDE_DIR_ONCE(stdio.h)
+	dnl Update AH files
+	AC_DEFINE_UNQUOTED([CHAINPATH_INCLUDE], $tk_found_dir)
+	dnl For AC files
+	CHAINPATH_INCLUDE=$tk_found_dir
+	AC_SUBST(CHAINPATH_INCLUDE)
+])
+
+AC_DEFUN([TINKER_CANONICAL_TOOLS],
+[
+	dnl Find and set the C compiler. The result of this will affect the $CC env.
+	dnl var in the make files. Further more the TK_CPLUSPLUS macro in config.h
+	dnl will reflect the following:
+	dnl
+	dnl  * Undefined. Whomever intended to build TinKer did *not* intend TinKer
+	dnl 	to be build with g++
+	dnl
+	dnl  * Set but "FALSE". Whomever intended to build TinKer *did* intend TinKer
+	dnl 	to be build with g++, but the test failed and the build system falls
+	dnl 	back to gcc
+	dnl
+	dnl  * Set but "TRUE". Whomever intended to build TinKer *did* intend TinKer
+	dnl 	to be build with g++ and TinKer was built that way.
+	dnl
+	dnl Note: it's easy to mix up the two macros G++ and C++ because they look
+	dnl very similar .They indicate the same logic, but their contents are very
+	dnl different.
+
+	AC_REQUIRE([AC_PROG_CC])
+	if test $USECPLUSPLUS != __tk_no; then
+		dnl Tries to use g++ as instructed. Should fall back on gcc if c++ is
+		dnl not available AC_PROG_CXX
+		AC_PROG_CC(g++)
+		AC_LANG_CPLUSPLUS
+		dnl The TK_CPLUSPLUS macro in config.h will be set accordingly to the
+		dnl result AC_DEFINE_UNQUOTED([TK_CPLUSPLUS],__tk_$GXX)
+		if test $GXX == yes; then
+			CC=$CXX
+			#AC_SUBST(CC)
+		fi
+	else
+		dnl Use gcc
+		AC_PROG_CC
+		AC_PROG_CC(gcc)
+		AC_LANG_C
+	fi
+
+	dnl Expand the canonicals
+	AC_CANONICAL_BUILD
+	AC_CANONICAL_HOST
+	AC_CANONICAL_TARGET
+	AC_MSG_NOTICE([Build system CPU: $build_cpu])
+	AC_MSG_NOTICE([Build system vendor: $build_vendor])
+	AC_MSG_NOTICE([Build system OS: $build_os])
+	AC_MSG_NOTICE([Host system CPU: $host_cpu])
+	AC_MSG_NOTICE([Host system vendor: $host_vendor])
+	AC_MSG_NOTICE([Host system OS: $host_os])
+	AC_MSG_NOTICE([Target system CPU: $target_cpu])
+	AC_MSG_NOTICE([Target system vendor: $target_vendor])
+	AC_MSG_NOTICE([Target system OS: $target_os])
+])
+
+AC_DEFUN([TINKER_CANONICAL_TOOLS_ONCE],
+[
+	AS_IF([test "x$tk_canonical_tools_hasrun" == "x"],[
+		TINKER_CANONICAL_TOOLS
+		tk_canonical_tools_hasrun=yes
+	])
+])
+
 dnl This function replaces the need of automake to get some files that autoconf
 dnl needs. TinKer does not use automake because of it's version incompatibility
 dnl problems. However, autoconf seems to have some dependency towards automake
@@ -278,58 +455,17 @@ AC_DEFUN([TINKER_CONFIGURE],
 	fi
 
 	TINKER_OPTIONS_BUILD
-
-	dnl Find and set the C compiler. The result of this will affect the $CC env. var in the make
-	dnl files. Further more the TK_CPLUSPLUS macro in config.h will reflect the following:
-	dnl * Undefined. Whomever intended to build TinKer did *not* intend TinKer to be build with g++
-	dnl * Set but "FALSE". Whomever intended to build TinKer *did* intend TinKer to be build
-	dnl    with g++, but the test failed and the build system falls back to gcc
-	dnl * Set but "TRUE". Whomever intended to build TinKer *did* intend TinKer to be build
-	dnl    with g++ and TinKer was built that way.
-	dnl
-	dnl Note: it's easy to mix up the two macros G++ and C++ because they look very similar
-	dnl.They indicate the same logic, but their contents are very different.
-	AC_PROG_CC
-	if test $USECPLUSPLUS != __tk_no; then
-		dnl Tries to use g++ as instructed. Should fall back on gcc if c++ is not available
-		AC_PROG_CXX
-		AC_PROG_CC(g++)
-		AC_LANG_CPLUSPLUS
-		dnl The TK_CPLUSPLUS macro in config.h will be set accordingly to the result
-		AC_DEFINE_UNQUOTED([TK_CPLUSPLUS],__tk_$GXX)
-		if test $GXX == yes; then
-			CC=$CXX
-			#AC_SUBST(CC)
-		fi
-	else
-		dnl Use gcc
-		AC_PROG_CC
-		AC_PROG_CC(gcc)
-		AC_LANG_C
-	fi
-
-	dnl Expand the canonicals
-	AC_CANONICAL_BUILD
-	AC_CANONICAL_HOST
-	AC_CANONICAL_TARGET
-	AC_MSG_NOTICE([Build system CPU: $build_cpu])
-	AC_MSG_NOTICE([Build system vendor: $build_vendor])
-	AC_MSG_NOTICE([Build system OS: $build_os])
-	AC_MSG_NOTICE([Host system CPU: $host_cpu])
-	AC_MSG_NOTICE([Host system vendor: $host_vendor])
-	AC_MSG_NOTICE([Host system OS: $host_os])
-	AC_MSG_NOTICE([Target system CPU: $target_cpu])
-	AC_MSG_NOTICE([Target system vendor: $target_vendor])
-	AC_MSG_NOTICE([Target system OS: $target_os])
+	TINKER_CANONICAL_TOOLS_ONCE
+	TINKER_SUSBST_HEADER_PATHS
 
    TINKER_CANONICAL_EXTRA
-
 	dnl the vendor part will tell us.
 	if test $host_vendor == "unknown"; then
 		SYSTEM="default"
 	else
 		SYSTEM=$host_vendor
 	fi
+
 	dnl Note that system is not quoted in config.h in this file. This permits configure.in at lower level
 	dnl to determine {if test $SYSTEM == 'default'} to set whatever default system they think is best
 	dnl The "un-prefixed version is however quoted and is set to the canonical middle name

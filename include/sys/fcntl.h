@@ -24,11 +24,7 @@
 #include <tinker/config.h>
 #include <tk_ansi_dirwrap.h>
 
-#if defined(TK_MULTI_ARCH_TARGET)
-#include BUILDCHAIN_MUARCH(sys/fcntl.h)
-#else
-#include BUILDCHAIN(sys/fcntl.h)
-#endif
+#include BUILDCHAIN_SYS_INCLUDE(fcntl.h)
 
 #undef O_RDONLY
 #undef O_WRONLY

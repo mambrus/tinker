@@ -23,7 +23,7 @@
 #include <tk_ansi.h>
 #include <tk_ansi_dirwrap.h>
 
-#include BUILDCHAIN(stdio.h)
+#include BUILDCHAIN_INCLUDE(stdio.h)
 
 #if defined (__GNUC__)
 #define perror tk_perror

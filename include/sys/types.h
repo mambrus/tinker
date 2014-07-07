@@ -23,11 +23,9 @@
 #include <tk_ansi_dirwrap.h>
 
 #define __DEV_T void*
-#if defined(TK_MULTI_ARCH_TARGET)
-#include BUILDCHAIN_MUARCH(sys/types.h)
-#else
-#include BUILDCHAIN(sys/types.h)
-#endif
+
+#include BUILDCHAIN_SYS_INCLUDE(types.h)
+
 #endif
 
 #ifndef SYS_TYPES_H_TK

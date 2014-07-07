@@ -22,7 +22,7 @@
 #include <tk_ansi.h>
 #include <tk_ansi_dirwrap.h>
 
-#include BUILDCHAIN(string.h)
+#include BUILDCHAIN_INCLUDE(string.h)
 
 #if defined (__GNUC__)
 #define strerror tk_strerror
