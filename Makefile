@@ -169,7 +169,7 @@ configure:
 	rm -rf autom4te.cache
 	autoheader
 	#rm -f aclocal.m4
-	autoconf -I kernel
+	autoconf
 	#aclocal
 	$(CONFIGURE_MODS)
 	@echo "Configure scripts created. Now run './configure [options]'. For example: "
