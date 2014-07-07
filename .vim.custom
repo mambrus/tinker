@@ -15,4 +15,4 @@ nmap <silent> <leader>d :!kdbg $KDBG_GEOMETRY $KDBG_SESSION $KDBG_BINARY &<CR>
 
 :set tabstop=3
 :set shiftwidth=3
-:set expandtab
+":set expandtab
