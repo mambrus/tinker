@@ -1,0 +1,240 @@
+dnl This is the tinker/bsp/gnu_armv7l configure.in file.
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.59])
+AC_INIT(gnu_armv7l, [0.1.0])
+AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
+
+AC_CONFIG_AUX_DIR(../..)
+
+dnl Currently only hosted mode. I.e. no real BOARDSs and no MCPU adaptions (TBD)
+AC_CONFIG_SUBDIRS([])
+
+# Note: The system identification and configure.h update will get its final
+# form by the last test in the AC chain
+
+sources_asm=""
+extras=""
+sources_c="dummy_board.c"
+#extras="../../lib/ram_gnu.ld ../../lib/flash_gnu.ld ../../lib/crt0.o"
+
+AC_PROG_CC
+TINKER_CONFIGURE(../..)
+
+
+AC_MSG_NOTICE([bsp/gnu_armv7l configure: Sanity checking and source packaging...])
+AC_MSG_NOTICE([Canonical info either configured or self-determined/deducted:])
+AC_MSG_NOTICE([  BUILD:  ${build_cpu}-${build_vendor}-${build_os}])
+AC_MSG_NOTICE([  HOST:   ${host_cpu}-${host_vendor}-${host_os}])
+AC_MSG_NOTICE([  TARGET: ${target_cpu}-${target_vendor}-${target_os}])
+# Check run-time system sanity and add sources accordingly
+if test $SYSTEM == 'default'; then
+   if test $HOSTED -eq 1; then
+      EXEC_SYS=__SYS_HOSTED__
+      AC_SUBST(EXEC_SYS)
+      AC_DEFINE_UNQUOTED([TK_SYSTEM],$EXEC_SYS)
+   else
+      AC_MSG_ERROR([<<< Tinker does (yet) only support __SYS_HOSTED_ system for your tool-chain])
+   fi
+else
+   AC_MSG_ERROR([<<< Tinker does only support hosted execution for this tool-chain/configure combo])
+fi
+
+# See to that all sources get in the makefile (both generic and configure specific)
+ALL_C=$sources_c
+AC_SUBST(ALL_C)
+
+
+dnl Tunings, either default or fall-back depending on further refinements in
+dnl either BOARD or MCPU exists.
+if test "X${EXEC_SYS}" == "X__SYS_HOSTED__"; then
+   dnl *Components* New defaults but may be changed (prune only)
+   dnl ----------------------------------------------------------------------------
+   AC_ARG_ENABLE(itc,
+      AS_HELP_STRING(
+         [--enable-itc],
+         [ITC - Enable/disable Inter thread communication component (native API)]),
+      _TK_COMP_ITC=__tk_$enableval,
+      _TK_COMP_ITC=__tk_yes
+   )
+   AC_ARG_ENABLE(ptimer,
+      AS_HELP_STRING(
+         [--enable-ptimer],
+         [PTIMER - Enable/disable Preemptive timer component]),
+      _TK_COMP_PTIMER=__tk_$enableval,
+      _TK_COMP_PTIMER=__tk_no
+   )
+   AC_ARG_ENABLE(kmem,
+      AS_HELP_STRING(
+         [--enable-kmem],
+         [KMEM - Enable/disable Kernel memory manager component]),
+      _TK_COMP_KMEM=__tk_$enableval,
+      _TK_COMP_KMEM=__tk_no
+   )
+   AC_ARG_ENABLE(pthread,
+      AS_HELP_STRING(
+         [--enable-pthread],
+         [PTHRED - Enable/disable POSIX 1003.1c threads component]),
+      _TK_COMP_PTHREAD=__tk_$enableval,
+      _TK_COMP_PTHREAD=__tk_yes
+   )
+   AC_ARG_ENABLE(posix_rt,
+      AS_HELP_STRING(
+         [--enable-posix_rt],
+         [POSIX_RT - Enable/disable POSIX 1003.1b queues, semaphores component enabled]),
+      _TK_COMP_POSIX_RT=__tk_$enableval,
+      _TK_COMP_POSIX_RT=__tk_yes
+   )
+   AC_ARG_ENABLE(filesys,
+      AS_HELP_STRING(
+         [--enable-filesys],
+         [FIILESYS - Enable/disable embedded file-system abstraction component. (Not available for all possible targets. Target must be HIXS adapted.)]),
+      _TK_COMP_FILESYS=__tk_$enableval,
+      _TK_COMP_FILESYS=__tk_no
+   )
+
+   dnl
+   dnl settings for the components above
+   dnl
+   AC_ARG_ENABLE(min_stack,
+      AS_HELP_STRING(
+         [--enable-min_stack=<val>],
+         [Maximum size of a stack for a thread ]),
+      _TK_MINIMUM_STACK_SIZE=$enableval,
+      _TK_MINIMUM_STACK_SIZE=0x2400
+   )
+   AC_ARG_ENABLE(norm_stack,
+      AS_HELP_STRING(
+         [--enable-norm_stack=<val>],
+         [Stack-size used when stack-size is omitted ]
+      ),
+      _TK_NORMAL_STACK_SIZE=$enableval,
+      _TK_NORMAL_STACK_SIZE=0x4800
+   )
+   AC_ARG_ENABLE(max_threads,
+      AS_HELP_STRING(
+         [--enable-max_threads=<val>],
+         [Maximum number of threads your system could have ]),
+      _TK_MAX_THREADS=$enableval,
+      _TK_MAX_THREADS=1000
+   )
+   AC_ARG_ENABLE(max_prio,
+      AS_HELP_STRING(
+         [--enable-max_prio=<val>],
+         [Number of priorities for you system (recommended value: 3 or 16)]),
+      _TK_MAX_PRIO_LEVELS=$enableval,
+      _TK_MAX_PRIO_LEVELS=16
+   )
+   AC_ARG_ENABLE(that_prio,
+      AS_HELP_STRING(
+         [--enable-that_prio=<val>],
+         [Number of threads that can be scheduled at each priority ]),
+      _TK_MAX_THREADS_AT_PRIO=$enableval,
+      _TK_MAX_THREADS_AT_PRIO=TK_MAX_THREADS
+   )
+   AC_ARG_ENABLE(thename_len,
+      AS_HELP_STRING(
+         [--enable-thename_len=<val>],
+         [Lengts of the string in TCB that holds the name of the thread ]),
+      _TK_THREAD_NAME_LEN=$enableval,
+      _TK_THREAD_NAME_LEN=0x17
+   )
+   AC_ARG_ENABLE(blocked_q,
+      AS_HELP_STRING(
+         [--enable-blocked_q=<val>],
+         [Maximum number of threads blocked on any ITC primitive, i.e. not only Q ]),
+      _TK_MAX_BLOCKED_ON_Q=$enableval,
+      _TK_MAX_BLOCKED_ON_Q=TK_MAX_THREADS
+   )
+   AC_ARG_ENABLE(max_q,
+      AS_HELP_STRING(
+         [--enable-max_q=<val>],
+         [Maximum number of any ITC primitive, i.e not only Q ]),
+      _TK_MAX_NUM_Q=$enableval,
+      _TK_MAX_NUM_Q="(TK_MAX_THREADS*2)"
+   )
+   AC_ARG_ENABLE(max_heaps,
+      AS_HELP_STRING(
+         [--enable-max_heaps=<val>],
+         [Maximum number of heaps for the KMEM component]),
+      _TK_KMEM_NHEAPS=$enableval,
+      _TK_KMEM_NHEAPS=100,
+   )
+else
+   AC_ARG_ENABLE(min_stack,
+      AS_HELP_STRING(
+         [--enable-min_stack=<val>],
+         [Maximum size of a stack for a thread ]),
+      _TK_MINIMUM_STACK_SIZE=$enableval,
+      _TK_MINIMUM_STACK_SIZE=0x0300,
+   )
+   AC_ARG_ENABLE(norm_stack,
+      AS_HELP_STRING(
+         [--enable-norm_stack=<val>],
+         [Stack-size used when stack-size is omitted ]
+      ),
+      _TK_NORMAL_STACK_SIZE=$enableval,
+      _TK_NORMAL_STACK_SIZE=0x0300
+   )
+   AC_ARG_ENABLE(max_threads,
+      AS_HELP_STRING(
+         [--enable-max_threads=<val>],
+         [Maximum number of threads your system could have ]),
+      _TK_MAX_THREADS=$enableval,
+      _TK_MAX_THREADS=10
+   )
+   AC_ARG_ENABLE(max_prio,
+      AS_HELP_STRING(
+         [--enable-max_prio=<val>],
+         [Number of priorities for you system (recommended value: 3 or 16)]),
+      _TK_MAX_PRIO_LEVELS=$enableval,
+      _TK_MAX_PRIO_LEVELS=16
+   )
+   AC_ARG_ENABLE(that_prio,
+      AS_HELP_STRING(
+         [--enable-that_prio=<val>],
+         [Number of threads that can be scheduled at each priority ]),
+      _TK_MAX_THREADS_AT_PRIO=$enableval,
+      _TK_MAX_THREADS_AT_PRIO=3
+   )
+   AC_ARG_ENABLE(thename_len,
+      AS_HELP_STRING(
+         [--enable-thename_len=<val>],
+         [Lengts of the string in TCB that holds the name of the thread ]),
+      _TK_THREAD_NAME_LEN=$enableval,
+      _TK_THREAD_NAME_LEN=0x17
+   )
+   AC_ARG_ENABLE(blocked_q,
+      AS_HELP_STRING(
+         [--enable-blocked_q=<val>],
+         [Maximum number of threads blocked on any ITC primitive, i.e. not only Q ]),
+      _TK_MAX_BLOCKED_ON_Q=$enableval,
+      _TK_MAX_BLOCKED_ON_Q=TK_MAX_THREADS
+   )
+   AC_ARG_ENABLE(max_q,
+      AS_HELP_STRING(
+         [--enable-max_q=<val>],
+         [Maximum number of any ITC primitive, i.e not only Q ]),
+      _TK_MAX_NUM_Q=$enableval,
+      _TK_MAX_NUM_Q=10
+   )
+   AC_ARG_ENABLE(max_heaps,
+      AS_HELP_STRING(
+         [--enable-max_heaps=<val>],
+         [Maximum number of heaps for the KMEM component]),
+      _TK_KMEM_NHEAPS=$enableval,
+      _TK_KMEM_NHEAPS=25,
+   )
+fi
+
+TINKER_CONDITINAL_VERBOSE_PRINT
+dnl
+dnl Make it so (Actuate)
+dnl
+TINKER_ACTUATE_COMPONENTS
+TINKER_ACTUATE_COMP_SETTINGS
+
+dnl Update config.h
+AC_CONFIG_HEADER(../../include/tinker/config.h)
+
+AC_OUTPUT(Makefile-gnu)

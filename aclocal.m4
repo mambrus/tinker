@@ -548,7 +548,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 		TOOLDIR=$(echo $GXX_PATH | sed -e "s/\/bin\/\+$CXX//")
 	fi
 
-	if test $cross_compiling == yes; then
+	if test "X$cross_compiling" == "Xyes"; then
 		XCOMPILE=1
 		ABI=$(echo $host | sed -e s/.*-//)
 		if test "X${ARCH}" == "X"; then
@@ -557,11 +557,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	else
 		XCOMPILE=0
 
-		#$build, $target, host are missing in this case. Need AC_CANNONICAL_HOST but that implies extra scripts (?)
-		#Preferred line below cant be used
-		#ARCH=$(echo $build | sed -e s/-.*//)
-
-		ARCH=$(uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/)
+		ARCH=${HOST_CPU}
 		ABI=""
 	fi
 	AC_SUBST(XCOMPILE)
@@ -572,56 +568,6 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_DEFINE_UNQUOTED([TK_ABI],__tk_${ABI}__)
 	AC_DEFINE_UNQUOTED([__TK_ARCH_up__],$ARCH)
 	AC_DEFINE_UNQUOTED([__TK_ABI_up__],$ABI)
-
-	dnl Adapt for what could be ccache tricks where binary is installed
-	dnl under local to gain PATH priority, but includes and libs are not.
-	if test ! -f $TOOLDIR/$host_alias/include/stdio.h; then
-		AC_MSG_WARN([<<< System header-files are not at expected location.
-		Trying to work-around...])
-		if test -f $TOOLDIR/$host_alias/../include/stdio.h; then
-			pushd $TOOLDIR/$host_alias/..
-			TOOLDIR=$(pwd)
-			popd
-		else
-			AC_MSG_NOTICE([<<< Can't figure out location of system includes.
-			Please rapport bug!])
-		fi
-	fi
-
-	dnl Adapt for multi-arch
-	if test ! -f $TOOLDIR/$host_alias/include/sys/types.h; then
-		arch1=$target_cpu-$target_vendor-$target_os
-		arch2=$target_cpu-$target_os
-		AC_MSG_WARN([<<< Arch specific Header-files are not at expected location.
-		This must be a multi-arch target, Adding arch specific sub-dir...])
-		if test -f $TOOLDIR/$host_alias/include/$arch1/sys/types.h; then
-			MULTI_ARCH_TARGET=$(echo $arch1 | sed -e 's/\/\//\//g')
-			MULTI_ARCH_INCLUDES=$(
-				echo $TOOLDIR/$host_alias/include/$arch1 | \
-					sed -e 's/\/\//\//g'
-			)
-			AC_SUBST(MULTI_ARCH_TARGET)
-			AC_DEFINE_UNQUOTED([TK_MULTI_ARCH_TARGET],$MULTI_ARCH_TARGET)
-			AC_SUBST(MULTI_ARCH_TARGET)
-			AC_DEFINE_UNQUOTED([TK_MULTI_ARCH_TARGET],$MULTI_ARCH_TARGET)
-		elif test -f $TOOLDIR/$host_alias/include/$arch2/sys/types.h; then
-			MULTI_ARCH_TARGET=$(echo $arch2 | sed -e 's/\/\//\//g')
-			MULTI_ARCH_INCLUDES=$(
-				echo $TOOLDIR/$host_alias/include/$arch2 | \
-					sed -e 's/\/\//\//g'
-			)
-			AC_SUBST(MULTI_ARCH_TARGET)
-			AC_DEFINE_UNQUOTED([TK_MULTI_ARCH_TARGET],$MULTI_ARCH_TARGET)
-			AC_SUBST(MULTI_ARCH_INCLUDES)
-			AC_DEFINE_UNQUOTED([TK_MULTI_ARCH_INCLUDES],$MULTI_ARCH_INCLUDES)
-		else
-			dnl echo "Tested: "
-			dnl echo "$TOOLDIR/$host_alias/include/$arch1/sys/types.h"
-			dnl echo "$TOOLDIR/$host_alias/include/$arch2/sys/types.h"
-			AC_MSG_NOTICE([<<<Can't figure out location of arch includes and libraries
-			echo "Please rapport bug!])
-		fi
-	fi
 
 	AC_SUBST(TOOLDIR)
 	AC_DEFINE_UNQUOTED([TK_TOOLDIR],$TOOLDIR)

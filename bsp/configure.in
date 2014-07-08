@@ -35,6 +35,10 @@ case "${host}" in
     AC_MSG_NOTICE([<<< BSP for ARM >>>])
     AC_CONFIG_SUBDIRS([gnu_arm])
     ;;
+  armv7l-*-*)
+    AC_MSG_NOTICE([<<< BSP for ARM >>>])
+    AC_CONFIG_SUBDIRS([gnu_armv7l])
+    ;;
   powerpc-*-*)
     AC_MSG_NOTICE([<<< BSP for PowerPC >>>])
     AC_CONFIG_SUBDIRS([gnu_powerpc])
@@ -50,6 +54,10 @@ case "${host}" in
   x86_64-*-*)
     AC_MSG_NOTICE([<<< BSP for x86_64 >>>])
     AC_CONFIG_SUBDIRS([gnu_x86_64])
+    ;;
+  *)
+	AC_MSG_ERROR([\$host: $host unknown. Can't configure BSP.
+		Please add cofiguration. See ./bsp/configure.in])
     ;;
 esac
 
