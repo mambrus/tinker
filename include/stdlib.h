@@ -17,10 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <tk_ansi.h>
 #include <tk_ansi_dirwrap.h>
 #include BUILDCHAIN_INCLUDE(stdlib.h)
-#include <tinker/config.h>
 
 #ifndef STDLIB_H_TK
 #define STDLIB_H_TK
@@ -33,7 +31,6 @@
 #define TINKER_SEARCH_SORT
 #endif
 
-#include <tinker/config.h>
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 extern "C" {
 #endif

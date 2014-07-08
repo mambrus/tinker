@@ -34,7 +34,6 @@
 #include <sys/errno.h>
 #else
 #include <errno.h>
-#include <tk_ansi.h>
 #ifndef PATH_MAX
 #define PATH_MAX 24
 #endif

@@ -20,10 +20,8 @@
 #ifndef SYS_FCNTL_H_TK
 #define SYS_FCNTL_H_TK
 #if defined (__GNUC__)
-#include <tk_ansi.h>
-#include <tinker/config.h>
-#include <tk_ansi_dirwrap.h>
 
+#include <tk_ansi_dirwrap.h>
 #include BUILDCHAIN_SYS_INCLUDE(fcntl.h)
 
 #undef O_RDONLY

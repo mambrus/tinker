@@ -40,8 +40,14 @@
 #define CHAINPATH_INCLUDE C:\Keil\C166\INC
 
 #elif defined(__GNUC__)
+#include <tinker/config.h>
+
 #ifndef CHAINPATH_INCLUDE
-#define CHAINPATH_INCLUDE /usr/include
+#error Undefined CHAINPATH_INCLUDE (fatal error)
+#endif
+
+#ifndef CHAINPATH_SYS_INCLUDE
+#error Undefined CHAINPATH_SYS_INCLUDE (fatal error) 
 #endif
 
 #ifdef bfin
@@ -77,8 +83,8 @@
    DEFSTR( path/file )
 
 #define BUILDCHAIN_INCLUDE(file) \
-   FNAME( CHAINPATH_INCLUDE, file ) \
+   FNAME( CHAINPATH_INCLUDE, file )
 
 #define BUILDCHAIN_SYS_INCLUDE(file) \
-   FNAME( CHAINPATH_SYS_INCLUDE, file ) \
+   FNAME( CHAINPATH_SYS_INCLUDE, file )
 

@@ -26,6 +26,7 @@
 #error "tk_sysqueues.h" belongs to [itc] that your configuration of TinKer did not include. Please reconfigure and rebuild TinKer.
 #endif
 #endif
+
 typedef enum {
 	Q_HW_TIMER_EVENT,
 	Q_SERIAL_0_I,
@@ -41,7 +42,6 @@ typedef enum {
 
 extern unsigned long tk_sys_queues[TK_NUMBER_OF_SYSQ];
 
-#include <tinker/config.h>
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 extern "C" {
 #endif

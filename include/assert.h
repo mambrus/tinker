@@ -20,12 +20,6 @@
 #ifndef ASSERT_H_TK
 #define ASSERT_H_TK
 
-#include <tk_ansi.h>
-
-#if defined (HAVE_CONFIG_H)
-#include <tinker/config.h>
-#endif
-
 #if defined(__cplusplus) && (TK_CPLUSPLUS == 0)
 extern "C" {
 #endif
@@ -44,7 +38,7 @@ extern "C" {
          defined(__GNUC__) || defined(__USE_GNU) || \
          defined(_WIN32) || defined(__BORLANDC__) || defined(__BCPLUSPLUS__) \
       )
-#error "DONT USE TINKER'S ASSERT FOR THIS TOOL_CHAIN"
+#error "DON'T USE TINKER'S ASSERT FOR THIS TOOL_CHAIN"
 #endif
 #define assure(p) ((p) ? (void)0 : (void) _tk_assertfail( \
                     #p, __FILE__, __LINE__ ) )

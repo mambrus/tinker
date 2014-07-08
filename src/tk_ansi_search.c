@@ -17,7 +17,6 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "tk_ansi.h"
 #include <string.h>
 #include <stdlib.h>
 #define MAX_SORT_ELEMENT_SIZE 255

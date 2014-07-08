@@ -19,9 +19,8 @@
  ***************************************************************************/
 #ifndef STRING_H_TK
 #define STRING_H_TK 
-#include <tk_ansi.h>
-#include <tk_ansi_dirwrap.h>
 
+#include <tk_ansi_dirwrap.h>
 #include BUILDCHAIN_INCLUDE(string.h)
 
 #if defined (__GNUC__)

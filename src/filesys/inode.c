@@ -24,7 +24,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <limits.h>
-#ifndef PATH_MAX
+#if !defined(PATH_MAX) || !defined(NAME_MAX)
 #include <sys/syslimits.h>
 #endif
 

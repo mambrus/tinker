@@ -20,9 +20,7 @@
 #ifndef STDIO_H_TK
 #define STDIO_H_TK
 
-#include <tk_ansi.h>
 #include <tk_ansi_dirwrap.h>
-
 #include BUILDCHAIN_INCLUDE(stdio.h)
 
 #if defined (__GNUC__)

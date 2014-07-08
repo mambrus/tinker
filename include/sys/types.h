@@ -18,12 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #if defined (__GNUC__)
-#include <tk_ansi.h>
-#include <tinker/config.h>
-#include <tk_ansi_dirwrap.h>
 
 #define __DEV_T void*
 
+#include <tk_ansi_dirwrap.h>
 #include BUILDCHAIN_SYS_INCLUDE(types.h)
 
 #endif

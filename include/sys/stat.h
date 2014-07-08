@@ -18,14 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #if defined (__GNUC__)
-#include <tk_ansi.h>
-#include <tk_ansi_dirwrap.h>
 
 #if defined (__rtems__)
 #undef __rtems__
 #define __was_rtems__
 #endif
 
+#include <tk_ansi_dirwrap.h>
 #include BUILDCHAIN_SYS_INCLUDE(stat.h)
 
 #if defined (__was_rtems__)

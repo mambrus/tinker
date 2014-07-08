@@ -20,13 +20,12 @@
 #ifndef ERRNO_H_TK
 #define ERRNO_H_TK
 
-#include <tk_ansi.h>
-
 #if defined(errno)
 #undef errno
 #endif
 
 #include <tinker/config.h>
+
 #if defined(__cplusplus) && (TK_CPLUSPLUS==0)
 extern "C" {
 #endif
@@ -36,14 +35,15 @@ extern "C" {
 #if defined(__cplusplus) && (TK_CPLUSPLUS==0)
 }
 #endif
-#if apa
-#error Hehe
-#endif
 #define errno (*_tk_errno())
+
 #define DEF_EC(ec) \
  ec ANSI_#ec
+
 #define DEF_ES(ec,estr)
+
 #define ECODES_ONLY
+
 #include <tk_mem.h>
 
 enum ANSI_ERROR_CODES {
