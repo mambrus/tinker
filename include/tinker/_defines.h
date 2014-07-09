@@ -85,6 +85,8 @@ Well known CPU architectures:
 #define __tk_xscale__      33
 #define __tk_xstormy16__   34
 #define __tk_z8k__         35
+#define __tk_x86_64__      36
+#define __tk_armv7l__      38
 
 /*
 ----------------------------------------------------------------------------
@@ -129,6 +131,59 @@ Some well known boards:
 #define __tk_unknown__     0x300
 #define __tk_default__     0x301
 #define __tk_localhost__   0x302
+
+/*
+Some well known cannonical triplet parts
+*/
+
+/* === CPU === */
+#define CANONICAL_CPU_a29k      __tk_a29k__
+#define CANONICAL_CPU_arm       __tk_arm__
+#define CANONICAL_CPU_configure __tk_configure__
+#define CANONICAL_CPU_cris      __tk_cris__
+#define CANONICAL_CPU_crx       __tk_crx__
+#define CANONICAL_CPU_d10v      __tk_d10v__
+#define CANONICAL_CPU_d30v      __tk_d30v__
+#define CANONICAL_CPU_fr30      __tk_fr30__
+#define CANONICAL_CPU_frv       __tk_frv__
+#define CANONICAL_CPU_h8300     __tk_h8300__
+#define CANONICAL_CPU_h8500     __tk_h8500__
+#define CANONICAL_CPU_hppa      __tk_hppa__
+#define CANONICAL_CPU_i386      __tk_i386__
+#define CANONICAL_CPU_i960      __tk_i960__
+#define CANONICAL_CPU_iq2000    __tk_iq2000__
+#define CANONICAL_CPU_m32c      __tk_m32c__
+#define CANONICAL_CPU_m32r      __tk_m32r__
+#define CANONICAL_CPU_m68hc11   __tk_m68hc11__
+#define CANONICAL_CPU_m68k      __tk_m68k__
+#define CANONICAL_CPU_m88k      __tk_m88k__
+#define CANONICAL_CPU_mips      __tk_mips__
+#define CANONICAL_CPU_mn10200   __tk_mn10200__
+#define CANONICAL_CPU_mn10300   __tk_mn10300__
+#define CANONICAL_CPU_mt        __tk_mt__
+#define CANONICAL_CPU_necv70    __tk_necv70__
+#define CANONICAL_CPU_powerpc   __tk_powerpc__
+#define CANONICAL_CPU_sh        __tk_sh__
+#define CANONICAL_CPU_sparc     __tk_sparc__
+#define CANONICAL_CPU_tic4x     __tk_tic4x__
+#define CANONICAL_CPU_tic80     __tk_tic80__
+#define CANONICAL_CPU_v850      __tk_v850__
+#define CANONICAL_CPU_w65       __tk_w65__
+#define CANONICAL_CPU_xscale    __tk_xscale__
+#define CANONICAL_CPU_xstormy16 __tk_xstormy16__
+#define CANONICAL_CPU_z8k       __tk_z8k__
+#define CANONICAL_CPU_x86_64    __tk_x86_64__
+#define CANONICAL_CPU_armv7l    __tk_armv7l__
+
+/* === VENDOR === */
+#define CANON_VENDOR_unknown       0x400
+#define CANON_VENDOR_hixs          0x401
+
+/* === OS === */
+#define CANONICAL_OS_linux_gnu    	0x500
+#define CANON_OS_linux_gnueabihf   0x501
+
+/* === --- === */
 
 /*
 Some well known function names for emergency consoles:

@@ -179,3 +179,26 @@ AC_SUBST(ALL_C)
 
 dnl Read Makefile.in and config.h.in, Write Makefile and config.h
 AC_OUTPUT(Makefile-gnu)
+
+dnl If build out of source, copy all Makefiles so that '-F Makefile-gnu'
+dnl isn't needed to pass to make
+
+if test "X${BUILD_ROOT}" != "X${TINKER_PATH}"; then
+	AC_MSG_NOTICE([+++ Out of source configure detected (good).])
+	AC_MSG_NOTICE([    Build-directory prepared with needed files and structure])
+	pushd "${TINKER_PATH}"
+	cp Makefile "${BUILD_ROOT}/"
+	rm -rf "${BUILD_ROOT}/lib"
+	mkdir "${BUILD_ROOT}/lib"
+	cp lib/README "${BUILD_ROOT}/lib/"
+	cp gcc.grc "${BUILD_ROOT}/"
+	for F in $(find "./src" -name Makefile); do
+		cp "$F" "${BUILD_ROOT}/$F" 2>/dev/null
+		cp gcc.grc "$(dirname ${BUILD_ROOT}/$F)" 2>/dev/null
+	done
+	for F in $(find "./bsp" -name Makefile); do
+		cp "$F" "${BUILD_ROOT}/$F" 2>/dev/null
+		cp gcc.grc "$(dirname ${BUILD_ROOT}/$F)" 2>/dev/null
+	done
+	popd
+fi

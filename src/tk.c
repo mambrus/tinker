@@ -92,6 +92,10 @@
 #endif
 #endif
 
+#define LDATA struct tcb_t_
+//struct tcb_t_ __tk_threadPool[TK_MAX_THREADS] = { {0} };
+#include <mlist/mlist.h>
+
 void *_tk_destructor(void *retval);
 void *_tk_idle(void *foo);
 void _tk_detach_children(thid_t thid);
@@ -101,7 +105,8 @@ void _tk_constructor(start_func_f, void *, thid_t);
 void _tk_construct_thread_scope(start_func_f, void *, thid_t);
 
 int __tk_IntFlagCntr;
-struct tcb_t_ __tk_threadPool[TK_MAX_THREADS];
+struct tcb_t_ __tk_threadPool[TK_MAX_THREADS] = { {0} };
+
 thid_t __tk_schedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
 struct stat_t __tk_roundrobin_prio_idxs[TK_MAX_PRIO_LEVELS];
 
@@ -159,26 +164,17 @@ void tk_create_kernel(void)
 {
 	int i, j;
 	char *testArea;
+	__mlist_init();
+	assert(mlist_opencreate(sizeof(struct tcb_t_*), NULL, &tk_list_sleep)==0);
+	assert(mlist_opencreate(sizeof(struct tcb_t_*), NULL, &tk_list_die)==0);
 
 	TK_NO_WARN_ARG(testArea);
+
 	for (i = 0; i < TK_MAX_THREADS; i++) {
 		__tk_threadPool[i].state = ZOMBI;
 		__tk_threadPool[i].bOnId.kind = BON_SCHED;
-		__tk_threadPool[i].bOnId.entity.tcb = NULL;
-		__tk_threadPool[i].wakeuptime = 0;
 		__tk_threadPool[i].valid = TK_FALSE;
-		__tk_threadPool[i].name[TK_THREAD_NAME_LEN] = 0;
-		__tk_threadPool[i].Gid = 0;
-		__tk_threadPool[i].Thid = 0;
-		__tk_threadPool[i].noChilds = 0;
-		__tk_threadPool[i]._errno_ = 0;
-		__tk_threadPool[i].stack_size = 0;
-		STACK_PTR(__tk_threadPool[i].stack_begin) = NULL;
-		STACK_PTR(__tk_threadPool[i].curr_sp) = NULL;
-		__tk_threadPool[i].stack_crc = 0;
 		__tk_threadPool[i].wakeupEvent = E_NONE;
-		__tk_threadPool[i].retval = (void *)0;
-
 	}
 
 	__tk_threadPool[0].state = READY;
@@ -214,21 +210,46 @@ void *_tk_destructor(void *retval)
 {
 
 #ifdef DEBUG
-	printk(("Dieing thread [id=%d] is returning! Return value is: 0x%lX\n\n", __tk_active_thread, retval));
+	printk(("Dieing thread [id=%u] is returning! Return value is: 0x%lX\n\n",
+		(unsigned int)__tk_active_thread,
+		(unsigned long)retval));
 #endif
 
 	__tk_threadPool[__tk_active_thread].state = ZOMBI;
 	__tk_threadPool[__tk_active_thread].retval = (void *)retval;
 	_tk_detach_children(__tk_active_thread);
+	mlist_add(tk_list_die, &__tk_threadPool[__tk_active_thread]);
+	nThreads_ended++;
 
 	while (TK_TRUE) {
-		tk_msleep(1000);
+		tk_yield();
 #ifdef DEBUG
-		printk(("Dead thread [id=%d] still waiting for Nirvana! \n",
-			__tk_active_thread));
+		printk(("Error: Dead thread [id=%u] still waiting for Nirvana!\n",
+			(unsigned int)__tk_active_thread));
 #endif
+		assert("Code should never reach this point" == NULL);
 	}
 
+}
+
+void _tk_finalize_dtors(void){
+	struct node *n;
+
+	for(
+		n=mlist_head(tk_list_die);
+		n;
+		n=mlist_next(tk_list_die)
+	) {
+		assert(n->pl);
+		assert(n->pl->state == ZOMBI);
+		assert(n->pl->Thid != __tk_active_thread);
+
+		if (_tk_try_detach_parent(n->pl->Thid, TK_FALSE)) {
+			tk_delete_thread(n->pl->Thid);
+			mlist_del_curr(tk_list_die);
+		}
+
+	}
 }
 
 int tk_delete_thread(thid_t Thid)
@@ -266,7 +287,7 @@ int tk_delete_thread(thid_t Thid)
 			__tk_roundrobin_prio_idxs[Prio].curr_idx = 0;
 		}
 
-		stalloc_free(STACK_PTR(__tk_threadPool[Thid].stack_begin));
+		stalloc_free(__tk_threadPool[Thid].stack.bos);
 
 		__tk_threadPool[Thid].valid = TK_FALSE;
 	}
@@ -330,14 +351,11 @@ thid_t tk_create_thread(char *name,
 #endif
 	__tk_threadPool[__tk_proc_idx].name[TK_THREAD_NAME_LEN] = 0;
 
-	if ((STACK_PTR(__tk_threadPool[__tk_proc_idx].stack_begin) =
+	if ((__tk_threadPool[__tk_proc_idx].stack.bos =
 	     (char *)stalloc(stack_size)) == NULL) {
-		printk(("tk: Error - Can't create process (can't allocate memory for stack)\n"));
+		printk(("tk: Error - Can't create thread (can't allocate memory for stack)\n"));
 		tk_exit(TC_NOMEM);
 	}
-
-	REINIT_STACKADDR(__tk_threadPool[__tk_proc_idx].stack_begin,
-			 stack_size);
 
 	__tk_threadPool[__tk_proc_idx].valid = TK_TRUE;
 	__tk_threadPool[__tk_proc_idx].state = READY;
@@ -347,29 +365,32 @@ thid_t tk_create_thread(char *name,
 	__tk_threadPool[__tk_proc_idx].Gid = __tk_active_thread;
 	__tk_threadPool[__tk_proc_idx].noChilds = 0;
 	__tk_threadPool[__tk_proc_idx]._errno_ = 0;
-	__tk_threadPool[__tk_proc_idx].stack_size = stack_size;
 	__tk_threadPool[__tk_proc_idx].Prio = prio;
 	__tk_threadPool[__tk_proc_idx].Idx = slot_idx;
-	__tk_threadPool[__tk_proc_idx].stack_crc = 0;
 
 	__tk_threadPool[__tk_proc_idx].wakeupEvent = E_NONE;
 	__tk_threadPool[__tk_proc_idx].retval = inpar;
 
 	__tk_threadPool[__tk_active_thread].noChilds++;
-	__tk_procs_in_use++;
+
+	__tk_threadPool[__tk_proc_idx].stack.stack_size = stack_size;
+#if STACK_SMASH
+	__tk_threadPool[__tk_proc_idx].stack.stack_crc = 0;
+#endif				//STACK_SMASH
 
 #if MARKUP_STACKS_ON_START
 #if defined (HAVE_MEMSET)
 #include <string.h>
-	memset(STACK_PTR(__tk_threadPool[__tk_proc_idx].stack_begin),
+	memset(__tk_threadPool[__tk_proc_idx].stack.bos,
 	       (unsigned char)__tk_proc_idx, stack_size - 8);
 #else
 	for (i = 0; i < stack_size; i++)
-		STACK_PTR(__tk_threadPool[__tk_proc_idx].stack_begin)[i] =
-		    (unsigned char)__tk_proc_idx;
+		__tk_threadPool[__tk_proc_idx].stack.bos[i] =
+		    (unsigned char)(__tk_proc_idx % sizeof(unsigned char));
 #endif
 #endif
 
+	__tk_procs_in_use++;
 	valid_proc_idx = __tk_proc_idx;
 	_tk_construct_thread_scope(f, inpar, __tk_proc_idx);
 
@@ -539,13 +560,13 @@ int _tk_try_detach_parent(thid_t thid, int force)
 		    E_CHILDDEATH;
 
 		if (__tk_threadPool[__tk_threadPool[thid].Gid].state == READY) {
-			__tk_threadPool[__tk_threadPool[thid].Gid].bOnId.entity.
-			    tcb = NULL;
+			__tk_threadPool[__tk_threadPool[thid].Gid].bOnId.
+			    entity.tcb = NULL;
 			__tk_threadPool[__tk_threadPool[thid].Gid].bOnId.kind =
 			    BON_SCHED;
 		} else {
-			__tk_threadPool[__tk_threadPool[thid].Gid].bOnId.entity.
-			    tcb = &__tk_threadPool[thid];
+			__tk_threadPool[__tk_threadPool[thid].Gid].bOnId.
+			    entity.tcb = &__tk_threadPool[thid];
 			__tk_threadPool[__tk_threadPool[thid].Gid].bOnId.kind =
 			    BON_SCHED;
 		}
@@ -614,55 +635,89 @@ thid_t _tk_next_runable_thread()
 	return return_Thid;
 }
 
+#if JUMPER_BASED
+#define _SELF 0
 void _tk_context_switch_to_thread(thid_t RID, thid_t SID)
 {
-	static char *cswTSP;
-	static unsigned int cswTEMP;
-	static unsigned int cswTEMP2;
+	unsigned int pid;
+#if STACK_DEBUG
+	__tk_threadPool[SID].stack.free =
+	    (void *)__tk_threadPool[SID].stack.stack_size -
+	    __tk_threadPool[SID].stack.sp;
 
-	TK_NO_WARN_ARG(cswTEMP);
-	TK_NO_WARN_ARG(cswTEMP2);
+	__tk_threadPool[SID].stack.inuse =
+	    __tk_threadPool[SID].stack.stack_size -
+	    __tk_threadPool[SID].stack.free;
+#endif				//STACK_DEBUG
 
-	PUSH_CPU_GETCUR_STACK(cswTSP, cswTEMP);
+	PUSH_CPU_GETCUR_STACK(__tk_threadPool[SID].stack, pid);
 
-#if JUMPER_BASED
-	if (cswTEMP == 0)
-#endif
-	{
-		STACK_PTR(__tk_threadPool[SID].curr_sp) = cswTSP;
-
-		cswTSP = STACK_PTR(__tk_threadPool[RID].curr_sp);
-
+	if (pid == _SELF) {
 		__tk_active_thread = RID;
-		CHANGE_STACK_POP_CPU(cswTSP, cswTEMP);
+		CHANGE_STACK_POP_CPU(__tk_threadPool[RID].stack, pid);
 	}
 
 }
 
 void _tk_half_switch(thid_t RID, thid_t SID)
 {
-	static char *cswTSP;
-	static unsigned int cswTEMP;
-	static unsigned int cswTEMP2;
+	unsigned int pid;
+#if STACK_DEBUG
+	__tk_threadPool[SID].stack.free =
+	    (void *)__tk_threadPool[SID].stack.stack_size -
+	    __tk_threadPool[SID].stack.sp;
 
-	TK_NO_WARN_ARG(cswTEMP);
-	TK_NO_WARN_ARG(cswTEMP2);
+	__tk_threadPool[SID].stack.inuse =
+	    __tk_threadPool[SID].stack.stack_size -
+	    __tk_threadPool[SID].stack.free;
+#endif				//STACK_DEBUG
 
-	PUSH_CPU_GETCUR_STACK(cswTSP, cswTEMP);
+	PUSH_CPU_GETCUR_STACK(__tk_threadPool[SID].stack, pid);
 
-#if JUMPER_BASED
-	if (cswTEMP == 0)
-#endif
-	{
-		STACK_PTR(__tk_threadPool[SID].curr_sp) = cswTSP;
-		cswTSP = STACK_PTR(__tk_threadPool[SID].curr_sp);
-
+	if (pid == _SELF) {
 		__tk_active_thread = RID;
-		CHANGE_STACK_POP_CPU(cswTSP, cswTEMP);
+		CHANGE_STACK_POP_CPU(__tk_threadPool[SID].stack, pid);
 	}
 
 }
 
+#undef _SELF
+#else
+void _tk_context_switch_to_thread(thid_t RID, thid_t SID)
+{
+	static char *tmp_stackp;
+	static unsigned int cswTEMP;
+
+	TK_NO_WARN_ARG(cswTEMP);
+
+	PUSH_CPU_GETCUR_STACK(tmp_stackp, cswTEMP);
+
+	__tk_threadPool[SID].stack.sp = tmp_stackp;
+
+	tmp_stackp = STACK_PTR(__tk_threadPool[RID].stack.sp);
+
+	__tk_active_thread = RID;
+	CHANGE_STACK_POP_CPU(tmp_stackp, cswTEMP);
+
+}
+
+void _tk_half_switch(thid_t RID, thid_t SID)
+{
+	static char *tmp_stackp;
+	static unsigned int cswTEMP;
+
+	TK_NO_WARN_ARG(cswTEMP);
+
+	PUSH_CPU_GETCUR_STACK(tmp_stackp, cswTEMP);
+
+	__tk_threadPool[SID].stack.sp = tmp_stackp;
+	tmp_stackp = STACK_PTR(__tk_threadPool[SID].stack.sp);
+
+	__tk_active_thread = RID;
+	CHANGE_STACK_POP_CPU(tmp_stackp, cswTEMP);
+
+}
+#endif
 void _tk_constructor(start_func_f f, void *inpar, thid_t id)
 {
 	void *retval;
@@ -691,8 +746,10 @@ void _tk_construct_thread_scope(start_func_f f, void *inpar, thid_t id)
 	t_inpar = inpar;
 	t_id = id;
 
-	INIT_SP(__tk_threadPool[t_id].curr_sp,
-		__tk_threadPool[t_id].stack_begin);
+	__tk_threadPool[t_id].stack.sp =
+	    __tk_threadPool[t_id].stack.bos +
+	    __tk_threadPool[t_id].stack.stack_size - EXTRA_MARGIN;
+
 	PUSHALL();
 
 	_tk_half_switch(t_id, __tk_active_thread);
@@ -700,13 +757,11 @@ void _tk_construct_thread_scope(start_func_f f, void *inpar, thid_t id)
 	if (__tk_active_thread != t_id) {
 		POPALL();
 		return;
-
 	}
 
-	aSP = STACK_PTR(__tk_threadPool[t_id].curr_sp);
+	aSP = __tk_threadPool[t_id].stack.sp;
 	CHANGE_STACK(aSP, TEMP);
 
-	BIND_STACK(SPS, TEMP);
 	TK_STI();
 	_tk_constructor(t_f, t_inpar, t_id);
 
@@ -809,20 +864,20 @@ void _tk_main(void)
 
 #if defined(TK_COMP_FILESYS) && TK_COMP_FILESYS
 	_b_hook(fs_init);
-	printk(("Filesystem starting...\n"));
+	printk(("File-system starting...\n"));
 	assert(fs_init() == ERR_OK);
 
-	fprintf(stderr, "Filesystem initialized! (1)\n");
-	printk(("Filesystem initialized! (2)\n"));
+	fprintf(stderr, "File-system initialized! (1)\n");
+	printk(("File-system initialized! (2)\n"));
 #endif
 
 	tk_root();
 
 #if defined(TK_COMP_FILESYS) && TK_COMP_FILESYS
 	_b_hook(fs_fini);
-	printk(("Filesystem shutting down...\n"));
+	printk(("File-system shutting down...\n"));
 	assert(fs_fini() == ERR_OK);
-	fprintf(stderr, "Filesystem terminated!\n");
+	fprintf(stderr, "File-system terminated!\n");
 #endif
 
 #if defined(TK_COMP_ITC) && TK_COMP_ITC

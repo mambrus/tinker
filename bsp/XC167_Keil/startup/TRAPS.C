@@ -413,13 +413,13 @@ void printtrap(const char *leadtext,
 						safeprint(&i2shex
 							  ((((unsigned long)
 							     &
-							     (tcb->stack_begin))
+							     (tcb->stack))
 							    & 0xFFFF0000ul) >>
 							   16)[2]);
 						safeprint(":");
 						safeprint(&i2shex
 							  ((unsigned long)
-							   &(tcb->stack_begin))
+							   &(tcb->stack))
 							  [2]);
 						safeprint(" ");
 

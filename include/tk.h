@@ -25,9 +25,9 @@
 #include <tinker/config.h>
 #include <sys/types.h>
 
-#if defined(_POSIX_THREADS)
-#error newlib/libc headers somehow managed set _POSIX_THREADS and probably a whole set of others incompatible pthread related things
-#endif
+//#if defined(_POSIX_THREADS)
+//#error newlib/libc headers somehow managed set _POSIX_THREADS and probably a whole set of others incompatible pthread related things
+//#endif
 #endif
 
 #include <stddef.h>

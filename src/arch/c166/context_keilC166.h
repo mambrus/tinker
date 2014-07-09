@@ -111,11 +111,11 @@
    __asm{ mov SP,TSP1 } \
    __asm{ mov SPSEG,TEMP }
 
-#define INIT_SP(_stack_SP,_stack_begin) \
-   _stack_SP.usr_stack_size = _stack_begin.usr_stack_size; \
-   _stack_SP.userstack.linear = _stack_begin.userstack.linear + _stack_begin.usr_stack_size; \
-   _stack_SP.sys_stack_size = _stack_begin.sys_stack_size; \
-   _stack_SP.systemstack.linear = _stack_begin.systemstack.linear + _stack_begin.sys_stack_size;
+#define INIT_SP(_stack_SP,_stack) \
+   _stack_SP.usr_stack_size = _stack.usr_stack_size; \
+   _stack_SP.userstack.linear = _stack.userstack.linear + _stack.usr_stack_size; \
+   _stack_SP.sys_stack_size = _stack.sys_stack_size; \
+   _stack_SP.systemstack.linear = _stack.systemstack.linear + _stack.sys_stack_size;
 
 #define BIND_STACK(_stack_struct,_temp2) \
    _temp2 = _stack_struct.userstack.u.offs24._offs; \

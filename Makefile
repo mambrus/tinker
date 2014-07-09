@@ -26,36 +26,38 @@ CONFMODULES:=  src bsp
 THIS_MODULE=DUMMY_MODULE
 CPU_T=DUMMY_CPU_TYPE
 USR_DEFINES:=DUMMY_DEF
-export TINKER_SRC_DIR = $(shell pwd)
+export MAKE_ROOTDIR = $(shell pwd)
 
-#Colorizarion tool detection
+#Colorization tool detection
 
 ifeq ($(VIM),)
    GRCAT = $(shell which grcat)
 endif
 
-# TOOLS could be either 'gnu' or any othe supported tool-chain.
+# TOOLS could be either 'gnu' or any other supported tool-chain.
 # If TOOLS is not set, the build system assumes each sub-module
-# will know which tol-chain to use
+# will know which tool-chain to use
 
 TOOLS := gnu
 #TOOLS := keil
 
 ifdef TOOLS
 ifdef GRCAT
-   CLEAN_MODS      := $(patsubst %, (make -f Makefile-$(TOOLS) clean    -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
-   CLEANALL_MODS   := $(patsubst %, (make -f Makefile-$(TOOLS) cleanall -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
-   INSTALL_MODS    := $(patsubst %, (make -f Makefile-$(TOOLS) install  -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
-   FLASHIT_MODS    := $(patsubst %, (make -f Makefile-$(TOOLS) flashit  -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
-   CONSOLE_MODS    := $(patsubst %, (make -f Makefile-$(TOOLS) console  -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
+   CLEAN_MODS      := $(patsubst %, (make -f Makefile-$(TOOLS) clean     -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
+   CLEANALL_MODS   := $(patsubst %, (make -f Makefile-$(TOOLS) cleanall  -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
+   INSTALL_MODS    := $(patsubst %, (make -f Makefile-$(TOOLS) install   -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
+   UNINSTALL_MODS  := $(patsubst %, (make -f Makefile-$(TOOLS) uninstall -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
+   FLASHIT_MODS    := $(patsubst %, (make -f Makefile-$(TOOLS) flashit   -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
+   CONSOLE_MODS    := $(patsubst %, (make -f Makefile-$(TOOLS) console   -C % 2>&1 ) | grcat gcc.grc;, $(MODULES))
    NEXT_MAKEALL    := -f Makefile-$(TOOLS)
 else
-   CLEAN_MODS      := $(patsubst %, make -f Makefile-$(TOOLS) clean -C %;, $(MODULES))
-   MRPROPER_MODS   := $(patsubst %, make -f Makefile-$(TOOLS) mrproper -C %;, $(MODULES))
-   CLEANALL_MODS   := $(patsubst %, make -f Makefile-$(TOOLS) cleanall -C %;, $(MODULES))
-   INSTALL_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) install -C %;, $(MODULES))
-   FLASHIT_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) flashit -C %;, $(MODULES))
-   CONSOLE_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) console -C %;, $(MODULES))
+   CLEAN_MODS      := $(patsubst %, make -f Makefile-$(TOOLS) clean     -C %;, $(MODULES))
+   MRPROPER_MODS   := $(patsubst %, make -f Makefile-$(TOOLS) mrproper  -C %;, $(MODULES))
+   CLEANALL_MODS   := $(patsubst %, make -f Makefile-$(TOOLS) cleanall  -C %;, $(MODULES))
+   INSTALL_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) install   -C %;, $(MODULES))
+   UNINSTALL_MODS  := $(patsubst %, make -f Makefile-$(TOOLS) uninstall -C %;, $(MODULES))
+   FLASHIT_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) flashit   -C %;, $(MODULES))
+   CONSOLE_MODS    := $(patsubst %, make -f Makefile-$(TOOLS) console   -C %;, $(MODULES))
    NEXT_MAKEALL    := -f Makefile-$(TOOLS)
 endif
 else
@@ -138,6 +140,12 @@ install:
 	$(INSTALL_MODS)
 	@echo "======================================================"
 	@echo "<<-        ALL MODULES INSTALLED!                  ->>"
+	@echo "======================================================"
+
+uninstall:
+	$(UNINSTALL_MODS)
+	@echo "======================================================"
+	@echo "<<-        ALL MODULES UNINSTALLED!                ->>"
 	@echo "======================================================"
 
 flashit:

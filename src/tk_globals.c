@@ -1,8 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michael Ambrus                                  *
- *   michael.ambrus@maquet.com                                             *
  *   Copyright (C) 2014 by Michael Ambrus                                  *
- *   michael.ambrus@gmail.com                                              *
+ *   michael.ambrus@sonymobile.com                                         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,34 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef SYS_FCNTL_H_TK
-#define SYS_FCNTL_H_TK
+#include <tk.h>
+#define LDATA struct tcb_t_*
+#include <mlist/mlist.h>
 
-#if defined (__GNUC__)
-#include <tk_ansi_dirwrap.h>
+/* Lists: RUN, SLEEP, DIE e.t.a. These lists are indexes for searching, i.e.
+ * they make things go much faster. They don't contain any data however,
+ * only pointers to data. The penalty in form of dynamic memory usage is
+ * acceptable */
 
-#if defined(__ANDROID__) && __ANDROID__
-#include BUILDCHAIN_INCLUDE(fcntl.h)
-#else
-#include BUILDCHAIN_SYS_INCLUDE(fcntl.h)
-#endif
+/* Note that the list below all carry a tcb. But several list may contain
+ * the same tcb which is fully allowed. You can't rely on these index list
+ * to contain all th logic themselves. A list is only a look-up and each
+ * list exists for a specific look-up purpose */
 
-#undef O_RDONLY
-#undef O_WRONLY
-#undef O_RDWR
+handle_t tk_list_sleep;
+handle_t tk_list_die;
 
-#define O_RDONLY_NL (FREAD-1)
-#define O_WRONLY_NL (FWRITE-1)
-#define O_RDWR_NL ((FREAD|FWRITE) -1)
+/* Per core global data */
+int nThreads_ended = 0;
+int nThreads_ended_skip_cntr = 0;
 
-#else
-#define O_CREAT 0x10
-#define O_EXCL 0x20
-#define O_NONBLOCK 0x40
-#endif
 
-#define O_RDONLY 0x01
-#define O_WRONLY 0x02
-#define O_RDWR 0x04
 
-#endif

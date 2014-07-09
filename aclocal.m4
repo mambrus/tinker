@@ -28,7 +28,7 @@ AC_DEFUN([TINKER_FIND_INCLUDE_DIR],
 	tk_found_dir=$(
 		for DD in $(
 			for D in $(
-				(echo | $CC -I /opt -v -x c -E - 2>&1 ) | \
+				(echo | $CC $CFLAGS -I /opt -v -x c -E - 2>&1 ) | \
 				sed -nEe /search\ starts\ here:/,/End\ of\ search\ list\./p | \
 				grep '^ /'
 			); do
@@ -70,7 +70,7 @@ AC_DEFUN([TINKER_FIND_INCLUDE_SYS_DIR],
 	tk_found_dir=$(
 		for DD in $(
 			for D in $(
-				(echo | $CC -I /opt -v -x c -E - 2>&1 ) | \
+				(echo | $CC $CFLAGS -I /opt -v -x c -E - 2>&1 ) | \
 				sed -nEe /search\ starts\ here:/,/End\ of\ search\ list\./p | \
 				grep '^ /'
 			); do
@@ -227,18 +227,24 @@ dnl ----------------------------------------------------------------------------
 AC_DEFUN([TINKER_OPTIONS_BUILD],
 [
 	AC_ARG_ENABLE(depmake,
-		AS_HELP_STRING([--enable-depmake],[Build - Enable/disable makefile targets to depend on Makefile and Makefile-gnu. Optionally you can assign a value naming which specific files to depend on]),
+		AS_HELP_STRING([--enable-depmake],
+		[Build - Enable/disable makefile targets to depend on Makefile and
+		Makefile-gnu. Optionally you can assign a value naming which specific
+		files to depend on]),
 		DEPMAKE=__tk_$enableval,
 		DEPMAKE="Makefile-gnu Makefile"
 	)
 	AC_ARG_ENABLE(cplusplus,
-		AS_HELP_STRING([--enable-cplusplus],[Build - Enable/disable using C++ for compilation and linking]),
+		AS_HELP_STRING([--enable-cplusplus],[Build - Enable/disable using C++
+		for compilation and linking]),
 		USECPLUSPLUS=__tk_$enableval,
 		USECPLUSPLUS=__tk_no
 	)
 	dnl Note that the omission of '__tk_' below is intentional
 	AC_ARG_ENABLE(makeopts,
-		AS_HELP_STRING([--enable-makeopts],[Build - Pass specified make options to recursive makes (=arg). Options worth considering are -S, -w]),
+		AS_HELP_STRING([--enable-makeopts],[Build - Pass specified make
+		options to recursive makes (=arg). Options worth considering are -S,
+		-w]),
 		MAKEOPTS=$enableval,
 		MAKEOPTS=""
 	)
@@ -253,18 +259,20 @@ AC_DEFUN([TINKER_OPTIONS_BUILD],
 	AC_SUBST(MAKEOPTS)
 
 	AC_ARG_ENABLE(subdir-verbose,
-		AS_HELP_STRING([--enable-subdir-verbose],[Build - If extra printouts should be made for each subdir build (=arg). Valid options are yes/no. Default is no]),
+		AS_HELP_STRING([--enable-subdir-verbose],
+			[Build - If extra printouts should be made for each subdir build (=arg).
+			Valid options are yes/no. Default is no]),
 		SUB_VERBOSE=$enableval,
 		SUB_VERBOSE="no"
 	)
 	AC_SUBST(SUB_VERBOSE)
 
 	if test -z $CRT0_OBJECT; then
-                AC_MSG_NOTICE([<<< ctr0.o is based on startup_gnu.ao (default)])
-                CRT0_OBJECT=startup_gnu.ao
-        else
-                AC_MSG_NOTICE([<<< ctr0.o is based on $CRT0_OBJECT])
-        fi
+		AC_MSG_NOTICE([<<< ctr0.o is based on startup_gnu.ao (default)])
+			CRT0_OBJECT=startup_gnu.ao
+	else
+		AC_MSG_NOTICE([<<< ctr0.o is based on $CRT0_OBJECT])
+	fi
 	AC_SUBST(CRT0_OBJECT)
 
 	#echo "------------------------------------------------------> $extern_includes"
@@ -287,7 +295,8 @@ dnl ----------------------------------------------------------------------------
 AC_DEFUN([TINKER_OPTIONS_CONFIG],
 [
 	AC_ARG_ENABLE(verbose-config,
-		AS_HELP_STRING([--enable-verbose-config],[Configure - Shows extra information while running configure script]),
+		AS_HELP_STRING([--enable-verbose-config],
+			[Configure - Shows extra information while running configure script]),
 		CONF_VERBOSE=$enableval,
 		CONF_VERBOSE="no"
 	)
@@ -303,15 +312,15 @@ AC_DEFUN([TINKER_CANONICAL_EXTRA],
 	AC_CANONICAL_HOST
 	AC_CANONICAL_TARGET
 
-   BUILD_CPU=$build_cpu
-   BUILD_VENDOR=$build_vendor
-   BUILD_OS=$build_os
-   HOST_CPU=$host_cpu
-   HOST_VENDOR=$host_vendor
-   HOST_OS=$host_os
-   TARGET_CPU=$target_cpu
-   TARGET_VENDOR=$target_vendor
-   TARGET_OS=$target_os
+	BUILD_CPU=CANON_CPU_$(tr '-' '_' <<< $build_cpu)
+	BUILD_VENDOR=CANON_VENDOR_$(tr '-' '_' <<< $build_vendor)
+	BUILD_OS=CANON_OS_$(tr '-' '_' <<< $build_os)
+	HOST_CPU=CANON_CPU_$(tr '-' '_' <<< $host_cpu)
+	HOST_VENDOR=CANON_VENDOR_$(tr '-' '_' <<< $host_vendor)
+	HOST_OS=CANON_OS_$(tr '-' '_' <<< $host_os)
+	TARGET_CPU=CANON_CPU_$(tr '-' '_' <<< $target_cpu)
+	TARGET_VENDOR=CANON_VENDOR_$(tr '-' '_' <<< $target_vendor)
+	TARGET_OS=CANON_OS_$(tr '-' '_' <<< $target_os)
 
 	AC_SUBST(BUILD_CPU)
 	AC_DEFINE_UNQUOTED([CANON_BUILD_CPU],$BUILD_CPU)
@@ -340,68 +349,129 @@ dnl Prints configured components
 dnl ----------------------------------------------------------------------------
 AC_DEFUN([TINKER_PRINT_COMPONENTS],
 [
-   echo "                   COMPONENTS"
-   echo "                   =========="
-   echo "TK_COMP_ITC:                              $_TK_COMP_ITC"
-   echo "TK_COMP_PTIMER:                           $_TK_COMP_PTIMER"
-   echo "TK_COMP_KMEM:                             $_TK_COMP_KMEM"
-   echo "TK_COMP_PTHREAD:                          $_TK_COMP_PTHREAD"
-   echo "TK_COMP_POSIX_RT:                         $_TK_COMP_POSIX_RT"
-   echo "TK_COMP_FILESYS:                          $_TK_COMP_FILESYS"
-   echo
-   echo "                 PACKAGES & misc"
-   echo "                 ==============="
-   echo "TK_USE_BUILTIN_SORT:                      $_TK_USE_BUILTIN_SORT"
+	echo "                   COMPONENTS"
+	echo "                   =========="
+	echo "TK_COMP_ITC:                              $_TK_COMP_ITC"
+	echo "TK_COMP_PTIMER:                           $_TK_COMP_PTIMER"
+	echo "TK_COMP_KMEM:                             $_TK_COMP_KMEM"
+	echo "TK_COMP_PTHREAD:                          $_TK_COMP_PTHREAD"
+	echo "TK_COMP_POSIX_RT:                         $_TK_COMP_POSIX_RT"
+	echo "TK_COMP_FILESYS:                          $_TK_COMP_FILESYS"
+	echo
+	echo "                 PACKAGES & misc"
+	echo "                 ==============="
+	echo "TK_USE_BUILTIN_SORT:                      $_TK_USE_BUILTIN_SORT"
 ])
 
 dnl Prints configured component settings
 dnl ----------------------------------------------------------------------------
 AC_DEFUN([TINKER_PRINT_COMP_SETTINGS],
 [
-   echo "               COMPONENT SETTINGS"
-   echo "               =================="
-   echo "TK_MINIMUM_STACK_SIZE                     : $_TK_MINIMUM_STACK_SIZE"
-   echo "TK_NORMAL_STACK_SIZE                      : $_TK_NORMAL_STACK_SIZE"
-   echo "TK_ROOT_STACK_SIZE                        : $_TK_ROOT_STACK_SIZE"
-   echo "TK_MAX_THREADS                            : $_TK_MAX_THREADS"
-   echo "TK_MAX_PRIO_LEVELS                        : $_TK_MAX_PRIO_LEVELS"
-   echo "TK_MAX_THREADS_AT_PRIO                    : $_TK_MAX_THREADS_AT_PRIO"
-   echo "TK_THREAD_NAME_LEN                        : $_TK_THREAD_NAME_LEN"
-   echo "TK_MAX_BLOCKED_ON_Q                       : $_TK_MAX_BLOCKED_ON_Q"
-   echo "TK_MAX_NUM_Q                              : $_TK_MAX_NUM_Q"
-   echo "TK_KMEM_NHEAPS                            : $_TK_KMEM_NHEAPS"
-
+	echo "               COMPONENT SETTINGS"
+	echo "               =================="
+	echo "TK_MINIMUM_STACK_SIZE                     : $_TK_MINIMUM_STACK_SIZE"
+	echo "TK_NORMAL_STACK_SIZE                      : $_TK_NORMAL_STACK_SIZE"
+	echo "TK_ROOT_STACK_SIZE                        : $_TK_ROOT_STACK_SIZE"
+	echo "TK_MAX_THREADS                            : $_TK_MAX_THREADS"
+	echo "TK_MAX_PRIO_LEVELS                        : $_TK_MAX_PRIO_LEVELS"
+	echo "TK_MAX_THREADS_AT_PRIO                    : $_TK_MAX_THREADS_AT_PRIO"
+	echo "TK_THREAD_NAME_LEN                        : $_TK_THREAD_NAME_LEN"
+	echo "TK_MAX_BLOCKED_ON_Q                       : $_TK_MAX_BLOCKED_ON_Q"
+	echo "TK_MAX_NUM_Q                              : $_TK_MAX_NUM_Q"
+	echo "TK_KMEM_NHEAPS                            : $_TK_KMEM_NHEAPS"
 ])
 
 dnl Actuate COMPONENT selection
 dnl ----------------------------------------------------------------------------
 AC_DEFUN([TINKER_ACTUATE_COMPONENTS],
 [
-   AC_DEFINE_UNQUOTED([TK_COMP_ITC],            $_TK_COMP_ITC)
-   AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],         $_TK_COMP_PTIMER)
-   AC_DEFINE_UNQUOTED([TK_COMP_KMEM],           $_TK_COMP_KMEM)
-   AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],        $_TK_COMP_PTHREAD)
-   AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],       $_TK_COMP_POSIX_RT)
-   AC_DEFINE_UNQUOTED([TK_COMP_FILESYS],        $_TK_COMP_FILESYS)
+	AC_DEFINE_UNQUOTED([TK_COMP_ITC],            $_TK_COMP_ITC)
+	AC_DEFINE_UNQUOTED([TK_COMP_PTIMER],         $_TK_COMP_PTIMER)
+	AC_DEFINE_UNQUOTED([TK_COMP_KMEM],           $_TK_COMP_KMEM)
+	AC_DEFINE_UNQUOTED([TK_COMP_PTHREAD],        $_TK_COMP_PTHREAD)
+	AC_DEFINE_UNQUOTED([TK_COMP_POSIX_RT],       $_TK_COMP_POSIX_RT)
+	AC_DEFINE_UNQUOTED([TK_COMP_FILESYS],        $_TK_COMP_FILESYS)
 ])
 
-dnl Actuate COMPONENT tune-settings
+dnl Actuate COMPONENT tune-settings. None of these have defaults, therefor
+dnl actuation per each must be conditional or corresponding #define will be
+dnl set, but with nothing.
 dnl ----------------------------------------------------------------------------
 AC_DEFUN([TINKER_ACTUATE_COMP_SETTINGS],
 [
-   AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],  $_TK_MINIMUM_STACK_SIZE)
-   AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],   $_TK_NORMAL_STACK_SIZE)
-   if test ! -z $_TK_ROOT_STACK_SIZE; then
+	if test ! -z $_TK_MINIMUM_STACK_SIZE; then
+		AC_DEFINE_UNQUOTED([TK_MINIMUM_STACK_SIZE],  $_TK_MINIMUM_STACK_SIZE)
+   fi
+	if test ! -z $_TK_NORMAL_STACK_SIZE; then
+		AC_DEFINE_UNQUOTED([TK_NORMAL_STACK_SIZE],   $_TK_NORMAL_STACK_SIZE)
+   fi
+	if test ! -z $_TK_ROOT_STACK_SIZE; then
       AC_DEFINE_UNQUOTED([TK_ROOT_STACK_SIZE],     $_TK_ROOT_STACK_SIZE)
    fi
-   AC_DEFINE_UNQUOTED([TK_MAX_THREADS],         $_TK_MAX_THREADS)
-   AC_DEFINE_UNQUOTED([TK_MAX_PRIO_LEVELS],     $_TK_MAX_PRIO_LEVELS)
-   AC_DEFINE_UNQUOTED([TK_MAX_THREADS_AT_PRIO], $_TK_MAX_THREADS_AT_PRIO)
-   AC_DEFINE_UNQUOTED([TK_THREAD_NAME_LEN],     $_TK_THREAD_NAME_LEN)
-   AC_DEFINE_UNQUOTED([TK_MAX_BLOCKED_ON_Q],    $_TK_MAX_BLOCKED_ON_Q)
-   AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],           $_TK_MAX_NUM_Q)
-   AC_DEFINE_UNQUOTED([TK_KMEM_NHEAPS],         $_TK_KMEM_NHEAPS)
+	if test ! -z $_TK_MAX_THREADS; then
+		AC_DEFINE_UNQUOTED([TK_MAX_THREADS],         $_TK_MAX_THREADS)
+   fi
+	if test ! -z $_TK_MAX_PRIO_LEVELS; then
+		AC_DEFINE_UNQUOTED([TK_MAX_PRIO_LEVELS],     $_TK_MAX_PRIO_LEVELS)
+   fi
+	if test ! -z $_TK_MAX_THREADS_AT_PRIO; then
+		AC_DEFINE_UNQUOTED([TK_MAX_THREADS_AT_PRIO], $_TK_MAX_THREADS_AT_PRIO)
+   fi
+	if test ! -z $_TK_THREAD_NAME_LEN; then
+		AC_DEFINE_UNQUOTED([TK_THREAD_NAME_LEN],     $_TK_THREAD_NAME_LEN)
+   fi
+	if test ! -z $_TK_MAX_BLOCKED_ON_Q; then
+		AC_DEFINE_UNQUOTED([TK_MAX_BLOCKED_ON_Q],    $_TK_MAX_BLOCKED_ON_Q)
+   fi
+	if test ! -z $_TK_MAX_NUM_Q; then
+		AC_DEFINE_UNQUOTED([TK_MAX_NUM_Q],           $_TK_MAX_NUM_Q)
+   fi
+	if test ! -z $_TK_KMEM_NHEAPS; then
+		AC_DEFINE_UNQUOTED([TK_KMEM_NHEAPS],         $_TK_KMEM_NHEAPS)
+   fi
+])
 
+
+dnl You use this without prefix (!). If lowercase version is used, the
+dnl exported variable will be uppercase.
+dnl ----------------------------------------------------------------------------
+AC_DEFUN([TINKER_EXPORT_SETTING_CONDITIONALLY],
+[
+	if test ! -z [$_]$1; then
+		dnl export [_]m4_translit([[$1]], [a-z], [A-Z])
+		export [_]$1
+   fi
+])
+
+dnl Export conditionally configure settings
+dnl Export those setting relevant (environment vars) that are set at this
+dnl level for the next (the deeper) level to pick up. Those will become the new
+dnl default. To unset at that level you must explicitly unset.
+dnl Notes
+dnl 1.Technically not everything needs to go gere, only those setting having
+dnl no default from the root level
+dnl 2. Place this just before each AC_CONFIG_SUBDIRS as a practice so you
+dnl won't forget.
+dnl ----------------------------------------------------------------------------
+AC_DEFUN([TINKER_EXPORT_SETTINGS],
+[
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_COMP_ITC)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_COMP_PTIMER)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_COMP_KMEM)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_COMP_PTHREAD)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_COMP_POSIX_RT)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_COMP_FILESYS)
+
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_MINIMUM_STACK_SIZE)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_NORMAL_STACK_SIZE)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_ROOT_STACK_SIZE)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_MAX_THREADS)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_MAX_PRIO_LEVELS)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_MAX_THREADS_AT_PRIO)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_THREAD_NAME_LEN)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_MAX_BLOCKED_ON_Q)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_MAX_NUM_Q)
+	TINKER_EXPORT_SETTING_CONDITIONALLY(TK_KMEM_NHEAPS)
 ])
 
 dnl Prints component and component settings as defaults may be overloaded further
@@ -409,16 +479,16 @@ dnl down in the configure chain. Note that this info belonging to ./src
 dnl *only* and reconfiguring in a leaf without (at least) re-building from the
 dnl is an error. Having defaults in the leaf is strictly for convenience.
 dnl ----------------------------------------------------------------------------
-AC_DEFUN([TINKER_CONDITINAL_VERBOSE_PRINT],
+AC_DEFUN([TINKER_CONDITIONAL_VERBOSE_PRINT],
 [
-   if test $CONF_VERBOSE == "yes"; then
-      echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-      TINKER_PRINT_COMPONENTS
-      echo "--------------------------------------------------------------"
-      TINKER_PRINT_COMP_SETTINGS
-      echo "VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV"
-      echo "(Last printout you see is what counts. Verify with tinker/config.h)"
-   fi
+	if test $CONF_VERBOSE == "yes"; then
+		echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+		TINKER_PRINT_COMPONENTS
+		echo "--------------------------------------------------------------"
+		TINKER_PRINT_COMP_SETTINGS
+		echo "VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV"
+		echo "(Last printout you see is what counts. Verify with tinker/config.h)"
+	fi
 ])
 
 dnl prints input argument as hex-string. AWK is used for this as it is part
@@ -444,8 +514,18 @@ AC_DEFUN([TINKER_CONFIGURE],
 		echo "================================================================================"
 	fi
 
-	TINKER_PATH=$1
+	BUILD_DIR=$(pwd)
+	pushd $1 >/dev/null
+	BUILD_ROOT=$(pwd)
+	popd >/dev/null
+
+	pushd ${srcdir}/$1 >/dev/null
+	TINKER_PATH=$(pwd)
+	popd >/dev/null
+
 	AC_SUBST(TINKER_PATH)
+	AC_SUBST(BUILD_DIR)
+	AC_SUBST(BUILD_ROOT)
 
 
 	dnl if called from kernel directory create the AM prerequisites
@@ -458,7 +538,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	TINKER_CANONICAL_TOOLS_ONCE
 	TINKER_SUSBST_HEADER_PATHS
 
-   TINKER_CANONICAL_EXTRA
+	TINKER_CANONICAL_EXTRA
 	dnl the vendor part will tell us.
 	if test $host_vendor == "unknown"; then
 		SYSTEM="default"
@@ -488,13 +568,13 @@ AC_DEFUN([TINKER_CONFIGURE],
 	AC_CHECK_FUNCS(gettimeofday)
 	AC_CHECK_FUNCS(settimeofday)
 
-   dnl Check for types
-   AC_CHECK_TYPES(
-      [ptrdiff_t, uintptr_t],
-      [],
-      [],
-      [[#include <stdint.h>]]
-   )
+	dnl Check for types
+	AC_CHECK_TYPES(
+		[ptrdiff_t, uintptr_t],
+		[],
+		[],
+		[[#include <stdint.h>]]
+	)
 
 	dnl Check for broken compiler setup
 	AC_HAVE_LIBRARY(gcc_s)
@@ -516,7 +596,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 		THIS_DIR=$(cygpath -u $(PWD))
 	else
 		SERIAL_PORT=/dev/ttyS0
-	THIS_DIR=$(pwd)
+		THIS_DIR=$(pwd)
 	fi
 
 	dnl if called from kernel directory, save TK_TINKER_PATH  to later so sub configure use the same value
@@ -557,7 +637,7 @@ AC_DEFUN([TINKER_CONFIGURE],
 	else
 		XCOMPILE=0
 
-		ARCH=${HOST_CPU}
+		ARCH=${host_cpu}
 		ABI=""
 	fi
 	AC_SUBST(XCOMPILE)
@@ -615,172 +695,181 @@ AC_DEFUN([TINKER_CONFIGURE],
    dnl *Components* config part. Use enable-feature/disable-feature without arguments
    dnl NOTE: Default values are set here, but *might get overridden in target specific sub-trees*
    dnl ----------------------------------------------------------------------------
-   AC_ARG_ENABLE(itc,
-      AS_HELP_STRING(
-         [--enable-itc],
-         [ITC - Enable/disable Inter thread communication component (native API)]),
-      _TK_COMP_ITC=__tk_$enableval,
-      _TK_COMP_ITC=__tk_yes
-   )
-   AC_ARG_ENABLE(ptimer,
-      AS_HELP_STRING(
-         [--enable-ptimer],
-         [PTIMER - Enable/disable Preemptive timer component]),
-      _TK_COMP_PTIMER=__tk_$enableval,
-      _TK_COMP_PTIMER=__tk_no
-   )
-   AC_ARG_ENABLE(kmem,
-      AS_HELP_STRING(
-         [--enable-kmem],
-         [KMEM - Enable/disable Kernel memory manager component]),
-      _TK_COMP_KMEM=__tk_$enableval,
-      _TK_COMP_KMEM=__tk_no
-   )
-   AC_ARG_ENABLE(pthread,
-      AS_HELP_STRING(
-         [--enable-pthread],
-         [PTHRED - Enable/disable POSIX 1003.1c threads component]),
-      _TK_COMP_PTHREAD=__tk_$enableval,
-      _TK_COMP_PTHREAD=__tk_no
-   )
-   AC_ARG_ENABLE(posix_rt,
-      AS_HELP_STRING(
-         [--enable-posix_rt],
-         [POSIX_RT - Enable/disable POSIX 1003.1b queues, semaphores component enabled]),
-      _TK_COMP_POSIX_RT=__tk_$enableval,
-      _TK_COMP_POSIX_RT=__tk_no
-   )
-   AC_ARG_ENABLE(filesys,
-      AS_HELP_STRING(
-         [--enable-filesys],
-         [FIILESYS - Enable/disable embedded file-system abstraction component. (Not available for all possible targets. Target must be HIXS adapted.)]),
-      _TK_COMP_FILESYS=__tk_$enableval,
-      _TK_COMP_FILESYS=__tk_no
-   )
+	AC_ARG_ENABLE(itc,
+		AS_HELP_STRING(
+			[--enable-itc],
+			[ITC - Enable/disable Inter thread communication component (native API)]),
+		_TK_COMP_ITC=__tk_$enableval,
+		_TK_COMP_ITC=__tk_yes
+	)
+	AC_ARG_ENABLE(ptimer,
+		AS_HELP_STRING(
+			[--enable-ptimer],
+			[PTIMER - Enable/disable Preemptive timer component]),
+		_TK_COMP_PTIMER=__tk_$enableval,
+		_TK_COMP_PTIMER=__tk_no
+	)
+	AC_ARG_ENABLE(kmem,
+		AS_HELP_STRING(
+			[--enable-kmem],
+			[KMEM - Enable/disable Kernel memory manager component]),
+		_TK_COMP_KMEM=__tk_$enableval,
+		_TK_COMP_KMEM=__tk_no
+	)
+	AC_ARG_ENABLE(pthread,
+		AS_HELP_STRING(
+			[--enable-pthread],
+			[PTHRED - Enable/disable POSIX 1003.1c threads component]),
+		_TK_COMP_PTHREAD=__tk_$enableval,
+		_TK_COMP_PTHREAD=__tk_no
+	)
+	AC_ARG_ENABLE(posix_rt,
+		AS_HELP_STRING(
+			[--enable-posix_rt],
+			[POSIX_RT - Enable/disable POSIX 1003.1b queues, semaphores component enabled]),
+		_TK_COMP_POSIX_RT=__tk_$enableval,
+		_TK_COMP_POSIX_RT=__tk_no
+	)
+	AC_ARG_ENABLE(filesys,
+		AS_HELP_STRING(
+			[--enable-filesys],
+			[FIILESYS - Enable/disable embedded file-system abstraction component. (Not available for all possible targets. Target must be HIXS adapted.)]),
+		_TK_COMP_FILESYS=__tk_$enableval,
+		_TK_COMP_FILESYS=__tk_no
+	)
 
-   TINKER_ACTUATE_COMPONENTS
+	TINKER_ACTUATE_COMPONENTS
 
 	dnl *Package* config part. (usage, tuning and misc) Use enable-feature/disable-feature (arguments optional)
 	dnl NOTE: Default values are set here, but *might get overridden in target specific sub-trees*
 	dnl ----------------------------------------------------------------------------
 	AC_ARG_ENABLE(builtin_sorting,
-		AS_HELP_STRING([--enable-builtin_sorting],[PACKAGE - Use built-in search/sort functions (overrides default for target)]),
+		AS_HELP_STRING([--enable-builtin_sorting],
+		[PACKAGE - Use built-in search/sort functions (overrides default for target)]),
 		_TK_USE_BUILTIN_SORT=__tk_$enableval,
 		_TK_USE_BUILTIN_SORT=__tk_yes
 	)
 	AC_ARG_ENABLE(emrgcy-console,
-		AS_HELP_STRING([--enable-emrgcy-console=<val>],[Claim an emergency console is available by the BSP. Alternatively: name a function to use.]),
+		AS_HELP_STRING([--enable-emrgcy-console=<val>],
+		[Claim an emergency console is available by the BSP. Alternatively: name a function to use.]),
 		AC_DEFINE_UNQUOTED([TK_USE_EMRGCY_CONSOLE],__tk_$enableval)
 	)
 
 
 	AC_DEFINE_UNQUOTED([TK_USE_BUILTIN_SORT],$_TK_USE_BUILTIN_SORT)
 
-   dnl Configurable entities (TinKer tuning defines)
-   dnl NOTE: Default values *NOT* set here, These are supposed to be set in
-   dnl target specific sub-trees dnl   which goes in each configure.in in such
-   dnl case.
-   dnl ---------------------------------------------
-   AC_ARG_ENABLE(min_stack,
-      AS_HELP_STRING(
-         [--enable-min_stack=<val>],
-         [Maximum size of a stack for a thread ]),
-      _TK_MINIMUM_STACK_SIZE=$enableval
-   )
-   AC_ARG_ENABLE(norm_stack,
-      AS_HELP_STRING(
-         [--enable-norm_stack=<val>],
-         [Stack-size used when stack-size is omitted ]
-      ),
-      _TK_NORMAL_STACK_SIZE=$enableval
-   )
-   AC_ARG_ENABLE(root_stack,
-      AS_HELP_STRING(
-         [--enable-root_stack=<val>],
-         [Stack-size for root-stack or process if hosted]
-      ),
-      _TK_ROOT_STACK_SIZE=$enableval
-   )
-   AC_ARG_ENABLE(max_threads,
-      AS_HELP_STRING(
-         [--enable-max_threads=<val>],
-         [Maximum number of threads your system could have ]),
-      _TK_MAX_THREADS=$enableval
-   )
-   AC_ARG_ENABLE(max_prio,
-      AS_HELP_STRING(
-         [--enable-max_prio=<val>],
-         [Number of priorities for you system (recommended value: 3 or 16)]),
-      _TK_MAX_PRIO_LEVELS=$enableval
-   )
-   AC_ARG_ENABLE(that_prio,
-      AS_HELP_STRING(
-         [--enable-that_prio=<val>],
-         [Number of threads that can be scheduled at each priority ]),
-      _TK_MAX_THREADS_AT_PRIO=$enableval
-   )
-   AC_ARG_ENABLE(thename_len,
-      AS_HELP_STRING(
-         [--enable-thename_len=<val>],
-         [Lengts of the string in TCB that holds the name of the thread ]),
-      _TK_THREAD_NAME_LEN=$enableval
-   )
-   AC_ARG_ENABLE(blocked_q,
-      AS_HELP_STRING(
-         [--enable-blocked_q=<val>],
-         [Maximum number of threads blocked on any ITC primitive, i.e. not only Q ]),
-      _TK_MAX_BLOCKED_ON_Q=$enableval
-   )
-   AC_ARG_ENABLE(max_q,
-      AS_HELP_STRING(
-         [--enable-max_q=<val>],
-         [Maximum number of any ITC primitive, i.e not only Q ]),
-      _TK_MAX_NUM_Q=$enableval
-   )
-   AC_ARG_ENABLE(max_heaps,
-      AS_HELP_STRING(
-         [--enable-max_heaps=<val>],
-         [Maximum number of heaps for the KMEM component]),
-      _TK_KMEM_NHEAPS=$enableval
-   )
+	dnl Configurable entities (TinKer tuning defines)
+	dnl NOTE: Default values *NOT* set here, These are supposed to be set in
+	dnl target specific sub-trees
+	dnl which goes in each configure.in in such case.
+	dnl ---------------------------------------------
+	AC_ARG_ENABLE(min_stack,
+		AS_HELP_STRING(
+			[--enable-min_stack=<val>],
+			[Maximum size of a stack for a thread ]),
+		_TK_MINIMUM_STACK_SIZE=$enableval
+	)
+	AC_ARG_ENABLE(norm_stack,
+		AS_HELP_STRING(
+			[--enable-norm_stack=<val>],
+			[Stack-size used when stack-size is omitted ]
+		),
+		_TK_NORMAL_STACK_SIZE=$enableval
+	)
+	AC_ARG_ENABLE(root_stack,
+		AS_HELP_STRING(
+			[--enable-root_stack=<val>],
+			[Stack-size for root-stack or process if hosted]
+		),
+		_TK_ROOT_STACK_SIZE=$enableval
+	)
+	AC_ARG_ENABLE(max_threads,
+		AS_HELP_STRING(
+			[--enable-max_threads=<val>],
+			[Maximum number of threads your system could have ]),
+		_TK_MAX_THREADS=$enableval
+	)
+	AC_ARG_ENABLE(max_prio,
+		AS_HELP_STRING(
+			[--enable-max_prio=<val>],
+			[Number of priorities for you system (recommended value: 3 or 16)]),
+		_TK_MAX_PRIO_LEVELS=$enableval
+	)
+	AC_ARG_ENABLE(that_prio,
+		AS_HELP_STRING(
+			[--enable-that_prio=<val>],
+			[Number of threads that can be scheduled at each priority ]),
+		_TK_MAX_THREADS_AT_PRIO=$enableval
+	)
+	AC_ARG_ENABLE(thename_len,
+		AS_HELP_STRING(
+			[--enable-thename_len=<val>],
+			[Lengts of the string in TCB that holds the name of the thread ]),
+		_TK_THREAD_NAME_LEN=$enableval
+	)
+	AC_ARG_ENABLE(blocked_q,
+		AS_HELP_STRING(
+			[--enable-blocked_q=<val>],
+			[Maximum number of threads blocked on any ITC primitive, i.e. not only Q ]),
+		_TK_MAX_BLOCKED_ON_Q=$enableval
+	)
+	AC_ARG_ENABLE(max_q,
+		AS_HELP_STRING(
+			[--enable-max_q=<val>],
+			[Maximum number of any ITC primitive, i.e not only Q ]),
+		_TK_MAX_NUM_Q=$enableval
+	)
+	AC_ARG_ENABLE(max_heaps,
+		AS_HELP_STRING(
+			[--enable-max_heaps=<val>],
+			[Maximum number of heaps for the KMEM component]),
+		_TK_KMEM_NHEAPS=$enableval
+	)
 
-   TINKER_ACTUATE_COMP_SETTINGS
+	TINKER_ACTUATE_COMP_SETTINGS
 
 	dnl Other configurable features
 	dnl ---------------------------------------------
 	AC_ARG_ENABLE(dispatch,
-		AS_HELP_STRING([--enable-dispatch=<val>],[Main type of dispatching. MIXED or EXCLUSIVE (default is MIXED)]),
+		AS_HELP_STRING([--enable-dispatch=<val>],[Main type of dispatching.
+		MIXED or EXCLUSIVE (default is MIXED)]),
 		AC_DEFINE_UNQUOTED([TK_DISPATCH],__tk_$enableval),
 		AC_DEFINE_UNQUOTED([TK_DISPATCH],MIXED)
 	)
 
-	dnl Advanced initial portining tuning.
-	dnl These options provice certain funtion/macro mappings. Not all values are valid for each setting
-	dnl possible values (NOTE: capital letters required!)
+	dnl Advanced initial portining/tuning.
+	dnl These options provide certain function/macro mappings. Not all values
+	dnl are valid for each setting possible values (NOTE: capital letters
+	dnl required!)
 	dnl ORIGINAL 	- Use & link against original name somewhere
 	dnl STUBBED 	- Use the stubbed version of the function
-	dnl RENAMED	- Use a renamed version
-	dnl VOIDED	- Void function call out
-	dnl NOTE: Default values *NOT* set here, These are supposed to be set in target specific sub-trees
+	dnl RENAMED	   - Use a renamed version
+	dnl VOIDED	   - Void function call out
+	dnl NOTE: Default values *NOT* set here, These are supposed to be set in
+	dnl target specific sub-trees
 	dnl   which goes in each configure.in in such case.
 	dnl ---------------------------------------------
 	AC_ARG_ENABLE(how-to-malloc,
-		AS_HELP_STRING([--enable-how-to-mallow=<val>],[Advanced primary porting - ORIGINAL/STUBBED/RENAMED/VOIDED]),
+		AS_HELP_STRING([--enable-how-to-malloc=<val>],
+		[Advanced primary porting - ORIGINAL/STUBBED/RENAMED/VOIDED]),
 		AC_DEFINE_UNQUOTED([TK_HOWTO_MALLOC],TK_FNK_$enableval)
 	)
 
 	AC_ARG_ENABLE(how-to-clock,
-		AS_HELP_STRING([--enable-how-to-clock=<val>],[Advanced primary porting - ORIGINAL/STUBBED/RENAMED/VOIDED]),
+		AS_HELP_STRING([--enable-how-to-clock=<val>],
+		[Advanced primary porting - ORIGINAL/STUBBED/RENAMED/VOIDED]),
 		AC_DEFINE_UNQUOTED([TK_HOWTO_CLOCK],TK_FNK_$enableval)
 	)
 
 	AC_ARG_ENABLE(how-to-printk,
-		AS_HELP_STRING([--enable-how-to-printk=<val>],[Advanced primary porting - )]),
+		AS_HELP_STRING([--enable-how-to-printk=<val>],
+		[Advanced primary porting - ]),
 		AC_DEFINE_UNQUOTED([TK_HOWTO_PRINTK],TK_FNK_$enableval)
 	)
 
 	AC_ARG_ENABLE(how-to-assert,
-		AS_HELP_STRING([--enable-how-to-assert=<val>],[Advanced primary porting - ]),
+		AS_HELP_STRING([--enable-how-to-assert=<val>],
+		[Advanced primary porting - ]),
 		AC_DEFINE_UNQUOTED([TK_HOWTO_ASSERT],TK_FNK_$enableval)
 	)
 
@@ -793,16 +882,16 @@ AC_DEFUN([TINKER_CONFIGURE],
 			Compilation will probably fail...])
 		fi
 	else
-		if test "X${BOARD}" != "X"; then
+		if test "X${BOARD}" != "X" -a "X${BOARD}" != "Xlocalhost"; then
 			AC_MSG_WARN([<<< You are configuring for NATIVE but BOARD is selected/defined.
 				This option does no purpose...])
-      else
-         dnl If no $BOARD and no $cross_compiling, it must mean that this
-         dnl configure is for building a hosted kernel. Let build-system
-         dnl know this, some instructions dnl are illegal on hosted systems as
-         dnl kernel will not run in aprivileged mode (IRQ manipulation e.t.a.).
+		else
+			dnl If no $BOARD and no $cross_compiling, it must mean that this
+			dnl configure is for building a hosted kernel. Let build-system
+			dnl know this, some instructions dnl are illegal on hosted systems as
+			dnl kernel will not run in a privileged mode (IRQ manipulation e.t.a.).
 
-         HOSTED=1
+			HOSTED=1
 			AC_SUBST(HOSTED)
 			AC_DEFINE_UNQUOTED([TK_HOSTED],$HOSTED)
 		fi

@@ -43,9 +43,14 @@ int sem_init(sem_t * sem, int pshared, unsigned int value)
 
 int sem_destroy(sem_t * sem)
 {
-	assert("sem_destroy - Not implemented" == NULL);
+	unsigned int rc;
 
-	return 0;
+	if (sem == NULL)
+		return EINVAL;
+
+	rc = sm_delete(*sem);
+
+	return rc;
 }
 
 int sem_trywait(sem_t * sem)

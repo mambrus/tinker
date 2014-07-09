@@ -83,14 +83,14 @@
 #define CHANGE_STACK(TSP1,TEMP) \
   SET_SP( TSP1 );
 
-#define INIT_SP(_stack_SP,_stack_begin) \
-   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; \
-   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;
+#define INIT_SP(_stack_SP,_stack) \
+   _stack_SP.stack_size = _stack.stack_size - EXTRA_MARGIN; \
+   _stack_SP.bos = _stack.bos + _stack.stack_size - EXTRA_MARGIN;
 
 #define BIND_STACK(_stack_struct,_temp2)
 
 #define STACK_PTR(ADDR) \
-   (ADDR.tstack)
+   (ADDR.bos)
 
 #define REINIT_STACKADDR(ADDR,size) \
    (ADDR.stack_size = size)
@@ -167,9 +167,9 @@
       : "r" (TSP1) \
    );
 
-#define INIT_SP(_stack_SP,_stack_begin) \
-   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; \
-   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;
+#define INIT_SP(_stack_SP,_stack) \
+   _stack_SP.stack_size = _stack.stack_size - EXTRA_MARGIN; \
+   _stack_SP.bos = _stack.bos + _stack.stack_size - EXTRA_MARGIN;
 
 #define BIND_STACK(_stack_struct,_temp2)
 
@@ -189,7 +189,7 @@
    );
 
 #define STACK_PTR(ADDR) \
-   (ADDR.tstack)
+   (ADDR.bos)
 
 #define REINIT_STACKADDR(ADDR,size) \
    (ADDR.stack_size = size)

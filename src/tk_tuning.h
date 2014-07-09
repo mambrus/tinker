@@ -55,59 +55,158 @@
 #undef INCLNAME
 
 #else
-#error "Can\'t determine the tool-chin you're using for the TINKER kernel"
+#error "Can\'t determine the tool-chain you're using for the TINKER kernel"
 
 #endif
 
 #ifndef TINKER_TUNING_CATCHALL
 #define TINKER_TUNING_CATCHALL
 
-#ifndef TK_MINIMUM_STACK_SIZE
-#define TK_MINIMUM_STACK_SIZE 0x200
+#if   CANON_HOST_OS == CANON_OS_linux_gnu
+	#define _TK_HOST_OS_linux
+#elif CANON_HOST_OS == CANON_OS_linux_gnueabihf
+	#define _TK_HOST_OS_linux
 #endif
 
-#ifndef TK_NORMAL_STACK_SIZE
-#define TK_NORMAL_STACK_SIZE 0x200
-#endif
+#if defined(TK_HOSTED) && TK_HOSTED
+	#ifndef TK_MINIMUM_STACK_SIZE
+		#ifndef _TK_HOST_OS_linux
+			#warning Hosted on unknown system. Implicit TK_MINIMUM_STACK_SIZE
+		#endif
+		#define TK_MINIMUM_STACK_SIZE 0x1000
+	#endif
 
-#ifndef TK_MAX_THREADS
-#define TK_MAX_THREADS 50
-#endif
+	#ifndef TK_NORMAL_STACK_SIZE
+		#ifndef _TK_HOST_OS_linux
+			#warning Hosted on unknown system. Implicit TK_NORMAL_STACK_SIZE
+		#endif
+	#define TK_NORMAL_STACK_SIZE 0x2000
+	#endif
 
-#ifndef TK_MAX_PRIO_LEVELS
-#define TK_MAX_PRIO_LEVELS 5
-#endif
+	#ifndef TK_MAX_THREADS
+		#ifndef _TK_HOST_OS_linux
+			#warning Hosted on unknown system. Implicit TK_MAX_THREADS
+		#endif
+	#define TK_MAX_THREADS 2000
+	#endif
 
-#ifndef TK_MAX_THREADS_AT_PRIO
-#define TK_MAX_THREADS_AT_PRIO 10
-#endif
+	#ifndef TK_MAX_PRIO_LEVELS
+		#ifndef _TK_HOST_OS_linux
+			#warning Hosted on unknown system. Implicit TK_MAX_PRIO_LEVELS
+		#endif
+	#define TK_MAX_PRIO_LEVELS 2000
+	#endif
 
-#ifndef TK_THREAD_NAME_LEN
-#define TK_THREAD_NAME_LEN 0x4
-#endif
+	#ifndef TK_MAX_THREADS_AT_PRIO
+		#ifndef _TK_HOST_OS_linux
+			#warning Hosted on unknown system. Implicit TK_MAX_THREADS_AT_PRIO
+		#endif
+	#define TK_MAX_THREADS_AT_PRIO 2000
+	#endif
 
-#ifndef TK_MAX_BLOCKED_ON_Q
-#define TK_MAX_BLOCKED_ON_Q TK_MAX_THREADS
-#endif
+	#ifndef TK_THREAD_NAME_LEN
+#error apan
+		#ifndef _TK_HOST_OS_linux
+			#warning Hosted on unknown system. Implicit TK_THREAD_NAME_LEN
+		#endif
+	#define TK_THREAD_NAME_LEN 0x20
+	#endif
 
-#ifndef TK_MAX_NUM_Q
-#define TK_MAX_NUM_Q TK_MAX_THREADS
-#endif
+	#ifndef TK_MAX_BLOCKED_ON_Q
+		#ifndef _TK_HOST_OS_linux
+			#warning Hosted on unknown system. Implicit TK_MAX_BLOCKED_ON_Q
+		#endif
+	#define TK_MAX_BLOCKED_ON_Q TK_MAX_THREADS
+	#endif
 
-#ifndef TK_HOWTO_MALLOC
-#define TK_HOWTO_MALLOC TK_FNK_STUBBED
-#endif
+	#ifndef TK_MAX_NUM_Q
+		#ifndef _TK_HOST_OS_linux
+			#warning Hosted on unknown system. Implicit TK_MAX_NUM_Q
+		#endif
+	#define TK_MAX_NUM_Q TK_MAX_THREADS
+	#endif
 
-#ifndef TK_HOWTO_CLOCK
-#define TK_HOWTO_CLOCK TK_FNK_STUBBED
-#endif
+	#ifndef TK_HOWTO_MALLOC
+		#ifndef _TK_HOST_OS_linux
+			#warning Hosted on unknown system. Implicit TK_HOWTO_MALLOC
+		#endif
+	#define TK_HOWTO_MALLOC TK_FNK_ORIGINAL
+	#endif
 
-#ifndef TK_HOWTO_PRINTK
-#define TK_HOWTO_PRINTK TK_FNK_VOIDED
-#endif
+	#ifndef TK_HOWTO_CLOCK
+		#ifndef _TK_HOST_OS_linux
+			#warning Hosted on unknown system. Implicit TK_HOWTO_CLOCK
+		#endif
+	#define TK_HOWTO_CLOCK TK_FNK_ORIGINAL
+	#endif
 
-#ifndef TK_HOWTO_ASSERT
-#define TK_HOWTO_ASSERT TK_FNK_RENAMED
+	#ifndef TK_HOWTO_PRINTK
+		#ifndef _TK_HOST_OS_linux
+			#warning Hosted on unknown system. Implicit TK_HOWTO_PRINTK
+		#endif
+	//#define TK_HOWTO_PRINTK TK_FNK_ORIGINAL
+	#define TK_HOWTO_PRINTK TK_FNK_VOIDED
+	#endif
+
+	#ifndef TK_HOWTO_ASSERT
+		#ifndef _TK_HOST_OS_linux
+			#warning Hosted on unknown system. Implicit TK_HOWTO_ASSERT
+		#endif
+	#define TK_HOWTO_ASSERT TK_FNK_RENAMED
+	#endif
+#else //HOSTED
+	#ifndef TK_MINIMUM_STACK_SIZE
+	#define TK_MINIMUM_STACK_SIZE 0x200
+	#endif
+
+	#ifndef TK_NORMAL_STACK_SIZE
+	#define TK_NORMAL_STACK_SIZE 0x200
+	#endif
+
+	#ifndef TK_MAX_THREADS
+	#define TK_MAX_THREADS 50
+	#endif
+
+	#ifndef TK_MAX_PRIO_LEVELS
+	#define TK_MAX_PRIO_LEVELS 5
+	#endif
+
+	#ifndef TK_MAX_THREADS_AT_PRIO
+	#define TK_MAX_THREADS_AT_PRIO 10
+	#endif
+
+	#ifndef TK_THREAD_NAME_LEN
+	#define TK_THREAD_NAME_LEN 0x4
+	#endif
+
+	#ifndef TK_MAX_BLOCKED_ON_Q
+	#define TK_MAX_BLOCKED_ON_Q TK_MAX_THREADS
+	#endif
+
+	#ifndef TK_MAX_NUM_Q
+	#define TK_MAX_NUM_Q TK_MAX_THREADS
+	#endif
+
+	#ifndef TK_HOWTO_MALLOC
+	#define TK_HOWTO_MALLOC TK_FNK_STUBBED
+	#endif
+
+	#ifndef TK_HOWTO_CLOCK
+	#define TK_HOWTO_CLOCK TK_FNK_STUBBED
+	#endif
+
+	#ifndef TK_HOWTO_PRINTK
+	#define TK_HOWTO_PRINTK TK_FNK_VOIDED
+	#endif
+
+	#ifndef TK_HOWTO_ASSERT
+	#define TK_HOWTO_ASSERT TK_FNK_RENAMED
+	#endif
+#endif //HOSTED
+#undef _TK_HOST_OS_linux
+
+#ifndef JUMPER_BASED
+	#define JUMPER_BASED 1
 #endif
 
 #endif
@@ -129,14 +228,8 @@
 
 #if (!(TK_SYSTEM == __SYS_HIXS__))
 
-#define tk_bsp_sysinit _tk_bsp_sysinit
-#if TK_HOSTED
-#if TK_COMP_PTHREAD == __tk_no
-#define tk_root root
-#endif
-#endif
-#define BOOT_BSP_STUB
-#endif
-
-#endif
+	#define tk_bsp_sysinit _tk_bsp_sysinit
+		#define BOOT_BSP_STUB
+		#endif
+	#endif
 #endif

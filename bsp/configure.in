@@ -18,7 +18,9 @@ TINKER_CONFIGURE(..)
 
 sources_c="gnu_stubs.c tk_stubs.c"
 
-if test $HOSTED -eq 1; then
+dnl Note that $HOSTED may not be fully deducted. Therefore compered like
+dnl this of `$HOSTED -eq 1'
+if test "X$HOSTED" == "X1"; then
    #No root-stack needed. Process stack is used as root-stack.
    sources_c="$sources_c"
 else

@@ -1,0 +1,13 @@
+MLIST
+=====
+
+This source stems from the SAMPLER/mlist project (GPL) and is used in
+SAMPLER and Tinker as an essential component.
+
+MLIST is decoupled from SAMPLER and will be made either separate project to
+accommodate both projects or a sub-project to TinKer as the build-system is
+better suited for component based C-code.
+
+It can be built either as a library or used as a module. Library is
+preferred, either .so or as for TinKer, incrementally linked (i.e. no
+optimization based on removal is done until final link).

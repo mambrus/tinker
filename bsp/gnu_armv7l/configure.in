@@ -29,7 +29,7 @@ AC_MSG_NOTICE([  HOST:   ${host_cpu}-${host_vendor}-${host_os}])
 AC_MSG_NOTICE([  TARGET: ${target_cpu}-${target_vendor}-${target_os}])
 # Check run-time system sanity and add sources accordingly
 if test $SYSTEM == 'default'; then
-   if test $HOSTED -eq 1; then
+	if test "X$HOSTED" == "X1"; then
       EXEC_SYS=__SYS_HOSTED__
       AC_SUBST(EXEC_SYS)
       AC_DEFINE_UNQUOTED([TK_SYSTEM],$EXEC_SYS)
@@ -227,7 +227,7 @@ else
    )
 fi
 
-TINKER_CONDITINAL_VERBOSE_PRINT
+TINKER_CONDITIONAL_VERBOSE_PRINT
 dnl
 dnl Make it so (Actuate)
 dnl

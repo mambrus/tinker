@@ -60,7 +60,7 @@ int pthread_create_named_np(pthread_t * thread,
 					start_routine, arg, (*attr)->stacksize);
 		tk_tcb = _tk_specific_tcb(thid);
 
-		(*attr)->stackaddr = tk_tcb->stack_begin;
+		(*attr)->stackaddr = tk_tcb->stack;
 
 	} else {
 		thid = tk_create_thread(threadName,

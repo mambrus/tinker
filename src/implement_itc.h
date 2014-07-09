@@ -28,6 +28,7 @@
 #include <assert.h>
 #include <time.h>
 #include "implement_tk.h"
+#include "tk_tuning.h"
 #include "context.h"
 #include <tk_itc.h>
 

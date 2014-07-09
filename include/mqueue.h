@@ -27,10 +27,6 @@
 #endif
 #endif
 
-#include <sys/types.h>
-#include <sys/fcntl.h>
-#include <stddef.h>
-
 typedef int mqd_t;
 
 #if defined(_WIN32) && defined(_MSC_VER)

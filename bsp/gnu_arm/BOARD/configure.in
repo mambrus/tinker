@@ -8,41 +8,84 @@ AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION 
 
 AC_CONFIG_AUX_DIR(../../..)
 
-sources_c="board.c"
+sources_c=""
 sources_asm=""
 extras=""
 
 TINKER_CONFIGURE(../../..)
 
 case "${BOARD}" in
-  stm32)
-    AC_MSG_NOTICE([<<< Board stm32 is configured >>>])
+	stm32)
+		AC_MSG_NOTICE([<<< Board stm32 is configured >>>])
 
-	dnl default values that can be refined by deeper configs
-	ROM_START="0x00000000"
-	ROM_LEN="128K"
-	DATA_START="0x20000000"
-	DATA_LEN="20K"
+		dnl default values that can be refined by deeper configs
+		ROM_START="0x00000000"
+		ROM_LEN="128K"
+		DATA_START="0x20000000"
+		DATA_LEN="20K"
 
-    AC_CONFIG_SUBDIRS([stm32])
-    ;;
-  lpc21xx)
-    AC_MSG_NOTICE([<<< Board lpc21xx is configured >>>])
+		AC_CONFIG_SUBDIRS([stm32])
+		;;
+	lpc21xx)
+		AC_MSG_NOTICE([<<< Board lpc21xx is configured >>>])
 
-	dnl default values that can be refined by deeper configs
-	dnl 254k flash, 15K RAM
-	ROM_START="0x00000000"
-	ROM_LEN="0x0003E000"
-	DATA_START="0x40000000"
-	DATA_LEN="0x00003AF0"
+		dnl default values that can be refined by deeper configs
+		dnl 254k flash, 15K RAM
+		ROM_START="0x00000000"
+		ROM_LEN="0x0003E000"
+		DATA_START="0x40000000"
+		DATA_LEN="0x00003AF0"
 
-	AC_CONFIG_SUBDIRS([lpc21xx])
-    ;;
-  *)
-    AC_MSG_ERROR([<<< Sorry, board $BOARD is not supported >>>])
-    ;;
+		AC_CONFIG_SUBDIRS([lpc21xx])
+		;;
+	localhost)
+		AC_MSG_NOTICE([<<< Board localhost is configured >>>])
+		sources_c="$sources_c dummy.c"
+		HOSTED=1
+		AC_SUBST(HOSTED)
+        AC_DEFINE_UNQUOTED([TK_HOSTED],$HOSTED)
+		AC_DEFINE([TK_SYSTEM],__SYS_HOSTED__)
+
+		dnl Using a C-chain to build a HOSTED-mode kernel
+		dnl Settings fall-back on either ./bsp/tk_tuning.h or defaults higher
+		dnl up in config hierarchy
+
+		AC_CONFIG_SUBDIRS([])
+		;;
+  	*)
+		AC_MSG_ERROR([<<< Sorry, board $BOARD is not supported >>>])
+		;;
 esac
 
+if test "x$HOSTED" != "x1"; then
+	sources_c="$sources_c tk_systimer.c board.c"
+	extras="$extras ../../../lib/ram_gnu.ld ../../../lib/flash_gnu.ld ../../../lib/crt0.o"
+
+	AC_DEFINE([ANGEL_SWI],0,[Default system])
+	AC_DEFINE([HIXS],0,[HIXS system])
+
+	if test $SYSTEM == 'default'; then
+		AC_DEFINE([TK_SYSTEM],__SYS_ANGEL_SWI__)
+		sources_c="$sources_c tk_angel.c "
+	elif test $SYSTEM == 'hixs'; then
+		AC_DEFINE([TK_SYSTEM],__SYS_HIXS__)
+
+		sources_c="$sources_c hixsys.c"
+	else
+	   AC_MSG_ERROR([<<< "Tinker does not support the system you'we chosen"])
+	fi
+fi
+
+ALL_C=$sources_c
+AC_SUBST(ALL_C)
+
+TINKER_EXPORT_SETTINGS
+TINKER_CONDITIONAL_VERBOSE_PRINT
+dnl
+dnl Make it so (Actuate)
+dnl
+TINKER_ACTUATE_COMPONENTS
+TINKER_ACTUATE_COMP_SETTINGS
 
 dnl Update config.h
 AC_CONFIG_HEADER(../../../include/tinker/config.h)
@@ -54,4 +97,4 @@ AC_SUBST(ROM_LEN)
 AC_SUBST(DATA_START)
 AC_SUBST(DATA_LEN)
 
-AC_OUTPUT(../flash_gnu.ld)
+AC_OUTPUT(flash_gnu.ld)

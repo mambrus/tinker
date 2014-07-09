@@ -15,18 +15,30 @@ extras=""
 TINKER_CONFIGURE(../../..)
 
 case "${MCPU}" in
-  cortex-m3)
-    AC_MSG_NOTICE([<<< CPU cortex-m3 is configured >>>])
-    AC_CONFIG_SUBDIRS([cortex-m3])
-    ;;
-  arm7tdmi)
-    AC_MSG_NOTICE([<<< CPU arm7tdmi is configured >>>])
-    AC_CONFIG_SUBDIRS([arm7tdmi])
-    ;;
-  *)
-    AC_MSG_ERROR([<<< Sorry, CPU $MCPU is not supported >>>])
-    ;;
+	cortex-m3)
+		AC_MSG_NOTICE([<<< CPU cortex-m3 is configured >>>])
+			AC_CONFIG_SUBDIRS([cortex-m3])
+		;;
+	arm7tdmi)
+		AC_MSG_NOTICE([<<< CPU arm7tdmi is configured >>>])
+		AC_CONFIG_SUBDIRS([arm7tdmi])
+		;;
+	*)
+		if test "X${BOARD}" == "Xlocalhost"; then
+			AC_MSG_NOTICE([<<< MCPU detected BOARD is localhost >>>])
+		else
+			AC_MSG_ERROR([<<< Sorry, CPU $MCPU is not supported >>>])
+		fi
+	 ;;
 esac
+
+TINKER_EXPORT_SETTINGS
+TINKER_CONDITIONAL_VERBOSE_PRINT
+dnl
+dnl Make it so (Actuate)
+dnl
+TINKER_ACTUATE_COMPONENTS
+TINKER_ACTUATE_COMP_SETTINGS
 
 dnl Update config.h
 AC_CONFIG_HEADER(../../../include/tinker/config.h)

@@ -13,6 +13,20 @@
 nmap <silent> <leader>d :!kdbg $KDBG_GEOMETRY $KDBG_SESSION $KDBG_BINARY &<CR>
 
 
-:set tabstop=3
-:set shiftwidth=3
-":set expandtab
+"This is just a indication and will work only if files are opened from root
+"directory. Note that tab-stops is half of that which is defined by for
+"example Linux kernel:https://www.kernel.org/doc/Documentation/CodingStyle
+"One of the reasons being that I disagree with the argument limiting your
+"indentation levels to 3 or "you're screwed anyway". I've never counted what
+"I use, but it seems as a completely brain-dead statement not worthy even a
+"discussion. The only thing I do care about is (and I agree with Linus on
+"that) is readability. From that viewpoint, white-space using spaces should
+"actually be encouraged as having your vi, or whatever tool you use for
+"viewing your code, will make right hand comments impossible to read. These
+"are the type of comments I prefer when documenting members of structs.
+
+"As of recently, all/most such documentation is skipped for that reason.
+
+:set tabstop=4
+:set shiftwidth=4
+:set noexpandtab

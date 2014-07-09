@@ -22,6 +22,13 @@
 
 #include "tk_tuning.h"
 #include "stypes.h"
+#define LDATA struct tcb_t_
+#include <mlist/mlist.h>
+
+#if JUMPER_BASED
+#include <setjmp.h>
+#endif
+
 typedef enum {
 	READY = 0x00,
 	_______T = 0x01,
@@ -45,7 +52,9 @@ typedef enum {
 #define SLEEP ______S_
 #define QUEUE _____Q__
 #define ZOMBI ____Z___
+
 typedef enum { E_NONE, E_CHILDDEATH, E_TIMER, E_ITC, E_ITC2 } wakeE_t;
+
 typedef enum {
 	BON_SCHED = 0,
 	BON_ITC,
@@ -53,6 +62,7 @@ typedef enum {
 	BON_SEMAPHORE,
 	BON_PTIMER
 } bon_sel_t;
+
 typedef struct bon_t_ {
 	bon_sel_t kind;
 	union {
@@ -61,6 +71,7 @@ typedef struct bon_t_ {
 		struct pthread_mutex_t_ *mutex;
 	} entity;
 } bon_t;
+
 typedef struct tcb_t_ {
 	thid_t Thid, Gid;
 	int noChilds;
@@ -68,12 +79,10 @@ typedef struct tcb_t_ {
 	TK_BOOL valid;
 	PROCSTATE state;
 	bon_t bOnId;
-
 	int _errno_;
-	stack_t stack_begin;
-	stack_t curr_sp;
-	size_t stack_size;
-	unsigned long stack_crc;
+
+	tk_stack_t stack;
+
 	clock_t wakeuptime;
 	wakeE_t wakeupEvent;
 	void *retval;
@@ -86,6 +95,13 @@ typedef struct stat_t {
 	unsigned short curr_idx;
 } prio_stat_t;
 
+
+extern handle_t tk_list_sleep;
+extern handle_t tk_list_die;
+extern int __tk_IntFlagCntr;
+extern int nThreads_ended;
+extern int nThreads_ended_skip_cntr;
+
 struct tcb_t_ *_tk_current_tcb(void);
 struct tcb_t_ *_tk_specific_tcb(thid_t id);
 void _tk_main(void);
@@ -93,10 +109,10 @@ void tk_trap(int ec);
 int _tk_try_detach_parent(thid_t, int);
 thid_t _tk_next_runable_thread(void);
 void _tk_context_switch_to_thread(thid_t, thid_t);
+void _tk_finalize_dtors(void);
 
 extern int root(void);
 
-extern int __tk_IntFlagCntr;
 
 #if (TK_HOWTO_CLOCK == TK_FNK_STUBBED)
 clock_t clock_stubbed();

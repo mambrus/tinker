@@ -1,0 +1,19 @@
+dnl This is the tinker/src/filesys configure.in file.
+dnl Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.59])
+AC_INIT(mlist, [0.1.0])
+AC_MSG_NOTICE([<<< Running configure for $PACKAGE_NAME version $PACKAGE_VERSION >>>])
+
+AC_CONFIG_AUX_DIR(../..)
+
+sources_c="initfini.c  mlist.c  modglobals.c"
+
+TINKER_CONFIGURE(../..)
+subdirs=
+AC_SUBST(subdirs)
+
+dnl Update config.h
+AC_CONFIG_HEADER(../../include/tinker/config.h)
+
+AC_OUTPUT(Makefile-gnu)

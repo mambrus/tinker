@@ -14,7 +14,7 @@ TINKER_CONFIGURE(..)
 
 AC_CONFIG_HEADER(../include/tinker/config.h)
 
-sources_c="tk.c tk_error.c tk_switch.c time.c"
+sources_c="tk.c tk_globals.c tk_error.c tk_switch.c time.c"
 
 TINKER_CONDITINAL_VERBOSE_PRINT
 
@@ -40,8 +40,10 @@ fi
 
 if test $_TK_COMP_FILESYS != __tk_no; then
    AC_MSG_NOTICE([<<< Component <filesys> >>>])
-   AC_CONFIG_SUBDIRS([filesys])
+	AC_CONFIG_SUBDIRS([filesys])
 fi
+
+AC_CONFIG_SUBDIRS([mlist])
 
 ALL_C=$sources_c
 AC_SUBST(ALL_C)

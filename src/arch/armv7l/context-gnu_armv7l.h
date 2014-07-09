@@ -1,7 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2006, Michael Ambrus                                    *
- *   michael.ambrus@gmail.com                                              *
- *   Copyright (C) 2010,2014 by Michael Ambrus                             *
+ *   Copyright (C) 2014 by Michael Ambrus                                  *
  *   michael.ambrus@gmail.com                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,8 +17,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef TK_CONTEXT_H
-#define TK_CONTEXT_H
+
+/* ARCH=armv7l: ARMv7 VFPv3-D16 port, softfp ABI */
+/*===============================================*/
+
+#ifndef CONTEXT_GNU_ARMV7L_H
+#define CONTEXT_GNU_ARMV7L_H
 
 #define stalloc malloc
 #define stalloc_free free
@@ -35,7 +37,6 @@
 #endif
 
 #if !TK_HOSTED
-
 #define TK_CLI() asm __volatile__ (" CPSID if\n\t");
 #define TK_STI() asm __volatile__ (" CPSIE if\n\t");
 #else
@@ -44,19 +45,12 @@
 #endif
 
 #if JUMPER_BASED
-
 #include <setjmp.h>
+//#define EXTRA_MARGIN (2*sizeof(uint64_t))
+#define EXTRA_MARGIN 0
 
-#ifndef _JBLEN
-//#error JBLEN is expected but not known (undefined)
-//#warning JBLEN is not known, just guessing...(TBD)
-#define _JBLEN sizeof(struct __jmp_buf_tag)
-#endif
-
-#define EXTRA_MARGIN (2*sizeof(uint64_t))
-
-#define PUSHALL()
-#define POPALL()
+#define PUSHALL()		/*No need to PUSHALL on this arch - Already done by setjmp */
+#define POPALL()		/*No need to POPALL on this arch - Already done by longjmp */
 
 #define GET_SP(OUT_SP) \
    asm __volatile__ ( \
@@ -64,175 +58,28 @@
       : "=r" (OUT_SP) \
       : \
       : "memory" \
-   )
+   );
 
 #define SET_SP(IN_SP) \
    asm __volatile__ ( \
       "mov %%r13, %0 " \
       : \
       : "r" (IN_SP) \
-   )
+   );
 
-#define PUSH_CPU_GETCUR_STACK(TSP1,TEMP) \
-   GET_SP( TSP1 ); \
-   TEMP = setjmp( (struct __jmp_buf_tag*)(TSP1 - _JBLEN - EXTRA_MARGIN)); \
-   if (TEMP != (active_thread+1)) \
-      GET_SP( TSP1 );
+#define PUSH_CPU_GETCUR_STACK( TSP1, TEMP )     \
+   GET_SP( TSP1.sp )                            \
+   TEMP = setjmp( TSP1.context );               \
+   if (TEMP != (active_thread+1))               \
+      GET_SP( TSP1.sp );
 
-#define CHANGE_STACK_POP_CPU(TSP1,TEMP) \
- longjmp( (struct __jmp_buf_tag*)(TSP1 - _JBLEN - EXTRA_MARGIN), active_thread+1);
+#define CHANGE_STACK_POP_CPU( TSP1, TEMP )      \
+    longjmp( TSP1.context, active_thread+1);
 
-#define CHANGE_STACK(TSP1,TEMP) \
+#define CHANGE_STACK( TSP1, TEMP )              \
   SET_SP( TSP1 );
 
-#define INIT_SP(_stack_SP,_stack_begin) \
-   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; \
-   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;
-
-#define BIND_STACK(_stack_struct,_temp2)
-
-#define STACK_PTR(ADDR) \
-   (ADDR.tstack)
-
-#define REINIT_STACKADDR(ADDR,size) \
-   (ADDR.stack_size = size)
-
-#else
-#error Only JUMPER based config currently done for this arch
-
-#define EXTRA_MARGIN 20
-
-#define REAL_STACK_SIZE(TCB) \
-   ( TCB.stack_size )
-
-#define PREP_TOS(_oldTOS,_newSP,_temp1,_temp2,_stack_struct) \
-   PUSHALL(); \
-   asm __volatile__ ( \
-      " mov  %0, %%r13\n\t" \
-      : "=r" (_temp1) \
-      : \
-      : "memory" \
-   ); \
-   asm __volatile__ ( \
-      " mov  %%r13, %0\n\t" \
-      : \
-      : "r" (_oldTOS) \
-   ); \
-                                          \
-                                          \
-                                          \
-                                          \
-   asm __volatile__ ( \
-      "stmdb sp!, {sp}" \
-   ); \
-   asm __volatile__ ( \
-      "stmdb sp!, {r11, r12, sp}" \
-   ); \
-                                          \
-                                          \
-                                          \
-   PUSHALL(); \
-                                          \
-   asm __volatile__ ( \
-      " mov  %0, %%r13\n\t" \
-      : "=r" (_newSP) \
-      : \
-      : "memory" \
-   ); \
-   asm __volatile__ ( \
-      " mov  %%r13, %0\n\t" \
-      : \
-      : "r" (_temp1) \
-   ); \
-   POPALL();
-
-#define PUSH_CPU_GETCUR_STACK(TSP1,TEMP) \
-   PUSHALL(); \
-   asm __volatile__ ( \
-      "mov %0, %%r13 " \
-      : "=r" (TSP1) \
-      : \
-      : "memory" \
-   )
-
-#define CHANGE_STACK_POP_CPU(TSP1,TEMP) \
-   asm __volatile__ ( \
-      "mov %%r13, %0 " \
-      : \
-      : "r" (TSP1) \
-   ); \
-   POPALL();
-
-#define CHANGE_STACK(TSP1,TEMP) \
-   asm __volatile__ ( \
-      "mov %%r13, %0 " \
-      : \
-      : "r" (TSP1) \
-   );
-
-#define INIT_SP(_stack_SP,_stack_begin) \
-   _stack_SP.stack_size = _stack_begin.stack_size - EXTRA_MARGIN; \
-   _stack_SP.tstack = _stack_begin.tstack + _stack_begin.stack_size - EXTRA_MARGIN;
-
-#define BIND_STACK(_stack_struct,_temp2)
-
-#define GET_THREADS_RETVAL(THRETVAL,TEMP) \
-   asm __volatile__ ( \
-      "nop" \
-   );
-
-#define PUSHALL() \
-   asm __volatile__ ( \
-      "stmdb sp!, {r0-r12,lr}" \
-   );
-
-#define POPALL() \
-   asm __volatile__ ( \
-      "ldmia sp!, {r0-r12,lr}" \
-   );
-
-#define STACK_PTR(ADDR) \
-   (ADDR.tstack)
-
-#define REINIT_STACKADDR(ADDR,size) \
-   (ADDR.stack_size = size)
-
-#define GET_SP(param) \
-   asm __volatile__ ( \
-      "mov %0, %%r13 " \
-      : "=r" (param ) \
-      : "0" (param) \
-      : "memory" \
-   )
-
-#define GET_LR(param) \
-   asm __volatile__ ( \
-      "mov %0, %%r14 " \
-      : "=r" (param ) \
-      : "0" (param) \
-      : "memory" \
-   )
-
-#define GET_REG(theReg,param) \
-   asm __volatile__ ( \
-      "mov %0, %%"#theReg \
-      : "=r" (param ) \
-      : "0" (param) \
-      : "memory" \
-   )
-
-#define GET_PC(param) \
-   asm __volatile__ ( \
-      "mov %0, %%r15\n\t " \
-      "sub %0, %0, #4 " \
-      : "=r" (param ) \
-      : "0" (param) \
-      : "memory" \
-   )
-
-#define aGET_PC(param) \
-   __asm__( "mov %0, #1", "=r" (param))
-
-#endif
-
+#else				//JUMPER_BASED
+	#error Non jumper-based context-switch not implemented
+#endif				//JUMPER_BASED
 #endif

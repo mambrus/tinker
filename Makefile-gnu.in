@@ -1,4 +1,4 @@
-OUTFILENAME    = @TINKER_PATH@/lib/lib@PACKAGE_NAME@.a
+OUTFILENAME    = @BUILD_ROOT@/lib/lib@PACKAGE_NAME@.a
 PACK_ID        = @PACKAGE_NAME@-@host_alias@
 CC             = @CC@
 CXX            = @CXX@
@@ -29,11 +29,15 @@ MAKE_SUBDIRS   = @subdirs@
 EXTERN_INCL    = @ext_incl@
 TINKER_PATH    = @TINKER_PATH@
 THIS_DIR       = @THIS_DIR@
+SRCDIR         = @srcdir@
+BUILD_DIR      = @BUILD_DIR@
+BUILD_ROOT     = @BUILD_ROOT@
+VPATH          = @srcdir@
 CPU_OPT        = @CPU_OPT@
 DCPU           = @DCPU@
 SUB_VERBOSE    = @SUB_VERBOSE@
 # Below are for informative use only. Don't use, especially not in any
-# application makefiles. Values are available though include/config.h
+# application makefiles. Values are available through include/config.h
 # instead.
 CHAINPATH_INCLUDE			= @CHAINPATH_INCLUDE@
 CHAINPATH_SYS_INCLUDE	= @CHAINPATH_SYS_INCLUDE@
@@ -45,9 +49,9 @@ MAKE_SUBDIRS_CLEAN    := $(patsubst %, make -f Makefile-gnu clean @MAKEOPTS@ -C 
 MAKE_SUBDIRS_MRPROPER := $(patsubst %, make -f Makefile-gnu mrproper @MAKEOPTS@ -C % &&, $(MAKE_SUBDIRS))
 
 SUBLIBS       := $(patsubst %, -l%, @subdirs@)
-SUBLIBOUT     := $(patsubst %, @TINKER_PATH@/lib/lib%.a, @subdirs@)
+SUBLIBOUT     := $(patsubst %, @BUILD_ROOT@/lib/lib%.a, @subdirs@)
 
-LDFLAGS  := $(LDFLAGS) -L$(TINKER_PATH)/lib $(SUBLIBS)
+LDFLAGS  := $(LDFLAGS) -L$(BUILD_ROOT)/lib $(SUBLIBS)
 
 LIBOBJS_LIST   = $(patsubst %,-l%,$(LIBOBJS))
 
@@ -59,17 +63,17 @@ CFLAGS := $(CFLAGS) -D__FDSCR_T=int -D__FDFLG_T=int
 ifeq ($(XCOMPILE),1)
    CFLAGS := $(CFLAGS)  -DDEBUG -DBOARD=$(BOARD) -DABI=$(ABI) -DARCH=$(ARCH)
    CFLAGS := $(CFLAGS) $(CPU_OPT) $(DCPU) -g -gstabs+ -D RUN_FROM_ROM
-   CFLAGS := $(CFLAGS) -I . -I $(TINKER_PATH)/include -I $(TINKER_PATH)/src $(EXTERN_INCL)
+   CFLAGS := $(CFLAGS) -I $(BUILD_ROOT)/include -I $(SRCDIR) -I $(TINKER_PATH)/include -I $(TINKER_PATH)/src $(EXTERN_INCL)
 
-   LDFLAGS   := $(LDFLAGS) -Xlinker --relocatable
+   LDFLAGS   := $(LDFLAGS) -Xlinker -r
 
    LDFLAGS   := $(LDFLAGS) -nodefaultlibs
    LDFLAGS   := $(LDFLAGS) -nostdlib -nostartfiles
 
 else
    CFLAGS   := $(CFLAGS) -no-integrated-cpp -g3 -O0 -DARCH=$(ARCH) -DDEBUG
-   CFLAGS   := $(CFLAGS) -Wall -I . -I $(TINKER_PATH)/include
-   LDFLAGS  := $(LDFLAGS) -Xlinker --relocatable
+   CFLAGS   := $(CFLAGS) -Wall -I $(BUILD_ROOT)/include -I $(SRCDIR) -I $(TINKER_PATH)/include
+   LDFLAGS  := $(LDFLAGS) -Xlinker -r
 
    #On GCC 3.3.4 (SuSe 9.2) not having this flag will produce a link error to
    #libgcc_s.a
@@ -81,13 +85,9 @@ else
 endif
 
 #-------1---------2---------3---------4---------5---------6---------7---------8
-ALL_C_r   := @ALL_C@
-ALL_ASM_r := @ALL_ASM@
-EXTRAS_r  := @EXTRAS@
-
-ALL_C     := $(patsubst %, ${THIS_DIR}/%, ${ALL_C_r})
-ALL_ASM   := $(patsubst %, ${THIS_DIR}/%, ${ALL_ASM_r})
-EXTRAS    := $(patsubst %, ${THIS_DIR}/%, ${EXTRAS_r})
+ALL_C   := @ALL_C@
+ALL_ASM := @ALL_ASM@
+EXTRAS  := @EXTRAS@
 
 #-------1---------2---------3---------4---------5---------6---------7---------8
 
@@ -155,8 +155,8 @@ cleanhard:
 
 
 cleanall: clean
-	rm -rf @TINKER_PATH@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
-	rm -rf @TINKER_PATH@/lib/crt*.o $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
+	rm -rf @BUILD_ROOT@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
+	rm -rf @BUILD_ROOT@/lib/crt*.o $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
 	rm $(TOOLDIR)/$(ALIAS_HOST)/lib/lib@PACKAGE_NAME@.a
 	rm -rf $(TOOLDIR)/$(ALIAS_HOST)/include/tinker
 	rm -f .installed-$(PACK_ID)
@@ -186,20 +186,43 @@ mrproper: clean
 tryinstall: .installed-$(PACK_ID)
 
 install: all
+	rm -f .installed-$(PACK_ID)
 	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
 	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/
 	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/tinker
 	mkdir -p $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/sys
 	mkdir -p $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
-	cp -dpv $(OUTFILENAME) $(TOOLDIR)/$(ALIAS_HOST)/lib/
-	cp -dpv @TINKER_PATH@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
-	cp -dpv @TINKER_PATH@/lib/crt*.o $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
-	cp -dprv @TINKER_PATH@/include/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/
-	cp -dprv @TINKER_PATH@/include/tinker/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/tinker/
-	cp -dprv @TINKER_PATH@/include/sys/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/sys/
-	touch .installed-$(PACK_ID)
+	cp -dpv $(OUTFILENAME) $(TOOLDIR)/$(ALIAS_HOST)/lib/ >> .installed-$(PACK_ID)
+	bash -c 'if test -n "$$(ls @BUILD_ROOT@/lib/*.ld 2>/dev/null)"; then \
+        cp -dpv @BUILD_ROOT@/lib/*.ld $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/ >> \
+           .installed-$(PACK_ID); \
+    fi'
+	bash -c 'if test -n "$$(ls @BUILD_ROOT@/lib/crt*.o 2>/dev/null)"; then \
+        cp -dpv @BUILD_ROOT@/lib/crt*.o $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/ >> \
+           .installed-$(PACK_ID); \
+    fi'
+	cp -dprv @TINKER_PATH@/include/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/ >> .installed-$(PACK_ID)
+	cp -dprv @TINKER_PATH@/include/tinker/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/tinker/ >> .installed-$(PACK_ID)
+	cp -dprv @BUILD_ROOT@/include/tinker/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/tinker/ >> .installed-$(PACK_ID)
+	cp -dprv @TINKER_PATH@/include/sys/*.h $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/sys/ >> .installed-$(PACK_ID)
 	@echo "======================================================"
-	@echo "<<- Target [@PACKAGE_NAME@] installed! ->>"
+	@echo "<<- Target [@PACKAGE_NAME@] [$(PACK_ID)] installed in: ->>"
+	@echo "   $(TOOLDIR)/$(ALIAS_HOST)/"
+	@echo "   $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/"
+	@echo "======================================================"
+
+uninstall:
+	@for F in $$(cat .installed-$(PACK_ID) | cut -f2 -d'>' | sed -e 's/^..//' -e 's/.$$//'); do echo "rm -f $$F"; rm -f $$F; done
+	rm -rf $(TOOLDIR)/$(ALIAS_HOST)/lib/tinker/
+	rm -rf $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/
+	rm -rf $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/tinker
+	rm -rf $(TOOLDIR)/$(ALIAS_HOST)/include/tinker/sys
+	rm -rf $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/tinker/
+	rm -f .installed-$(PACK_ID)
+	@echo "======================================================"
+	@echo "<<- Target [@PACKAGE_NAME@] [$(PACK_ID)] uninstalled from: ->>"
+	@echo "   $(TOOLDIR)/$(ALIAS_HOST)/"
+	@echo "   $(TOOLDIR)/lib/gcc/$(ALIAS_HOST)/$(GCC_VERSION)/"
 	@echo "======================================================"
 
 %.ld:
@@ -221,15 +244,14 @@ ifeq ($(SUB_VERBOSE),yes)
 	echo $@
 endif
 	@bash -c 'if [ ! -d ${@D} ]; then echo "-->>>> Creating directory: ${@D}"; mkdir -p ${@D}; fi'
-	$(CC) -MM $(CFLAGS) ${@:d=c} > temp
-	@sed  -e 's,\(.*\):,$*.o: $@,' > $@ < temp
+	$(CC) -MM $(CFLAGS) $< | sed  -e 's,\(.*\):,$*.o: $@,' > $@
 	@echo
 
 %.o: %.d @DEPMAKE@
 ifeq ($(SUB_VERBOSE),yes)
 	@echo =o2========================================================
 endif
-	$(CC) -c $(CFLAGS) ${@:o=c} -o $@
+	$(CC) -c $(CFLAGS) $(SRCDIR)/${@:o=c} -o $@
 	@echo
 
 %.ao: %.s @DEPMAKE@

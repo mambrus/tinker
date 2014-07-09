@@ -131,7 +131,7 @@ typedef struct {
 
 	size_t sys_stack_size;
 	size_t usr_stack_size;
-} stack_t;
+} tk_stack_t;
 
-extern void _tk_reinit_stackaddr_xc167keil(stack_t * addr, size_t size);
+extern void _tk_reinit_stackaddr_xc167keil(tk_stack_t * addr, size_t size);
 #endif

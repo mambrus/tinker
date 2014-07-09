@@ -25,8 +25,8 @@
 #include <stddef.h>
 
 typedef struct {
-	char *tstack;
+	char *bos;
 	size_t stack_size;
-} stack_t;
+} tk_stack_t;
 
 #endif

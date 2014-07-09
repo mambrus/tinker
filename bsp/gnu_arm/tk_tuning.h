@@ -1,6 +1,8 @@
 /***************************************************************************
  *   Copyright (C) 2006 by Michael Ambrus                                  *
  *   michael.ambrus@maquet.com                                             *
+ *   Copyright (C) 2014 by Michael Ambrus                                  *
+ *   michael.ambrus@gmail.com                                              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -63,11 +65,22 @@
 #define TK_HOWTO_ASSERT 		TK_FNK_RENAMED
 */
 
+#ifndef TK_HOWTO_MALLOC
 #define TK_HOWTO_MALLOC 		TK_FNK_ORIGINAL
+#endif
+
+#ifndef TK_HOWTO_CLOCK
 //#define TK_HOWTO_CLOCK                TK_FNK_STUBBED
 #define TK_HOWTO_CLOCK  		TK_FNK_ORIGINAL
+#endif
+
+#ifndef TK_HOWTO_PRINTK
 #define TK_HOWTO_PRINTK 		TK_FNK_RENAMED
+#endif
+
+#ifndef TK_HOWTO_ASSERT
 #define TK_HOWTO_ASSERT 		TK_FNK_RENAMED
+#endif
 
 #define TRAP( NUM )     \
    tk_trap( NUM )

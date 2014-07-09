@@ -17,7 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include <time.h>
+
+#ifdef NEVER
 #include <string.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -25,6 +26,11 @@
 #include <pthread.h>
 #include <mqueue.h>
 #include <semaphore.h>
+
+//#include <sys/types.h>
+#include <sys/fcntl.h>
+//#include <stddef.h>
+//#include <time.h>
 
 #if defined(_WIN32) && defined(_MSC_VER)
 #include <errno.h>
@@ -34,6 +40,7 @@
 #include <sys/errno.h>
 #else
 #include <errno.h>
+
 #ifndef PATH_MAX
 #define PATH_MAX 24
 #endif
@@ -56,6 +63,7 @@
    Q->mBox.mIdxIn - Q->mBox.mIdxOut: \
    Q->mq_attr.mq_maxmsg - Q->mBox.mIdxOut + Q->mBox.mIdxIn \
 )
+
 
 typedef struct {
 	time_t time;
@@ -519,3 +527,5 @@ int mq_unlink(const char *mq_name)
 	_MQ_NO_WARN_VAR(mq_name);
 	return 0;
 }
+
+#endif //NEVER

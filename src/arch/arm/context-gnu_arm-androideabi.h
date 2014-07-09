@@ -1,8 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Michael Ambrus                                  *
- *   michael.ambrus@maquet.com                                             *
  *   Copyright (C) 2014 by Michael Ambrus                                  *
- *   michael.ambrus@gmail.com                                              *
+ *   michael.ambrus@sonymobile.com                                         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,34 +17,9 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef SYS_FCNTL_H_TK
-#define SYS_FCNTL_H_TK
+#ifndef CONTEXT_GNU_ARM_ANDROIDEABI_H
+#define CONTEXT_GNU_ARM_ANDROIDEABI_H
 
-#if defined (__GNUC__)
-#include <tk_ansi_dirwrap.h>
-
-#if defined(__ANDROID__) && __ANDROID__
-#include BUILDCHAIN_INCLUDE(fcntl.h)
-#else
-#include BUILDCHAIN_SYS_INCLUDE(fcntl.h)
-#endif
-
-#undef O_RDONLY
-#undef O_WRONLY
-#undef O_RDWR
-
-#define O_RDONLY_NL (FREAD-1)
-#define O_WRONLY_NL (FWRITE-1)
-#define O_RDWR_NL ((FREAD|FWRITE) -1)
-
-#else
-#define O_CREAT 0x10
-#define O_EXCL 0x20
-#define O_NONBLOCK 0x40
-#endif
-
-#define O_RDONLY 0x01
-#define O_WRONLY 0x02
-#define O_RDWR 0x04
+#include "../armv7l/context-gnu_armv7l.h"
 
 #endif

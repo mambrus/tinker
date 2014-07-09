@@ -26,6 +26,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <assert.h>
+#define LDATA struct tcb_t_
+#include <mlist/mlist.h>
 
 extern struct tcb_t_ __tk_threadPool[TK_MAX_THREADS];
 extern thid_t __tk_schedule[TK_MAX_PRIO_LEVELS][TK_MAX_THREADS_AT_PRIO];
@@ -48,13 +50,21 @@ void tk_preemplist(thid_t thid)
 
 void _tk_wakeup_timedout_threads(void)
 {
-	thid_t i;
+	thid_t i=0;
 	clock_t act_time_us;
 	int _npreempt;
+	struct node *n;
 
 	act_time_us = tk_clock() * (1000000uL / CLOCKS_PER_SEC);
+	for(
+		n=mlist_head(tk_list_sleep);
+		n;
+		n=mlist_next(tk_list_sleep)
+	) {
+		assert(n->pl);
 
-	for (i = 0; i < TK_MAX_THREADS; i++) {
+
+	//for (i = 0; i < TK_MAX_THREADS; i++) {
 		TK_CLI();
 		_npreempt = npreempt;
 		TK_STI();
@@ -116,6 +126,12 @@ void tk_yield(void)
 	__tk_thread_to_run = _tk_next_runable_thread();
 	_tk_context_switch_to_thread(__tk_thread_to_run, __tk_active_thread);
 
+	if (nThreads_ended || (nThreads_ended_skip_cntr>100)) {
+		nThreads_ended=0;
+		nThreads_ended_skip_cntr=0;
+		_tk_finalize_dtors();
+	} else
+		nThreads_ended_skip_cntr++;
 	POPALL();
 	TK_STI();
 

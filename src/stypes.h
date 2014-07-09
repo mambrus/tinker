@@ -20,10 +20,6 @@
 #ifndef TK_HWTYPES_H
 #define TK_HWTYPES_H
 
-#if defined(DOXYGEN_ONLY)
-
-#endif
-
 #if defined(_WIN32) && defined(_MSC_VER)
 #include <kernel/bsp/X86_msvc/tk_hwtypes_mvcsX86.h>
 
@@ -36,7 +32,9 @@
 #elif defined(__GNUC__)
 
 #ifndef ARCH
+
 #error For GNU targets, ARCH has to be defined
+
 #endif
 
 #define str(x) \
