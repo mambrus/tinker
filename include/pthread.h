@@ -61,7 +61,7 @@ typedef enum {
    NULL, \
    _PTHREAD_BLOCKED_INIT, \
    _PBON_NOLINK, \
-   NULL, \
+    {NULL}, \
    _PTHREAD_MUTEXATTR_DEFAULT, \
    1 \
 }
@@ -70,7 +70,7 @@ typedef enum {
    (pthread_t)1, \
    _PTHREAD_BLOCKED_INIT, \
    _PBON_NOLINK, \
-   NULL, \
+    {NULL}, \
    _PTHREAD_MUTEXATTR_DEFAULT, \
    1 \
 }
